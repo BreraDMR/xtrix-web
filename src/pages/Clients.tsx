@@ -4,7 +4,6 @@ import api from '../api/client'
 import ClientForm from '../components/ClientForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { SkeletonTable } from '../components/Skeleton'
 
 interface Client {
   id: number

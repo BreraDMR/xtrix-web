@@ -3,7 +3,6 @@ import Calendar from 'react-calendar'
 import { format } from 'date-fns'
 import 'react-calendar/dist/Calendar.css'
 import VisitForm from './VisitForm'
-import api from '../api/client'
 
 interface SimpleCalendarProps {
   visits: any[]
