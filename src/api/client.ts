@@ -39,7 +39,7 @@ api.interceptors.request.use((config) => {
   config.headers['Accept-Language'] = locale
   
   // Логируем запросы для отладки
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, { 
       hasToken: !!token,
       tokenSource: token ? (useAuthStore.getState().token ? 'store' : 'localStorage') : 'none'

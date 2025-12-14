@@ -57,7 +57,7 @@ export const logger = {
 }
 
 // Выводим команду для просмотра логов в консоли
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (typeof window !== 'undefined' && import.meta.env.DEV) {
   (window as any).viewLogs = () => {
     const logs = logger.getLogs()
     console.log('=== App Logs ===')

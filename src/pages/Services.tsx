@@ -4,7 +4,6 @@ import api from '../api/client'
 import ServiceForm from '../components/ServiceForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { SkeletonTable } from '../components/Skeleton'
 
 interface Service {
   id: number

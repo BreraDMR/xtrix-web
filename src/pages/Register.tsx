@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -16,8 +16,7 @@ export default function Register() {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
-  const { token, setAuth } = useAuthStore()
+  const { setAuth } = useAuthStore()
 
   // Если уже залогинен, перенаправляем на главную
   useEffect(() => {

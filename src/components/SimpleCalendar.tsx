@@ -77,7 +77,13 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
         <Calendar
-          onChange={setSelectedDate}
+          onChange={(value) => {
+            if (value instanceof Date) {
+              setSelectedDate(value)
+            } else if (Array.isArray(value) && value[0] instanceof Date) {
+              setSelectedDate(value[0])
+            }
+          }}
           value={selectedDate}
           onClickDay={handleDateClick}
           tileContent={tileContent}
