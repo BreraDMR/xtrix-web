@@ -184,9 +184,18 @@ export default function Register() {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="••••••••"
             />
-            <p className="mt-1 text-xs text-gray-500">
-              Minimum 8 characters, include uppercase, lowercase, number, and special character
-            </p>
+            <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-xs text-blue-700 font-medium">
+                ⚠️ Password requirements:
+              </p>
+              <ul className="text-xs text-blue-600 mt-1 ml-4 list-disc">
+                <li>Minimum 8 characters</li>
+                <li>At least one uppercase letter (A-Z)</li>
+                <li>At least one lowercase letter (a-z)</li>
+                <li>At least one number (0-9)</li>
+                <li>At least one special character (!@#$%^&*)</li>
+              </ul>
+            </div>
           </div>
 
           <div>
