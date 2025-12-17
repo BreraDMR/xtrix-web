@@ -1,9 +1,15 @@
-import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
 export default function Layout() {
   const { user, logout } = useAuthStore()
   const location = useLocation()
+  const navigate = useNavigate()
+  
+  const handleLogout = () => {
+    logout()
+    navigate('/login', { replace: true })
+  }
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: '📊' },
@@ -43,7 +49,7 @@ export default function Layout() {
                 <span className="text-sm font-medium text-gray-700">{user?.full_name || 'User'}</span>
               </div>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="px-4 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all font-medium"
               >
                 Logout
