@@ -28,6 +28,15 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
+  // ВАЖНО: FastAPI требует trailing slash - добавляем автоматически
+  if (config.url && !config.url.includes('?')) {
+    // Если URL не содержит query параметры и не заканчивается на /
+    if (!config.url.endsWith('/')) {
+      config.url = config.url + '/'
+      console.log('[API Client] 📌 Added trailing slash:', config.url)
+    }
+  }
+  
   // Сначала проверяем store, затем localStorage для надежности
   let token = useAuthStore.getState().token
   if (!token && typeof window !== 'undefined') {
