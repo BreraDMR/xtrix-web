@@ -89,8 +89,8 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-2xl animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 sm:px-6">
+      <div className="max-w-md w-full space-y-8 p-6 sm:p-8 bg-white rounded-xl shadow-2xl animate-fade-in">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Xtrix</h2>
           <p className="text-gray-600">Sign in to your account</p>
