@@ -15,6 +15,8 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
 
   const visitsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {}
+    if (!visits || !Array.isArray(visits)) return grouped
+    
     visits.forEach((visit) => {
       const dateKey = format(new Date(visit.date_start), 'yyyy-MM-dd')
       if (!grouped[dateKey]) {

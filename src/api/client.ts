@@ -28,6 +28,12 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
+  // КРИТИЧЕСКИ ВАЖНО: Принудительно используем HTTPS для Railway
+  if (config.baseURL && config.baseURL.includes('railway.app') && config.baseURL.startsWith('http:')) {
+    config.baseURL = config.baseURL.replace('http://', 'https://')
+    console.warn('[API Client] 🔒 Forced HTTPS in interceptor:', config.baseURL)
+  }
+  
   // ВАЖНО: FastAPI routing - добавляем trailing slash ТОЛЬКО для collection endpoints
   if (config.url && !config.url.includes('?')) {
     // НЕ добавляем trailing slash для этих эндпоинтов (они возвращают 307 с /)
