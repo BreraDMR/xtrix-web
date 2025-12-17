@@ -28,10 +28,10 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  // ВАЖНО: FastAPI routing - добавляем trailing slash, КРОМЕ /login и POST запросов
+  // ВАЖНО: FastAPI routing - добавляем trailing slash, КРОМЕ специфических эндпоинтов
   if (config.url && !config.url.includes('?')) {
-    // НЕ добавляем trailing slash для login/register эндпоинтов
-    const skipTrailingSlash = ['/login', '/register', '/2fa'].some(path => 
+    // НЕ добавляем trailing slash для этих эндпоинтов (они возвращают 307 с /)
+    const skipTrailingSlash = ['/login', '/register', '/2fa', '/me'].some(path => 
       config.url?.includes(path)
     )
     
