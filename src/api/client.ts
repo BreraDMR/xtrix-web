@@ -1,16 +1,24 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 
-// Use environment variable for API URL, fallback to /api for dev proxy
-let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+// КРИТИЧЕСКИ ВАЖНО: Используем HTTPS по умолчанию для Railway
+// Production URL для Railway (ВСЕГДА HTTPS)
+const RAILWAY_PROD_URL = 'https://xtrix-production.up.railway.app'
 
-// КРИТИЧЕСКИ ВАЖНО: Всегда используем HTTPS для Railway
-// Vercel требует HTTPS для всех запросов (Mixed Content Policy)
-if (API_BASE_URL.includes('railway.app')) {
-  // Принудительно меняем на HTTPS
+// Use environment variable for API URL
+// Fallback: Railway prod (если деплой на Vercel) или /api (локальная разработка)
+let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+                   (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') 
+                     ? RAILWAY_PROD_URL 
+                     : '/api')
+
+// Дополнительная защита: принудительно меняем HTTP на HTTPS для Railway
+if (API_BASE_URL.includes('railway.app') && API_BASE_URL.startsWith('http:')) {
   API_BASE_URL = API_BASE_URL.replace(/^http:/, 'https:')
-  console.warn('[API Client] 🔒 Forced HTTPS for Railway:', API_BASE_URL)
+  console.warn('[API Client] ⚠️ Fixed HTTP to HTTPS:', API_BASE_URL)
 }
+
+console.log('[API Client] 🌐 Using API:', API_BASE_URL)
 
 const api = axios.create({
   baseURL: API_BASE_URL,
