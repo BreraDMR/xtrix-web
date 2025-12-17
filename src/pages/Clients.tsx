@@ -30,7 +30,7 @@ export default function Clients() {
   })
 
   const filteredClients = useMemo(() => {
-    if (!clients) return []
+    if (!clients || !Array.isArray(clients)) return []
     
     return clients.filter((client) => {
       const matchesSearch =

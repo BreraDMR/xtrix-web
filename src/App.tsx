@@ -71,6 +71,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
+  // Force rebuild v2
   return (
     <BrowserRouter
       future={{

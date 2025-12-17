@@ -33,7 +33,7 @@ export default function Visits() {
   })
 
   const filteredVisits = useMemo(() => {
-    if (!visits) return []
+    if (!visits || !Array.isArray(visits)) return []
     
     return visits.filter((visit) => {
       const matchesSearch =

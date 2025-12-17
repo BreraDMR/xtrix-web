@@ -29,7 +29,7 @@ export default function Services() {
   })
 
   const filteredServices = useMemo(() => {
-    if (!services) return []
+    if (!services || !Array.isArray(services)) return []
     
     return services.filter((service) => {
       const matchesSearch =
