@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
+import { useAuthStore } from '../store/authStore'
 
 interface ClientFormProps {
   clientId?: number
@@ -24,10 +25,11 @@ interface ClientData {
 }
 
 export default function ClientForm({ clientId, onSuccess, onCancel }: ClientFormProps) {
+  const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<ClientData>({
     full_name: '',
-    owner_id: 1, // Will be set from auth
+    owner_id: user?.id || 0,
   })
 
   useEffect(() => {
