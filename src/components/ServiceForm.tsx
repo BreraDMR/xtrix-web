@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
+import { useAuthStore } from '../store/authStore'
 
 interface ServiceFormProps {
   serviceId?: number
@@ -18,13 +19,14 @@ interface ServiceData {
 }
 
 export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceFormProps) {
+  const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<ServiceData>({
     name: '',
     duration_minutes: 60,
     price: 0,
     is_active: true,
-    specialist_id: 1, // Will be set from auth
+    specialist_id: user?.id || 0,
   })
 
   useEffect(() => {

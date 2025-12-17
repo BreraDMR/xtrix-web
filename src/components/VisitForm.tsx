@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
+import { useAuthStore } from '../store/authStore'
 
 interface VisitFormProps {
   visitId?: number
@@ -23,6 +24,7 @@ interface VisitData {
 }
 
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
+  const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<any[]>([])
   const [services, setServices] = useState<any[]>([])
@@ -34,7 +36,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   
   const [formData, setFormData] = useState<VisitData>({
     client_id: 0,
-    specialist_id: 1,
+    specialist_id: user?.id || 0,
     date_start: getInitialDate(initialDateStart),
     date_end: initialDateEnd ? getInitialDate(initialDateEnd) : undefined,
     status: 'planned',
