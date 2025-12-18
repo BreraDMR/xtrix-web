@@ -136,13 +136,13 @@ export default function Clients() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Name
+                {t('name')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Phone
+                {t('phone')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Email
+                {t('email')}
               </th>
             </tr>
           </thead>
@@ -150,7 +150,7 @@ export default function Clients() {
             {filteredClients.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                  {searchQuery || genderFilter ? 'No clients match your filters' : 'No clients found'}
+                  {searchQuery || genderFilter ? t('noClientsMatchFilters') : t('noClientsFound')}
                 </td>
               </tr>
             ) : (
@@ -170,7 +170,7 @@ export default function Clients() {
                     onClick={() => handleEdit(client.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    Edit
+                    {t('edit')}
                   </button>
                 </td>
               </tr>
