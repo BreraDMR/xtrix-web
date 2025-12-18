@@ -111,6 +111,8 @@ export const translations = {
     deleteSuccess: 'Deleted successfully',
     errorOccurred: 'An error occurred',
     requiredField: 'This field is required',
+    passwordsDoNotMatch: 'Passwords do not match',
+    emailOrPhoneRequired: 'Please provide either email or phone number',
     
     // Password requirements
     passwordRequirements: 'Password must be at least 8 characters long, contain uppercase and lowercase letters, numbers, and special characters',
@@ -244,6 +246,8 @@ export const translations = {
     deleteSuccess: 'Успешно удалено',
     errorOccurred: 'Произошла ошибка',
     requiredField: 'Это поле обязательно',
+    passwordsDoNotMatch: 'Пароли не совпадают',
+    emailOrPhoneRequired: 'Пожалуйста, укажите email или номер телефона',
     
     // Password requirements
     passwordRequirements: 'Пароль должен быть не менее 8 символов, содержать заглавные и строчные буквы, цифры и специальные символы',
