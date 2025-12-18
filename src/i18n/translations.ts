@@ -382,6 +382,8 @@ export const translations = {
     deleteSuccess: 'Úspěšně smazáno',
     errorOccurred: 'Došlo k chybě',
     requiredField: 'Toto pole je povinné',
+    passwordsDoNotMatch: 'Hesla se neshodují',
+    emailOrPhoneRequired: 'Zadejte prosím email nebo telefonní číslo',
     
     // Password requirements
     passwordRequirements: 'Heslo musí mít alespoň 8 znaků, obsahovat velká a malá písmena, číslice a speciální znaky',
