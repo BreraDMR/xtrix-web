@@ -33,6 +33,18 @@ export default function Login() {
     }
   }, []) // Убираем зависимость от token, чтобы избежать лишних редиректов
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (showForgotPassword) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showForgotPassword])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -178,8 +190,8 @@ export default function Login() {
 
       {/* Forgot Password Modal */}
       {showForgotPassword && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 sm:p-8 animate-fade-in">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 sm:p-8 animate-fade-in my-auto max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold text-gray-900">Reset Password</h3>
               <button
@@ -220,14 +232,13 @@ export default function Login() {
                   
                   // If code is returned (for development/testing), show it
                   if (response.data.code) {
-                    message += `\n\nYour reset code: ${response.data.code}\n\nPlease enter this code below to reset your password.`
+                    message = `Password reset code has been generated.\n\nYour reset code: ${response.data.code}\n\nPlease enter this code below to reset your password.`
+                  } else {
+                    message = 'Password reset code has been sent. Please check your email or phone for the reset code, then enter it below to reset your password.'
                   }
                   
                   setForgotPasswordMessage(message)
-                  // Show reset form if code is available
-                  if (response.data.code) {
-                    setShowResetForm(true)
-                  }
+                  setShowResetForm(true)
                 } catch (err: any) {
                   setForgotPasswordMessage(
                     err.response?.data?.detail || 'An error occurred. Please try again.'
