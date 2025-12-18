@@ -28,7 +28,7 @@ export default function LanguageSwitcher() {
         <button
           key={lang.code}
           onClick={() => handleLanguageChange(lang.code)}
-          className={`flex items-center justify-center gap-1 px-2 py-1.5 rounded-md text-xs font-semibold transition-all min-w-[2.5rem] ${
+          className={`flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
             locale === lang.code
               ? 'bg-blue-600 text-white shadow-sm'
               : 'text-gray-700 hover:bg-gray-200'
