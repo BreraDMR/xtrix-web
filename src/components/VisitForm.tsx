@@ -42,6 +42,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     status: 'planned',
   })
 
+  // Update specialist_id when user loads
+  useEffect(() => {
+    if (user?.id && !visitId) {
+      setFormData(prev => ({ ...prev, specialist_id: user.id }))
+    }
+  }, [user?.id, visitId])
+
   useEffect(() => {
     loadClients()
     loadServices()
@@ -85,13 +92,44 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate required fields
+    if (!formData.client_id || formData.client_id === 0) {
+      alert('Please select a client')
+      return
+    }
+    
+    if (!formData.specialist_id || formData.specialist_id === 0) {
+      alert('Error: User not loaded. Please try again.')
+      return
+    }
+    
     setLoading(true)
 
     try {
-      const submitData = {
-        ...formData,
+      // Prepare data for API - only include fields that have values
+      const submitData: any = {
+        client_id: formData.client_id,
+        specialist_id: formData.specialist_id,
         date_start: new Date(formData.date_start).toISOString(),
-        date_end: formData.date_end ? new Date(formData.date_end).toISOString() : undefined,
+        status: formData.status || 'planned',
+      }
+      
+      // Only include optional fields if they have values
+      if (formData.date_end) {
+        submitData.date_end = new Date(formData.date_end).toISOString()
+      }
+      if (formData.service_id) {
+        submitData.service_id = formData.service_id
+      }
+      if (formData.service_name) {
+        submitData.service_name = formData.service_name
+      }
+      if (formData.note) {
+        submitData.note = formData.note
+      }
+      if (formData.price !== undefined && formData.price !== null) {
+        submitData.price = formData.price
       }
 
       if (visitId) {
@@ -101,7 +139,12 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       }
       onSuccess()
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Failed to save visit')
+      console.error('Visit save error:', error)
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.error?.message ||
+                          error.message || 
+                          'Failed to save visit'
+      alert(errorMessage)
     } finally {
       setLoading(false)
     }
