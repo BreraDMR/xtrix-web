@@ -10,6 +10,11 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('')
+  const [forgotPasswordPhone, setForgotPasswordPhone] = useState('')
+  const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false)
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState('')
   const { setAuth } = useAuthStore()
   
   // Если уже залогинен, перенаправляем на главную
@@ -126,6 +131,15 @@ export default function Login() {
               placeholder="••••••••"
             />
           </div>
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Forgot password?
+            </button>
+          </div>
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm animate-slide-in">
               {error}
@@ -156,6 +170,109 @@ export default function Login() {
           </p>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 sm:p-8 animate-fade-in">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-2xl font-bold text-gray-900">Reset Password</h3>
+              <button
+                onClick={() => {
+                  setShowForgotPassword(false)
+                  setForgotPasswordEmail('')
+                  setForgotPasswordPhone('')
+                  setForgotPasswordMessage('')
+                }}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Enter your email or phone number to receive a password reset link.
+            </p>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault()
+                setForgotPasswordLoading(true)
+                setForgotPasswordMessage('')
+                
+                try {
+                  // TODO: Replace with actual API endpoint when backend is ready
+                  // const response = await api.post('/users/forgot-password', {
+                  //   email: forgotPasswordEmail || undefined,
+                  //   phone: forgotPasswordPhone || undefined,
+                  // })
+                  
+                  // For now, show a message
+                  setForgotPasswordMessage(
+                    'Password reset functionality will be available soon. Please contact support.'
+                  )
+                } catch (err: any) {
+                  setForgotPasswordMessage(
+                    err.response?.data?.detail || 'An error occurred. Please try again.'
+                  )
+                } finally {
+                  setForgotPasswordLoading(false)
+                }
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={forgotPasswordEmail}
+                  onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="your@email.com"
+                />
+              </div>
+              <div className="text-center text-gray-500 text-sm">OR</div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={forgotPasswordPhone}
+                  onChange={(e) => setForgotPasswordPhone(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="+1234567890"
+                />
+              </div>
+              {forgotPasswordMessage && (
+                <div
+                  className={`p-3 rounded-lg text-sm ${
+                    forgotPasswordMessage.includes('error') || forgotPasswordMessage.includes('Error')
+                      ? 'bg-red-50 border border-red-200 text-red-700'
+                      : 'bg-blue-50 border border-blue-200 text-blue-700'
+                  }`}
+                >
+                  {forgotPasswordMessage}
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={forgotPasswordLoading || (!forgotPasswordEmail && !forgotPasswordPhone)}
+                className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                {forgotPasswordLoading ? (
+                  <>
+                    <LoadingSpinner size="sm" />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  'Send Reset Link'
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

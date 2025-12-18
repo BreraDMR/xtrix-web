@@ -165,7 +165,7 @@ export default function Services() {
                   {service.duration_minutes} min
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  ${service.price.toFixed(2)}
+                  {service.price.toFixed(2)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span

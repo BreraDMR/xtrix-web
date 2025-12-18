@@ -261,7 +261,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           <option value="">Select service...</option>
           {services.map((service) => (
             <option key={service.id} value={service.id}>
-              {service.name} ({service.duration_minutes} min{service.price ? ` - $${service.price.toFixed(2)}` : ''})
+              {service.name} ({service.duration_minutes} min{service.price ? ` - ${service.price.toFixed(2)}` : ''})
             </option>
           ))}
         </select>
@@ -269,7 +269,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           const selectedService = services.find(s => s.id === formData.service_id)
           return selectedService ? (
             <p className="mt-1 text-xs text-gray-500">
-              Auto-filled: Duration {selectedService.duration_minutes} min{selectedService.price ? `, Price $${selectedService.price.toFixed(2)}` : ''}
+              Auto-filled: Duration {selectedService.duration_minutes} min{selectedService.price ? `, Price ${selectedService.price.toFixed(2)}` : ''}
             </p>
           ) : null
         })()}

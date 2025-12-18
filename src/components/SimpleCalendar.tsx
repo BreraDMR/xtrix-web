@@ -142,7 +142,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                     </span>
                   </div>
                   {visit.price && (
-                    <p className="text-sm text-gray-500 mt-1">${visit.price.toFixed(2)}</p>
+                    <p className="text-sm text-gray-500 mt-1">{visit.price.toFixed(2)}</p>
                   )}
                 </div>
               ))
