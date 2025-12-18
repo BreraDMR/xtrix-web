@@ -14,12 +14,18 @@ const languages: Language[] = [
   { code: 'en', label: 'EN', flag: '🇬🇧' },
 ]
 
+// Map locale codes to display labels (always uppercase)
+const getLocaleLabel = (code: Locale): string => {
+  return code.toUpperCase()
+}
+
 export default function LanguageSwitcher() {
   const { locale, setLocale } = useLocaleStore()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]
+  const currentLabel = getLocaleLabel(locale)
 
   const handleLanguageChange = (newLocale: Locale) => {
     setLocale(newLocale)
@@ -51,7 +57,7 @@ export default function LanguageSwitcher() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700 transition-all"
       >
-        <span>{currentLanguage.label}</span>
+        <span>{currentLabel}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -75,8 +81,7 @@ export default function LanguageSwitcher() {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>{lang.flag}</span>
-                <span>{lang.label}</span>
+                <span>{getLocaleLabel(lang.code)}</span>
                 {locale === lang.code && (
                   <span className="ml-auto text-blue-600">✓</span>
                 )}
