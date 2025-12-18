@@ -49,43 +49,41 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }, [user?.id, visitId])
 
-  // Auto-fill price and calculate end date when service is selected
+  // Helper function to calculate end date
+  const calculateEndDate = (startDateStr: string, durationMinutes: number): string => {
+    if (!startDateStr) return ''
+    // Parse datetime-local format (YYYY-MM-DDTHH:mm)
+    const startDate = new Date(startDateStr)
+    if (isNaN(startDate.getTime())) return ''
+    const endDate = new Date(startDate.getTime() + durationMinutes * 60000)
+    return endDate.toISOString().slice(0, 16)
+  }
+
+  // Auto-fill price when service is selected (only if price is not set)
   useEffect(() => {
-    if (formData.service_id && services.length > 0) {
+    if (formData.service_id && services.length > 0 && formData.price === undefined) {
       const selectedService = services.find(s => s.id === formData.service_id)
-      if (selectedService) {
-        const updates: Partial<VisitData> = {}
-        
-        // Auto-fill price if not manually set
-        if (selectedService.price && formData.price === undefined) {
-          updates.price = selectedService.price
-        }
-        
-        // Auto-calculate end date based on start date + duration
-        if (formData.date_start && selectedService.duration_minutes) {
-          const startDate = new Date(formData.date_start)
-          const endDate = new Date(startDate.getTime() + selectedService.duration_minutes * 60000)
-          updates.date_end = endDate.toISOString().slice(0, 16)
-        }
-        
-        if (Object.keys(updates).length > 0) {
-          setFormData(prev => ({ ...prev, ...updates }))
-        }
+      if (selectedService && selectedService.price) {
+        setFormData(prev => ({ ...prev, price: selectedService.price }))
       }
     }
-  }, [formData.service_id, services, formData.date_start])
+  }, [formData.service_id, services])
 
-  // Recalculate end date when start date changes (if service is selected)
+  // Auto-calculate end date when service or start date changes
   useEffect(() => {
     if (formData.service_id && formData.date_start && services.length > 0) {
       const selectedService = services.find(s => s.id === formData.service_id)
       if (selectedService && selectedService.duration_minutes) {
-        const startDate = new Date(formData.date_start)
-        const endDate = new Date(startDate.getTime() + selectedService.duration_minutes * 60000)
-        setFormData(prev => ({ 
-          ...prev, 
-          date_end: endDate.toISOString().slice(0, 16) 
-        }))
+        const calculatedEndDate = calculateEndDate(formData.date_start, selectedService.duration_minutes)
+        if (calculatedEndDate) {
+          setFormData(prev => {
+            // Only update if end date is different to avoid unnecessary re-renders
+            if (prev.date_end !== calculatedEndDate) {
+              return { ...prev, date_end: calculatedEndDate }
+            }
+            return prev
+          })
+        }
       }
     }
   }, [formData.date_start, formData.service_id, services])
