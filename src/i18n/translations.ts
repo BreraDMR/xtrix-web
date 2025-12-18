@@ -42,6 +42,7 @@ export const translations = {
     noData: 'No data available',
     signUp: 'Sign up',
     dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: 'Already have an account?',
     
     // Clients
     addClient: 'Add Client',
@@ -54,6 +55,10 @@ export const translations = {
     clientDetails: 'Client Details',
     noClientsFound: 'No clients found',
     noClientsMatchFilters: 'No clients match your filters',
+    allGenders: 'All Genders',
+    male: 'Male',
+    female: 'Female',
+    other: 'Other',
     
     // Services
     addService: 'Add Service',

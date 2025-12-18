@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
+import { useTranslation } from '../hooks/useTranslation'
 
 interface ClientFormProps {
   clientId?: number
