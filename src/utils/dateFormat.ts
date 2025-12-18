@@ -17,16 +17,16 @@ export function formatDate(date: Date | string, formatStr: string, locale: AppLo
 // Common date formats
 export const dateFormats = {
   // Full date with time: "January 15, 2024 at 3:45 PM"
-  full: (locale: AppLocale) => locale === 'ru' ? 'PPp' : 'PPp',
+  full: (_locale: AppLocale) => 'PPp',
   // Date only: "January 15, 2024"
-  date: (locale: AppLocale) => 'PP',
+  date: (_locale: AppLocale) => 'PP',
   // Time only: "3:45 PM"
-  time: (locale: AppLocale) => 'p',
+  time: (_locale: AppLocale) => 'p',
   // Short date: "01/15/2024" or "15.01.2024"
   short: (locale: AppLocale) => locale === 'ru' || locale === 'cz' ? 'dd.MM.yyyy' : 'MM/dd/yyyy',
   // Month and day: "January 15"
-  monthDay: (locale: AppLocale) => 'MMMM d',
+  monthDay: (_locale: AppLocale) => 'MMMM d',
   // Calendar header: "January 15, 2024"
-  calendar: (locale: AppLocale) => 'MMMM d, yyyy',
+  calendar: (_locale: AppLocale) => 'MMMM d, yyyy',
 }
 

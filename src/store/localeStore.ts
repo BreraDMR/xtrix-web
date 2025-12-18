@@ -11,16 +11,29 @@ const LOCALE_STORAGE_KEY = 'xtrix-locale'
 
 // Get initial locale from localStorage or browser language
 function getInitialLocale(): Locale {
+  // Only access browser APIs if we're in the browser
+  if (typeof window === 'undefined') {
+    return 'en'
+  }
+  
   // Check localStorage first
-  const saved = localStorage.getItem(LOCALE_STORAGE_KEY)
-  if (saved && (saved === 'en' || saved === 'ru' || saved === 'cz')) {
-    return saved as Locale
+  try {
+    const saved = localStorage.getItem(LOCALE_STORAGE_KEY)
+    if (saved && (saved === 'en' || saved === 'ru' || saved === 'cz')) {
+      return saved as Locale
+    }
+  } catch (e) {
+    // localStorage might not be available
   }
   
   // Fallback to browser language
-  const browserLang = navigator.language.toLowerCase()
-  if (browserLang.startsWith('ru')) return 'ru'
-  if (browserLang.startsWith('cs') || browserLang.startsWith('cz')) return 'cz'
+  try {
+    const browserLang = navigator.language.toLowerCase()
+    if (browserLang.startsWith('ru')) return 'ru'
+    if (browserLang.startsWith('cs') || browserLang.startsWith('cz')) return 'cz'
+  } catch (e) {
+    // navigator might not be available
+  }
   
   return 'en'
 }
@@ -31,8 +44,10 @@ export const useLocaleStore = create<LocaleState>()(
       locale: getInitialLocale(),
       setLocale: (locale: Locale) => {
         set({ locale })
-        // Also update document language attribute
-        document.documentElement.lang = locale
+        // Also update document language attribute (only in browser)
+        if (typeof window !== 'undefined' && document) {
+          document.documentElement.lang = locale
+        }
       },
     }),
     {

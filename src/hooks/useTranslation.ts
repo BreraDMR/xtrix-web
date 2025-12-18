@@ -1,5 +1,5 @@
 import { useLocaleStore } from '../store/localeStore'
-import { t, type Locale } from '../i18n/translations'
+import { t } from '../i18n/translations'
 
 export function useTranslation() {
   const { locale } = useLocaleStore()

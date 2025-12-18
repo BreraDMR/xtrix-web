@@ -5,7 +5,7 @@ import 'react-calendar/dist/Calendar.css'
 import VisitForm from './VisitForm'
 import { useLocaleStore } from '../store/localeStore'
 import { t } from '../i18n/translations'
-import { formatDate, dateFormats, dateLocales } from '../utils/dateFormat'
+import { formatDate, dateFormats } from '../utils/dateFormat'
 
 interface SimpleCalendarProps {
   visits: any[]
