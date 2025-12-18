@@ -5,7 +5,7 @@ import 'react-calendar/dist/Calendar.css'
 import VisitForm from './VisitForm'
 import { useLocaleStore } from '../store/localeStore'
 import { t } from '../i18n/translations'
-import { formatDate, dateFormats } from '../utils/dateFormat'
+import { formatDate, dateFormats, dateLocales } from '../utils/dateFormat'
 
 interface SimpleCalendarProps {
   visits: any[]
@@ -90,6 +90,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           onClickDay={handleDateClick}
           tileContent={tileContent}
           className="w-full"
+          locale={locale === 'cz' ? 'cs' : locale}
         />
       </div>
 

@@ -2,7 +2,7 @@ import { format, Locale } from 'date-fns'
 import { enUS, ru, cs } from 'date-fns/locale'
 import type { Locale as AppLocale } from '../i18n/translations'
 
-const dateLocales: Record<AppLocale, Locale> = {
+export const dateLocales: Record<AppLocale, Locale> = {
   en: enUS,
   ru: ru,
   cz: cs, // Czech locale
