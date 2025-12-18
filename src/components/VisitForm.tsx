@@ -104,6 +104,22 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       return
     }
     
+    // Validate date range
+    if (formData.date_end) {
+      const startDate = new Date(formData.date_start)
+      const endDate = new Date(formData.date_end)
+      if (endDate <= startDate) {
+        alert('End date must be after start date')
+        return
+      }
+      // Check minimum duration (15 minutes)
+      const durationMinutes = (endDate.getTime() - startDate.getTime()) / (1000 * 60)
+      if (durationMinutes < 15) {
+        alert('Visit duration must be at least 15 minutes')
+        return
+      }
+    }
+    
     setLoading(true)
 
     try {
