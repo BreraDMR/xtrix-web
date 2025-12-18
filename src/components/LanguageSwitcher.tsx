@@ -28,7 +28,7 @@ export default function LanguageSwitcher() {
         <button
           key={lang.code}
           onClick={() => handleLanguageChange(lang.code)}
-          className={`flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
+          className={`flex items-center justify-center px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
             locale === lang.code
               ? 'bg-blue-600 text-white shadow-sm'
               : 'text-gray-700 hover:bg-gray-200'
@@ -36,7 +36,7 @@ export default function LanguageSwitcher() {
           title={lang.label}
         >
           <span className="text-base leading-none">{lang.flag}</span>
-          <span className="hidden sm:inline">{lang.label}</span>
+          <span className="ml-1 hidden sm:inline">{lang.label}</span>
         </button>
       ))}
     </div>
