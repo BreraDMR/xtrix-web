@@ -24,11 +24,12 @@ export default function Visits() {
   const [dateTo, setDateTo] = useState<string>('')
   const queryClient = useQueryClient()
 
-  const { data: visits, isLoading } = useQuery<Visit[]>({
+  const { data: visits, isLoading, refetch } = useQuery<Visit[]>({
     queryKey: ['visits'],
     queryFn: async () => {
       const { data } = await api.get('/visits')
-      return data
+      // Backend returns PaginatedResponse with items array
+      return Array.isArray(data) ? data : (data?.items || [])
     },
   })
 
@@ -59,10 +60,12 @@ export default function Visits() {
     })
   }, [visits, searchQuery, statusFilter, dateFrom, dateTo])
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
     setShowForm(false)
     setEditingId(undefined)
-    queryClient.invalidateQueries({ queryKey: ['visits'] })
+    // Invalidate and refetch to get the updated list
+    await queryClient.invalidateQueries({ queryKey: ['visits'] })
+    await refetch()
   }
 
   const handleEdit = (id: number) => {

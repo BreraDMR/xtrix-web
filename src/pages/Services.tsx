@@ -20,11 +20,12 @@ export default function Services() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: services, isLoading } = useQuery<Service[]>({
+  const { data: services, isLoading, refetch } = useQuery<Service[]>({
     queryKey: ['services'],
     queryFn: async () => {
       const { data } = await api.get('/services')
-      return data
+      // Backend returns PaginatedResponse with items array
+      return Array.isArray(data) ? data : (data?.items || [])
     },
   })
 
@@ -45,10 +46,12 @@ export default function Services() {
     })
   }, [services, searchQuery, activeFilter])
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
     setShowForm(false)
     setEditingId(undefined)
-    queryClient.invalidateQueries({ queryKey: ['services'] })
+    // Invalidate and refetch to get the updated list
+    await queryClient.invalidateQueries({ queryKey: ['services'] })
+    await refetch()
   }
 
   const handleEdit = (id: number) => {

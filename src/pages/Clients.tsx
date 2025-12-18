@@ -21,11 +21,12 @@ export default function Clients() {
   const [genderFilter, setGenderFilter] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: clients, isLoading } = useQuery<Client[]>({
+  const { data: clients, isLoading, refetch } = useQuery<Client[]>({
     queryKey: ['clients'],
     queryFn: async () => {
       const { data } = await api.get('/clients')
-      return data
+      // Backend returns PaginatedResponse with items array
+      return Array.isArray(data) ? data : (data?.items || [])
     },
   })
 
@@ -45,10 +46,12 @@ export default function Clients() {
     })
   }, [clients, searchQuery, genderFilter])
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
     setShowForm(false)
     setEditingId(undefined)
-    queryClient.invalidateQueries({ queryKey: ['clients'] })
+    // Invalidate and refetch to get the updated list
+    await queryClient.invalidateQueries({ queryKey: ['clients'] })
+    await refetch()
   }
 
   const handleEdit = (id: number) => {

@@ -53,7 +53,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const loadClients = async () => {
     try {
       const { data } = await api.get('/clients')
-      setClients(data)
+      // Backend returns PaginatedResponse with items array
+      setClients(Array.isArray(data) ? data : (data?.items || []))
     } catch (error) {
       console.error('Failed to load clients:', error)
     }
@@ -62,7 +63,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const loadServices = async () => {
     try {
       const { data } = await api.get('/services')
-      setServices(data)
+      // Backend returns PaginatedResponse with items array
+      setServices(Array.isArray(data) ? data : (data?.items || []))
     } catch (error) {
       console.error('Failed to load services:', error)
     }
