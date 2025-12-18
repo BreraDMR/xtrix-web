@@ -14,9 +14,14 @@ const languages: Language[] = [
   { code: 'en', label: 'EN', flag: '🇬🇧' },
 ]
 
-// Map locale codes to display labels (always uppercase)
+// Map locale codes to display labels (always uppercase, no lowercase prefixes)
 const getLocaleLabel = (code: Locale): string => {
-  return code.toUpperCase()
+  const labelMap: Record<Locale, string> = {
+    'cz': 'CZ',
+    'ru': 'RU',
+    'en': 'EN',
+  }
+  return labelMap[code] || code.toUpperCase()
 }
 
 export default function LanguageSwitcher() {
