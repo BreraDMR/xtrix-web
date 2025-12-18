@@ -71,7 +71,19 @@ api.interceptors.request.use((config) => {
     }
   }
   
-  const locale = navigator.language.split('-')[0] || 'en'
+  // Get locale from localStorage (where zustand persist stores it) or browser language
+  let locale = 'en'
+  if (typeof window !== 'undefined') {
+    const savedLocale = localStorage.getItem('xtrix-locale')
+    if (savedLocale && (savedLocale === 'en' || savedLocale === 'ru' || savedLocale === 'cz')) {
+      locale = savedLocale
+    } else {
+      // Fallback to browser language
+      const browserLang = navigator.language.toLowerCase()
+      if (browserLang.startsWith('ru')) locale = 'ru'
+      else if (browserLang.startsWith('cs') || browserLang.startsWith('cz')) locale = 'cz'
+    }
+  }
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

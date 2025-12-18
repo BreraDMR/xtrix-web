@@ -1,10 +1,13 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { format, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns'
+import { isAfter, isBefore, startOfDay, endOfDay } from 'date-fns'
 import api from '../api/client'
 import VisitForm from '../components/VisitForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useLocaleStore } from '../store/localeStore'
+import { t } from '../i18n/translations'
+import { formatDate, dateFormats } from '../utils/dateFormat'
 
 interface Visit {
   id: number
@@ -16,6 +19,7 @@ interface Visit {
 }
 
 export default function Visits() {
+  const { locale } = useLocaleStore()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
@@ -84,7 +88,7 @@ export default function Visits() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Visits</h1>
+        <h1 className="text-2xl font-bold">{t('visits', locale)}</h1>
         {!showForm && (
           <button
             onClick={() => {
@@ -93,7 +97,7 @@ export default function Visits() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            New Visit
+            {t('addVisit', locale)}
           </button>
         )}
       </div>
@@ -101,7 +105,7 @@ export default function Visits() {
       {!showForm && (
         <div className="mb-6 space-y-4">
           <SearchBar
-            placeholder="Search by service or client name..."
+            placeholder={t('search', locale) + '...'}
             onSearch={setSearchQuery}
           />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -110,7 +114,7 @@ export default function Visits() {
               onChange={(e) => setStatusFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">All Statuses</option>
+              <option value="">{t('filter', locale)}</option>
               <option value="planned">Planned</option>
               <option value="in_progress">In Progress</option>
               <option value="completed">Completed</option>
@@ -140,7 +144,7 @@ export default function Visits() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md"
               >
-                Clear filters
+                {t('filter', locale)}
               </button>
             )}
           </div>
@@ -165,16 +169,16 @@ export default function Visits() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Date
+                {t('visitDate', locale)}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Service
+                {t('visitService', locale)}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Status
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Price
+                {t('visitPrice', locale)}
               </th>
             </tr>
           </thead>
@@ -182,16 +186,14 @@ export default function Visits() {
             {filteredVisits.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  {searchQuery || statusFilter || dateFrom || dateTo
-                    ? 'No visits match your filters'
-                    : 'No visits found'}
+                  {t('noData', locale)}
                 </td>
               </tr>
             ) : (
               filteredVisits.map((visit) => (
               <tr key={visit.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {format(new Date(visit.date_start), 'PPp')}
+                  {formatDate(visit.date_start, dateFormats.full(locale), locale)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {visit.service_name || '-'}
@@ -209,7 +211,7 @@ export default function Visits() {
                     onClick={() => handleEdit(visit.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    Edit
+                    {t('edit', locale)}
                   </button>
                 </td>
               </tr>

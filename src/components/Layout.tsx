@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { useLocaleStore } from '../store/localeStore'
+import { t } from '../i18n/translations'
+import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Layout() {
   const { user, logout } = useAuthStore()
+  const { locale } = useLocaleStore()
   const location = useLocation()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -14,11 +18,11 @@ export default function Layout() {
   }
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: '📊' },
-    { path: '/clients', label: 'Clients', icon: '👥' },
-    { path: '/visits', label: 'Visits', icon: '📅' },
-    { path: '/calendar', label: 'Calendar', icon: '🗓️' },
-    { path: '/services', label: 'Services', icon: '💆' },
+    { path: '/', label: t('dashboard', locale), icon: '📊', key: 'dashboard' },
+    { path: '/clients', label: t('clients', locale), icon: '👥', key: 'clients' },
+    { path: '/visits', label: t('visits', locale), icon: '📅', key: 'visits' },
+    { path: '/calendar', label: t('calendar', locale), icon: '🗓️', key: 'calendar' },
+    { path: '/services', label: t('services', locale), icon: '💆', key: 'services' },
   ]
 
   return (
@@ -50,8 +54,11 @@ export default function Layout() {
               </div>
             </div>
 
-            {/* Right Side - User & Logout */}
+            {/* Right Side - Language, User & Logout */}
             <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+              
               {/* User Info - Simplified on mobile */}
               <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-gray-100 rounded-full">
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
@@ -66,9 +73,9 @@ export default function Layout() {
               <button
                 onClick={handleLogout}
                 className="px-3 sm:px-4 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all font-medium"
-                title="Logout"
+                title={t('logout', locale)}
               >
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">{t('logout', locale)}</span>
                 <span className="sm:hidden">🚪</span>
               </button>
 
