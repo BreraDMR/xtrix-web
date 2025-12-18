@@ -13,7 +13,7 @@ interface ServiceData {
   name: string
   duration_minutes: number
   price: number
-  description?: string
+  features?: string
   is_active: boolean
   specialist_id: number
 }
@@ -28,6 +28,13 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     is_active: true,
     specialist_id: user?.id || 0,
   })
+
+  // Update specialist_id when user loads
+  useEffect(() => {
+    if (user?.id && !serviceId) {
+      setFormData(prev => ({ ...prev, specialist_id: user.id }))
+    }
+  }, [user?.id, serviceId])
 
   useEffect(() => {
     if (serviceId) {
@@ -46,17 +53,43 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate that specialist_id is set
+    if (!formData.specialist_id || formData.specialist_id === 0) {
+      alert('Error: User not loaded. Please try again.')
+      return
+    }
+    
     setLoading(true)
 
     try {
+      // Prepare data for API - remove any undefined fields
+      const submitData: any = {
+        name: formData.name,
+        duration_minutes: formData.duration_minutes,
+        price: formData.price,
+        is_active: formData.is_active,
+        specialist_id: formData.specialist_id,
+      }
+      
+      // Only include features if it has a value
+      if (formData.features) {
+        submitData.features = formData.features
+      }
+      
       if (serviceId) {
-        await api.put(`/services/${serviceId}`, formData)
+        await api.put(`/services/${serviceId}`, submitData)
       } else {
-        await api.post('/services', formData)
+        await api.post('/services', submitData)
       }
       onSuccess()
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Failed to save service')
+      console.error('Service save error:', error)
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.error?.message ||
+                          error.message || 
+                          'Failed to save service'
+      alert(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -107,12 +140,13 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+        <label className="block text-sm font-medium mb-1">Features / Description</label>
         <textarea
-          value={formData.description || ''}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          value={formData.features || ''}
+          onChange={(e) => setFormData({ ...formData, features: e.target.value })}
           rows={3}
           className="w-full px-3 py-2 border rounded-md"
+          placeholder="Service features and description"
         />
       </div>
 
