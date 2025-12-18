@@ -29,7 +29,6 @@ export default function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]
   const currentLabel = getLocaleLabel(locale)
 
   const handleLanguageChange = (newLocale: Locale) => {
