@@ -25,6 +25,7 @@ interface ClientData {
 }
 
 export default function ClientForm({ clientId, onSuccess, onCancel }: ClientFormProps) {
+  const { t } = useTranslation()
   const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<ClientData>({
@@ -176,7 +177,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          Cancel
+          {t('cancel')}
         </button>
         <button
           type="submit"
@@ -189,7 +190,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
               <span>Saving...</span>
             </>
           ) : (
-            clientId ? 'Update Client' : 'Create Client'
+            clientId ? t('updateClient') : t('createClient')
           )}
         </button>
       </div>

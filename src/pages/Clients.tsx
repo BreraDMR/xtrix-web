@@ -4,6 +4,7 @@ import api from '../api/client'
 import ClientForm from '../components/ClientForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useTranslation } from '../hooks/useTranslation'
 
 interface Client {
   id: number
@@ -15,6 +16,7 @@ interface Client {
 }
 
 export default function Clients() {
+  const { t } = useTranslation()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
@@ -70,7 +72,7 @@ export default function Clients() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Clients</h1>
+        <h1 className="text-2xl font-bold">{t('clients')}</h1>
         {!showForm && (
           <button
             onClick={() => {
@@ -79,7 +81,7 @@ export default function Clients() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            Add Client
+            {t('addClient')}
           </button>
         )}
       </div>
@@ -96,10 +98,10 @@ export default function Clients() {
               onChange={(e) => setGenderFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">All Genders</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="">{t('allGenders')}</option>
+              <option value="male">{t('male')}</option>
+              <option value="female">{t('female')}</option>
+              <option value="other">{t('other')}</option>
             </select>
             {(searchQuery || genderFilter) && (
               <button
@@ -109,7 +111,7 @@ export default function Clients() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
               >
-                Clear filters
+                {t('clearFilters')}
               </button>
             )}
           </div>

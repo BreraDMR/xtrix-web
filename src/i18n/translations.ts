@@ -163,6 +163,10 @@ export const translations = {
     clientDetails: 'Детали клиента',
     noClientsFound: 'Клиенты не найдены',
     noClientsMatchFilters: 'Нет клиентов, соответствующих фильтрам',
+    allGenders: 'Все полы',
+    male: 'Мужской',
+    female: 'Женский',
+    other: 'Другой',
     
     // Services
     addService: 'Добавить услугу',
@@ -273,6 +277,10 @@ export const translations = {
     clientDetails: 'Detaily klienta',
     noClientsFound: 'Klienti nenalezeni',
     noClientsMatchFilters: 'Žádní klienti neodpovídají filtrům',
+    allGenders: 'Všechna pohlaví',
+    male: 'Muž',
+    female: 'Žena',
+    other: 'Jiné',
     
     // Services
     addService: 'Přidat službu',
