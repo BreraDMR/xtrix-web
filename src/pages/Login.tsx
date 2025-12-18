@@ -15,6 +15,11 @@ export default function Login() {
   const [forgotPasswordPhone, setForgotPasswordPhone] = useState('')
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false)
   const [forgotPasswordMessage, setForgotPasswordMessage] = useState('')
+  const [showResetForm, setShowResetForm] = useState(false)
+  const [resetCode, setResetCode] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [resetLoading, setResetLoading] = useState(false)
   const { setAuth } = useAuthStore()
   
   // Если уже залогинен, перенаправляем на главную
@@ -195,20 +200,34 @@ export default function Login() {
             <form
               onSubmit={async (e) => {
                 e.preventDefault()
+                
+                if (!forgotPasswordEmail && !forgotPasswordPhone) {
+                  setForgotPasswordMessage('Please enter email or phone number')
+                  return
+                }
+                
                 setForgotPasswordLoading(true)
                 setForgotPasswordMessage('')
                 
                 try {
-                  // TODO: Replace with actual API endpoint when backend is ready
-                  // const response = await api.post('/users/forgot-password', {
-                  //   email: forgotPasswordEmail || undefined,
-                  //   phone: forgotPasswordPhone || undefined,
-                  // })
+                  const response = await api.post('/users/forgot-password', {
+                    email: forgotPasswordEmail || undefined,
+                    phone: forgotPasswordPhone || undefined,
+                  })
                   
-                  // For now, show a message
-                  setForgotPasswordMessage(
-                    'Password reset functionality will be available soon. Please contact support.'
-                  )
+                  // Show success message
+                  let message = response.data.message || 'Password reset code has been sent.'
+                  
+                  // If code is returned (for development/testing), show it
+                  if (response.data.code) {
+                    message += `\n\nYour reset code: ${response.data.code}\n\nPlease enter this code below to reset your password.`
+                  }
+                  
+                  setForgotPasswordMessage(message)
+                  // Show reset form if code is available
+                  if (response.data.code) {
+                    setShowResetForm(true)
+                  }
                 } catch (err: any) {
                   setForgotPasswordMessage(
                     err.response?.data?.detail || 'An error occurred. Please try again.'
@@ -246,8 +265,8 @@ export default function Login() {
               </div>
               {forgotPasswordMessage && (
                 <div
-                  className={`p-3 rounded-lg text-sm ${
-                    forgotPasswordMessage.includes('error') || forgotPasswordMessage.includes('Error')
+                  className={`p-3 rounded-lg text-sm whitespace-pre-line ${
+                    forgotPasswordMessage.includes('error') || forgotPasswordMessage.includes('Error') || forgotPasswordMessage.includes('occurred')
                       ? 'bg-red-50 border border-red-200 text-red-700'
                       : 'bg-blue-50 border border-blue-200 text-blue-700'
                   }`}
@@ -255,20 +274,124 @@ export default function Login() {
                   {forgotPasswordMessage}
                 </div>
               )}
-              <button
-                type="submit"
-                disabled={forgotPasswordLoading || (!forgotPasswordEmail && !forgotPasswordPhone)}
-                className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                {forgotPasswordLoading ? (
-                  <>
-                    <LoadingSpinner size="sm" />
-                    <span>Sending...</span>
-                  </>
-                ) : (
-                  'Send Reset Link'
-                )}
-              </button>
+              {!showResetForm ? (
+                <button
+                  type="submit"
+                  disabled={forgotPasswordLoading || (!forgotPasswordEmail && !forgotPasswordPhone)}
+                  className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                >
+                  {forgotPasswordLoading ? (
+                    <>
+                      <LoadingSpinner size="sm" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    'Send Reset Code'
+                  )}
+                </button>
+              ) : (
+                <div className="space-y-4 pt-4 border-t border-gray-200">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Reset Code
+                    </label>
+                    <input
+                      type="text"
+                      value={resetCode}
+                      onChange={(e) => setResetCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-center text-2xl tracking-widest"
+                      placeholder="000000"
+                      maxLength={6}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="Enter new password"
+                      required
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Minimum 8 characters, include uppercase, lowercase, number, and special character
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="Confirm new password"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!resetCode || resetCode.length !== 6) {
+                        setForgotPasswordMessage('Please enter a valid 6-digit code')
+                        return
+                      }
+                      if (!newPassword || newPassword.length < 8) {
+                        setForgotPasswordMessage('Password must be at least 8 characters')
+                        return
+                      }
+                      if (newPassword !== confirmPassword) {
+                        setForgotPasswordMessage('Passwords do not match')
+                        return
+                      }
+                      
+                      setResetLoading(true)
+                      setForgotPasswordMessage('')
+                      
+                      try {
+                        const response = await api.post('/users/reset-password', {
+                          code: resetCode,
+                          new_password: newPassword,
+                        })
+                        
+                        setForgotPasswordMessage(response.data.message || 'Password has been reset successfully!')
+                        
+                        // Close modal and redirect to login after 2 seconds
+                        setTimeout(() => {
+                          setShowForgotPassword(false)
+                          setShowResetForm(false)
+                          setForgotPasswordEmail('')
+                          setForgotPasswordPhone('')
+                          setResetCode('')
+                          setNewPassword('')
+                          setConfirmPassword('')
+                        }, 2000)
+                      } catch (err: any) {
+                        setForgotPasswordMessage(
+                          err.response?.data?.detail || 'An error occurred. Please try again.'
+                        )
+                      } finally {
+                        setResetLoading(false)
+                      }
+                    }}
+                    disabled={resetLoading || !resetCode || !newPassword || !confirmPassword}
+                    className="w-full py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    {resetLoading ? (
+                      <>
+                        <LoadingSpinner size="sm" />
+                        <span>Resetting...</span>
+                      </>
+                    ) : (
+                      'Reset Password'
+                    )}
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>
