@@ -53,10 +53,28 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const calculateEndDate = (startDateStr: string, durationMinutes: number): string => {
     if (!startDateStr) return ''
     // Parse datetime-local format (YYYY-MM-DDTHH:mm)
-    const startDate = new Date(startDateStr)
+    // datetime-local format doesn't include timezone, so we need to parse it manually
+    const [datePart, timePart] = startDateStr.split('T')
+    if (!datePart || !timePart) return ''
+    
+    const [year, month, day] = datePart.split('-').map(Number)
+    const [hours, minutes] = timePart.split(':').map(Number)
+    
+    // Create date in local timezone
+    const startDate = new Date(year, month - 1, day, hours, minutes, 0)
     if (isNaN(startDate.getTime())) return ''
+    
+    // Add duration
     const endDate = new Date(startDate.getTime() + durationMinutes * 60000)
-    return endDate.toISOString().slice(0, 16)
+    
+    // Format back to datetime-local format (YYYY-MM-DDTHH:mm)
+    const endYear = endDate.getFullYear()
+    const endMonth = String(endDate.getMonth() + 1).padStart(2, '0')
+    const endDay = String(endDate.getDate()).padStart(2, '0')
+    const endHours = String(endDate.getHours()).padStart(2, '0')
+    const endMinutes = String(endDate.getMinutes()).padStart(2, '0')
+    
+    return `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}`
   }
 
   // Auto-fill price when service is selected (only if price is not set)
