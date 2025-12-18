@@ -4,8 +4,11 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { logger } from '../utils/logger'
+import { useTranslation } from '../hooks/useTranslation'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 
 export default function Register() {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -116,14 +119,17 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 sm:px-6 py-8">
       <div className="max-w-md w-full space-y-8 p-6 sm:p-8 bg-white rounded-xl shadow-2xl animate-fade-in">
+        <div className="flex justify-end mb-2">
+          <LanguageSwitcher />
+        </div>
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Xtrix</h2>
-          <p className="text-gray-600">Create your account</p>
+          <p className="text-gray-600">{t('createAccount')}</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-2">
-              Full Name *
+              {t('fullName')} *
             </label>
             <input
               id="full_name"
@@ -139,7 +145,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email {!formData.phone && '*'}
+              {t('email')} {!formData.phone && '*'}
             </label>
             <input
               id="email"
@@ -155,7 +161,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-              Phone {!formData.email && '*'}
+              {t('phone')} {!formData.email && '*'}
             </label>
             <input
               id="phone"
@@ -200,7 +206,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-              Confirm Password *
+              {t('confirmPassword')} *
             </label>
             <input
               id="confirmPassword"
@@ -249,16 +255,16 @@ export default function Register() {
                 <span>Creating account...</span>
               </>
             ) : (
-              'Create Account'
+              t('createAccount')
             )}
           </button>
         </form>
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Already have an account?{' '}
+            {t('alreadyHaveAccount')}{' '}
             <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
-              Sign in
+              {t('login')}
             </Link>
           </p>
         </div>

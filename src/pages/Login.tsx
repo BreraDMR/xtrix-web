@@ -121,7 +121,7 @@ export default function Login() {
         </div>
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Xtrix</h2>
-          <p className="text-gray-600">{t('login')}</p>
+          <p className="text-gray-600">{t('signInToAccount')}</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -186,9 +186,9 @@ export default function Login() {
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
+            {t('dontHaveAccount')}{' '}
             <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
-              Sign up
+              {t('signUp')}
             </Link>
           </p>
         </div>

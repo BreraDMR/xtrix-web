@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
+import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 
 interface ServiceFormProps {
@@ -19,6 +20,7 @@ interface ServiceData {
 }
 
 export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceFormProps) {
+  const { t } = useTranslation()
   const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<ServiceData>({
@@ -98,7 +100,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">Service Name *</label>
+        <label className="block text-sm font-medium mb-1">{t('serviceName')} *</label>
         <input
           type="text"
           value={formData.name}
@@ -111,7 +113,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Duration (minutes) *</label>
+          <label className="block text-sm font-medium mb-1">{t('serviceDuration')} *</label>
           <input
             type="number"
             min="1"
@@ -124,7 +126,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Price *</label>
+          <label className="block text-sm font-medium mb-1">{t('servicePrice')} *</label>
           <input
             type="number"
             step="0.01"
@@ -140,7 +142,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Features / Description</label>
+        <label className="block text-sm font-medium mb-1">{t('serviceFeatures')}</label>
         <textarea
           value={formData.features || ''}
           onChange={(e) => setFormData({ ...formData, features: e.target.value })}
@@ -158,7 +160,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
             onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
             className="mr-2"
           />
-          <span className="text-sm font-medium">Active</span>
+          <span className="text-sm font-medium">{t('serviceActive')}</span>
         </label>
       </div>
 
@@ -168,7 +170,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          Cancel
+          {t('cancel')}
         </button>
         <button
           type="submit"
@@ -181,7 +183,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
               <span>Saving...</span>
             </>
           ) : (
-            serviceId ? 'Update Service' : 'Create Service'
+            serviceId ? t('updateService') : t('createService')
           )}
         </button>
       </div>

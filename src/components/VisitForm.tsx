@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
+import { useTranslation } from '../hooks/useTranslation'
 
 interface VisitFormProps {
   visitId?: number
@@ -24,6 +25,7 @@ interface VisitData {
 }
 
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
+  const { t } = useTranslation()
   const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<any[]>([])
@@ -226,7 +228,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">Client *</label>
+        <label className="block text-sm font-medium mb-1">{t('visitClient')} *</label>
         <select
           value={formData.client_id}
           onChange={(e) => setFormData({ ...formData, client_id: parseInt(e.target.value) })}
@@ -243,7 +245,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Service</label>
+        <label className="block text-sm font-medium mb-1">{t('visitService')}</label>
         <select
           value={formData.service_id || ''}
           onChange={(e) => {
@@ -287,7 +289,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Start Date & Time *</label>
+          <label className="block text-sm font-medium mb-1">{t('visitStartTime')} *</label>
           <input
             type="datetime-local"
             value={formData.date_start}
@@ -297,7 +299,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">End Date & Time (auto-calculated)</label>
+          <label className="block text-sm font-medium mb-1">{t('visitEndTime')}</label>
           <input
             type="datetime-local"
             value={formData.date_end || ''}
@@ -330,16 +332,16 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="planned">Planned</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="planned">{t('planned')}</option>
+            <option value="in_progress">{t('inProgress')}</option>
+            <option value="completed">{t('completed')}</option>
+            <option value="cancelled">{t('cancelled')}</option>
           </select>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Notes</label>
+        <label className="block text-sm font-medium mb-1">{t('visitNotes')}</label>
         <textarea
           value={formData.note || ''}
           onChange={(e) => setFormData({ ...formData, note: e.target.value })}
@@ -354,7 +356,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          Cancel
+          {t('cancel')}
         </button>
         <button
           type="submit"
@@ -367,7 +369,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               <span>Saving...</span>
             </>
           ) : (
-            visitId ? 'Update Visit' : 'Create Visit'
+            visitId ? t('updateVisit') : t('createVisit')
           )}
         </button>
       </div>

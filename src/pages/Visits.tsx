@@ -89,7 +89,7 @@ export default function Visits() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">{t('visits', locale)}</h1>
-        {!showForm && (
+            {!showForm && (
           <button
             onClick={() => {
               setEditingId(undefined)
@@ -97,7 +97,7 @@ export default function Visits() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            {t('addVisit', locale)}
+            {t('newVisit', locale)}
           </button>
         )}
       </div>
@@ -114,11 +114,11 @@ export default function Visits() {
               onChange={(e) => setStatusFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">{t('filter', locale)}</option>
-              <option value="planned">Planned</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="">{t('allStatuses', locale)}</option>
+              <option value="planned">{t('planned', locale)}</option>
+              <option value="in_progress">{t('inProgress', locale)}</option>
+              <option value="completed">{t('completed', locale)}</option>
+              <option value="cancelled">{t('cancelled', locale)}</option>
             </select>
             <input
               type="date"
@@ -144,7 +144,7 @@ export default function Visits() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md"
               >
-                {t('filter', locale)}
+                {t('clearFilters', locale)}
               </button>
             )}
           </div>
@@ -186,7 +186,9 @@ export default function Visits() {
             {filteredVisits.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  {t('noData', locale)}
+                  {searchQuery || statusFilter || dateFrom || dateTo
+                    ? t('noVisitsMatchFilters', locale)
+                    : t('noVisitsFound', locale)}
                 </td>
               </tr>
             ) : (
