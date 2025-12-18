@@ -37,13 +37,13 @@ export default function Register() {
 
     // Валидация
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('passwordsDoNotMatch'))
       setLoading(false)
       return
     }
 
     if (!formData.email && !formData.phone) {
-      setError('Please provide either email or phone number')
+      setError(t('emailOrPhoneRequired'))
       setLoading(false)
       return
     }
@@ -177,7 +177,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password *
+              {t('password')} *
             </label>
             <input
               id="password"
@@ -192,14 +192,14 @@ export default function Register() {
             />
             <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
               <p className="text-xs text-blue-700 font-medium">
-                ⚠️ Password requirements:
+                ⚠️ {t('passwordRequirementsTitle')}
               </p>
               <ul className="text-xs text-blue-600 mt-1 ml-4 list-disc">
-                <li>Minimum 8 characters</li>
-                <li>At least one uppercase letter (A-Z)</li>
-                <li>At least one lowercase letter (a-z)</li>
-                <li>At least one number (0-9)</li>
-                <li>At least one special character (!@#$%^&*)</li>
+                <li>{t('passwordMinChars')}</li>
+                <li>{t('passwordUppercase')}</li>
+                <li>{t('passwordLowercase')}</li>
+                <li>{t('passwordNumber')}</li>
+                <li>{t('passwordSpecial')}</li>
               </ul>
             </div>
           </div>
@@ -222,7 +222,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-              Role *
+              {t('role')} *
             </label>
             <select
               id="role"
@@ -232,9 +232,9 @@ export default function Register() {
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
-              <option value="client">Client</option>
-              <option value="specialist">Specialist</option>
-              <option value="admin">Admin</option>
+              <option value="client">{t('roleClient')}</option>
+              <option value="specialist">{t('roleSpecialist')}</option>
+              <option value="admin">{t('roleAdmin')}</option>
             </select>
           </div>
 
@@ -252,7 +252,7 @@ export default function Register() {
             {loading ? (
               <>
                 <LoadingSpinner size="sm" />
-                <span>Creating account...</span>
+                <span>{t('creatingAccount')}</span>
               </>
             ) : (
               t('createAccount')

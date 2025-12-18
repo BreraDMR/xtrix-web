@@ -114,6 +114,26 @@ export const translations = {
     
     // Password requirements
     passwordRequirements: 'Password must be at least 8 characters long, contain uppercase and lowercase letters, numbers, and special characters',
+    passwordRequirementsTitle: 'Password requirements:',
+    passwordMinChars: 'Minimum 8 characters',
+    passwordUppercase: 'At least one uppercase letter (A-Z)',
+    passwordLowercase: 'At least one lowercase letter (a-z)',
+    passwordNumber: 'At least one number (0-9)',
+    passwordSpecial: 'At least one special character (!@#$%^&*)',
+    
+    // Dashboard
+    overview: 'Overview of your business',
+    monthlyRevenue: 'Monthly Revenue',
+    thisMonth: 'This month',
+    
+    // Roles
+    role: 'Role',
+    roleClient: 'Client',
+    roleSpecialist: 'Specialist',
+    roleAdmin: 'Admin',
+    
+    // Other
+    creatingAccount: 'Creating account...',
   },
   ru: {
     // Navigation
@@ -227,6 +247,26 @@ export const translations = {
     
     // Password requirements
     passwordRequirements: 'Пароль должен быть не менее 8 символов, содержать заглавные и строчные буквы, цифры и специальные символы',
+    passwordRequirementsTitle: 'Требования к паролю:',
+    passwordMinChars: 'Минимум 8 символов',
+    passwordUppercase: 'Хотя бы одна заглавная буква (A-Z)',
+    passwordLowercase: 'Хотя бы одна строчная буква (a-z)',
+    passwordNumber: 'Хотя бы одна цифра (0-9)',
+    passwordSpecial: 'Хотя бы один специальный символ (!@#$%^&*)',
+    
+    // Dashboard
+    overview: 'Обзор вашего бизнеса',
+    monthlyRevenue: 'Месячный доход',
+    thisMonth: 'В этом месяце',
+    
+    // Roles
+    role: 'Роль',
+    roleClient: 'Клиент',
+    roleSpecialist: 'Специалист',
+    roleAdmin: 'Администратор',
+    
+    // Other
+    creatingAccount: 'Создание аккаунта...',
     alreadyHaveAccount: 'Уже есть аккаунт?',
   },
   cz: {
@@ -341,6 +381,26 @@ export const translations = {
     
     // Password requirements
     passwordRequirements: 'Heslo musí mít alespoň 8 znaků, obsahovat velká a malá písmena, číslice a speciální znaky',
+    passwordRequirementsTitle: 'Požadavky na heslo:',
+    passwordMinChars: 'Minimálně 8 znaků',
+    passwordUppercase: 'Alespoň jedno velké písmeno (A-Z)',
+    passwordLowercase: 'Alespoň jedno malé písmeno (a-z)',
+    passwordNumber: 'Alespoň jedna číslice (0-9)',
+    passwordSpecial: 'Alespoň jeden speciální znak (!@#$%^&*)',
+    
+    // Dashboard
+    overview: 'Přehled vašeho podnikání',
+    monthlyRevenue: 'Měsíční příjmy',
+    thisMonth: 'Tento měsíc',
+    
+    // Roles
+    role: 'Role',
+    roleClient: 'Klient',
+    roleSpecialist: 'Specialista',
+    roleAdmin: 'Administrátor',
+    
+    // Other
+    creatingAccount: 'Vytváření účtu...',
     alreadyHaveAccount: 'Již máte účet?',
   },
 } as const

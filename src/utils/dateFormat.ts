@@ -16,17 +16,37 @@ export function formatDate(date: Date | string, formatStr: string, locale: AppLo
 
 // Common date formats
 export const dateFormats = {
-  // Full date with time: "January 15, 2024 at 3:45 PM"
-  full: (_locale: AppLocale) => 'PPp',
-  // Date only: "January 15, 2024"
-  date: (_locale: AppLocale) => 'PP',
-  // Time only: "3:45 PM"
-  time: (_locale: AppLocale) => 'p',
-  // Short date: "01/15/2024" or "15.01.2024"
+  // Full date with time: "15.01.2024, 15:45" for RU/CZ, "January 15, 2024 at 3:45 PM" for EN
+  full: (locale: AppLocale) => {
+    if (locale === 'ru' || locale === 'cz') {
+      return 'dd.MM.yyyy, HH:mm'
+    }
+    return 'PPp'
+  },
+  // Date only: "15.01.2024" for RU/CZ, "January 15, 2024" for EN
+  date: (locale: AppLocale) => {
+    if (locale === 'ru' || locale === 'cz') {
+      return 'dd.MM.yyyy'
+    }
+    return 'PP'
+  },
+  // Time only: "15:45" for RU/CZ, "3:45 PM" for EN
+  time: (locale: AppLocale) => {
+    if (locale === 'ru' || locale === 'cz') {
+      return 'HH:mm'
+    }
+    return 'p'
+  },
+  // Short date: "15.01.2024" for RU/CZ, "01/15/2024" for EN
   short: (locale: AppLocale) => locale === 'ru' || locale === 'cz' ? 'dd.MM.yyyy' : 'MM/dd/yyyy',
-  // Month and day: "January 15"
+  // Month and day: "15 января" for RU, "15. ledna" for CZ, "January 15" for EN
   monthDay: (_locale: AppLocale) => 'MMMM d',
-  // Calendar header: "January 15, 2024"
-  calendar: (_locale: AppLocale) => 'MMMM d, yyyy',
+  // Calendar header: "15 января 2024" for RU, "15. ledna 2024" for CZ, "January 15, 2024" for EN
+  calendar: (_locale: AppLocale) => {
+    if (_locale === 'ru' || _locale === 'cz') {
+      return 'd MMMM yyyy'
+    }
+    return 'MMMM d, yyyy'
+  },
 }
 

@@ -131,8 +131,8 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                         {visit.service_name || 'Visit'}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {formatDate(visit.date_start, 'HH:mm', locale)}
-                        {visit.date_end && ` - ${formatDate(visit.date_end, 'HH:mm', locale)}`}
+                        {formatDate(visit.date_start, dateFormats.time(locale), locale)}
+                        {visit.date_end && ` - ${formatDate(visit.date_end, dateFormats.time(locale), locale)}`}
                       </p>
                     </div>
                     <span
