@@ -10,8 +10,9 @@ export default function CalendarPage() {
   const { data: visits, refetch } = useQuery({
     queryKey: ['visits'],
     queryFn: async () => {
-      const { data } = await api.get('/visits')
-      return data
+      const { data } = await api.get('/visits/')
+      // API returns paginated response, extract items array
+      return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
   })
 
