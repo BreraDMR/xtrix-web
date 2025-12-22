@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://your-backend-url.vercel.app/$1"
+      "destination": "https://xtrix-production.up.railway.app/$1"
     },
     {
       "source": "/(.*)",
