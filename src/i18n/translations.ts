@@ -1,417 +1,211 @@
-export type Locale = 'en' | 'ru' | 'cz'
+export type TranslationKey =
+  // Common
+  | 'common.save'
+  | 'common.cancel'
+  | 'common.delete'
+  | 'common.edit'
+  | 'common.create'
+  | 'common.search'
+  | 'common.filter'
+  | 'common.loading'
+  | 'common.error'
+  | 'common.success'
+  // Specialist types
+  | 'specialistType.massage'
+  | 'specialistType.cosmetologist'
+  | 'specialistType.barber'
+  | 'specialistType.hairdresser'
+  | 'specialistType.esthetician'
+  | 'specialistType.nailTechnician'
+  | 'specialistType.lashTechnician'
+  | 'specialistType.makeupArtist'
+  | 'specialistType.physiotherapist'
+  | 'specialistType.nutritionist'
+  | 'specialistType.aromatherapist'
+  | 'specialistType.fitnessCoach'
+  | 'specialistType.yogaInstructor'
+  | 'specialistType.psychologist'
+  | 'specialistType.psychotherapist'
+  | 'specialistType.therapist'
+  | 'specialistType.dentist'
+  | 'specialistType.dermatologist'
+  | 'specialistType.doctor'
+  | 'specialistType.cardiologist'
+  | 'specialistType.neurologist'
+  | 'specialistType.orthopedist'
+  | 'specialistType.gynecologist'
+  | 'specialistType.urologist'
+  | 'specialistType.ophthalmologist'
+  | 'specialistType.endocrinologist'
+  | 'specialistType.pediatrician'
+  | 'specialistType.surgeon'
+  | 'specialistType.oncologist'
+  // Categories
+  | 'category.beauty'
+  | 'category.wellness'
+  | 'category.healthcare'
+  // Business types
+  | 'businessType.individual'
+  | 'businessType.salon'
+  | 'businessType.clinic'
+  | 'businessType.hospital'
+  | 'businessType.barbershop'
+  | 'businessType.rehabCenter'
+  // Registration
+  | 'register.title'
+  | 'register.fullName'
+  | 'register.email'
+  | 'register.phone'
+  | 'register.password'
+  | 'register.confirmPassword'
+  | 'register.role'
+  | 'register.specialistType'
+  | 'register.selectSpecialistType'
+  | 'register.createAccount'
+  | 'register.alreadyHaveAccount'
+  | 'register.signIn'
+  | 'register.specialistTypeRequired'
+  // Client form
+  | 'clientForm.allergies'
+  | 'clientForm.chronicDiseases'
+  | 'clientForm.healthcareRequired'
+  | 'clientForm.healthcareRequiredDescription'
+  // Specialist profile
+  | 'specialistProfile.title'
+  | 'specialistProfile.notFound'
+  | 'specialistProfile.verificationPending'
+  | 'specialistProfile.verified'
+  | 'specialistProfile.basicInfo'
+  | 'specialistProfile.specialistType'
+  | 'specialistProfile.category'
+  | 'specialistProfile.specialization'
+  | 'specialistProfile.specializationPlaceholder'
+  | 'specialistProfile.experience'
+  | 'specialistProfile.experienceYears'
+  | 'specialistProfile.years'
+  | 'specialistProfile.education'
+  | 'specialistProfile.educationPlaceholder'
+  | 'specialistProfile.certifications'
+  | 'specialistProfile.certificationsPlaceholder'
+  | 'specialistProfile.businessInfo'
+  | 'specialistProfile.businessName'
+  | 'specialistProfile.businessType'
+  | 'specialistProfile.address'
+  | 'specialistProfile.additionalInfo'
+  | 'specialistProfile.description'
+  | 'specialistProfile.descriptionPlaceholder'
+  | 'specialistProfile.languages'
+  | 'specialistProfile.languagesPlaceholder'
 
-export const translations = {
-  en: {
-    // Navigation
-    dashboard: 'Dashboard',
-    clients: 'Clients',
-    visits: 'Visits',
-    calendar: 'Calendar',
-    services: 'Services',
-    logout: 'Logout',
-    
-    // Auth
-    login: 'Login',
-    register: 'Register',
-    createAccount: 'Create Account',
-    signInToAccount: 'Sign in to your account',
-    email: 'Email',
-    password: 'Password',
-    phone: 'Phone',
-    fullName: 'Full Name',
-    forgotPassword: 'Forgot password?',
-    resetPassword: 'Reset Password',
-    resetCode: 'Reset Code',
-    newPassword: 'New Password',
-    confirmPassword: 'Confirm Password',
-    sendCode: 'Send Code',
-    
-    // Common
-    save: 'Save',
-    cancel: 'Cancel',
-    edit: 'Edit',
-    delete: 'Delete',
-    add: 'Add',
-    create: 'Create',
-    update: 'Update',
-    search: 'Search',
-    filter: 'Filter',
-    clearFilters: 'Clear filters',
-    close: 'Close',
-    loading: 'Loading...',
-    noData: 'No data available',
-    signUp: 'Sign up',
-    dontHaveAccount: "Don't have an account?",
-    alreadyHaveAccount: 'Already have an account?',
-    
-    // Clients
-    addClient: 'Add Client',
-    editClient: 'Edit Client',
-    createClient: 'Create Client',
-    updateClient: 'Update Client',
-    clientName: 'Client Name',
-    clientPhone: 'Client Phone',
-    clientEmail: 'Client Email',
-    clientDetails: 'Client Details',
-    noClientsFound: 'No clients found',
-    noClientsMatchFilters: 'No clients match your filters',
-    allGenders: 'All Genders',
-    male: 'Male',
-    female: 'Female',
-    other: 'Other',
-    
-    // Services
-    addService: 'Add Service',
-    editService: 'Edit Service',
-    createService: 'Create Service',
-    updateService: 'Update Service',
-    serviceName: 'Service Name',
-    servicePrice: 'Price',
-    serviceDuration: 'Duration (minutes)',
-    serviceDescription: 'Description',
-    serviceFeatures: 'Features / Description',
-    serviceActive: 'Active',
-    allServices: 'All Services',
-    activeOnly: 'Active Only',
-    inactiveOnly: 'Inactive Only',
-    noServicesFound: 'No services found',
-    noServicesMatchFilters: 'No services match your filters',
-    name: 'Name',
-    duration: 'Duration',
-    status: 'Status',
-    
-    // Visits
-    addVisit: 'Add Visit',
-    newVisit: 'New Visit',
-    editVisit: 'Edit Visit',
-    createVisit: 'Create Visit',
-    updateVisit: 'Update Visit',
-    visitClient: 'Client',
-    visitService: 'Service',
-    visitDate: 'Date',
-    visitStartTime: 'Start Time',
-    visitEndTime: 'End Time',
-    visitPrice: 'Price',
-    visitNotes: 'Notes',
-    visitsFor: 'Visits for',
-    allStatuses: 'All Statuses',
-    planned: 'Planned',
-    inProgress: 'In Progress',
-    completed: 'Completed',
-    cancelled: 'Cancelled',
-    noVisitsFound: 'No visits found',
-    noVisitsMatchFilters: 'No visits match your filters',
-    
-    // Calendar
-    selectDate: 'Select a date',
-    noVisits: 'No visits scheduled',
-    
-    // Messages
-    saveSuccess: 'Saved successfully',
-    deleteSuccess: 'Deleted successfully',
-    errorOccurred: 'An error occurred',
-    requiredField: 'This field is required',
-    passwordsDoNotMatch: 'Passwords do not match',
-    emailOrPhoneRequired: 'Please provide either email or phone number',
-    
-    // Password requirements
-    passwordRequirements: 'Password must be at least 8 characters long, contain uppercase and lowercase letters, numbers, and special characters',
-    passwordRequirementsTitle: 'Password requirements:',
-    passwordMinChars: 'Minimum 8 characters',
-    passwordUppercase: 'At least one uppercase letter (A-Z)',
-    passwordLowercase: 'At least one lowercase letter (a-z)',
-    passwordNumber: 'At least one number (0-9)',
-    passwordSpecial: 'At least one special character (!@#$%^&*)',
-    
-    // Dashboard
-    overview: 'Overview of your business',
-    monthlyRevenue: 'Monthly Revenue',
-    thisMonth: 'This month',
-    
-    // Roles
-    role: 'Role',
-    roleClient: 'Client',
-    roleSpecialist: 'Specialist',
-    roleAdmin: 'Admin',
-    
-    // Other
-    creatingAccount: 'Creating account...',
-  },
-  ru: {
-    // Navigation
-    dashboard: 'Панель управления',
-    clients: 'Клиенты',
-    visits: 'Визиты',
-    calendar: 'Календарь',
-    services: 'Услуги',
-    logout: 'Выйти',
-    
-    // Auth
-    login: 'Вход',
-    register: 'Регистрация',
-    createAccount: 'Создать аккаунт',
-    signInToAccount: 'Войдите в свой аккаунт',
-    email: 'Электронная почта',
-    password: 'Пароль',
-    phone: 'Телефон',
-    fullName: 'Полное имя',
-    forgotPassword: 'Забыли пароль?',
-    resetPassword: 'Сброс пароля',
-    resetCode: 'Код сброса',
-    newPassword: 'Новый пароль',
-    confirmPassword: 'Подтвердите пароль',
-    sendCode: 'Отправить код',
-    
-    // Common
-    save: 'Сохранить',
-    cancel: 'Отмена',
-    edit: 'Редактировать',
-    delete: 'Удалить',
-    add: 'Добавить',
-    create: 'Создать',
-    update: 'Обновить',
-    search: 'Поиск',
-    filter: 'Фильтр',
-    clearFilters: 'Очистить фильтры',
-    close: 'Закрыть',
-    loading: 'Загрузка...',
-    noData: 'Нет данных',
-    signUp: 'Зарегистрироваться',
-    dontHaveAccount: 'Нет аккаунта?',
-    
-    // Clients
-    addClient: 'Добавить клиента',
-    editClient: 'Редактировать клиента',
-    createClient: 'Создать клиента',
-    updateClient: 'Обновить клиента',
-    clientName: 'Имя клиента',
-    clientPhone: 'Телефон клиента',
-    clientEmail: 'Email клиента',
-    clientDetails: 'Детали клиента',
-    noClientsFound: 'Клиенты не найдены',
-    noClientsMatchFilters: 'Нет клиентов, соответствующих фильтрам',
-    allGenders: 'Все полы',
-    male: 'Мужской',
-    female: 'Женский',
-    other: 'Другой',
-    
-    // Services
-    addService: 'Добавить услугу',
-    editService: 'Редактировать услугу',
-    createService: 'Создать услугу',
-    updateService: 'Обновить услугу',
-    serviceName: 'Название услуги',
-    servicePrice: 'Цена',
-    serviceDuration: 'Длительность (минуты)',
-    serviceDescription: 'Описание',
-    serviceFeatures: 'Особенности / Описание',
-    serviceActive: 'Активна',
-    allServices: 'Все услуги',
-    activeOnly: 'Только активные',
-    inactiveOnly: 'Только неактивные',
-    noServicesFound: 'Услуги не найдены',
-    noServicesMatchFilters: 'Нет услуг, соответствующих фильтрам',
-    name: 'Название',
-    duration: 'Длительность',
-    status: 'Статус',
-    
-    // Visits
-    addVisit: 'Добавить визит',
-    newVisit: 'Новый визит',
-    editVisit: 'Редактировать визит',
-    createVisit: 'Создать визит',
-    updateVisit: 'Обновить визит',
-    visitClient: 'Клиент',
-    visitService: 'Услуга',
-    visitDate: 'Дата',
-    visitStartTime: 'Время начала',
-    visitEndTime: 'Время окончания',
-    visitPrice: 'Цена',
-    visitNotes: 'Заметки',
-    visitsFor: 'Визиты на',
-    allStatuses: 'Все статусы',
-    planned: 'Запланирован',
-    inProgress: 'В процессе',
-    completed: 'Завершен',
-    cancelled: 'Отменен',
-    noVisitsFound: 'Визиты не найдены',
-    noVisitsMatchFilters: 'Нет визитов, соответствующих фильтрам',
-    
-    // Calendar
-    selectDate: 'Выберите дату',
-    noVisits: 'Нет запланированных визитов',
-    
-    // Messages
-    saveSuccess: 'Успешно сохранено',
-    deleteSuccess: 'Успешно удалено',
-    errorOccurred: 'Произошла ошибка',
-    requiredField: 'Это поле обязательно',
-    passwordsDoNotMatch: 'Пароли не совпадают',
-    emailOrPhoneRequired: 'Пожалуйста, укажите email или номер телефона',
-    
-    // Password requirements
-    passwordRequirements: 'Пароль должен быть не менее 8 символов, содержать заглавные и строчные буквы, цифры и специальные символы',
-    passwordRequirementsTitle: 'Требования к паролю:',
-    passwordMinChars: 'Минимум 8 символов',
-    passwordUppercase: 'Хотя бы одна заглавная буква (A-Z)',
-    passwordLowercase: 'Хотя бы одна строчная буква (a-z)',
-    passwordNumber: 'Хотя бы одна цифра (0-9)',
-    passwordSpecial: 'Хотя бы один специальный символ (!@#$%^&*)',
-    
-    // Dashboard
-    overview: 'Обзор вашего бизнеса',
-    monthlyRevenue: 'Месячный доход',
-    thisMonth: 'В этом месяце',
-    
-    // Roles
-    role: 'Роль',
-    roleClient: 'Клиент',
-    roleSpecialist: 'Специалист',
-    roleAdmin: 'Администратор',
-    
-    // Other
-    creatingAccount: 'Создание аккаунта...',
-    alreadyHaveAccount: 'Уже есть аккаунт?',
-  },
-  cz: {
-    // Navigation
-    dashboard: 'Nástěnka',
-    clients: 'Klienti',
-    visits: 'Návštěvy',
-    calendar: 'Kalendář',
-    services: 'Služby',
-    logout: 'Odhlásit se',
-    
-    // Auth
-    login: 'Přihlásit se',
-    register: 'Registrovat se',
-    createAccount: 'Vytvořit účet',
-    signInToAccount: 'Přihlaste se ke svému účtu',
-    email: 'Email',
-    password: 'Heslo',
-    phone: 'Telefon',
-    fullName: 'Celé jméno',
-    forgotPassword: 'Zapomenuté heslo?',
-    resetPassword: 'Resetovat heslo',
-    resetCode: 'Kód pro reset',
-    newPassword: 'Nové heslo',
-    confirmPassword: 'Potvrďte heslo',
-    sendCode: 'Odeslat kód',
-    
-    // Common
-    save: 'Uložit',
-    cancel: 'Zrušit',
-    edit: 'Upravit',
-    delete: 'Smazat',
-    add: 'Přidat',
-    create: 'Vytvořit',
-    update: 'Aktualizovat',
-    search: 'Hledat',
-    filter: 'Filtr',
-    clearFilters: 'Vymazat filtry',
-    close: 'Zavřít',
-    loading: 'Načítání...',
-    noData: 'Žádná data',
-    signUp: 'Registrovat se',
-    dontHaveAccount: 'Nemáte účet?',
-    
-    // Clients
-    addClient: 'Přidat klienta',
-    editClient: 'Upravit klienta',
-    createClient: 'Vytvořit klienta',
-    updateClient: 'Aktualizovat klienta',
-    clientName: 'Jméno klienta',
-    clientPhone: 'Telefon klienta',
-    clientEmail: 'Email klienta',
-    clientDetails: 'Detaily klienta',
-    noClientsFound: 'Klienti nenalezeni',
-    noClientsMatchFilters: 'Žádní klienti neodpovídají filtrům',
-    allGenders: 'Všechna pohlaví',
-    male: 'Muž',
-    female: 'Žena',
-    other: 'Jiné',
-    
-    // Services
-    addService: 'Přidat službu',
-    editService: 'Upravit službu',
-    createService: 'Vytvořit službu',
-    updateService: 'Aktualizovat službu',
-    serviceName: 'Název služby',
-    servicePrice: 'Cena',
-    serviceDuration: 'Délka (minuty)',
-    serviceDescription: 'Popis',
-    serviceFeatures: 'Funkce / Popis',
-    serviceActive: 'Aktivní',
-    allServices: 'Všechny služby',
-    activeOnly: 'Pouze aktivní',
-    inactiveOnly: 'Pouze neaktivní',
-    noServicesFound: 'Služby nenalezeny',
-    noServicesMatchFilters: 'Žádné služby neodpovídají filtrům',
-    name: 'Název',
-    duration: 'Délka',
-    status: 'Stav',
-    
-    // Visits
-    addVisit: 'Přidat návštěvu',
-    newVisit: 'Nová návštěva',
-    editVisit: 'Upravit návštěvu',
-    createVisit: 'Vytvořit návštěvu',
-    updateVisit: 'Aktualizovat návštěvu',
-    visitClient: 'Klient',
-    visitService: 'Služba',
-    visitDate: 'Datum',
-    visitStartTime: 'Čas začátku',
-    visitEndTime: 'Čas konce',
-    visitPrice: 'Cena',
-    visitNotes: 'Poznámky',
-    visitsFor: 'Návštěvy na',
-    allStatuses: 'Všechny stavy',
-    planned: 'Naplánováno',
-    inProgress: 'Probíhá',
-    completed: 'Dokončeno',
-    cancelled: 'Zrušeno',
-    noVisitsFound: 'Návštěvy nenalezeny',
-    noVisitsMatchFilters: 'Žádné návštěvy neodpovídají filtrům',
-    
-    // Calendar
-    selectDate: 'Vyberte datum',
-    noVisits: 'Žádné naplánované návštěvy',
-    
-    // Messages
-    saveSuccess: 'Úspěšně uloženo',
-    deleteSuccess: 'Úspěšně smazáno',
-    errorOccurred: 'Došlo k chybě',
-    requiredField: 'Toto pole je povinné',
-    passwordsDoNotMatch: 'Hesla se neshodují',
-    emailOrPhoneRequired: 'Zadejte prosím email nebo telefonní číslo',
-    
-    // Password requirements
-    passwordRequirements: 'Heslo musí mít alespoň 8 znaků, obsahovat velká a malá písmena, číslice a speciální znaky',
-    passwordRequirementsTitle: 'Požadavky na heslo:',
-    passwordMinChars: 'Minimálně 8 znaků',
-    passwordUppercase: 'Alespoň jedno velké písmeno (A-Z)',
-    passwordLowercase: 'Alespoň jedno malé písmeno (a-z)',
-    passwordNumber: 'Alespoň jedna číslice (0-9)',
-    passwordSpecial: 'Alespoň jeden speciální znak (!@#$%^&*)',
-    
-    // Dashboard
-    overview: 'Přehled vašeho podnikání',
-    monthlyRevenue: 'Měsíční příjmy',
-    thisMonth: 'Tento měsíc',
-    
-    // Roles
-    role: 'Role',
-    roleClient: 'Klient',
-    roleSpecialist: 'Specialista',
-    roleAdmin: 'Administrátor',
-    
-    // Other
-    creatingAccount: 'Vytváření účtu...',
-    alreadyHaveAccount: 'Již máte účet?',
-  },
-} as const
-
-export function t(key: keyof typeof translations.en, locale: Locale): string {
-  return translations[locale][key] || translations.en[key] || key
+const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  // Common
+  'common.save': { en: 'Save', ru: 'Сохранить', cz: 'Uložit' },
+  'common.cancel': { en: 'Cancel', ru: 'Отмена', cz: 'Zrušit' },
+  'common.delete': { en: 'Delete', ru: 'Удалить', cz: 'Smazat' },
+  'common.edit': { en: 'Edit', ru: 'Редактировать', cz: 'Upravit' },
+  'common.create': { en: 'Create', ru: 'Создать', cz: 'Vytvořit' },
+  'common.search': { en: 'Search', ru: 'Поиск', cz: 'Hledat' },
+  'common.filter': { en: 'Filter', ru: 'Фильтр', cz: 'Filtr' },
+  'common.loading': { en: 'Loading...', ru: 'Загрузка...', cz: 'Načítání...' },
+  'common.error': { en: 'Error', ru: 'Ошибка', cz: 'Chyba' },
+  'common.success': { en: 'Success', ru: 'Успешно', cz: 'Úspěch' },
+  
+  // Specialist types - Beauty
+  'specialistType.massage': { en: 'Massage Therapist', ru: 'Массажист', cz: 'Masér' },
+  'specialistType.cosmetologist': { en: 'Cosmetologist', ru: 'Косметолог', cz: 'Kosmetička' },
+  'specialistType.barber': { en: 'Barber', ru: 'Барбер', cz: 'Holič' },
+  'specialistType.hairdresser': { en: 'Hairdresser', ru: 'Парикмахер', cz: 'Kadeřník' },
+  'specialistType.esthetician': { en: 'Esthetician', ru: 'Эстетист', cz: 'Estetička' },
+  'specialistType.nailTechnician': { en: 'Nail Technician', ru: 'Мастер маникюра/педикюра', cz: 'Manikérka' },
+  'specialistType.lashTechnician': { en: 'Lash & Brow Technician', ru: 'Мастер по ресницам и бровям', cz: 'Technička řas a obočí' },
+  'specialistType.makeupArtist': { en: 'Makeup Artist', ru: 'Визажист', cz: 'Vizážistka' },
+  
+  // Specialist types - Wellness
+  'specialistType.physiotherapist': { en: 'Physiotherapist', ru: 'Физиотерапевт', cz: 'Fyzioterapeut' },
+  'specialistType.nutritionist': { en: 'Nutritionist', ru: 'Нутрициолог', cz: 'Výživový poradce' },
+  'specialistType.aromatherapist': { en: 'Aromatherapist', ru: 'Ароматерапевт', cz: 'Aromaterapeut' },
+  'specialistType.fitnessCoach': { en: 'Fitness Coach', ru: 'Фитнес-тренер', cz: 'Fitness trenér' },
+  'specialistType.yogaInstructor': { en: 'Yoga Instructor', ru: 'Инструктор йоги', cz: 'Instruktor jógy' },
+  'specialistType.psychologist': { en: 'Psychologist', ru: 'Психолог', cz: 'Psycholog' },
+  'specialistType.psychotherapist': { en: 'Psychotherapist', ru: 'Психотерапевт', cz: 'Psychoterapeut' },
+  
+  // Specialist types - Healthcare
+  'specialistType.therapist': { en: 'Therapist', ru: 'Терапевт', cz: 'Terapeut' },
+  'specialistType.dentist': { en: 'Dentist', ru: 'Стоматолог', cz: 'Zubař' },
+  'specialistType.dermatologist': { en: 'Dermatologist', ru: 'Дерматолог', cz: 'Dermatolog' },
+  'specialistType.doctor': { en: 'Doctor', ru: 'Врач-специалист', cz: 'Lékař' },
+  'specialistType.cardiologist': { en: 'Cardiologist', ru: 'Кардиолог', cz: 'Kardiolog' },
+  'specialistType.neurologist': { en: 'Neurologist', ru: 'Невролог', cz: 'Neurolog' },
+  'specialistType.orthopedist': { en: 'Orthopedist', ru: 'Ортопед', cz: 'Ortoped' },
+  'specialistType.gynecologist': { en: 'Gynecologist', ru: 'Гинеколог', cz: 'Gynekolog' },
+  'specialistType.urologist': { en: 'Urologist', ru: 'Уролог', cz: 'Urolog' },
+  'specialistType.ophthalmologist': { en: 'Ophthalmologist', ru: 'Офтальмолог', cz: 'Oftalmolog' },
+  'specialistType.endocrinologist': { en: 'Endocrinologist', ru: 'Эндокринолог', cz: 'Endokrinolog' },
+  'specialistType.pediatrician': { en: 'Pediatrician', ru: 'Педиатр', cz: 'Pediatr' },
+  'specialistType.surgeon': { en: 'Surgeon', ru: 'Хирург', cz: 'Chirurg' },
+  'specialistType.oncologist': { en: 'Oncologist', ru: 'Онколог', cz: 'Onkolog' },
+  
+  // Categories
+  'category.beauty': { en: 'Beauty', ru: 'Красота', cz: 'Krása' },
+  'category.wellness': { en: 'Wellness', ru: 'Велнес', cz: 'Wellness' },
+  'category.healthcare': { en: 'Healthcare', ru: 'Здравоохранение', cz: 'Zdravotní péče' },
+  
+  // Business types
+  'businessType.individual': { en: 'Individual Specialist', ru: 'Индивидуальный специалист', cz: 'Individuální specialista' },
+  'businessType.salon': { en: 'Beauty Salon', ru: 'Салон красоты', cz: 'Kosmetický salón' },
+  'businessType.clinic': { en: 'Clinic', ru: 'Клиника', cz: 'Klinika' },
+  'businessType.hospital': { en: 'Hospital', ru: 'Больница', cz: 'Nemocnice' },
+  'businessType.barbershop': { en: 'Barbershop', ru: 'Барбершоп', cz: 'Holičství' },
+  'businessType.rehabCenter': { en: 'Rehabilitation Center', ru: 'Реабилитационный центр', cz: 'Rehabilitační centrum' },
+  
+  // Registration
+  'register.title': { en: 'Create your account', ru: 'Создайте свой аккаунт', cz: 'Vytvořte si účet' },
+  'register.fullName': { en: 'Full Name', ru: 'Полное имя', cz: 'Celé jméno' },
+  'register.email': { en: 'Email', ru: 'Email', cz: 'Email' },
+  'register.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
+  'register.password': { en: 'Password', ru: 'Пароль', cz: 'Heslo' },
+  'register.confirmPassword': { en: 'Confirm Password', ru: 'Подтвердите пароль', cz: 'Potvrďte heslo' },
+  'register.role': { en: 'Role', ru: 'Роль', cz: 'Role' },
+  'register.specialistType': { en: 'Specialist Type', ru: 'Тип специалиста', cz: 'Typ specialisty' },
+  'register.selectSpecialistType': { en: 'Select specialist type', ru: 'Выберите тип специалиста', cz: 'Vyberte typ specialisty' },
+  'register.createAccount': { en: 'Create Account', ru: 'Создать аккаунт', cz: 'Vytvořit účet' },
+  'register.alreadyHaveAccount': { en: 'Already have an account?', ru: 'Уже есть аккаунт?', cz: 'Již máte účet?' },
+  'register.signIn': { en: 'Sign in', ru: 'Войти', cz: 'Přihlásit se' },
+  'register.specialistTypeRequired': { en: 'Please select your specialist type', ru: 'Пожалуйста, выберите тип специалиста', cz: 'Vyberte prosím typ specialisty' },
+  
+  // Client form
+  'clientForm.allergies': { en: 'Allergies', ru: 'Аллергии', cz: 'Alergie' },
+  'clientForm.chronicDiseases': { en: 'Chronic Diseases', ru: 'Хронические заболевания', cz: 'Chronická onemocnění' },
+  'clientForm.healthcareRequired': { en: 'Required for Healthcare Specialists', ru: 'Обязательно для медицинских специалистов', cz: 'Povinné pro zdravotnické specialisty' },
+  'clientForm.healthcareRequiredDescription': { en: 'For healthcare specialists, allergies and chronic diseases are required fields.', ru: 'Для медицинских специалистов поля аллергии и хронических заболеваний являются обязательными.', cz: 'Pro zdravotnické specialisty jsou pole alergie a chronická onemocnění povinná.' },
+  
+  // Specialist profile
+  'specialistProfile.title': { en: 'My Specialist Profile', ru: 'Мой профиль специалиста', cz: 'Můj profil specialisty' },
+  'specialistProfile.notFound': { en: 'Specialist profile not found. Please create your profile.', ru: 'Профиль специалиста не найден. Пожалуйста, создайте профиль.', cz: 'Profil specialisty nebyl nalezen. Vytvořte prosím profil.' },
+  'specialistProfile.verificationPending': { en: 'Your profile is pending verification.', ru: 'Ваш профиль ожидает верификации.', cz: 'Váš profil čeká na ověření.' },
+  'specialistProfile.verified': { en: 'Your profile is verified.', ru: 'Ваш профиль верифицирован.', cz: 'Váš profil je ověřen.' },
+  'specialistProfile.basicInfo': { en: 'Basic Information', ru: 'Основная информация', cz: 'Základní informace' },
+  'specialistProfile.specialistType': { en: 'Specialist Type', ru: 'Тип специалиста', cz: 'Typ specialisty' },
+  'specialistProfile.category': { en: 'Category', ru: 'Категория', cz: 'Kategorie' },
+  'specialistProfile.specialization': { en: 'Specialization', ru: 'Специализация', cz: 'Specializace' },
+  'specialistProfile.specializationPlaceholder': { en: 'Describe your specialization...', ru: 'Опишите вашу специализацию...', cz: 'Popište svou specializaci...' },
+  'specialistProfile.experience': { en: 'Experience', ru: 'Опыт работы', cz: 'Zkušenosti' },
+  'specialistProfile.experienceYears': { en: 'Years of Experience', ru: 'Лет опыта', cz: 'Let zkušeností' },
+  'specialistProfile.years': { en: 'years', ru: 'лет', cz: 'let' },
+  'specialistProfile.education': { en: 'Education', ru: 'Образование', cz: 'Vzdělání' },
+  'specialistProfile.educationPlaceholder': { en: 'Your education background...', ru: 'Ваше образование...', cz: 'Vaše vzdělání...' },
+  'specialistProfile.certifications': { en: 'Certifications', ru: 'Сертификаты', cz: 'Certifikáty' },
+  'specialistProfile.certificationsPlaceholder': { en: 'Your certifications and licenses...', ru: 'Ваши сертификаты и лицензии...', cz: 'Vaše certifikáty a licence...' },
+  'specialistProfile.businessInfo': { en: 'Business Information', ru: 'Информация о бизнесе', cz: 'Obchodní informace' },
+  'specialistProfile.businessName': { en: 'Business Name', ru: 'Название бизнеса', cz: 'Název podniku' },
+  'specialistProfile.businessType': { en: 'Business Type', ru: 'Тип бизнеса', cz: 'Typ podniku' },
+  'specialistProfile.address': { en: 'Address', ru: 'Адрес', cz: 'Adresa' },
+  'specialistProfile.additionalInfo': { en: 'Additional Information', ru: 'Дополнительная информация', cz: 'Další informace' },
+  'specialistProfile.description': { en: 'Description', ru: 'Описание', cz: 'Popis' },
+  'specialistProfile.descriptionPlaceholder': { en: 'Public description...', ru: 'Публичное описание...', cz: 'Veřejný popis...' },
+  'specialistProfile.languages': { en: 'Languages', ru: 'Языки', cz: 'Jazyky' },
+  'specialistProfile.languagesPlaceholder': { en: 'e.g., English, Russian, Czech', ru: 'например, Английский, Русский, Чешский', cz: 'např. Angličtina, Ruština, Čeština' },
 }
+
+export default translations
 

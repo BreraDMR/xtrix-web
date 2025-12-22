@@ -4,7 +4,6 @@ import api from '../api/client'
 import ClientForm from '../components/ClientForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { useTranslation } from '../hooks/useTranslation'
 
 interface Client {
   id: number
@@ -16,24 +15,22 @@ interface Client {
 }
 
 export default function Clients() {
-  const { t } = useTranslation()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
   const [genderFilter, setGenderFilter] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: clients, isLoading, refetch } = useQuery<Client[]>({
+  const { data: clients, isLoading } = useQuery<Client[]>({
     queryKey: ['clients'],
     queryFn: async () => {
       const { data } = await api.get('/clients')
-      // Backend returns PaginatedResponse with items array
-      return Array.isArray(data) ? data : (data?.items || [])
+      return data
     },
   })
 
   const filteredClients = useMemo(() => {
-    if (!clients || !Array.isArray(clients)) return []
+    if (!clients) return []
     
     return clients.filter((client) => {
       const matchesSearch =
@@ -48,12 +45,10 @@ export default function Clients() {
     })
   }, [clients, searchQuery, genderFilter])
 
-  const handleSuccess = async () => {
+  const handleSuccess = () => {
     setShowForm(false)
     setEditingId(undefined)
-    // Invalidate and refetch to get the updated list
-    await queryClient.invalidateQueries({ queryKey: ['clients'] })
-    await refetch()
+    queryClient.invalidateQueries({ queryKey: ['clients'] })
   }
 
   const handleEdit = (id: number) => {
@@ -72,7 +67,7 @@ export default function Clients() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('clients')}</h1>
+        <h1 className="text-2xl font-bold">Clients</h1>
         {!showForm && (
           <button
             onClick={() => {
@@ -81,7 +76,7 @@ export default function Clients() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            {t('addClient')}
+            Add Client
           </button>
         )}
       </div>
@@ -98,10 +93,10 @@ export default function Clients() {
               onChange={(e) => setGenderFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">{t('allGenders')}</option>
-              <option value="male">{t('male')}</option>
-              <option value="female">{t('female')}</option>
-              <option value="other">{t('other')}</option>
+              <option value="">All Genders</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
             </select>
             {(searchQuery || genderFilter) && (
               <button
@@ -111,7 +106,7 @@ export default function Clients() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
               >
-                {t('clearFilters')}
+                Clear filters
               </button>
             )}
           </div>
@@ -131,18 +126,17 @@ export default function Clients() {
         </div>
       ) : (
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('name')}
+                Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('phone')}
+                Phone
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('email')}
+                Email
               </th>
             </tr>
           </thead>
@@ -150,7 +144,7 @@ export default function Clients() {
             {filteredClients.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                  {searchQuery || genderFilter ? t('noClientsMatchFilters') : t('noClientsFound')}
+                  {searchQuery || genderFilter ? 'No clients match your filters' : 'No clients found'}
                 </td>
               </tr>
             ) : (
@@ -170,7 +164,7 @@ export default function Clients() {
                     onClick={() => handleEdit(client.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    {t('edit')}
+                    Edit
                   </button>
                 </td>
               </tr>
@@ -178,7 +172,6 @@ export default function Clients() {
             )}
           </tbody>
         </table>
-        </div>
       </div>
       )}
     </div>

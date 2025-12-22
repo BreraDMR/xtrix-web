@@ -1,24 +1,8 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 
-// КРИТИЧЕСКИ ВАЖНО: Используем HTTPS по умолчанию для Railway
-// Production URL для Railway (ВСЕГДА HTTPS)
-const RAILWAY_PROD_URL = 'https://xtrix-production.up.railway.app'
-
-// Use environment variable for API URL
-// Fallback: Railway prod (если деплой на Vercel) или /api (локальная разработка)
-let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
-                   (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app') 
-                     ? RAILWAY_PROD_URL 
-                     : '/api')
-
-// Дополнительная защита: принудительно меняем HTTP на HTTPS для Railway
-if (API_BASE_URL.includes('railway.app') && API_BASE_URL.startsWith('http:')) {
-  API_BASE_URL = API_BASE_URL.replace(/^http:/, 'https:')
-  console.warn('[API Client] ⚠️ Fixed HTTP to HTTPS:', API_BASE_URL)
-}
-
-console.log('[API Client] 🌐 Using API:', API_BASE_URL)
+// Use environment variable for API URL, fallback to /api for dev proxy
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -28,30 +12,6 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  // КРИТИЧЕСКИ ВАЖНО: Принудительно используем HTTPS для Railway
-  if (config.baseURL && config.baseURL.includes('railway.app') && config.baseURL.startsWith('http:')) {
-    config.baseURL = config.baseURL.replace('http://', 'https://')
-    console.warn('[API Client] 🔒 Forced HTTPS in interceptor:', config.baseURL)
-  }
-  
-  // ВАЖНО: FastAPI routing - добавляем trailing slash ТОЛЬКО для collection endpoints
-  if (config.url && !config.url.includes('?')) {
-    // НЕ добавляем trailing slash для этих эндпоинтов (они возвращают 307 с /)
-    const skipTrailingSlash = ['/login', '/register', '/2fa', '/me', '/revenue', '/metrics'].some(path => 
-      config.url?.includes(path)
-    )
-    
-    // Добавляем trailing slash ТОЛЬКО для collection endpoints (clients, services, visits)
-    const needsTrailingSlash = ['/clients', '/services', '/visits', '/calendar'].some(path =>
-      config.url?.includes(path) && !config.url?.match(/\/\d+$/)
-    )
-    
-    if (!skipTrailingSlash && needsTrailingSlash && !config.url.endsWith('/')) {
-      config.url = config.url + '/'
-      console.log('[API Client] 📌 Added trailing slash:', config.url)
-    }
-  }
-  
   // Сначала проверяем store, затем localStorage для надежности
   let token = useAuthStore.getState().token
   if (!token && typeof window !== 'undefined') {
@@ -71,19 +31,7 @@ api.interceptors.request.use((config) => {
     }
   }
   
-  // Get locale from localStorage (where zustand persist stores it) or browser language
-  let locale = 'en'
-  if (typeof window !== 'undefined') {
-    const savedLocale = localStorage.getItem('xtrix-locale')
-    if (savedLocale && (savedLocale === 'en' || savedLocale === 'ru' || savedLocale === 'cz')) {
-      locale = savedLocale
-    } else {
-      // Fallback to browser language
-      const browserLang = navigator.language.toLowerCase()
-      if (browserLang.startsWith('ru')) locale = 'ru'
-      else if (browserLang.startsWith('cs') || browserLang.startsWith('cz')) locale = 'cz'
-    }
-  }
+  const locale = navigator.language.split('-')[0] || 'en'
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

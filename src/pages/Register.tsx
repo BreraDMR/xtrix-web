@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { logger } from '../utils/logger'
+import SpecialistTypeSelector from '../components/SpecialistTypeSelector'
 import { useTranslation } from '../hooks/useTranslation'
-import LanguageSwitcher from '../components/LanguageSwitcher'
+import { logger } from '../utils/logger'
 
 export default function Register() {
   const { t } = useTranslation()
@@ -16,6 +16,7 @@ export default function Register() {
     password: '',
     confirmPassword: '',
     role: 'client' as 'admin' | 'specialist' | 'client',
+    specialist_type: '',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -37,13 +38,13 @@ export default function Register() {
 
     // Валидация
     if (formData.password !== formData.confirmPassword) {
-      setError(t('passwordsDoNotMatch'))
+      setError('Passwords do not match')
       setLoading(false)
       return
     }
 
     if (!formData.email && !formData.phone) {
-      setError(t('emailOrPhoneRequired'))
+      setError('Please provide either email or phone number')
       setLoading(false)
       return
     }
@@ -51,6 +52,13 @@ export default function Register() {
     try {
       logger.log('[Register] Attempting registration', { email: formData.email, phone: formData.phone })
       
+      // Валидация: если роль specialist, то specialist_type обязателен
+      if (formData.role === 'specialist' && !formData.specialist_type) {
+        setError(t('register.specialistTypeRequired'))
+        setLoading(false)
+        return
+      }
+
       // Создаем пользователя
       const { data: userData } = await api.post('/users/', {
         full_name: formData.full_name,
@@ -58,6 +66,7 @@ export default function Register() {
         phone: formData.phone || undefined,
         password: formData.password,
         role: formData.role,
+        specialist_type: formData.role === 'specialist' && formData.specialist_type ? formData.specialist_type : undefined,
       })
 
       logger.log('[Register] User created successfully')
@@ -117,19 +126,16 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 sm:px-6 py-8">
-      <div className="max-w-md w-full space-y-8 p-6 sm:p-8 bg-white rounded-xl shadow-2xl animate-fade-in">
-        <div className="flex justify-end mb-2">
-          <LanguageSwitcher />
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-2xl animate-fade-in">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Xtrix</h2>
-          <p className="text-gray-600">{t('createAccount')}</p>
+          <p className="text-gray-600">{t('register.title')}</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('fullName')} *
+              {t('register.fullName')} *
             </label>
             <input
               id="full_name"
@@ -145,7 +151,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('email')} {!formData.phone && '*'}
+              {t('register.email')} {!formData.phone && '*'}
             </label>
             <input
               id="email"
@@ -161,7 +167,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('phone')} {!formData.email && '*'}
+              {t('register.phone')} {!formData.email && '*'}
             </label>
             <input
               id="phone"
@@ -177,7 +183,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('password')} *
+              {t('register.password')} *
             </label>
             <input
               id="password"
@@ -190,23 +196,14 @@ export default function Register() {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="••••••••"
             />
-            <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
-              <p className="text-xs text-blue-700 font-medium">
-                ⚠️ {t('passwordRequirementsTitle')}
-              </p>
-              <ul className="text-xs text-blue-600 mt-1 ml-4 list-disc">
-                <li>{t('passwordMinChars')}</li>
-                <li>{t('passwordUppercase')}</li>
-                <li>{t('passwordLowercase')}</li>
-                <li>{t('passwordNumber')}</li>
-                <li>{t('passwordSpecial')}</li>
-              </ul>
-            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Minimum 8 characters, include uppercase, lowercase, number, and special character
+            </p>
           </div>
 
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('confirmPassword')} *
+              {t('register.confirmPassword')} *
             </label>
             <input
               id="confirmPassword"
@@ -222,21 +219,41 @@ export default function Register() {
 
           <div>
             <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('role')} *
+              {t('register.role')} *
             </label>
             <select
               id="role"
               name="role"
               value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'specialist' | 'client' })}
+              onChange={(e) => {
+                const newRole = e.target.value as 'admin' | 'specialist' | 'client'
+                setFormData({ 
+                  ...formData, 
+                  role: newRole,
+                  specialist_type: newRole !== 'specialist' ? '' : formData.specialist_type,
+                })
+              }}
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
-              <option value="client">{t('roleClient')}</option>
-              <option value="specialist">{t('roleSpecialist')}</option>
-              <option value="admin">{t('roleAdmin')}</option>
+              <option value="client">Client</option>
+              <option value="specialist">Specialist</option>
+              <option value="admin">Admin</option>
             </select>
           </div>
+
+          {formData.role === 'specialist' && (
+            <div>
+              <label htmlFor="specialist_type" className="block text-sm font-medium text-gray-700 mb-2">
+                {t('register.specialistType')} *
+              </label>
+              <SpecialistTypeSelector
+                value={formData.specialist_type}
+                onChange={(value) => setFormData({ ...formData, specialist_type: value })}
+                required
+              />
+            </div>
+          )}
 
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm animate-slide-in">
@@ -252,19 +269,19 @@ export default function Register() {
             {loading ? (
               <>
                 <LoadingSpinner size="sm" />
-                <span>{t('creatingAccount')}</span>
+                <span>Creating account...</span>
               </>
             ) : (
-              t('createAccount')
+              t('register.createAccount')
             )}
           </button>
         </form>
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            {t('alreadyHaveAccount')}{' '}
+            {t('register.alreadyHaveAccount')}{' '}
             <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
-              {t('login')}
+              {t('register.signIn')}
             </Link>
           </p>
         </div>

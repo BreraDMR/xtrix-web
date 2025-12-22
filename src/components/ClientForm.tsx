@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
-import LoadingSpinner from './LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
+import LoadingSpinner from './LoadingSpinner'
 
 interface ClientFormProps {
   clientId?: number
@@ -31,8 +32,24 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<ClientData>({
     full_name: '',
-    owner_id: user?.id || 0,
+    owner_id: 1, // Will be set from auth
   })
+
+  // Get specialist profile to check if healthcare specialist
+  const { data: specialistProfile } = useQuery({
+    queryKey: ['specialist-profile'],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get('/specialist-profiles/me')
+        return data
+      } catch (error) {
+        return null
+      }
+    },
+    enabled: user?.role === 'specialist',
+  })
+
+  const isHealthcareSpecialist = specialistProfile?.specialist_category === 'healthcare'
 
   useEffect(() => {
     if (clientId) {
@@ -55,6 +72,19 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate healthcare requirements
+    if (isHealthcareSpecialist && !clientId) {
+      if (!formData.allergies || !formData.allergies.trim()) {
+        alert(t('clientForm.healthcareRequiredDescription'))
+        return
+      }
+      if (!formData.chronic_diseases || !formData.chronic_diseases.trim()) {
+        alert(t('clientForm.healthcareRequiredDescription'))
+        return
+      }
+    }
+    
     setLoading(true)
 
     try {
@@ -129,23 +159,42 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
         />
       </div>
 
+      {isHealthcareSpecialist && !clientId && (
+        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-yellow-800 text-sm font-medium mb-1">
+            {t('clientForm.healthcareRequired')}
+          </p>
+          <p className="text-yellow-700 text-xs">
+            {t('clientForm.healthcareRequiredDescription')}
+          </p>
+        </div>
+      )}
+
       <div>
-        <label className="block text-sm font-medium mb-1">Allergies</label>
+        <label className="block text-sm font-medium mb-1">
+          {t('clientForm.allergies')} {isHealthcareSpecialist && !clientId && '*'}
+        </label>
         <textarea
           value={formData.allergies || ''}
           onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
           rows={2}
+          required={isHealthcareSpecialist && !clientId}
           className="w-full px-3 py-2 border rounded-md"
+          placeholder={isHealthcareSpecialist ? t('clientForm.allergies') : ''}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Chronic Diseases</label>
+        <label className="block text-sm font-medium mb-1">
+          {t('clientForm.chronicDiseases')} {isHealthcareSpecialist && !clientId && '*'}
+        </label>
         <textarea
           value={formData.chronic_diseases || ''}
           onChange={(e) => setFormData({ ...formData, chronic_diseases: e.target.value })}
           rows={2}
+          required={isHealthcareSpecialist && !clientId}
           className="w-full px-3 py-2 border rounded-md"
+          placeholder={isHealthcareSpecialist ? t('clientForm.chronicDiseases') : ''}
         />
       </div>
 
@@ -178,7 +227,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          {t('cancel')}
+          Cancel
         </button>
         <button
           type="submit"
@@ -191,7 +240,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
               <span>Saving...</span>
             </>
           ) : (
-            clientId ? t('updateClient') : t('createClient')
+            clientId ? 'Update Client' : 'Create Client'
           )}
         </button>
       </div>

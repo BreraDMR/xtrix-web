@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
-import { useAuthStore } from '../store/authStore'
-import { useTranslation } from '../hooks/useTranslation'
 
 interface VisitFormProps {
   visitId?: number
@@ -25,8 +23,6 @@ interface VisitData {
 }
 
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
-  const { t } = useTranslation()
-  const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<any[]>([])
   const [services, setServices] = useState<any[]>([])
@@ -38,75 +34,11 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   
   const [formData, setFormData] = useState<VisitData>({
     client_id: 0,
-    specialist_id: user?.id || 0,
+    specialist_id: 1,
     date_start: getInitialDate(initialDateStart),
     date_end: initialDateEnd ? getInitialDate(initialDateEnd) : undefined,
     status: 'planned',
   })
-
-  // Update specialist_id when user loads
-  useEffect(() => {
-    if (user?.id && !visitId) {
-      setFormData(prev => ({ ...prev, specialist_id: user.id }))
-    }
-  }, [user?.id, visitId])
-
-  // Helper function to calculate end date
-  const calculateEndDate = (startDateStr: string, durationMinutes: number): string => {
-    if (!startDateStr) return ''
-    // Parse datetime-local format (YYYY-MM-DDTHH:mm)
-    // datetime-local format doesn't include timezone, so we need to parse it manually
-    const [datePart, timePart] = startDateStr.split('T')
-    if (!datePart || !timePart) return ''
-    
-    const [year, month, day] = datePart.split('-').map(Number)
-    const [hours, minutes] = timePart.split(':').map(Number)
-    
-    // Create date in local timezone
-    const startDate = new Date(year, month - 1, day, hours, minutes, 0)
-    if (isNaN(startDate.getTime())) return ''
-    
-    // Add duration
-    const endDate = new Date(startDate.getTime() + durationMinutes * 60000)
-    
-    // Format back to datetime-local format (YYYY-MM-DDTHH:mm)
-    const endYear = endDate.getFullYear()
-    const endMonth = String(endDate.getMonth() + 1).padStart(2, '0')
-    const endDay = String(endDate.getDate()).padStart(2, '0')
-    const endHours = String(endDate.getHours()).padStart(2, '0')
-    const endMinutes = String(endDate.getMinutes()).padStart(2, '0')
-    
-    return `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}`
-  }
-
-  // Auto-fill price when service is selected (only if price is not set)
-  useEffect(() => {
-    if (formData.service_id && services.length > 0 && formData.price === undefined) {
-      const selectedService = services.find(s => s.id === formData.service_id)
-      if (selectedService && selectedService.price) {
-        setFormData(prev => ({ ...prev, price: selectedService.price }))
-      }
-    }
-  }, [formData.service_id, services])
-
-  // Auto-calculate end date when service or start date changes
-  useEffect(() => {
-    if (formData.service_id && formData.date_start && services.length > 0) {
-      const selectedService = services.find(s => s.id === formData.service_id)
-      if (selectedService && selectedService.duration_minutes) {
-        const calculatedEndDate = calculateEndDate(formData.date_start, selectedService.duration_minutes)
-        if (calculatedEndDate) {
-          setFormData(prev => {
-            // Only update if end date is different to avoid unnecessary re-renders
-            if (prev.date_end !== calculatedEndDate) {
-              return { ...prev, date_end: calculatedEndDate }
-            }
-            return prev
-          })
-        }
-      }
-    }
-  }, [formData.date_start, formData.service_id, services])
 
   useEffect(() => {
     loadClients()
@@ -119,8 +51,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const loadClients = async () => {
     try {
       const { data } = await api.get('/clients')
-      // Backend returns PaginatedResponse with items array
-      setClients(Array.isArray(data) ? data : (data?.items || []))
+      setClients(data)
     } catch (error) {
       console.error('Failed to load clients:', error)
     }
@@ -129,8 +60,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const loadServices = async () => {
     try {
       const { data } = await api.get('/services')
-      // Backend returns PaginatedResponse with items array
-      setServices(Array.isArray(data) ? data : (data?.items || []))
+      setServices(data)
     } catch (error) {
       console.error('Failed to load services:', error)
     }
@@ -151,60 +81,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Validate required fields
-    if (!formData.client_id || formData.client_id === 0) {
-      alert('Please select a client')
-      return
-    }
-    
-    if (!formData.specialist_id || formData.specialist_id === 0) {
-      alert('Error: User not loaded. Please try again.')
-      return
-    }
-    
-    // Validate date range
-    if (formData.date_end) {
-      const startDate = new Date(formData.date_start)
-      const endDate = new Date(formData.date_end)
-      if (endDate <= startDate) {
-        alert('End date must be after start date')
-        return
-      }
-      // Check minimum duration (15 minutes)
-      const durationMinutes = (endDate.getTime() - startDate.getTime()) / (1000 * 60)
-      if (durationMinutes < 15) {
-        alert('Visit duration must be at least 15 minutes')
-        return
-      }
-    }
-    
     setLoading(true)
 
     try {
-      // Prepare data for API - only include fields that have values
-      const submitData: any = {
-        client_id: formData.client_id,
-        specialist_id: formData.specialist_id,
+      const submitData = {
+        ...formData,
         date_start: new Date(formData.date_start).toISOString(),
-        status: formData.status || 'planned',
-      }
-      
-      // Only include optional fields if they have values
-      if (formData.date_end) {
-        submitData.date_end = new Date(formData.date_end).toISOString()
-      }
-      if (formData.service_id) {
-        submitData.service_id = formData.service_id
-      }
-      if (formData.service_name) {
-        submitData.service_name = formData.service_name
-      }
-      if (formData.note) {
-        submitData.note = formData.note
-      }
-      if (formData.price !== undefined && formData.price !== null) {
-        submitData.price = formData.price
+        date_end: formData.date_end ? new Date(formData.date_end).toISOString() : undefined,
       }
 
       if (visitId) {
@@ -214,12 +97,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       }
       onSuccess()
     } catch (error: any) {
-      console.error('Visit save error:', error)
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.error?.message ||
-                          error.message || 
-                          'Failed to save visit'
-      alert(errorMessage)
+      alert(error.response?.data?.detail || 'Failed to save visit')
     } finally {
       setLoading(false)
     }
@@ -228,7 +106,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">{t('visitClient')} *</label>
+        <label className="block text-sm font-medium mb-1">Client *</label>
         <select
           value={formData.client_id}
           onChange={(e) => setFormData({ ...formData, client_id: parseInt(e.target.value) })}
@@ -245,36 +123,24 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">{t('visitService')}</label>
+        <label className="block text-sm font-medium mb-1">Service</label>
         <select
           value={formData.service_id || ''}
-          onChange={(e) => {
-            const serviceId = e.target.value ? parseInt(e.target.value) : undefined
+          onChange={(e) =>
             setFormData({
               ...formData,
-              service_id: serviceId,
-              // Clear price and end date when service is deselected
-              price: serviceId ? formData.price : undefined,
-              date_end: serviceId ? formData.date_end : undefined,
+              service_id: e.target.value ? parseInt(e.target.value) : undefined,
             })
-          }}
+          }
           className="w-full px-3 py-2 border rounded-md"
         >
           <option value="">Select service...</option>
           {services.map((service) => (
             <option key={service.id} value={service.id}>
-              {service.name} ({service.duration_minutes} min{service.price ? ` - ${service.price.toFixed(2)}` : ''})
+              {service.name} ({service.duration_minutes} min)
             </option>
           ))}
         </select>
-        {formData.service_id && (() => {
-          const selectedService = services.find(s => s.id === formData.service_id)
-          return selectedService ? (
-            <p className="mt-1 text-xs text-gray-500">
-              Auto-filled: Duration {selectedService.duration_minutes} min{selectedService.price ? `, Price ${selectedService.price.toFixed(2)}` : ''}
-            </p>
-          ) : null
-        })()}
       </div>
 
       <div>
@@ -289,7 +155,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">{t('visitStartTime')} *</label>
+          <label className="block text-sm font-medium mb-1">Start Date & Time *</label>
           <input
             type="datetime-local"
             value={formData.date_start}
@@ -299,20 +165,19 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">{t('visitEndTime')}</label>
+          <label className="block text-sm font-medium mb-1">End Date & Time</label>
           <input
             type="datetime-local"
             value={formData.date_end || ''}
             onChange={(e) => setFormData({ ...formData, date_end: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
           />
-          <p className="mt-1 text-xs text-gray-500">Auto-calculated from start time + service duration</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Price (optional)</label>
+          <label className="block text-sm font-medium mb-1">Price</label>
           <input
             type="number"
             step="0.01"
@@ -320,10 +185,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             onChange={(e) =>
               setFormData({ ...formData, price: e.target.value ? parseFloat(e.target.value) : undefined })
             }
-            placeholder="Auto-filled from service"
             className="w-full px-3 py-2 border rounded-md"
           />
-          <p className="mt-1 text-xs text-gray-500">Can be manually adjusted</p>
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Status</label>
@@ -332,16 +195,16 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="planned">{t('planned')}</option>
-            <option value="in_progress">{t('inProgress')}</option>
-            <option value="completed">{t('completed')}</option>
-            <option value="cancelled">{t('cancelled')}</option>
+            <option value="planned">Planned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
           </select>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">{t('visitNotes')}</label>
+        <label className="block text-sm font-medium mb-1">Notes</label>
         <textarea
           value={formData.note || ''}
           onChange={(e) => setFormData({ ...formData, note: e.target.value })}
@@ -356,7 +219,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          {t('cancel')}
+          Cancel
         </button>
         <button
           type="submit"
@@ -369,7 +232,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               <span>Saving...</span>
             </>
           ) : (
-            visitId ? t('updateVisit') : t('createVisit')
+            visitId ? 'Update Visit' : 'Create Visit'
           )}
         </button>
       </div>

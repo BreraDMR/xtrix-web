@@ -11,8 +11,7 @@ export default function CalendarPage() {
     queryKey: ['visits'],
     queryFn: async () => {
       const { data } = await api.get('/visits')
-      // Backend returns PaginatedResponse with items array
-      return Array.isArray(data) ? data : (data?.items || [])
+      return data
     },
   })
 

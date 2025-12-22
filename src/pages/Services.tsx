@@ -4,7 +4,6 @@ import api from '../api/client'
 import ServiceForm from '../components/ServiceForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { useTranslation } from '../hooks/useTranslation'
 
 interface Service {
   id: number
@@ -15,24 +14,22 @@ interface Service {
 }
 
 export default function Services() {
-  const { t } = useTranslation()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: services, isLoading, refetch } = useQuery<Service[]>({
+  const { data: services, isLoading } = useQuery<Service[]>({
     queryKey: ['services'],
     queryFn: async () => {
       const { data } = await api.get('/services')
-      // Backend returns PaginatedResponse with items array
-      return Array.isArray(data) ? data : (data?.items || [])
+      return data
     },
   })
 
   const filteredServices = useMemo(() => {
-    if (!services || !Array.isArray(services)) return []
+    if (!services) return []
     
     return services.filter((service) => {
       const matchesSearch =
@@ -48,12 +45,10 @@ export default function Services() {
     })
   }, [services, searchQuery, activeFilter])
 
-  const handleSuccess = async () => {
+  const handleSuccess = () => {
     setShowForm(false)
     setEditingId(undefined)
-    // Invalidate and refetch to get the updated list
-    await queryClient.invalidateQueries({ queryKey: ['services'] })
-    await refetch()
+    queryClient.invalidateQueries({ queryKey: ['services'] })
   }
 
   const handleEdit = (id: number) => {
@@ -72,7 +67,7 @@ export default function Services() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('services')}</h1>
+        <h1 className="text-2xl font-bold">Services</h1>
         {!showForm && (
           <button
             onClick={() => {
@@ -81,7 +76,7 @@ export default function Services() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            {t('addService')}
+            Add Service
           </button>
         )}
       </div>
@@ -89,7 +84,7 @@ export default function Services() {
       {!showForm && (
         <div className="mb-6 space-y-4">
           <SearchBar
-            placeholder={t('search') + '...'}
+            placeholder="Search by service name..."
             onSearch={setSearchQuery}
           />
           <div className="flex gap-4">
@@ -98,9 +93,9 @@ export default function Services() {
               onChange={(e) => setActiveFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">{t('allServices')}</option>
-              <option value="active">{t('activeOnly')}</option>
-              <option value="inactive">{t('inactiveOnly')}</option>
+              <option value="">All Services</option>
+              <option value="active">Active Only</option>
+              <option value="inactive">Inactive Only</option>
             </select>
             {(searchQuery || activeFilter) && (
               <button
@@ -110,7 +105,7 @@ export default function Services() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
               >
-                {t('clearFilters')}
+                Clear filters
               </button>
             )}
           </div>
@@ -130,21 +125,20 @@ export default function Services() {
         </div>
       ) : (
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('name')}
+                Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('duration')}
+                Duration
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('servicePrice')}
+                Price
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('status')}
+                Status
               </th>
             </tr>
           </thead>
@@ -153,8 +147,8 @@ export default function Services() {
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                   {searchQuery || activeFilter
-                    ? t('noServicesMatchFilters')
-                    : t('noServicesFound')}
+                    ? 'No services match your filters'
+                    : 'No services found'}
                 </td>
               </tr>
             ) : (
@@ -167,7 +161,7 @@ export default function Services() {
                   {service.duration_minutes} min
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {service.price.toFixed(2)}
+                  ${service.price.toFixed(2)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
@@ -177,7 +171,7 @@ export default function Services() {
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    {service.is_active ? t('serviceActive') : t('inactiveOnly')}
+                    {service.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -185,7 +179,7 @@ export default function Services() {
                     onClick={() => handleEdit(service.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    {t('edit')}
+                    Edit
                   </button>
                 </td>
               </tr>
@@ -193,7 +187,6 @@ export default function Services() {
             )}
           </tbody>
         </table>
-        </div>
       </div>
       )}
     </div>

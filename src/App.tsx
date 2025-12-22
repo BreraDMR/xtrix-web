@@ -8,6 +8,7 @@ import Clients from './pages/Clients'
 import Visits from './pages/Visits'
 import CalendarPage from './pages/CalendarPage'
 import Services from './pages/Services'
+import SpecialistProfile from './pages/SpecialistProfile'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -71,7 +72,6 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-  // Force rebuild v2
   return (
     <BrowserRouter
       future={{
@@ -95,6 +95,7 @@ function App() {
           <Route path="visits" element={<Visits />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="services" element={<Services />} />
+          <Route path="profile" element={<SpecialistProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>

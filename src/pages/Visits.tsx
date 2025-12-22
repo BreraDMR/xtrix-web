@@ -1,13 +1,10 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { isAfter, isBefore, startOfDay, endOfDay } from 'date-fns'
+import { format, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns'
 import api from '../api/client'
 import VisitForm from '../components/VisitForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { useLocaleStore } from '../store/localeStore'
-import { t } from '../i18n/translations'
-import { formatDate, dateFormats } from '../utils/dateFormat'
 
 interface Visit {
   id: number
@@ -19,7 +16,6 @@ interface Visit {
 }
 
 export default function Visits() {
-  const { locale } = useLocaleStore()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
@@ -28,17 +24,16 @@ export default function Visits() {
   const [dateTo, setDateTo] = useState<string>('')
   const queryClient = useQueryClient()
 
-  const { data: visits, isLoading, refetch } = useQuery<Visit[]>({
+  const { data: visits, isLoading } = useQuery<Visit[]>({
     queryKey: ['visits'],
     queryFn: async () => {
       const { data } = await api.get('/visits')
-      // Backend returns PaginatedResponse with items array
-      return Array.isArray(data) ? data : (data?.items || [])
+      return data
     },
   })
 
   const filteredVisits = useMemo(() => {
-    if (!visits || !Array.isArray(visits)) return []
+    if (!visits) return []
     
     return visits.filter((visit) => {
       const matchesSearch =
@@ -64,12 +59,10 @@ export default function Visits() {
     })
   }, [visits, searchQuery, statusFilter, dateFrom, dateTo])
 
-  const handleSuccess = async () => {
+  const handleSuccess = () => {
     setShowForm(false)
     setEditingId(undefined)
-    // Invalidate and refetch to get the updated list
-    await queryClient.invalidateQueries({ queryKey: ['visits'] })
-    await refetch()
+    queryClient.invalidateQueries({ queryKey: ['visits'] })
   }
 
   const handleEdit = (id: number) => {
@@ -88,8 +81,8 @@ export default function Visits() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('visits', locale)}</h1>
-            {!showForm && (
+        <h1 className="text-2xl font-bold">Visits</h1>
+        {!showForm && (
           <button
             onClick={() => {
               setEditingId(undefined)
@@ -97,7 +90,7 @@ export default function Visits() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            {t('newVisit', locale)}
+            New Visit
           </button>
         )}
       </div>
@@ -105,7 +98,7 @@ export default function Visits() {
       {!showForm && (
         <div className="mb-6 space-y-4">
           <SearchBar
-            placeholder={t('search', locale) + '...'}
+            placeholder="Search by service or client name..."
             onSearch={setSearchQuery}
           />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -114,11 +107,11 @@ export default function Visits() {
               onChange={(e) => setStatusFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">{t('allStatuses', locale)}</option>
-              <option value="planned">{t('planned', locale)}</option>
-              <option value="in_progress">{t('inProgress', locale)}</option>
-              <option value="completed">{t('completed', locale)}</option>
-              <option value="cancelled">{t('cancelled', locale)}</option>
+              <option value="">All Statuses</option>
+              <option value="planned">Planned</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
             </select>
             <input
               type="date"
@@ -144,7 +137,7 @@ export default function Visits() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md"
               >
-                {t('clearFilters', locale)}
+                Clear filters
               </button>
             )}
           </div>
@@ -164,21 +157,20 @@ export default function Visits() {
         </div>
       ) : (
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('visitDate', locale)}
+                Date
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('visitService', locale)}
+                Service
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Status
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('visitPrice', locale)}
+                Price
               </th>
             </tr>
           </thead>
@@ -187,15 +179,15 @@ export default function Visits() {
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                   {searchQuery || statusFilter || dateFrom || dateTo
-                    ? t('noVisitsMatchFilters', locale)
-                    : t('noVisitsFound', locale)}
+                    ? 'No visits match your filters'
+                    : 'No visits found'}
                 </td>
               </tr>
             ) : (
               filteredVisits.map((visit) => (
               <tr key={visit.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {formatDate(visit.date_start, dateFormats.full(locale), locale)}
+                  {format(new Date(visit.date_start), 'PPp')}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {visit.service_name || '-'}
@@ -206,14 +198,14 @@ export default function Visits() {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {visit.price ? visit.price.toFixed(2) : '-'}
+                  {visit.price ? `$${visit.price.toFixed(2)}` : '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button
                     onClick={() => handleEdit(visit.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    {t('edit', locale)}
+                    Edit
                   </button>
                 </td>
               </tr>
@@ -221,7 +213,6 @@ export default function Visits() {
             )}
           </tbody>
         </table>
-        </div>
       </div>
       )}
     </div>
