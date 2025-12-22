@@ -24,8 +24,9 @@ export default function Clients() {
   const { data: clients, isLoading } = useQuery<Client[]>({
     queryKey: ['clients'],
     queryFn: async () => {
-      const { data } = await api.get('/clients')
-      return data
+      const { data } = await api.get('/clients/')
+      // API returns paginated response, extract items array
+      return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
   })
 

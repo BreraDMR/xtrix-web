@@ -23,8 +23,9 @@ export default function Services() {
   const { data: services, isLoading } = useQuery<Service[]>({
     queryKey: ['services'],
     queryFn: async () => {
-      const { data } = await api.get('/services')
-      return data
+      const { data } = await api.get('/services/')
+      // API returns paginated response, extract items array
+      return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
   })
 

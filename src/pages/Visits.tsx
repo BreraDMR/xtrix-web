@@ -27,8 +27,9 @@ export default function Visits() {
   const { data: visits, isLoading } = useQuery<Visit[]>({
     queryKey: ['visits'],
     queryFn: async () => {
-      const { data } = await api.get('/visits')
-      return data
+      const { data } = await api.get('/visits/')
+      // API returns paginated response, extract items array
+      return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
   })
 
