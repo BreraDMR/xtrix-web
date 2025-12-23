@@ -165,7 +165,7 @@ interface Service {
                   {service.duration_minutes} {t('services.min')}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  ${service.price.toFixed(2)}
+                  {service.price.toFixed(2)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span

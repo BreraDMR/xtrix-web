@@ -354,6 +354,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.clearFilters': { en: 'Clear filters', ru: 'Очистить фильтры', cz: 'Vymazat filtry' },
   'visits.fromDate': { en: 'From date', ru: 'С даты', cz: 'Od data' },
   'visits.toDate': { en: 'To date', ru: 'По дату', cz: 'Do data' },
+  'visits.dateFormat': { en: 'YYYY-MM-DD', ru: 'ГГГГ-ММ-ДД', cz: 'RRRR-MM-DD' },
   'visits.noVisitsMatch': { en: 'No visits match your filters', ru: 'Нет визитов, соответствующих фильтрам', cz: 'Žádné návštěvy neodpovídají filtru' },
   'visits.noVisitsFound': { en: 'No visits found', ru: 'Визиты не найдены', cz: 'Návštěvy nenalezeny' },
   'visits.date': { en: 'Date', ru: 'Дата', cz: 'Datum' },
@@ -366,6 +367,13 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.advancedViewDescription': { en: 'Click on a time slot to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на временной слот, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na časový slot pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },
   'calendar.simpleView': { en: 'Simple View', ru: 'Простой вид', cz: 'Jednoduché zobrazení' },
   'calendar.advancedView': { en: 'Advanced View', ru: 'Расширенный вид', cz: 'Pokročilé zobrazení' },
+  'calendar.noVisits': { en: 'No visits on this date', ru: 'Нет визитов на эту дату', cz: 'Na tento den žádné návštěvy' },
+  'calendar.visit': { en: 'visit', ru: 'визит', cz: 'návštěva' },
+  'calendar.visits': { en: 'visits', ru: 'визитов', cz: 'návštěv' },
+  'calendar.backToCalendar': { en: 'Back to Calendar', ru: 'Назад к календарю', cz: 'Zpět do kalendáře' },
+  'calendar.previous': { en: 'Previous', ru: 'Назад', cz: 'Předchozí' },
+  'calendar.next': { en: 'Next', ru: 'Вперед', cz: 'Další' },
+  'calendar.more': { en: 'more', ru: 'еще', cz: 'více' },
 }
 
 export default translations

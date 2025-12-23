@@ -42,7 +42,7 @@ export default function Dashboard() {
             <LoadingSpinner size="md" />
           ) : (
             <p className="text-3xl font-bold text-green-600">
-              ${metrics?.revenue?.toFixed(2) || '0.00'}
+              {metrics?.revenue?.toFixed(2) || '0.00'}
             </p>
           )}
           <p className="text-sm text-gray-500 mt-2">{t('dashboard.thisMonth')}</p>

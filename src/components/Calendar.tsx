@@ -1,6 +1,10 @@
 import { useState, useMemo } from 'react'
 import { format } from 'date-fns'
+import { ru } from 'date-fns/locale'
+import { cs } from 'date-fns/locale'
 import VisitForm from './VisitForm'
+import { useTranslation } from '../hooks/useTranslation'
+import { useLocaleStore } from '../store/localeStore'
 
 interface CalendarProps {
   visits: any[]
@@ -8,10 +12,14 @@ interface CalendarProps {
 }
 
 export default function Calendar({ visits, onRefresh }: CalendarProps) {
+  const { t } = useTranslation()
+  const locale = useLocaleStore((state) => state.locale)
   const [selectedSlot, setSelectedSlot] = useState<{ start: Date; end: Date } | null>(null)
   const [editingVisitId, setEditingVisitId] = useState<number | undefined>()
   const [showForm, setShowForm] = useState(false)
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  
+  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : undefined
 
   const visitsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {}
@@ -85,7 +93,17 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
   }
 
   const days = getDaysInMonth()
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  
+  // Week days based on locale
+  const weekDays = useMemo(() => {
+    if (!dateLocale) return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const days = []
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(2024, 0, i + 1) // January 2024, days 1-7
+      days.push(format(date, 'EEE', { locale: dateLocale }))
+    }
+    return days
+  }, [dateLocale])
 
   return (
     <div>
@@ -95,7 +113,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
             onClick={handleFormCancel}
             className="mb-4 text-gray-600 hover:text-gray-800"
           >
-            ← Back to Calendar
+            ← {t('calendar.backToCalendar')}
           </button>
           <VisitForm
             visitId={editingVisitId}
@@ -116,10 +134,10 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
               }}
               className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
             >
-              ← Previous
+              ← {t('calendar.previous')}
             </button>
             <h2 className="text-xl font-semibold">
-              {format(currentMonth, 'MMMM yyyy')}
+              {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
             </h2>
             <button
               onClick={() => {
@@ -129,7 +147,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
               }}
               className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
             >
-              Next →
+              {t('calendar.next')} →
             </button>
           </div>
           
@@ -174,12 +192,12 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                           }`}
                           title={visit.service_name || 'Visit'}
                         >
-                          {format(new Date(visit.date_start), 'HH:mm')} {visit.service_name || 'Visit'}
+                          {format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })} {visit.service_name || t('visits.title')}
                         </div>
                       ))}
                       {dayVisits.length > 2 && (
                         <div className="text-xs text-gray-500">
-                          +{dayVisits.length - 2} more
+                          +{dayVisits.length - 2} {t('calendar.more')}
                         </div>
                       )}
                     </div>

@@ -1,14 +1,20 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns'
+import { ru } from 'date-fns/locale'
+import { cs } from 'date-fns/locale'
 import api from '../api/client'
 import VisitForm from '../components/VisitForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
+import { useLocaleStore } from '../store/localeStore'
 
 export default function Visits() {
   const { t } = useTranslation()
+  const locale = useLocaleStore((state) => state.locale)
+  
+  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : undefined
 
 interface Visit {
   id: number
@@ -121,14 +127,14 @@ interface Visit {
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              placeholder={t('visits.fromDate')}
+              title={t('visits.fromDate')}
               className="px-4 py-2 border rounded-md"
             />
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              placeholder={t('visits.toDate')}
+              title={t('visits.toDate')}
               className="px-4 py-2 border rounded-md"
             />
             {(searchQuery || statusFilter || dateFrom || dateTo) && (
@@ -191,7 +197,7 @@ interface Visit {
               filteredVisits.map((visit) => (
               <tr key={visit.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {format(new Date(visit.date_start), 'PPp')}
+                  {format(new Date(visit.date_start), 'PPp', { locale: dateLocale })}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {visit.service_name || '-'}
@@ -202,7 +208,7 @@ interface Visit {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {visit.price ? `$${visit.price.toFixed(2)}` : '-'}
+                  {visit.price ? visit.price.toFixed(2) : '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button

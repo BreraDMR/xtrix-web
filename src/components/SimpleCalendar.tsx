@@ -10,10 +10,17 @@ interface SimpleCalendarProps {
 }
 
 export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProps) {
+  const { t } = useTranslation()
+  const locale = useLocaleStore((state) => state.locale)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedSlot, setSelectedSlot] = useState<{ start: Date; end: Date } | null>(null)
   const [editingVisitId, setEditingVisitId] = useState<number | undefined>()
   const [showForm, setShowForm] = useState(false)
+  
+  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : undefined
+  
+  // Map locale to react-calendar locale
+  const calendarLocale = locale === 'ru' ? 'ru' : locale === 'cz' ? 'cs' : 'en'
 
   const visitsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {}
@@ -87,12 +94,13 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           onClickDay={handleDateClick}
           tileContent={tileContent}
           className="w-full"
+          locale={calendarLocale}
         />
       </div>
 
       <div>
         <h3 className="text-lg font-semibold mb-4">
-          Visits for {format(selectedDate, 'MMMM d, yyyy')}
+          {t('visits.title')} {format(selectedDate, 'd MMMM yyyy', { locale: dateLocale })}
         </h3>
         {showForm ? (
           <div className="bg-white p-4 rounded-lg shadow">
@@ -100,7 +108,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
               onClick={handleFormCancel}
               className="mb-4 text-sm text-gray-600 hover:text-gray-800"
             >
-              ← Back
+              ← {t('common.cancel')}
             </button>
             <VisitForm
               visitId={editingVisitId}
@@ -127,8 +135,8 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                         {visit.service_name || 'Visit'}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {format(new Date(visit.date_start), 'HH:mm')}
-                        {visit.date_end && ` - ${format(new Date(visit.date_end), 'HH:mm')}`}
+                        {format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })}
+                        {visit.date_end && ` - ${format(new Date(visit.date_end), 'HH:mm', { locale: dateLocale })}`}
                       </p>
                     </div>
                     <span
@@ -146,7 +154,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                     </span>
                   </div>
                   {visit.price && (
-                    <p className="text-sm text-gray-500 mt-1">${visit.price.toFixed(2)}</p>
+                    <p className="text-sm text-gray-500 mt-1">{visit.price.toFixed(2)}</p>
                   )}
                 </div>
               ))
@@ -163,7 +171,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
               }}
               className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
-              Add Visit
+              {t('visits.newVisit')}
             </button>
           </div>
         )}
