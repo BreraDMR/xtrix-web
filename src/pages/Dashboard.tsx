@@ -35,9 +35,6 @@ export default function Dashboard() {
         <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-700">Monthly Revenue</h3>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">💰</span>
-            </div>
           </div>
           {isLoading ? (
             <LoadingSpinner size="md" />
