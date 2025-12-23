@@ -22,9 +22,6 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
   const [showForm, setShowForm] = useState(false)
   
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : undefined
-  
-  // Map locale to react-calendar locale
-  const calendarLocale = locale === 'ru' ? 'ru' : locale === 'cz' ? 'cs' : 'en'
 
   const visitsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {}
