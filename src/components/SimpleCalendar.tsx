@@ -72,7 +72,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     return (
       <div className="mt-1">
         <div className="text-xs text-blue-600 font-semibold">
-          {dayVisits.length} {dayVisits.length === 1 ? 'visit' : 'visits'}
+          {dayVisits.length} {dayVisits.length === 1 ? t('calendar.visit') : t('calendar.visits')}
         </div>
       </div>
     )
@@ -95,7 +95,6 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           onClickDay={handleDateClick}
           tileContent={tileContent}
           className="w-full"
-          locale={calendarLocale}
         />
       </div>
 
