@@ -1,8 +1,12 @@
 import { useState, useMemo } from 'react'
 import Calendar from 'react-calendar'
 import { format } from 'date-fns'
+import { ru } from 'date-fns/locale'
+import { cs } from 'date-fns/locale'
 import 'react-calendar/dist/Calendar.css'
 import VisitForm from './VisitForm'
+import { useTranslation } from '../hooks/useTranslation'
+import { useLocaleStore } from '../store/localeStore'
 
 interface SimpleCalendarProps {
   visits: any[]
@@ -121,7 +125,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
         ) : (
           <div className="space-y-2">
             {dayVisits.length === 0 ? (
-              <p className="text-gray-500">No visits on this date</p>
+              <p className="text-gray-500">{t('calendar.noVisits')}</p>
             ) : (
               dayVisits.map((visit) => (
                 <div
@@ -132,7 +136,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-semibold">
-                        {visit.service_name || 'Visit'}
+                        {visit.service_name || t('visits.title')}
                       </p>
                       <p className="text-sm text-gray-600">
                         {format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })}
