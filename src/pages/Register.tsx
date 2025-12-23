@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import SpecialistTypeSelector from '../components/SpecialistTypeSelector'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
 import { logger } from '../utils/logger'
 
@@ -127,6 +128,9 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-2xl animate-fade-in">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Xtrix</h2>

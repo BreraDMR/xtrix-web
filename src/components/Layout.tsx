@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Layout() {
   const { user, logout } = useAuthStore()
@@ -43,6 +44,7 @@ export default function Layout() {
               ))}
             </div>
             <div className="flex items-center space-x-4">
+              <LanguageSwitcher />
               <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
                   {user?.full_name?.charAt(0).toUpperCase() || 'U'}

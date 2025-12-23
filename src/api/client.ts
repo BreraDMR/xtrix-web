@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
+import { useLocaleStore } from '../store/localeStore'
 
 // Use environment variable for API URL, fallback to /api for dev proxy
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
@@ -31,7 +32,8 @@ api.interceptors.request.use((config) => {
     }
   }
   
-  const locale = navigator.language.split('-')[0] || 'en'
+  // Get locale from store (falls back to browser language if store not initialized)
+  const locale = useLocaleStore.getState().locale || navigator.language.split('-')[0] || 'en'
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
