@@ -1,11 +1,13 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import LanguageSwitcher from './LanguageSwitcher'
+import { useTranslation } from '../hooks/useTranslation'
 
 export default function Layout() {
   const { user, logout } = useAuthStore()
   const location = useLocation()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const handleLogout = () => {
     logout()
@@ -13,12 +15,12 @@ export default function Layout() {
   }
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: '📊' },
-    { path: '/clients', label: 'Clients', icon: '👥' },
-    { path: '/visits', label: 'Visits', icon: '📅' },
-    { path: '/calendar', label: 'Calendar', icon: '🗓️' },
-    { path: '/services', label: 'Services', icon: '💆' },
-    ...(user?.role === 'specialist' ? [{ path: '/profile', label: 'Profile', icon: '👤' }] : []),
+    { path: '/', label: t('nav.dashboard'), icon: '📊' },
+    { path: '/clients', label: t('nav.clients'), icon: '👥' },
+    { path: '/visits', label: t('nav.visits'), icon: '📅' },
+    { path: '/calendar', label: t('nav.calendar'), icon: '🗓️' },
+    { path: '/services', label: t('nav.services'), icon: '💆' },
+    ...(user?.role === 'specialist' ? [{ path: '/profile', label: t('nav.profile'), icon: '👤' }] : []),
   ]
 
   return (
@@ -55,7 +57,7 @@ export default function Layout() {
                 onClick={handleLogout}
                 className="px-4 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all font-medium"
               >
-                Logout
+                {t('nav.logout')}
               </button>
             </div>
           </div>

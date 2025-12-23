@@ -4,9 +4,11 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LanguageSwitcher from '../components/LanguageSwitcher'
+import { useTranslation } from '../hooks/useTranslation'
 import { logger } from '../utils/logger'
 
 export default function Login() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -82,7 +84,7 @@ export default function Login() {
       const errorMessage = err.response?.data?.error?.message || 
                           err.response?.data?.detail || 
                           err.message || 
-                          'Login failed'
+                          t('login.failed')
       setError(errorMessage)
     } finally {
       setLoading(false)
@@ -97,12 +99,12 @@ export default function Login() {
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-2xl animate-fade-in">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Xtrix</h2>
-          <p className="text-gray-600">Sign in to your account</p>
+          <p className="text-gray-600">{t('login.subtitle')}</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email
+              {t('login.email')}
             </label>
             <input
               id="email"
@@ -117,7 +119,7 @@ export default function Login() {
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password
+              {t('login.password')}
             </label>
             <input
               id="password"
@@ -143,19 +145,19 @@ export default function Login() {
             {loading ? (
               <>
                 <LoadingSpinner size="sm" />
-                <span>Logging in...</span>
+                <span>{t('login.loggingIn')}</span>
               </>
             ) : (
-              'Sign in'
+              t('login.signIn')
             )}
           </button>
         </form>
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
+            {t('login.dontHaveAccount')}{' '}
             <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
-              Sign up
+              {t('login.signUp')}
             </Link>
           </p>
         </div>

@@ -4,6 +4,10 @@ import api from '../api/client'
 import ServiceForm from '../components/ServiceForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useTranslation } from '../hooks/useTranslation'
+
+export default function Services() {
+  const { t } = useTranslation()
 
 interface Service {
   id: number
@@ -13,7 +17,6 @@ interface Service {
   is_active: boolean
 }
 
-export default function Services() {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
@@ -68,7 +71,7 @@ export default function Services() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Services</h1>
+        <h1 className="text-2xl font-bold">{t('services.title')}</h1>
         {!showForm && (
           <button
             onClick={() => {
@@ -77,7 +80,7 @@ export default function Services() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            Add Service
+            {t('services.addService')}
           </button>
         )}
       </div>
@@ -85,7 +88,7 @@ export default function Services() {
       {!showForm && (
         <div className="mb-6 space-y-4">
           <SearchBar
-            placeholder="Search by service name..."
+            placeholder={t('services.searchPlaceholder')}
             onSearch={setSearchQuery}
           />
           <div className="flex gap-4">
@@ -94,9 +97,9 @@ export default function Services() {
               onChange={(e) => setActiveFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">All Services</option>
-              <option value="active">Active Only</option>
-              <option value="inactive">Inactive Only</option>
+              <option value="">{t('services.allServices')}</option>
+              <option value="active">{t('services.activeOnly')}</option>
+              <option value="inactive">{t('services.inactiveOnly')}</option>
             </select>
             {(searchQuery || activeFilter) && (
               <button
@@ -106,7 +109,7 @@ export default function Services() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
               >
-                Clear filters
+                {t('services.clearFilters')}
               </button>
             )}
           </div>
@@ -130,16 +133,16 @@ export default function Services() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Name
+                {t('services.name')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Duration
+                {t('services.duration')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Price
+                {t('services.price')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Status
+                {t('services.status')}
               </th>
             </tr>
           </thead>
@@ -148,8 +151,8 @@ export default function Services() {
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                   {searchQuery || activeFilter
-                    ? 'No services match your filters'
-                    : 'No services found'}
+                    ? t('services.noServicesMatch')
+                    : t('services.noServicesFound')}
                 </td>
               </tr>
             ) : (
@@ -159,7 +162,7 @@ export default function Services() {
                   {service.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {service.duration_minutes} min
+                  {service.duration_minutes} {t('services.min')}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   ${service.price.toFixed(2)}
@@ -172,7 +175,7 @@ export default function Services() {
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    {service.is_active ? 'Active' : 'Inactive'}
+                    {service.is_active ? t('services.active') : t('services.inactive')}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -180,7 +183,7 @@ export default function Services() {
                     onClick={() => handleEdit(service.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    Edit
+                    {t('common.edit')}
                   </button>
                 </td>
               </tr>

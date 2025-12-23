@@ -2,8 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
+import { useTranslation } from '../hooks/useTranslation'
 
 export default function Dashboard() {
+  const { t } = useTranslation()
   const { data: metrics, isLoading } = useQuery({
     queryKey: ['metrics'],
     queryFn: async () => {
@@ -28,13 +30,13 @@ export default function Dashboard() {
   return (
     <div className="animate-fade-in">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Overview of your business</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('dashboard.title')}</h1>
+        <p className="text-gray-600">{t('dashboard.subtitle')}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-700">Monthly Revenue</h3>
+            <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.monthlyRevenue')}</h3>
           </div>
           {isLoading ? (
             <LoadingSpinner size="md" />
@@ -43,7 +45,7 @@ export default function Dashboard() {
               ${metrics?.revenue?.toFixed(2) || '0.00'}
             </p>
           )}
-          <p className="text-sm text-gray-500 mt-2">This month</p>
+          <p className="text-sm text-gray-500 mt-2">{t('dashboard.thisMonth')}</p>
         </div>
       </div>
     </div>

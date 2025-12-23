@@ -4,6 +4,10 @@ import api from '../api/client'
 import ClientForm from '../components/ClientForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useTranslation } from '../hooks/useTranslation'
+
+export default function Clients() {
+  const { t } = useTranslation()
 
 interface Client {
   id: number
@@ -14,7 +18,6 @@ interface Client {
   gender?: string
 }
 
-export default function Clients() {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
@@ -68,7 +71,7 @@ export default function Clients() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Clients</h1>
+        <h1 className="text-2xl font-bold">{t('clients.title')}</h1>
         {!showForm && (
           <button
             onClick={() => {
@@ -77,7 +80,7 @@ export default function Clients() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            Add Client
+            {t('clients.addClient')}
           </button>
         )}
       </div>
@@ -85,7 +88,7 @@ export default function Clients() {
       {!showForm && (
         <div className="mb-6 space-y-4">
           <SearchBar
-            placeholder="Search by name, phone, or email..."
+            placeholder={t('clients.searchPlaceholder')}
             onSearch={setSearchQuery}
           />
           <div className="flex gap-4">
@@ -94,10 +97,10 @@ export default function Clients() {
               onChange={(e) => setGenderFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">All Genders</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="">{t('clients.allGenders')}</option>
+              <option value="male">{t('clients.male')}</option>
+              <option value="female">{t('clients.female')}</option>
+              <option value="other">{t('clients.other')}</option>
             </select>
             {(searchQuery || genderFilter) && (
               <button
@@ -107,7 +110,7 @@ export default function Clients() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
               >
-                Clear filters
+                {t('clients.clearFilters')}
               </button>
             )}
           </div>
@@ -131,13 +134,13 @@ export default function Clients() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Name
+                {t('clients.name')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Phone
+                {t('clients.phone')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Email
+                {t('clients.email')}
               </th>
             </tr>
           </thead>
@@ -145,7 +148,7 @@ export default function Clients() {
             {filteredClients.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-                  {searchQuery || genderFilter ? 'No clients match your filters' : 'No clients found'}
+                  {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
                 </td>
               </tr>
             ) : (
@@ -165,7 +168,7 @@ export default function Clients() {
                     onClick={() => handleEdit(client.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    Edit
+                    {t('common.edit')}
                   </button>
                 </td>
               </tr>

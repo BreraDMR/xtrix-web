@@ -3,8 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import Calendar from '../components/Calendar'
 import SimpleCalendar from '../components/SimpleCalendar'
+import { useTranslation } from '../hooks/useTranslation'
 
 export default function CalendarPage() {
+  const { t } = useTranslation()
   const [view, setView] = useState<'simple' | 'advanced'>('simple')
   
   const { data: visits, refetch } = useQuery({
@@ -20,11 +22,11 @@ export default function CalendarPage() {
     <div>
       <div className="mb-6 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Calendar</h1>
+          <h1 className="text-2xl font-bold">{t('calendar.title')}</h1>
           <p className="text-gray-600 mt-2">
             {view === 'simple' 
-              ? 'Click on a date to create a visit, or click on an existing visit to edit it.'
-              : 'Click on a time slot to create a visit, or click on an existing visit to edit it.'}
+              ? t('calendar.simpleViewDescription')
+              : t('calendar.advancedViewDescription')}
           </p>
         </div>
         <div className="flex gap-2">
@@ -36,7 +38,7 @@ export default function CalendarPage() {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Simple View
+            {t('calendar.simpleView')}
           </button>
           <button
             onClick={() => setView('advanced')}
@@ -46,7 +48,7 @@ export default function CalendarPage() {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Advanced View
+            {t('calendar.advancedView')}
           </button>
         </div>
       </div>

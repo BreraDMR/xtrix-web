@@ -5,6 +5,10 @@ import api from '../api/client'
 import VisitForm from '../components/VisitForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useTranslation } from '../hooks/useTranslation'
+
+export default function Visits() {
+  const { t } = useTranslation()
 
 interface Visit {
   id: number
@@ -15,7 +19,6 @@ interface Visit {
   client_name?: string
 }
 
-export default function Visits() {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
@@ -82,7 +85,7 @@ export default function Visits() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Visits</h1>
+        <h1 className="text-2xl font-bold">{t('visits.title')}</h1>
         {!showForm && (
           <button
             onClick={() => {
@@ -91,7 +94,7 @@ export default function Visits() {
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
-            New Visit
+            {t('visits.newVisit')}
           </button>
         )}
       </div>
@@ -99,7 +102,7 @@ export default function Visits() {
       {!showForm && (
         <div className="mb-6 space-y-4">
           <SearchBar
-            placeholder="Search by service or client name..."
+            placeholder={t('visits.searchPlaceholder')}
             onSearch={setSearchQuery}
           />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -108,24 +111,24 @@ export default function Visits() {
               onChange={(e) => setStatusFilter(e.target.value || null)}
               className="px-4 py-2 border rounded-md"
             >
-              <option value="">All Statuses</option>
-              <option value="planned">Planned</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="">{t('visits.allStatuses')}</option>
+              <option value="planned">{t('visits.planned')}</option>
+              <option value="in_progress">{t('visits.inProgress')}</option>
+              <option value="completed">{t('visits.completed')}</option>
+              <option value="cancelled">{t('visits.cancelled')}</option>
             </select>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              placeholder="From date"
+              placeholder={t('visits.fromDate')}
               className="px-4 py-2 border rounded-md"
             />
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              placeholder="To date"
+              placeholder={t('visits.toDate')}
               className="px-4 py-2 border rounded-md"
             />
             {(searchQuery || statusFilter || dateFrom || dateTo) && (
@@ -138,7 +141,7 @@ export default function Visits() {
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md"
               >
-                Clear filters
+                {t('visits.clearFilters')}
               </button>
             )}
           </div>
@@ -162,16 +165,16 @@ export default function Visits() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Date
+                {t('visits.date')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Service
+                {t('visits.service')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Status
+                {t('visits.status')}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Price
+                {t('services.price')}
               </th>
             </tr>
           </thead>
@@ -180,8 +183,8 @@ export default function Visits() {
               <tr>
                 <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                   {searchQuery || statusFilter || dateFrom || dateTo
-                    ? 'No visits match your filters'
-                    : 'No visits found'}
+                    ? t('visits.noVisitsMatch')
+                    : t('visits.noVisitsFound')}
                 </td>
               </tr>
             ) : (
@@ -206,7 +209,7 @@ export default function Visits() {
                     onClick={() => handleEdit(visit.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    Edit
+                    {t('common.edit')}
                   </button>
                 </td>
               </tr>

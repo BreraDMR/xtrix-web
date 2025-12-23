@@ -96,6 +96,83 @@ export type TranslationKey =
   | 'specialistProfile.descriptionPlaceholder'
   | 'specialistProfile.languages'
   | 'specialistProfile.languagesPlaceholder'
+  // Navigation
+  | 'nav.dashboard'
+  | 'nav.clients'
+  | 'nav.visits'
+  | 'nav.calendar'
+  | 'nav.services'
+  | 'nav.profile'
+  | 'nav.logout'
+  // Login
+  | 'login.title'
+  | 'login.subtitle'
+  | 'login.email'
+  | 'login.password'
+  | 'login.signIn'
+  | 'login.loggingIn'
+  | 'login.dontHaveAccount'
+  | 'login.signUp'
+  | 'login.failed'
+  // Dashboard
+  | 'dashboard.title'
+  | 'dashboard.subtitle'
+  | 'dashboard.monthlyRevenue'
+  | 'dashboard.thisMonth'
+  // Clients
+  | 'clients.title'
+  | 'clients.addClient'
+  | 'clients.searchPlaceholder'
+  | 'clients.allGenders'
+  | 'clients.male'
+  | 'clients.female'
+  | 'clients.other'
+  | 'clients.clearFilters'
+  | 'clients.noClientsMatch'
+  | 'clients.noClientsFound'
+  | 'clients.name'
+  | 'clients.phone'
+  | 'clients.email'
+  // Services
+  | 'services.title'
+  | 'services.addService'
+  | 'services.searchPlaceholder'
+  | 'services.allServices'
+  | 'services.activeOnly'
+  | 'services.inactiveOnly'
+  | 'services.clearFilters'
+  | 'services.noServicesMatch'
+  | 'services.noServicesFound'
+  | 'services.name'
+  | 'services.duration'
+  | 'services.price'
+  | 'services.status'
+  | 'services.active'
+  | 'services.inactive'
+  | 'services.min'
+  // Visits
+  | 'visits.title'
+  | 'visits.newVisit'
+  | 'visits.searchPlaceholder'
+  | 'visits.allStatuses'
+  | 'visits.planned'
+  | 'visits.inProgress'
+  | 'visits.completed'
+  | 'visits.cancelled'
+  | 'visits.clearFilters'
+  | 'visits.fromDate'
+  | 'visits.toDate'
+  | 'visits.noVisitsMatch'
+  | 'visits.noVisitsFound'
+  | 'visits.date'
+  | 'visits.service'
+  | 'visits.status'
+  // Calendar
+  | 'calendar.title'
+  | 'calendar.simpleViewDescription'
+  | 'calendar.advancedViewDescription'
+  | 'calendar.simpleView'
+  | 'calendar.advancedView'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   // Common
@@ -205,6 +282,90 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'specialistProfile.descriptionPlaceholder': { en: 'Public description...', ru: 'Публичное описание...', cz: 'Veřejný popis...' },
   'specialistProfile.languages': { en: 'Languages', ru: 'Языки', cz: 'Jazyky' },
   'specialistProfile.languagesPlaceholder': { en: 'e.g., English, Russian, Czech', ru: 'например, Английский, Русский, Чешский', cz: 'např. Angličtina, Ruština, Čeština' },
+  
+  // Navigation
+  'nav.dashboard': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },
+  'nav.clients': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },
+  'nav.visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'nav.calendar': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },
+  'nav.services': { en: 'Services', ru: 'Услуги', cz: 'Služby' },
+  'nav.profile': { en: 'Profile', ru: 'Профиль', cz: 'Profil' },
+  'nav.logout': { en: 'Logout', ru: 'Выйти', cz: 'Odhlásit se' },
+  
+  // Login
+  'login.title': { en: 'Sign in to your account', ru: 'Войдите в свой аккаунт', cz: 'Přihlaste se ke svému účtu' },
+  'login.subtitle': { en: 'Sign in to your account', ru: 'Войдите в свой аккаунт', cz: 'Přihlaste se ke svému účtu' },
+  'login.email': { en: 'Email', ru: 'Email', cz: 'Email' },
+  'login.password': { en: 'Password', ru: 'Пароль', cz: 'Heslo' },
+  'login.signIn': { en: 'Sign in', ru: 'Войти', cz: 'Přihlásit se' },
+  'login.loggingIn': { en: 'Logging in...', ru: 'Вход...', cz: 'Přihlašování...' },
+  'login.dontHaveAccount': { en: "Don't have an account?", ru: 'Нет аккаунта?', cz: 'Nemáte účet?' },
+  'login.signUp': { en: 'Sign up', ru: 'Зарегистрироваться', cz: 'Registrovat se' },
+  'login.failed': { en: 'Login failed', ru: 'Ошибка входа', cz: 'Přihlášení se nezdařilo' },
+  
+  // Dashboard
+  'dashboard.title': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },
+  'dashboard.subtitle': { en: 'Overview of your business', ru: 'Обзор вашего бизнеса', cz: 'Přehled vašeho podnikání' },
+  'dashboard.monthlyRevenue': { en: 'Monthly Revenue', ru: 'Месячный доход', cz: 'Měsíční příjem' },
+  'dashboard.thisMonth': { en: 'This month', ru: 'Этот месяц', cz: 'Tento měsíc' },
+  
+  // Clients
+  'clients.title': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },
+  'clients.addClient': { en: 'Add Client', ru: 'Добавить клиента', cz: 'Přidat klienta' },
+  'clients.searchPlaceholder': { en: 'Search by name, phone, or email...', ru: 'Поиск по имени, телефону или email...', cz: 'Hledat podle jména, telefonu nebo emailu...' },
+  'clients.allGenders': { en: 'All Genders', ru: 'Все полы', cz: 'Všechna pohlaví' },
+  'clients.male': { en: 'Male', ru: 'Мужской', cz: 'Muž' },
+  'clients.female': { en: 'Female', ru: 'Женский', cz: 'Žena' },
+  'clients.other': { en: 'Other', ru: 'Другое', cz: 'Jiné' },
+  'clients.clearFilters': { en: 'Clear filters', ru: 'Очистить фильтры', cz: 'Vymazat filtry' },
+  'clients.noClientsMatch': { en: 'No clients match your filters', ru: 'Нет клиентов, соответствующих фильтрам', cz: 'Žádní klienti neodpovídají filtru' },
+  'clients.noClientsFound': { en: 'No clients found', ru: 'Клиенты не найдены', cz: 'Klienti nenalezeni' },
+  'clients.name': { en: 'Name', ru: 'Имя', cz: 'Jméno' },
+  'clients.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
+  'clients.email': { en: 'Email', ru: 'Email', cz: 'Email' },
+  
+  // Services
+  'services.title': { en: 'Services', ru: 'Услуги', cz: 'Služby' },
+  'services.addService': { en: 'Add Service', ru: 'Добавить услугу', cz: 'Přidat službu' },
+  'services.searchPlaceholder': { en: 'Search by service name...', ru: 'Поиск по названию услуги...', cz: 'Hledat podle názvu služby...' },
+  'services.allServices': { en: 'All Services', ru: 'Все услуги', cz: 'Všechny služby' },
+  'services.activeOnly': { en: 'Active Only', ru: 'Только активные', cz: 'Pouze aktivní' },
+  'services.inactiveOnly': { en: 'Inactive Only', ru: 'Только неактивные', cz: 'Pouze neaktivní' },
+  'services.clearFilters': { en: 'Clear filters', ru: 'Очистить фильтры', cz: 'Vymazat filtry' },
+  'services.noServicesMatch': { en: 'No services match your filters', ru: 'Нет услуг, соответствующих фильтрам', cz: 'Žádné služby neodpovídají filtru' },
+  'services.noServicesFound': { en: 'No services found', ru: 'Услуги не найдены', cz: 'Služby nenalezeny' },
+  'services.name': { en: 'Name', ru: 'Название', cz: 'Název' },
+  'services.duration': { en: 'Duration', ru: 'Длительность', cz: 'Délka trvání' },
+  'services.price': { en: 'Price', ru: 'Цена', cz: 'Cena' },
+  'services.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'services.active': { en: 'Active', ru: 'Активна', cz: 'Aktivní' },
+  'services.inactive': { en: 'Inactive', ru: 'Неактивна', cz: 'Neaktivní' },
+  'services.min': { en: 'min', ru: 'мин', cz: 'min' },
+  
+  // Visits
+  'visits.title': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'visits.newVisit': { en: 'New Visit', ru: 'Новый визит', cz: 'Nová návštěva' },
+  'visits.searchPlaceholder': { en: 'Search by service or client name...', ru: 'Поиск по услуге или клиенту...', cz: 'Hledat podle služby nebo klienta...' },
+  'visits.allStatuses': { en: 'All Statuses', ru: 'Все статусы', cz: 'Všechny stavy' },
+  'visits.planned': { en: 'Planned', ru: 'Запланирован', cz: 'Plánováno' },
+  'visits.inProgress': { en: 'In Progress', ru: 'В процессе', cz: 'Probíhá' },
+  'visits.completed': { en: 'Completed', ru: 'Завершен', cz: 'Dokončeno' },
+  'visits.cancelled': { en: 'Cancelled', ru: 'Отменен', cz: 'Zrušeno' },
+  'visits.clearFilters': { en: 'Clear filters', ru: 'Очистить фильтры', cz: 'Vymazat filtry' },
+  'visits.fromDate': { en: 'From date', ru: 'С даты', cz: 'Od data' },
+  'visits.toDate': { en: 'To date', ru: 'По дату', cz: 'Do data' },
+  'visits.noVisitsMatch': { en: 'No visits match your filters', ru: 'Нет визитов, соответствующих фильтрам', cz: 'Žádné návštěvy neodpovídají filtru' },
+  'visits.noVisitsFound': { en: 'No visits found', ru: 'Визиты не найдены', cz: 'Návštěvy nenalezeny' },
+  'visits.date': { en: 'Date', ru: 'Дата', cz: 'Datum' },
+  'visits.service': { en: 'Service', ru: 'Услуга', cz: 'Služba' },
+  'visits.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  
+  // Calendar
+  'calendar.title': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },
+  'calendar.simpleViewDescription': { en: 'Click on a date to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на дату, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na datum pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },
+  'calendar.advancedViewDescription': { en: 'Click on a time slot to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на временной слот, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na časový slot pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },
+  'calendar.simpleView': { en: 'Simple View', ru: 'Простой вид', cz: 'Jednoduché zobrazení' },
+  'calendar.advancedView': { en: 'Advanced View', ru: 'Расширенный вид', cz: 'Pokročilé zobrazení' },
 }
 
 export default translations
