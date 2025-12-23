@@ -15,7 +15,7 @@ export default function Register() {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'client' as 'admin' | 'specialist' | 'client',
+    role: 'specialist' as 'admin' | 'specialist',
     specialist_type: '',
   })
   const [error, setError] = useState('')
@@ -226,7 +226,7 @@ export default function Register() {
               name="role"
               value={formData.role}
               onChange={(e) => {
-                const newRole = e.target.value as 'admin' | 'specialist' | 'client'
+                const newRole = e.target.value as 'admin' | 'specialist'
                 setFormData({ 
                   ...formData, 
                   role: newRole,
@@ -236,7 +236,6 @@ export default function Register() {
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
-              <option value="client">Client</option>
               <option value="specialist">Specialist</option>
               <option value="admin">Admin</option>
             </select>
