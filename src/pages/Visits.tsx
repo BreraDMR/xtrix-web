@@ -123,20 +123,24 @@ interface Visit {
               <option value="completed">{t('visits.completed')}</option>
               <option value="cancelled">{t('visits.cancelled')}</option>
             </select>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              title={t('visits.fromDate')}
-              className="px-4 py-2 border rounded-md"
-            />
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              title={t('visits.toDate')}
-              className="px-4 py-2 border rounded-md"
-            />
+            <div className="relative">
+              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none">{t('visits.fromDate')}</label>
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="px-4 py-2 border rounded-md w-full pt-3"
+              />
+            </div>
+            <div className="relative">
+              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none">{t('visits.toDate')}</label>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="px-4 py-2 border rounded-md w-full pt-3"
+              />
+            </div>
             {(searchQuery || statusFilter || dateFrom || dateTo) && (
               <button
                 onClick={() => {
