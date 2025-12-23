@@ -173,6 +173,15 @@ export type TranslationKey =
   | 'calendar.advancedViewDescription'
   | 'calendar.simpleView'
   | 'calendar.advancedView'
+  | 'calendar.noVisits'
+  | 'calendar.visit'
+  | 'calendar.visits'
+  | 'calendar.backToCalendar'
+  | 'calendar.previous'
+  | 'calendar.next'
+  | 'calendar.more'
+  // Visits
+  | 'visits.dateFormat'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   // Common
