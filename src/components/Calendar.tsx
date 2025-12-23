@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { cs } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import VisitForm from './VisitForm'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
@@ -19,7 +20,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
   const [showForm, setShowForm] = useState(false)
   const [currentMonth, setCurrentMonth] = useState(new Date())
   
-  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : undefined
+  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
 
   const visitsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {}

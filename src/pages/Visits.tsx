@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { cs } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import api from '../api/client'
 import VisitForm from '../components/VisitForm'
 import SearchBar from '../components/SearchBar'
@@ -14,7 +15,17 @@ export default function Visits() {
   const { t } = useTranslation()
   const locale = useLocaleStore((state) => state.locale)
   
-  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : undefined
+  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
+  
+  const getStatusTranslation = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'planned': t('visits.planned'),
+      'in_progress': t('visits.inProgress'),
+      'completed': t('visits.completed'),
+      'cancelled': t('visits.cancelled'),
+    }
+    return statusMap[status] || status
+  }
 
 interface Visit {
   id: number
@@ -208,7 +219,7 @@ interface Visit {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                    {visit.status}
+                    {getStatusTranslation(visit.status)}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -3,6 +3,7 @@ import Calendar from 'react-calendar'
 import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { cs } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import 'react-calendar/dist/Calendar.css'
 import VisitForm from './VisitForm'
 import { useTranslation } from '../hooks/useTranslation'
@@ -21,7 +22,17 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
   const [editingVisitId, setEditingVisitId] = useState<number | undefined>()
   const [showForm, setShowForm] = useState(false)
   
-  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : undefined
+  const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
+  
+  const getStatusTranslation = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'planned': t('visits.planned'),
+      'in_progress': t('visits.inProgress'),
+      'completed': t('visits.completed'),
+      'cancelled': t('visits.cancelled'),
+    }
+    return statusMap[status] || status
+  }
 
   const visitsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {}
@@ -150,7 +161,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                           : 'bg-blue-100 text-blue-800'
                       }`}
                     >
-                      {visit.status}
+                      {getStatusTranslation(visit.status)}
                     </span>
                   </div>
                   {visit.price && (

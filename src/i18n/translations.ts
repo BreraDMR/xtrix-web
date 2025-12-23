@@ -167,6 +167,16 @@ export type TranslationKey =
   | 'visits.date'
   | 'visits.service'
   | 'visits.status'
+  | 'visits.client'
+  | 'visits.serviceName'
+  | 'visits.startDateTime'
+  | 'visits.endDateTime'
+  | 'visits.price'
+  | 'visits.notes'
+  | 'visits.selectClient'
+  | 'visits.selectService'
+  | 'visits.createVisit'
+  | 'visits.updateVisit'
   // Calendar
   | 'calendar.title'
   | 'calendar.simpleViewDescription'
@@ -366,6 +376,16 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.date': { en: 'Date', ru: 'Дата', cz: 'Datum' },
   'visits.service': { en: 'Service', ru: 'Услуга', cz: 'Služba' },
   'visits.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'visits.client': { en: 'Client', ru: 'Клиент', cz: 'Klient' },
+  'visits.serviceName': { en: 'Service Name (if custom)', ru: 'Название услуги (если нестандартная)', cz: 'Název služby (pokud vlastní)' },
+  'visits.startDateTime': { en: 'Start Date & Time', ru: 'Дата и время начала', cz: 'Datum a čas začátku' },
+  'visits.endDateTime': { en: 'End Date & Time', ru: 'Дата и время окончания', cz: 'Datum a čas konce' },
+  'visits.price': { en: 'Price', ru: 'Цена', cz: 'Cena' },
+  'visits.notes': { en: 'Notes', ru: 'Примечания', cz: 'Poznámky' },
+  'visits.selectClient': { en: 'Select client...', ru: 'Выберите клиента...', cz: 'Vyberte klienta...' },
+  'visits.selectService': { en: 'Select service...', ru: 'Выберите услугу...', cz: 'Vyberte službu...' },
+  'visits.createVisit': { en: 'Create Visit', ru: 'Создать визит', cz: 'Vytvořit návštěvu' },
+  'visits.updateVisit': { en: 'Update Visit', ru: 'Обновить визит', cz: 'Aktualizovat návštěvu' },
   
   // Calendar
   'calendar.title': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },

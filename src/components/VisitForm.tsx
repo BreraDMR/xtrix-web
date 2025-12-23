@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
+import { useTranslation } from '../hooks/useTranslation'
 
 interface VisitFormProps {
   visitId?: number
@@ -23,6 +24,7 @@ interface VisitData {
 }
 
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<any[]>([])
   const [services, setServices] = useState<any[]>([])
@@ -110,14 +112,14 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">Client *</label>
+        <label className="block text-sm font-medium mb-1">{t('visits.client')} *</label>
         <select
           value={formData.client_id}
           onChange={(e) => setFormData({ ...formData, client_id: parseInt(e.target.value) })}
           required
           className="w-full px-3 py-2 border rounded-md"
         >
-          <option value={0}>Select client...</option>
+          <option value={0}>{t('visits.selectClient')}</option>
           {clients.map((client) => (
             <option key={client.id} value={client.id}>
               {client.full_name}
@@ -127,7 +129,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Service</label>
+        <label className="block text-sm font-medium mb-1">{t('visits.service')}</label>
         <select
           value={formData.service_id || ''}
           onChange={(e) =>
@@ -138,7 +140,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           }
           className="w-full px-3 py-2 border rounded-md"
         >
-          <option value="">Select service...</option>
+          <option value="">{t('visits.selectService')}</option>
           {services.map((service) => (
             <option key={service.id} value={service.id}>
               {service.name} ({service.duration_minutes} min)
@@ -148,7 +150,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Service Name (if custom)</label>
+        <label className="block text-sm font-medium mb-1">{t('visits.serviceName')}</label>
         <input
           type="text"
           value={formData.service_name || ''}
@@ -159,7 +161,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Start Date & Time *</label>
+          <label className="block text-sm font-medium mb-1">{t('visits.startDateTime')} *</label>
           <input
             type="datetime-local"
             value={formData.date_start}
@@ -169,7 +171,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">End Date & Time</label>
+          <label className="block text-sm font-medium mb-1">{t('visits.endDateTime')}</label>
           <input
             type="datetime-local"
             value={formData.date_end || ''}
@@ -181,7 +183,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Price</label>
+          <label className="block text-sm font-medium mb-1">{t('visits.price')}</label>
           <input
             type="number"
             step="0.01"
@@ -193,22 +195,22 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Status</label>
+          <label className="block text-sm font-medium mb-1">{t('visits.status')}</label>
           <select
             value={formData.status}
             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="planned">Planned</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="planned">{t('visits.planned')}</option>
+            <option value="in_progress">{t('visits.inProgress')}</option>
+            <option value="completed">{t('visits.completed')}</option>
+            <option value="cancelled">{t('visits.cancelled')}</option>
           </select>
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Notes</label>
+        <label className="block text-sm font-medium mb-1">{t('visits.notes')}</label>
         <textarea
           value={formData.note || ''}
           onChange={(e) => setFormData({ ...formData, note: e.target.value })}
@@ -223,7 +225,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          Cancel
+          {t('common.cancel')}
         </button>
         <button
           type="submit"
@@ -233,10 +235,10 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           {loading ? (
             <>
               <LoadingSpinner size="sm" />
-              <span>Saving...</span>
+              <span>{t('common.loading')}</span>
             </>
           ) : (
-            visitId ? 'Update Visit' : 'Create Visit'
+            visitId ? t('visits.updateVisit') : t('visits.createVisit')
           )}
         </button>
       </div>
