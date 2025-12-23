@@ -180,8 +180,6 @@ export type TranslationKey =
   | 'calendar.previous'
   | 'calendar.next'
   | 'calendar.more'
-  // Visits
-  | 'visits.dateFormat'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   // Common
@@ -363,7 +361,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.clearFilters': { en: 'Clear filters', ru: 'Очистить фильтры', cz: 'Vymazat filtry' },
   'visits.fromDate': { en: 'From date', ru: 'С даты', cz: 'Od data' },
   'visits.toDate': { en: 'To date', ru: 'По дату', cz: 'Do data' },
-  'visits.dateFormat': { en: 'YYYY-MM-DD', ru: 'ГГГГ-ММ-ДД', cz: 'RRRR-MM-DD' },
   'visits.noVisitsMatch': { en: 'No visits match your filters', ru: 'Нет визитов, соответствующих фильтрам', cz: 'Žádné návštěvy neodpovídají filtru' },
   'visits.noVisitsFound': { en: 'No visits found', ru: 'Визиты не найдены', cz: 'Návštěvy nenalezeny' },
   'visits.date': { en: 'Date', ru: 'Дата', cz: 'Datum' },
