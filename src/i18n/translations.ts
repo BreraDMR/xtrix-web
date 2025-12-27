@@ -529,6 +529,16 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'employees.salary': { en: 'Salary', ru: 'Зарплата', cz: 'Plat' },
   'employees.form_coming_soon': { en: 'Employee management form is coming soon', ru: 'Форма управления сотрудниками скоро появится', cz: 'Formulář pro správu zaměstnanců brzy přijde' },
   'employees.access_denied': { en: 'You do not have permission to view this page', ru: 'У вас нет доступа к этой странице', cz: 'Nemáte oprávnění k zobrazení této stránky' },
+  'employees.select_user': { en: 'Select User', ru: 'Выберите пользователя', cz: 'Vyberte uživatele' },
+  'employees.select_user_placeholder': { en: 'Select a user...', ru: 'Выберите пользователя...', cz: 'Vyberte uživatele...' },
+  'employees.select_user_required': { en: 'Please select a user', ru: 'Пожалуйста, выберите пользователя', cz: 'Prosím vyberte uživatele' },
+  'employees.no_available_users': { en: 'No available users found', ru: 'Доступные пользователи не найдены', cz: 'Nebyli nalezeni dostupní uživatelé' },
+  'employees.position_placeholder': { en: 'e.g., Massage Therapist, Administrator', ru: 'например, Массажист, Администратор', cz: 'např. Masér, Administrátor' },
+  'employees.permissions': { en: 'Permissions', ru: 'Права доступа', cz: 'Oprávnění' },
+  'employees.permission_create_visits': { en: 'Can create visits', ru: 'Может создавать визиты', cz: 'Může vytvářet návštěvy' },
+  'employees.permission_edit_clients': { en: 'Can edit clients', ru: 'Может редактировать клиентов', cz: 'Může upravovat klienty' },
+  'employees.permission_view_financials': { en: 'Can view financial information', ru: 'Может просматривать финансовую информацию', cz: 'Může zobrazovat finanční informace' },
+  'employees.permission_manage_services': { en: 'Can manage services', ru: 'Может управлять услугами', cz: 'Může spravovat služby' },
   
   // Salary
   'salary.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },

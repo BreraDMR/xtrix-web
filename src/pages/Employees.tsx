@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
+import EmployeeForm from '../components/EmployeeForm'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 
@@ -257,25 +258,25 @@ export default function Employees() {
         </table>
       </div>
 
-      {/* TODO: Employee Form Modal */}
+      {/* Employee Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4">
               {editingId ? t('employees.edit_employee') : t('employees.add_employee')}
             </h2>
-            <p className="text-gray-600 mb-4">
-              {t('employees.form_coming_soon')}
-            </p>
-            <button
-              onClick={() => {
+            <EmployeeForm
+              employeeId={editingId}
+              onSuccess={() => {
+                setShowForm(false)
+                setEditingId(undefined)
+                queryClient.invalidateQueries({ queryKey: ['employees'] })
+              }}
+              onCancel={() => {
                 setShowForm(false)
                 setEditingId(undefined)
               }}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
-            >
-              {t('common.close')}
-            </button>
+            />
           </div>
         </div>
       )}
