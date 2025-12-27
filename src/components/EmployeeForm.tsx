@@ -117,8 +117,15 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       if (employeeId) {
         await api.put(`/employees/${employeeId}`, payload)
       } else {
-        // Для создания нужно использовать POST с business_owner_id
-        await api.post('/employees/', payload)
+        // Для создания отправляем business_owner_id в теле запроса
+        // Если текущий пользователь - admin, он должен указать business_owner_id
+        // Если business_owner - используем currentUser.id
+        const createPayload = {
+          ...payload,
+          // Для business_owner используем его ID, для admin - можно указать вручную или не указывать
+          business_owner_id: currentUser?.role === 'business_owner' ? currentUser.id : undefined,
+        }
+        await api.post('/employees/', createPayload)
       }
       onSuccess()
     } catch (error: any) {
