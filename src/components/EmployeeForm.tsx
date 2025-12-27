@@ -118,12 +118,14 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         await api.put(`/employees/${employeeId}`, payload)
       } else {
         // Для создания отправляем business_owner_id в теле запроса
-        // Если текущий пользователь - admin, он должен указать business_owner_id
-        // Если business_owner - используем currentUser.id
+        // Для business_owner и admin используем их ID (бэкенд обработает это правильно)
         const createPayload = {
           ...payload,
-          // Для business_owner используем его ID, для admin - можно указать вручную или не указывать
-          business_owner_id: currentUser?.role === 'business_owner' ? currentUser.id : undefined,
+          // Отправляем ID пользователя для business_owner и admin
+          // Бэкенд автоматически использует правильный business_owner_id
+          business_owner_id: (currentUser?.role === 'business_owner' || currentUser?.role === 'admin') 
+            ? currentUser.id 
+            : undefined,
         }
         await api.post('/employees/', createPayload)
       }
