@@ -21,6 +21,12 @@ export default function Layout() {
     { path: '/calendar', label: t('nav.calendar'), icon: '🗓️' },
     { path: '/services', label: t('nav.services'), icon: '💆' },
     ...(user?.role === 'specialist' ? [{ path: '/profile', label: t('nav.profile'), icon: '👤' }] : []),
+    ...(user?.role === 'admin' || user?.role === 'business_owner'
+      ? [{ path: '/employees', label: t('nav.employees'), icon: '👷' }]
+      : []),
+    ...(user?.role === 'employee'
+      ? [{ path: '/my-salary', label: t('nav.my_salary'), icon: '💰' }]
+      : []),
   ]
 
   return (

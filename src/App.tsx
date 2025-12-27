@@ -9,6 +9,8 @@ import Visits from './pages/Visits'
 import CalendarPage from './pages/CalendarPage'
 import Services from './pages/Services'
 import SpecialistProfile from './pages/SpecialistProfile'
+import Employees from './pages/Employees'
+import MySalary from './pages/MySalary'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -96,6 +98,8 @@ function App() {
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="services" element={<Services />} />
           <Route path="profile" element={<SpecialistProfile />} />
+          <Route path="employees" element={<Employees />} />
+          <Route path="my-salary" element={<MySalary />} />
         </Route>
       </Routes>
     </BrowserRouter>
