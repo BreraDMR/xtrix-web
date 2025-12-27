@@ -33,6 +33,7 @@ interface Employee {
 
 export default function Employees() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
 
@@ -241,7 +242,7 @@ export default function Employees() {
                       <button
                         onClick={() => {
                           // Navigate to salary page for this employee
-                          window.location.href = `/employees/${employee.id}/salary`
+                          navigate(`/employees/${employee.id}/salary`)
                         }}
                         className="text-green-600 hover:text-green-900"
                       >
