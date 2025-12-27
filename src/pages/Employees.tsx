@@ -227,9 +227,7 @@ export default function Employees() {
                           onClick={() => {
                             if (
                               window.confirm(
-                                t('employees.confirm_fire', {
-                                  name: employee.employee_user?.full_name || '',
-                                })
+                                t('employees.confirm_fire').replace('{name}', employee.employee_user?.full_name || 'Employee')
                               )
                             ) {
                               fireEmployeeMutation.mutate(employee.id)
