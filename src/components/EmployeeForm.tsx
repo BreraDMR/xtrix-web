@@ -32,7 +32,7 @@ interface User {
 
 export default function EmployeeForm({ employeeId, onSuccess, onCancel }: EmployeeFormProps) {
   const { t } = useTranslation()
-  const { user } = useAuthStore()
+  const { user: currentUser } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [availableUsers, setAvailableUsers] = useState<User[]>([])
   const [loadingUsers, setLoadingUsers] = useState(false)
