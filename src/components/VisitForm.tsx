@@ -89,11 +89,36 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const calculateDateEnd = (dateStart: string, durationMinutes: number | null | undefined): string | undefined => {
     if (!dateStart || !durationMinutes) return undefined
     
-    const start = new Date(dateStart)
-    if (isNaN(start.getTime())) return undefined
-    
-    const end = new Date(start.getTime() + durationMinutes * 60 * 1000)
-    return end.toISOString().slice(0, 16)
+    try {
+      // datetime-local формат: "YYYY-MM-DDTHH:mm" (без timezone)
+      // Парсим строку и создаем Date объект, интерпретируя как локальное время
+      // Чтобы избежать проблем с UTC, парсим компоненты вручную
+      const [datePart, timePart] = dateStart.split('T')
+      if (!datePart || !timePart) return undefined
+      
+      const [year, month, day] = datePart.split('-').map(Number)
+      const [hours, minutes] = timePart.split(':').map(Number)
+      
+      // Создаем Date объект в локальном времени
+      const start = new Date(year, month - 1, day, hours, minutes, 0, 0)
+      if (isNaN(start.getTime())) return undefined
+      
+      // Добавляем длительность в миллисекундах
+      const end = new Date(start.getTime() + durationMinutes * 60 * 1000)
+      
+      // Возвращаем в формате datetime-local: "YYYY-MM-DDTHH:mm"
+      // Используем локальное время
+      const endYear = end.getFullYear()
+      const endMonth = String(end.getMonth() + 1).padStart(2, '0')
+      const endDay = String(end.getDate()).padStart(2, '0')
+      const endHours = String(end.getHours()).padStart(2, '0')
+      const endMinutes = String(end.getMinutes()).padStart(2, '0')
+      
+      return `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}`
+    } catch (error) {
+      console.error('Error calculating date_end:', error)
+      return undefined
+    }
   }
 
   // Обработчик изменения услуги - автоматически заполняет цену, название и дату окончания
