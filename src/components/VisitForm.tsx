@@ -85,6 +85,76 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
+  // Вычисляет date_end на основе date_start и duration_minutes
+  const calculateDateEnd = (dateStart: string, durationMinutes: number | null | undefined): string | undefined => {
+    if (!dateStart || !durationMinutes) return undefined
+    
+    const start = new Date(dateStart)
+    if (isNaN(start.getTime())) return undefined
+    
+    const end = new Date(start.getTime() + durationMinutes * 60 * 1000)
+    return end.toISOString().slice(0, 16)
+  }
+
+  // Обработчик изменения услуги - автоматически заполняет цену, название и дату окончания
+  const handleServiceChange = (serviceId: string) => {
+    const selectedServiceId = serviceId ? parseInt(serviceId) : undefined
+    const selectedService = services.find(s => s.id === selectedServiceId)
+    
+    const updates: Partial<VisitData> = {
+      service_id: selectedServiceId,
+    }
+
+    if (selectedService) {
+      // Автоматически заполняем цену, если она не указана или равна 0
+      if (selectedService.price && (!formData.price || formData.price === 0)) {
+        updates.price = selectedService.price
+      }
+
+      // Автоматически заполняем название услуги, если оно не указано
+      if (selectedService.name && !formData.service_name) {
+        updates.service_name = selectedService.name
+      }
+
+      // Всегда автоматически вычисляем date_end на основе date_start + duration_minutes
+      // Это обеспечивает точность расчета времени окончания на основе длительности услуги
+      if (selectedService.duration_minutes && formData.date_start) {
+        const calculatedDateEnd = calculateDateEnd(formData.date_start, selectedService.duration_minutes)
+        if (calculatedDateEnd) {
+          updates.date_end = calculatedDateEnd
+        }
+      }
+    } else {
+      // Если услуга не выбрана, очищаем автоматически заполненные поля
+      if (!formData.service_name || formData.service_name === services.find(s => s.id === formData.service_id)?.name) {
+        updates.service_name = undefined
+      }
+      if (!formData.price || formData.price === services.find(s => s.id === formData.service_id)?.price) {
+        updates.price = undefined
+      }
+    }
+
+    setFormData({ ...formData, ...updates })
+  }
+
+  // Обработчик изменения даты начала - пересчитывает date_end, если выбрана услуга
+  const handleDateStartChange = (dateStart: string) => {
+    const updates: Partial<VisitData> = { date_start: dateStart }
+
+    // Если выбрана услуга, пересчитываем date_end
+    if (formData.service_id) {
+      const selectedService = services.find(s => s.id === formData.service_id)
+      if (selectedService?.duration_minutes) {
+        const calculatedDateEnd = calculateDateEnd(dateStart, selectedService.duration_minutes)
+        if (calculatedDateEnd) {
+          updates.date_end = calculatedDateEnd
+        }
+      }
+    }
+
+    setFormData({ ...formData, ...updates })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -132,12 +202,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         <label className="block text-sm font-medium mb-1">{t('visits.service')}</label>
         <select
           value={formData.service_id || ''}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              service_id: e.target.value ? parseInt(e.target.value) : undefined,
-            })
-          }
+          onChange={(e) => handleServiceChange(e.target.value)}
           className="w-full px-3 py-2 border rounded-md"
         >
           <option value="">{t('visits.selectService')}</option>
@@ -165,7 +230,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           <input
             type="datetime-local"
             value={formData.date_start}
-            onChange={(e) => setFormData({ ...formData, date_start: e.target.value })}
+            onChange={(e) => handleDateStartChange(e.target.value)}
             required
             className="w-full px-3 py-2 border rounded-md"
           />
