@@ -66,7 +66,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       const { data } = await api.get('/users/', { params: { role: 'specialist' } })
       const users = Array.isArray(data) ? data : (data?.items || data?.data || [])
       // Фильтруем: исключаем текущего пользователя и пользователей, которые уже являются сотрудниками
-      setAvailableUsers(users.filter((u: User) => u.id !== user?.id))
+      setAvailableUsers(users.filter((u: User) => u.id !== currentUser?.id))
     } catch (error) {
       console.error('Failed to load users:', error)
       // Fallback: если endpoint не работает, оставляем пустой список
