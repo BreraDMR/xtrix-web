@@ -531,6 +531,15 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.paid': { en: 'Paid', ru: 'Выплачено', cz: 'Vyplaceno' },
   'salary.access_denied': { en: 'You do not have permission to view this page', ru: 'У вас нет доступа к этой странице', cz: 'Nemáte oprávnění k zobrazení této stránky' },
   'salary.no_history': { en: 'No salary history available', ru: 'История зарплат отсутствует', cz: 'Historie platů není k dispozici' },
+  'salary.mark_paid': { en: 'Mark as Paid', ru: 'Отметить как выплаченную', cz: 'Označit jako vyplacenou' },
+  'salary.mark_paid_confirm': { en: 'Are you sure you want to mark this salary as paid?', ru: 'Вы уверены, что хотите отметить эту зарплату как выплаченную?', cz: 'Opravdu chcete označit tento plat jako vyplacený?' },
+  'salary.calculate_salary': { en: 'Calculate Salary', ru: 'Рассчитать зарплату', cz: 'Vypočítat plat' },
+  'salary.calculate_success': { en: 'Salary calculated successfully', ru: 'Зарплата успешно рассчитана', cz: 'Plat byl úspěšně vypočítán' },
+  'salary.calculate_error': { en: 'Failed to calculate salary', ru: 'Не удалось рассчитать зарплату', cz: 'Nepodařilo se vypočítat plat' },
+  'salary.mark_paid_success': { en: 'Salary marked as paid', ru: 'Зарплата отмечена как выплаченная', cz: 'Plat byl označen jako vyplacený' },
+  'salary.mark_paid_error': { en: 'Failed to mark salary as paid', ru: 'Не удалось отметить зарплату как выплаченную', cz: 'Nepodařilo se označit plat jako vyplacený' },
+  'salary.view_details': { en: 'View Details', ru: 'Просмотреть детали', cz: 'Zobrazit detaily' },
+  'salary.calculated_by': { en: 'Calculated by', ru: 'Рассчитано', cz: 'Vypočítáno' },
   
   // Nav
   'nav.employees': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
