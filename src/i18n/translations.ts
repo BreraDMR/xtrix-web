@@ -243,6 +243,59 @@ export type TranslationKey =
   // Common
   | 'common.currency'
   | 'common.close'
+  // Employees
+  | 'employees.title'
+  | 'employees.add_employee'
+  | 'employees.search_placeholder'
+  | 'employees.active_only'
+  | 'employees.employee'
+  | 'employees.position'
+  | 'employees.commission'
+  | 'employees.base_salary'
+  | 'employees.status'
+  | 'employees.hired_at'
+  | 'employees.actions'
+  | 'employees.no_employees'
+  | 'employees.unknown'
+  | 'employees.active'
+  | 'employees.inactive'
+  | 'employees.edit_employee'
+  | 'employees.fire'
+  | 'employees.confirm_fire'
+  | 'employees.salary'
+  | 'employees.form_coming_soon'
+  | 'employees.access_denied'
+  // Salary
+  | 'salary.my_salary'
+  | 'salary.current_unpaid'
+  | 'salary.unpaid'
+  | 'salary.period'
+  | 'salary.total_visits'
+  | 'salary.completed'
+  | 'salary.total'
+  | 'salary.total_revenue'
+  | 'salary.total_salary'
+  | 'salary.base'
+  | 'salary.commission'
+  | 'salary.notes'
+  | 'salary.calculated_at'
+  | 'salary.no_unpaid_salary'
+  | 'salary.history'
+  | 'salary.visits'
+  | 'salary.revenue'
+  | 'salary.salary'
+  | 'salary.status'
+  | 'salary.paid_at'
+  | 'salary.cancelled'
+  | 'salary.paid'
+  | 'salary.access_denied'
+  | 'salary.no_history'
+  // Nav
+  | 'nav.employees'
+  | 'nav.my_salary'
+  // Common
+  | 'common.currency'
+  | 'common.close'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   // Common
@@ -453,6 +506,63 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.previous': { en: 'Previous', ru: 'Назад', cz: 'Předchozí' },
   'calendar.next': { en: 'Next', ru: 'Вперед', cz: 'Další' },
   'calendar.more': { en: 'more', ru: 'еще', cz: 'více' },
+  
+  // Employees
+  'employees.title': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
+  'employees.add_employee': { en: 'Add Employee', ru: 'Добавить сотрудника', cz: 'Přidat zaměstnance' },
+  'employees.search_placeholder': { en: 'Search employees...', ru: 'Поиск сотрудников...', cz: 'Hledat zaměstnance...' },
+  'employees.active_only': { en: 'Active only', ru: 'Только активные', cz: 'Pouze aktivní' },
+  'employees.employee': { en: 'Employee', ru: 'Сотрудник', cz: 'Zaměstnanec' },
+  'employees.position': { en: 'Position', ru: 'Должность', cz: 'Pozice' },
+  'employees.commission': { en: 'Commission', ru: 'Комиссия', cz: 'Provize' },
+  'employees.base_salary': { en: 'Base Salary', ru: 'Базовая зарплата', cz: 'Základní plat' },
+  'employees.status': { en: 'Status', ru: 'Статус', cz: 'Status' },
+  'employees.hired_at': { en: 'Hired At', ru: 'Нанят', cz: 'Najato' },
+  'employees.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
+  'employees.no_employees': { en: 'No employees found', ru: 'Сотрудники не найдены', cz: 'Žádní zaměstnanci nenalezeni' },
+  'employees.unknown': { en: 'Unknown', ru: 'Неизвестно', cz: 'Neznámý' },
+  'employees.active': { en: 'Active', ru: 'Активен', cz: 'Aktivní' },
+  'employees.inactive': { en: 'Inactive', ru: 'Неактивен', cz: 'Neaktivní' },
+  'employees.edit_employee': { en: 'Edit Employee', ru: 'Редактировать сотрудника', cz: 'Upravit zaměstnance' },
+  'employees.fire': { en: 'Fire', ru: 'Уволить', cz: 'Propustit' },
+  'employees.confirm_fire': { en: 'Are you sure you want to fire {name}?', ru: 'Вы уверены, что хотите уволить {name}?', cz: 'Opravdu chcete propustit {name}?' },
+  'employees.salary': { en: 'Salary', ru: 'Зарплата', cz: 'Plat' },
+  'employees.form_coming_soon': { en: 'Employee management form is coming soon', ru: 'Форма управления сотрудниками скоро появится', cz: 'Formulář pro správu zaměstnanců brzy přijde' },
+  'employees.access_denied': { en: 'You do not have permission to view this page', ru: 'У вас нет доступа к этой странице', cz: 'Nemáte oprávnění k zobrazení této stránky' },
+  
+  // Salary
+  'salary.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
+  'salary.current_unpaid': { en: 'Current Unpaid Salary', ru: 'Текущая невыплаченная зарплата', cz: 'Aktuální nevyplacený plat' },
+  'salary.unpaid': { en: 'Unpaid', ru: 'Не выплачено', cz: 'Neplaceno' },
+  'salary.period': { en: 'Period', ru: 'Период', cz: 'Období' },
+  'salary.total_visits': { en: 'Total Visits', ru: 'Всего визитов', cz: 'Celkem návštěv' },
+  'salary.completed': { en: 'Completed', ru: 'Завершено', cz: 'Dokončeno' },
+  'salary.total': { en: 'Total', ru: 'Всего', cz: 'Celkem' },
+  'salary.total_revenue': { en: 'Total Revenue', ru: 'Общий доход', cz: 'Celkový příjem' },
+  'salary.total_salary': { en: 'Total Salary', ru: 'Итоговая зарплата', cz: 'Celkový plat' },
+  'salary.base': { en: 'Base', ru: 'Базовая', cz: 'Základ' },
+  'salary.commission': { en: 'Commission', ru: 'Комиссия', cz: 'Provize' },
+  'salary.notes': { en: 'Notes', ru: 'Заметки', cz: 'Poznámky' },
+  'salary.calculated_at': { en: 'Calculated at', ru: 'Рассчитано', cz: 'Vypočítáno' },
+  'salary.no_unpaid_salary': { en: 'You have no unpaid salary at the moment', ru: 'У вас нет невыплаченной зарплаты', cz: 'Momentálně nemáte nevyplacený plat' },
+  'salary.history': { en: 'Salary History', ru: 'История зарплат', cz: 'Historie platů' },
+  'salary.visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'salary.revenue': { en: 'Revenue', ru: 'Доход', cz: 'Příjem' },
+  'salary.salary': { en: 'Salary', ru: 'Зарплата', cz: 'Plat' },
+  'salary.status': { en: 'Status', ru: 'Статус', cz: 'Status' },
+  'salary.paid_at': { en: 'Paid At', ru: 'Выплачено', cz: 'Vyplaceno' },
+  'salary.cancelled': { en: 'cancelled', ru: 'отменено', cz: 'zrušeno' },
+  'salary.paid': { en: 'Paid', ru: 'Выплачено', cz: 'Vyplaceno' },
+  'salary.access_denied': { en: 'You do not have permission to view this page', ru: 'У вас нет доступа к этой странице', cz: 'Nemáte oprávnění k zobrazení této stránky' },
+  'salary.no_history': { en: 'No salary history available', ru: 'История зарплат отсутствует', cz: 'Historie platů není k dispozici' },
+  
+  // Nav
+  'nav.employees': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
+  'nav.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
+  
+  // Common
+  'common.currency': { en: 'CZK', ru: 'CZK', cz: 'CZK' },
+  'common.close': { en: 'Close', ru: 'Закрыть', cz: 'Zavřít' },
 }
 
 export default translations
