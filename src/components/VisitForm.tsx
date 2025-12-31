@@ -23,11 +23,30 @@ interface VisitData {
   status: string
 }
 
+interface ClientSearchResult {
+  id: number
+  full_name: string
+  contact_phone?: string
+  contact_email?: string
+  birth_date?: string
+  is_linked_to_my_business: boolean
+  basic_medical_info?: {
+    allergies?: string
+    chronic_diseases?: string
+    pregnancy?: boolean
+  }
+}
+
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<any[]>([])
   const [services, setServices] = useState<any[]>([])
+  const [clientSearchQuery, setClientSearchQuery] = useState('')
+  const [clientSearchResults, setClientSearchResults] = useState<ClientSearchResult[]>([])
+  const [selectedClient, setSelectedClient] = useState<ClientSearchResult | null>(null)
+  const [searchingClient, setSearchingClient] = useState(false)
+  const [showClientSearch, setShowClientSearch] = useState(false)
   
   const getInitialDate = (date?: Date) => {
     if (date) return date.toISOString().slice(0, 16)
@@ -60,6 +79,91 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       console.error('Failed to load clients:', error)
     }
   }
+
+  // Поиск клиента глобально
+  const searchClient = async (query: string) => {
+    if (!query || query.length < 2) {
+      setClientSearchResults([])
+      return
+    }
+
+    setSearchingClient(true)
+    try {
+      // Проверяем формат - телефон, email или имя
+      const phoneRegex = /^[\+]?[0-9\s\-\(\)]+$/
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      
+      let searchParams: any = {}
+      
+      if (phoneRegex.test(query.trim())) {
+        searchParams.phone = query.trim()
+      } else if (emailRegex.test(query.trim())) {
+        searchParams.email = query.trim()
+      } else {
+        searchParams.name = query.trim()
+      }
+
+      const { data } = await api.get('/clients/search', { params: searchParams })
+      
+      // Если найден один клиент, показываем результат
+      if (data && data.id) {
+        setClientSearchResults([data])
+        setSelectedClient(data)
+        setFormData({ ...formData, client_id: data.id })
+        
+        // Автоматически создаем связь, если клиент не связан с бизнесом
+        if (!data.is_linked_to_my_business) {
+          linkClientToBusiness(data.id)
+        }
+      } else {
+        setClientSearchResults([])
+      }
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        setClientSearchResults([])
+      } else {
+        console.error('Failed to search client:', error)
+      }
+    } finally {
+      setSearchingClient(false)
+    }
+  }
+
+  // Создание связи клиента с бизнесом
+  const linkClientToBusiness = async (clientId: number) => {
+    try {
+      await api.get('/clients/search', {
+        params: { 
+          phone: selectedClient?.contact_phone || undefined,
+          email: selectedClient?.contact_email || undefined,
+          name: selectedClient?.full_name || undefined,
+          create_link: true
+        }
+      })
+      
+      // Обновляем статус связи
+      if (selectedClient) {
+        setSelectedClient({ ...selectedClient, is_linked_to_my_business: true })
+      }
+    } catch (error) {
+      console.error('Failed to link client to business:', error)
+    }
+  }
+
+  // Debounce для поиска
+  useEffect(() => {
+    if (!clientSearchQuery) {
+      setClientSearchResults([])
+      setSelectedClient(null)
+      return
+    }
+
+    const timeoutId = setTimeout(() => {
+      searchClient(clientSearchQuery)
+    }, 500)
+
+    return () => clearTimeout(timeoutId)
+  }, [clientSearchQuery])
 
   const loadServices = async () => {
     try {
@@ -208,19 +312,121 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.client')} *</label>
-        <select
-          value={formData.client_id}
-          onChange={(e) => setFormData({ ...formData, client_id: parseInt(e.target.value) })}
-          required
-          className="w-full px-3 py-2 border rounded-md"
-        >
-          <option value={0}>{t('visits.selectClient')}</option>
-          {clients.map((client) => (
-            <option key={client.id} value={client.id}>
-              {client.full_name}
-            </option>
-          ))}
-        </select>
+        <div className="space-y-2">
+          {/* Переключатель между списком и поиском */}
+          <div className="flex gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setShowClientSearch(false)}
+              className={`px-3 py-1 text-sm rounded-md ${
+                !showClientSearch
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {t('visits.clientList') || 'Список клиентов'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowClientSearch(true)}
+              className={`px-3 py-1 text-sm rounded-md ${
+                showClientSearch
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {t('visits.clientSearch') || 'Поиск клиента'}
+            </button>
+          </div>
+
+          {showClientSearch ? (
+            <div className="space-y-2">
+              {/* Поле поиска */}
+              <input
+                type="text"
+                value={clientSearchQuery}
+                onChange={(e) => setClientSearchQuery(e.target.value)}
+                placeholder={t('visits.searchClientPlaceholder') || 'Телефон, email или имя клиента...'}
+                className="w-full px-3 py-2 border rounded-md"
+                disabled={searchingClient}
+              />
+              
+              {searchingClient && (
+                <div className="text-sm text-gray-500 flex items-center gap-2">
+                  <LoadingSpinner size="sm" />
+                  {t('visits.searching') || 'Поиск...'}
+                </div>
+              )}
+
+              {/* Результат поиска */}
+              {selectedClient && (
+                <div className="p-3 border rounded-md bg-gray-50">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-medium">{selectedClient.full_name}</p>
+                      {selectedClient.contact_phone && (
+                        <p className="text-sm text-gray-600">📞 {selectedClient.contact_phone}</p>
+                      )}
+                      {selectedClient.contact_email && (
+                        <p className="text-sm text-gray-600">✉️ {selectedClient.contact_email}</p>
+                      )}
+                    </div>
+                    {!selectedClient.is_linked_to_my_business && (
+                      <div className="flex flex-col gap-2">
+                        <div className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
+                          {t('visits.clientFromOtherBusiness') || 'Клиент из другого бизнеса'}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => linkClientToBusiness(selectedClient.id)}
+                          className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                          {t('visits.addToMyBusiness') || 'Добавить в мой бизнес'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Базовые медданные для healthcare */}
+                  {selectedClient.basic_medical_info && (
+                    <div className="mt-2 pt-2 border-t border-gray-200">
+                      <p className="text-xs font-medium text-gray-700 mb-1">
+                        {t('visits.basicMedicalInfo') || 'Базовая медицинская информация:'}
+                      </p>
+                      {selectedClient.basic_medical_info.allergies && (
+                        <p className="text-xs text-gray-600">
+                          <span className="font-medium">Аллергии:</span> {selectedClient.basic_medical_info.allergies}
+                        </p>
+                      )}
+                      {selectedClient.basic_medical_info.chronic_diseases && (
+                        <p className="text-xs text-gray-600">
+                          <span className="font-medium">Хронические заболевания:</span> {selectedClient.basic_medical_info.chronic_diseases}
+                        </p>
+                      )}
+                      {selectedClient.basic_medical_info.pregnancy && (
+                        <p className="text-xs text-yellow-700 font-medium">⚠️ Беременность</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <select
+              value={formData.client_id}
+              onChange={(e) => setFormData({ ...formData, client_id: parseInt(e.target.value) })}
+              required
+              className="w-full px-3 py-2 border rounded-md"
+            >
+              <option value={0}>{t('visits.selectClient')}</option>
+              {clients.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {client.full_name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
 
       <div>
