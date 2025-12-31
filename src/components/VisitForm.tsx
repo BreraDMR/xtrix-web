@@ -43,7 +43,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [clients, setClients] = useState<any[]>([])
   const [services, setServices] = useState<any[]>([])
   const [clientSearchQuery, setClientSearchQuery] = useState('')
-  const [clientSearchResults, setClientSearchResults] = useState<ClientSearchResult[]>([])
   const [selectedClient, setSelectedClient] = useState<ClientSearchResult | null>(null)
   const [searchingClient, setSearchingClient] = useState(false)
   const [showClientSearch, setShowClientSearch] = useState(false)
@@ -107,20 +106,19 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       
       // Если найден один клиент, показываем результат
       if (data && data.id) {
-        setClientSearchResults([data])
         setSelectedClient(data)
         setFormData({ ...formData, client_id: data.id })
         
         // Автоматически создаем связь, если клиент не связан с бизнесом
         if (!data.is_linked_to_my_business) {
-          linkClientToBusiness(data.id)
+          linkClientToBusiness()
         }
       } else {
-        setClientSearchResults([])
+        setSelectedClient(null)
       }
     } catch (error: any) {
       if (error.response?.status === 404) {
-        setClientSearchResults([])
+        setSelectedClient(null)
       } else {
         console.error('Failed to search client:', error)
       }
@@ -130,21 +128,20 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   }
 
   // Создание связи клиента с бизнесом
-  const linkClientToBusiness = async (clientId: number) => {
+  const linkClientToBusiness = async () => {
+    if (!selectedClient) return
+    
     try {
-      await api.get('/clients/search', {
-        params: { 
-          phone: selectedClient?.contact_phone || undefined,
-          email: selectedClient?.contact_email || undefined,
-          name: selectedClient?.full_name || undefined,
-          create_link: true
-        }
-      })
+      const searchParams: any = {}
+      if (selectedClient.contact_phone) searchParams.phone = selectedClient.contact_phone
+      if (selectedClient.contact_email) searchParams.email = selectedClient.contact_email
+      if (selectedClient.full_name) searchParams.name = selectedClient.full_name
+      searchParams.create_link = true
+      
+      await api.get('/clients/search', { params: searchParams })
       
       // Обновляем статус связи
-      if (selectedClient) {
-        setSelectedClient({ ...selectedClient, is_linked_to_my_business: true })
-      }
+      setSelectedClient({ ...selectedClient, is_linked_to_my_business: true })
     } catch (error) {
       console.error('Failed to link client to business:', error)
     }

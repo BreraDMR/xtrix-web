@@ -177,6 +177,13 @@ export type TranslationKey =
   | 'visits.selectService'
   | 'visits.createVisit'
   | 'visits.updateVisit'
+  | 'visits.clientList'
+  | 'visits.clientSearch'
+  | 'visits.searchClientPlaceholder'
+  | 'visits.searching'
+  | 'visits.clientFromOtherBusiness'
+  | 'visits.addToMyBusiness'
+  | 'visits.basicMedicalInfo'
   // Calendar
   | 'calendar.title'
   | 'calendar.simpleViewDescription'
