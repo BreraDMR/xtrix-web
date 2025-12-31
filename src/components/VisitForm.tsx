@@ -82,7 +82,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   // Поиск клиента глобально
   const searchClient = async (query: string) => {
     if (!query || query.length < 2) {
-      setClientSearchResults([])
+      setSelectedClient(null)
       return
     }
 
@@ -150,7 +150,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   // Debounce для поиска
   useEffect(() => {
     if (!clientSearchQuery) {
-      setClientSearchResults([])
       setSelectedClient(null)
       return
     }
