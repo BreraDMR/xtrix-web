@@ -374,7 +374,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                         </div>
                         <button
                           type="button"
-                          onClick={() => linkClientToBusiness(selectedClient.id)}
+                          onClick={() => linkClientToBusiness()}
                           className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
                         >
                           {t('visits.addToMyBusiness') || 'Добавить в мой бизнес'}
