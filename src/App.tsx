@@ -12,6 +12,7 @@ import SpecialistProfile from './pages/SpecialistProfile'
 import Employees from './pages/Employees'
 import MySalary from './pages/MySalary'
 import EmployeeSalary from './pages/EmployeeSalary'
+import Business from './pages/Business'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -102,6 +103,7 @@ function App() {
           <Route path="employees" element={<Employees />} />
           <Route path="employees/:id/salary" element={<EmployeeSalary />} />
           <Route path="my-salary" element={<MySalary />} />
+          <Route path="business" element={<Business />} />
         </Route>
       </Routes>
     </BrowserRouter>

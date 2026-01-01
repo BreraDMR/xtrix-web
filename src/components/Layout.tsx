@@ -22,7 +22,10 @@ export default function Layout() {
     { path: '/services', label: t('nav.services'), icon: '💆' },
     ...(user?.role === 'specialist' ? [{ path: '/profile', label: t('nav.profile'), icon: '👤' }] : []),
     ...(user?.role === 'admin' || user?.role === 'business_owner'
-      ? [{ path: '/employees', label: t('nav.employees'), icon: '👷' }]
+      ? [
+          { path: '/business', label: t('nav.business') || 'Business', icon: '🏢' },
+          { path: '/employees', label: t('nav.employees'), icon: '👷' },
+        ]
       : []),
     ...(user?.role === 'employee'
       ? [{ path: '/my-salary', label: t('nav.my_salary'), icon: '💰' }]
