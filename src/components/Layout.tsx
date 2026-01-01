@@ -23,7 +23,7 @@ export default function Layout() {
     ...(user?.role === 'specialist' ? [{ path: '/profile', label: t('nav.profile'), icon: '👤' }] : []),
     ...(user?.role === 'admin' || user?.role === 'business_owner'
       ? [
-          { path: '/business', label: t('nav.business') || 'Business', icon: '🏢' },
+          { path: '/business', label: 'Business', icon: '🏢' },
           { path: '/employees', label: t('nav.employees'), icon: '👷' },
         ]
       : []),

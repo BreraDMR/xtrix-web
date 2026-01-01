@@ -19,7 +19,6 @@ interface BusinessData {
 }
 
 export default function BusinessForm({ businessId, onSuccess, onCancel }: BusinessFormProps) {
-  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<BusinessData>({
     name: '',

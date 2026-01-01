@@ -18,7 +18,6 @@ interface Business {
 }
 
 export default function Business() {
-  const { t } = useTranslation()
   const { user } = useAuthStore()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
