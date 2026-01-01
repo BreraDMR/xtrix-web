@@ -147,8 +147,8 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
           full_name: newUserData.full_name,
           phone: newUserData.phone || undefined,
           email: newUserData.email || undefined,
-          role: newUserData.role,
-          specialist_type: newUserData.role === 'specialist' && newUserData.specialist_type 
+          role: 'specialist',  // Всегда создаем как specialist
+          specialist_type: newUserData.specialist_type 
             ? newUserData.specialist_type 
             : undefined,
           
