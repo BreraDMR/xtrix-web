@@ -62,11 +62,19 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
     setLoadingUsers(true)
     try {
       // Получаем список всех пользователей с ролями specialist или employee
-      // которые еще не являются сотрудниками
-      const { data } = await api.get('/users/', { params: { role: 'specialist' } })
-      const users = Array.isArray(data) ? data : (data?.items || data?.data || [])
-      // Фильтруем: исключаем текущего пользователя и пользователей, которые уже являются сотрудниками
-      setAvailableUsers(users.filter((u: User) => u.id !== currentUser?.id))
+      const { data: usersData } = await api.get('/users/', { params: { role: 'specialist' } })
+      const allUsers = Array.isArray(usersData) ? usersData : (usersData?.items || usersData?.data || [])
+      
+      // Получаем список всех активных сотрудников, чтобы исключить их
+      const { data: employeesData } = await api.get('/employees/', { params: { is_active: true } })
+      const employees = Array.isArray(employeesData) ? employeesData : (employeesData?.items || employeesData?.data || [])
+      const employedUserIds = new Set(employees.map((emp: any) => emp.employee_user_id))
+      
+      // Фильтруем: исключаем текущего пользователя и пользователей, которые уже являются активными сотрудниками
+      const available = allUsers.filter((u: User) => 
+        u.id !== currentUser?.id && !employedUserIds.has(u.id)
+      )
+      setAvailableUsers(available)
     } catch (error) {
       console.error('Failed to load users:', error)
       // Fallback: если endpoint не работает, оставляем пустой список
@@ -132,7 +140,14 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       onSuccess()
     } catch (error: any) {
       console.error('Failed to save employee:', error)
-      alert(error.response?.data?.detail || error.message || t('common.error'))
+      let errorMessage = error.response?.data?.detail || error.message || t('common.error')
+      
+      // Улучшаем сообщение об ошибке для случая, когда пользователь уже является сотрудником
+      if (errorMessage.includes('already employed')) {
+        errorMessage = 'This user is already employed by another business. Please select a different user or contact support to transfer the employee.'
+      }
+      
+      alert(errorMessage)
     } finally {
       setLoading(false)
     }
