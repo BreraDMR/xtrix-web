@@ -80,16 +80,36 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
     setLoadingUsers(true)
     try {
       // Получаем список всех пользователей с ролями specialist или employee
-      const { data: usersData } = await api.get('/users/', { params: { role: 'specialist' } })
-      const allUsers = Array.isArray(usersData) ? usersData : (usersData?.items || usersData?.data || [])
+      // Запрашиваем оба варианта и объединяем результаты
+      const [specialistsRes, employeesRes] = await Promise.all([
+        api.get('/users/', { params: { role: 'specialist' } }).catch(() => ({ data: [] })),
+        api.get('/users/', { params: { role: 'employee' } }).catch(() => ({ data: [] }))
+      ])
+      
+      const specialists = Array.isArray(specialistsRes.data) 
+        ? specialistsRes.data 
+        : (specialistsRes.data?.items || specialistsRes.data?.data || [])
+      const employees = Array.isArray(employeesRes.data) 
+        ? employeesRes.data 
+        : (employeesRes.data?.items || employeesRes.data?.data || [])
+      
+      // Объединяем списки
+      const allUsers = [...specialists, ...employees]
+      
+      // Убираем дубликаты по ID
+      const uniqueUsers = Array.from(
+        new Map(allUsers.map((u: User) => [u.id, u])).values()
+      )
       
       // Получаем список всех активных сотрудников, чтобы исключить их
       const { data: employeesData } = await api.get('/employees/', { params: { is_active: true } })
-      const employees = Array.isArray(employeesData) ? employeesData : (employeesData?.items || employeesData?.data || [])
-      const employedUserIds = new Set(employees.map((emp: any) => emp.employee_user_id))
+      const activeEmployees = Array.isArray(employeesData) 
+        ? employeesData 
+        : (employeesData?.items || employeesData?.data || [])
+      const employedUserIds = new Set(activeEmployees.map((emp: any) => emp.employee_user_id))
       
       // Фильтруем: исключаем текущего пользователя и пользователей, которые уже являются активными сотрудниками
-      const available = allUsers.filter((u: User) => 
+      const available = uniqueUsers.filter((u: User) => 
         u.id !== currentUser?.id && !employedUserIds.has(u.id)
       )
       setAvailableUsers(available)
