@@ -13,7 +13,7 @@ interface ClientFormProps {
 
 interface ClientData {
   full_name: string
-  date_of_birth?: string
+  birth_date?: string  // Исправлено: было date_of_birth
   gender?: string
   allergies?: string
   chronic_diseases?: string
@@ -23,7 +23,7 @@ interface ClientData {
   personal_notes?: string
   location_lat?: number
   location_lon?: number
-  owner_id: number
+  owner_id?: number  // Исправлено: сделано опциональным
 }
 
 export default function ClientForm({ clientId, onSuccess, onCancel }: ClientFormProps) {
@@ -32,7 +32,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<ClientData>({
     full_name: '',
-    owner_id: 1, // Will be set from auth
   })
 
   // Get specialist profile to check if healthcare specialist
@@ -62,7 +61,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       const { data } = await api.get(`/clients/${clientId}`)
       setFormData({
         ...data,
-        date_of_birth: data.date_of_birth?.split('T')[0] || '',
+        birth_date: data.birth_date?.split('T')[0] || '',  // Исправлено: было date_of_birth
         pregnancy: data.pregnancy || false,
       })
     } catch (error) {
@@ -88,14 +87,42 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
     setLoading(true)
 
     try {
-      if (clientId) {
-        await api.put(`/clients/${clientId}`, formData)
-      } else {
-        await api.post('/clients', formData)
+      // Подготавливаем данные для ClientCreate (только базовые поля клиента)
+      const clientData: any = {
+        full_name: formData.full_name,
+        birth_date: formData.birth_date || undefined,
+        gender: formData.gender || undefined,
+        contact_phone: formData.contact_phone || undefined,
+        contact_email: formData.contact_email || undefined,
+        location_lat: formData.location_lat || undefined,
+        location_lon: formData.location_lon || undefined,
       }
+      
+      // Убираем undefined значения
+      Object.keys(clientData).forEach(key => {
+        if (clientData[key] === undefined || clientData[key] === '') {
+          delete clientData[key]
+        }
+      })
+      
+      let clientResult
+      if (clientId) {
+        clientResult = await api.put(`/clients/${clientId}`, clientData)
+      } else {
+        clientResult = await api.post('/clients', clientData)
+      }
+      
+      // Медицинские данные будут сохранены отдельно через будущий endpoint
+      // Пока просто создаем клиента с базовыми данными
+      
       onSuccess()
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Failed to save client')
+      console.error('Error saving client:', error)
+      const errorMessage = error.response?.data?.error?.detail?.validation_errors?.[0]?.message 
+        || error.response?.data?.error?.message
+        || error.response?.data?.detail
+        || 'Failed to save client'
+      alert(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -119,8 +146,8 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
           <label className="block text-sm font-medium mb-1">Date of Birth</label>
           <input
             type="date"
-            value={formData.date_of_birth}
-            onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+            value={formData.birth_date || ''}  // Исправлено: было date_of_birth
+            onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}  // Исправлено: было date_of_birth
             className="w-full px-3 py-2 border rounded-md"
           />
         </div>
