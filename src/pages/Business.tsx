@@ -3,7 +3,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import BusinessForm from '../components/BusinessForm'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 
 interface Business {
