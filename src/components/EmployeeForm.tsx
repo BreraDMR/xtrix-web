@@ -46,6 +46,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
   const [loadingUsers, setLoadingUsers] = useState(false)
   const [createNewUser, setCreateNewUser] = useState(false)
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null)
+  const [passwordCopied, setPasswordCopied] = useState(false)
   const [newUserData, setNewUserData] = useState<NewUserData>({
     full_name: '',
     phone: '',
@@ -252,6 +253,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                     specialist_type: '',
                   })
                   setGeneratedPassword(null)
+                  setPasswordCopied(false)
                 }
               }}
               className="mr-2"
@@ -386,8 +388,37 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
           <h4 className="font-medium text-green-800 mb-2">Employee Created Successfully!</h4>
           <p className="text-sm text-green-700 mb-2">Generated Password:</p>
-          <div className="bg-white p-3 rounded border border-green-300 font-mono text-lg font-bold text-center">
-            {generatedPassword}
+          <div className="flex gap-2 items-center">
+            <input
+              type="text"
+              readOnly
+              value={generatedPassword}
+              className="flex-1 bg-white p-3 rounded border border-green-300 font-mono text-lg font-bold text-center select-all cursor-text"
+              onClick={(e) => (e.target as HTMLInputElement).select()}
+            />
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(generatedPassword)
+                  setPasswordCopied(true)
+                  setTimeout(() => setPasswordCopied(false), 2000)
+                } catch (err) {
+                  // Fallback for older browsers
+                  const input = document.createElement('input')
+                  input.value = generatedPassword
+                  document.body.appendChild(input)
+                  input.select()
+                  document.execCommand('copy')
+                  document.body.removeChild(input)
+                  setPasswordCopied(true)
+                  setTimeout(() => setPasswordCopied(false), 2000)
+                }
+              }}
+              className="px-4 py-3 bg-green-600 text-white rounded hover:bg-green-700 font-medium whitespace-nowrap"
+            >
+              {passwordCopied ? '✓ Copied!' : 'Copy'}
+            </button>
           </div>
           <p className="text-xs text-green-600 mt-2">
             Please save this password and provide it to the employee. They can log in using their email or phone number.
