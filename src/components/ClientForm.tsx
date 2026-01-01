@@ -105,11 +105,10 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
         }
       })
       
-      let clientResult
       if (clientId) {
-        clientResult = await api.put(`/clients/${clientId}`, clientData)
+        await api.put(`/clients/${clientId}`, clientData)
       } else {
-        clientResult = await api.post('/clients', clientData)
+        await api.post('/clients', clientData)
       }
       
       // Медицинские данные будут сохранены отдельно через будущий endpoint
