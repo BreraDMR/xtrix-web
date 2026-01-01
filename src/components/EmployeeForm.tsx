@@ -314,24 +314,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
           <div>
             <label className="block text-sm font-medium mb-1">
-              Role *
-            </label>
-            <select
-              value={newUserData.role}
-              onChange={(e) => setNewUserData({ 
-                ...newUserData, 
-                role: e.target.value as 'specialist' | 'employee',
-                specialist_type: e.target.value === 'employee' ? '' : newUserData.specialist_type
-              })}
-              className="w-full px-3 py-2 border rounded-md"
-            >
-              <option value="specialist">Specialist</option>
-              <option value="employee">Employee</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">
               Specialist Type
             </label>
             <select
