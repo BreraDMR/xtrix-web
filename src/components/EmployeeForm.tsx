@@ -160,13 +160,11 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
         const response = await api.post('/employees/create-with-user', payload)
         
-        // Показываем сгенерированный пароль
+        // Показываем сгенерированный пароль в форме (не закрываем форму, чтобы можно было скопировать)
         setGeneratedPassword(response.data.generated_password)
         
-        // Ждем подтверждения пользователя перед закрытием формы
-        alert(`Employee created successfully!\n\nGenerated password: ${response.data.generated_password}\n\nPlease save this password and provide it to the employee.`)
-        
-        onSuccess()
+        // НЕ вызываем onSuccess() сразу - оставляем форму открытой, чтобы пользователь мог скопировать пароль
+        // Пользователь может закрыть форму вручную после копирования пароля
       } catch (error: any) {
         console.error('Failed to create employee with user:', error)
         let errorMessage = error.response?.data?.detail || error.message || t('common.error')
@@ -423,6 +421,17 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
           <p className="text-xs text-green-600 mt-2">
             Please save this password and provide it to the employee. They can log in using their email or phone number.
           </p>
+          <button
+            type="button"
+            onClick={() => {
+              setGeneratedPassword(null)
+              setPasswordCopied(false)
+              onSuccess()
+            }}
+            className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
+          >
+            Close
+          </button>
         </div>
       )}
 
