@@ -330,24 +330,22 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
             </select>
           </div>
 
-          {newUserData.role === 'specialist' && (
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Specialist Type
-              </label>
-              <select
-                value={newUserData.specialist_type}
-                onChange={(e) => setNewUserData({ ...newUserData, specialist_type: e.target.value })}
-                className="w-full px-3 py-2 border rounded-md"
-              >
-                <option value="">Select type...</option>
-                <option value="beauty">Beauty</option>
-                <option value="wellness">Wellness</option>
-                <option value="healthcare">Healthcare</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-          )}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Specialist Type
+            </label>
+            <select
+              value={newUserData.specialist_type}
+              onChange={(e) => setNewUserData({ ...newUserData, specialist_type: e.target.value })}
+              className="w-full px-3 py-2 border rounded-md"
+            >
+              <option value="">Select type...</option>
+              <option value="beauty">Beauty</option>
+              <option value="wellness">Wellness</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
         </div>
       ) : (
         // Форма для выбора существующего пользователя
