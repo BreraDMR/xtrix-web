@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
-import api from '../services/api'
+import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 interface Subscription {
@@ -118,7 +118,7 @@ export default function Subscription() {
       <div className="p-6">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-blue-800">
-            {t('subscription.notRequired') || 'Subscription is not required for your role'}
+            {t('subscription.notRequired')}
           </p>
         </div>
       </div>
@@ -145,14 +145,13 @@ export default function Subscription() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">
-        {t('subscription.title') || 'Subscription Management'}
+        {t('subscription.title')}
       </h1>
 
       {isEmployee && (
         <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
           <p className="text-green-800">
-            {t('subscription.employeeMessage') ||
-              'You are using the subscription provided by your administrator. No payment required.'}
+            {t('subscription.employeeMessage')}
           </p>
         </div>
       )}
@@ -161,7 +160,7 @@ export default function Subscription() {
       {subscription && (
         <div className="mb-8 bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">
-            {t('subscription.currentSubscription') || 'Current Subscription'}
+            {t('subscription.currentSubscription')}
           </h2>
           <div className="space-y-2">
             <div className="flex justify-between">
@@ -205,11 +204,11 @@ export default function Subscription() {
       {trialStatus && trialStatus.is_trial && (
         <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p className="text-yellow-800 font-medium mb-2">
-            {t('subscription.trialActive') || 'Trial period is active'}
+            {t('subscription.trialActive')}
           </p>
           {trialStatus.trial_end && (
             <p className="text-sm text-yellow-700">
-              {t('subscription.trialEnds') || 'Trial ends'}: {formatDate(trialStatus.trial_end)} (
+              {t('subscription.trialEnds')}: {formatDate(trialStatus.trial_end)} (
               {getDaysRemaining(trialStatus.trial_end)} days remaining)
             </p>
           )}
@@ -220,7 +219,7 @@ export default function Subscription() {
       {availablePlans && availablePlans.length > 0 && (
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4">
-            {t('subscription.availablePlans') || 'Available Plans'}
+            {t('subscription.availablePlans')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {availablePlans.map((plan) => (
@@ -247,9 +246,9 @@ export default function Subscription() {
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
                 >
-                  {subscription?.status === 'active'
-                    ? t('subscription.currentPlan') || 'Current Plan'
-                    : t('subscription.subscribe') || 'Subscribe'}
+                    {subscription?.status === 'active'
+                    ? t('subscription.currentPlan')
+                    : t('subscription.subscribe')}
                 </button>
               </div>
             ))}
@@ -266,11 +265,11 @@ export default function Subscription() {
       {!subscription && !trialStatus?.is_trial && (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
           <p className="text-gray-600 mb-4">
-            {t('subscription.noSubscription') || 'No active subscription'}
+            {t('subscription.noSubscription')}
           </p>
           {availablePlans && availablePlans.length > 0 && (
             <p className="text-sm text-gray-500">
-              {t('subscription.selectPlan') || 'Please select a plan above to subscribe'}
+              {t('subscription.selectPlan')}
             </p>
           )}
         </div>

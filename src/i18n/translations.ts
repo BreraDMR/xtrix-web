@@ -558,6 +558,20 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   // Nav
   'nav.employees': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'nav.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
+  'nav.subscription': { en: 'Subscription', ru: 'Подписка', cz: 'Předplatné' },
+  
+  // Subscription
+  'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },
+  'subscription.notRequired': { en: 'Subscription is not required for your role', ru: 'Подписка не требуется для вашей роли', cz: 'Předplatné není vyžadováno pro vaši roli' },
+  'subscription.employeeMessage': { en: 'You are using the subscription provided by your administrator. No payment required.', ru: 'Вы используете подписку, предоставленную вашим администратором. Оплата не требуется.', cz: 'Používáte předplatné poskytnuté vaším správcem. Platba není vyžadována.' },
+  'subscription.currentSubscription': { en: 'Current Subscription', ru: 'Текущая подписка', cz: 'Aktuální předplatné' },
+  'subscription.trialActive': { en: 'Trial period is active', ru: 'Пробный период активен', cz: 'Zkušební období je aktivní' },
+  'subscription.trialEnds': { en: 'Trial ends', ru: 'Пробный период заканчивается', cz: 'Zkušební období končí' },
+  'subscription.availablePlans': { en: 'Available Plans', ru: 'Доступные планы', cz: 'Dostupné plány' },
+  'subscription.currentPlan': { en: 'Current Plan', ru: 'Текущий план', cz: 'Aktuální plán' },
+  'subscription.subscribe': { en: 'Subscribe', ru: 'Подписаться', cz: 'Přihlásit se' },
+  'subscription.noSubscription': { en: 'No active subscription', ru: 'Нет активной подписки', cz: 'Žádné aktivní předplatné' },
+  'subscription.selectPlan': { en: 'Please select a plan above to subscribe', ru: 'Пожалуйста, выберите план выше для подписки', cz: 'Vyberte prosím plán výše pro předplatné' },
   
   // Common
   'common.currency': { en: 'CZK', ru: 'CZK', cz: 'CZK' },
