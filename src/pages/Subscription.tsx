@@ -309,7 +309,7 @@ export default function Subscription() {
                   <div className="font-semibold">Все планы:</div>
                   {plans.map((p) => (
                     <div key={p.id} className="ml-2">
-                      • {p.name} - код: {p.code || 'нет'} - {p.price}€ - trial: {p.is_trial ? 'да' : 'нет'} - активен: {p.is_active !== false ? 'да' : 'нет'}
+                      • {p.name} - код: {p.code || 'нет'} - {p.price}€ - trial: {p.is_trial ? 'да' : 'нет'} - активен: {(p.is_active !== false && p.is_active !== undefined) ? 'да' : 'нет'}
                     </div>
                   ))}
                   <div className="font-semibold mt-2">Отфильтровано (для роли {user?.role}): {availablePlans.length}</div>
