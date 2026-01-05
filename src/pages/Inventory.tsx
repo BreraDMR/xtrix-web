@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
@@ -20,16 +20,6 @@ interface Product {
   is_active: boolean
   created_at: string
   updated_at: string
-}
-
-interface ProductUsage {
-  id: number
-  product_id: number
-  visit_id?: number
-  quantity: number
-  usage_date: string
-  notes?: string
-  product?: Product
 }
 
 export default function Inventory() {
@@ -57,15 +47,6 @@ export default function Inventory() {
 
   const products: Product[] = productsResponse?.items || []
   const lowStockProducts = products.filter(p => p.quantity <= p.min_quantity)
-
-  // Получаем товары с низким остатком
-  const { data: lowStockList } = useQuery({
-    queryKey: ['products-low-stock'],
-    queryFn: async () => {
-      const { data } = await api.get('/products/low-stock')
-      return data
-    },
-  })
 
   // Создание товара
   const createMutation = useMutation({
@@ -120,17 +101,6 @@ export default function Inventory() {
       setAddQuantityValue('')
     },
   })
-
-  // Список использований
-  const { data: usagesResponse } = useQuery({
-    queryKey: ['product-usages'],
-    queryFn: async () => {
-      const { data } = await api.get('/products/usage?per_page=50')
-      return data
-    },
-  })
-
-  const usages: ProductUsage[] = usagesResponse?.items || []
 
   if (isLoading) {
     return <LoadingSpinner />
