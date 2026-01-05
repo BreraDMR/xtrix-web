@@ -279,6 +279,8 @@ export type TranslationKey =
   | 'subscription.subscribe'
   | 'subscription.noSubscription'
   | 'subscription.selectPlan'
+  | 'subscription.noPlansAvailable'
+  | 'subscription.contactAdmin'
   // Common
   | 'common.currency'
   | 'common.close'
@@ -585,6 +587,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'subscription.subscribe': { en: 'Subscribe', ru: 'Подписаться', cz: 'Přihlásit se' },
   'subscription.noSubscription': { en: 'No active subscription', ru: 'Нет активной подписки', cz: 'Žádné aktivní předplatné' },
   'subscription.selectPlan': { en: 'Please select a plan above to subscribe', ru: 'Пожалуйста, выберите план выше для подписки', cz: 'Vyberte prosím plán výše pro předplatné' },
+  'subscription.noPlansAvailable': { en: 'No subscription plans available for your role', ru: 'Нет доступных планов для вашей роли', cz: 'Žádné dostupné plány pro vaši roli' },
+  'subscription.contactAdmin': { en: 'Please contact administrator to create subscription plans', ru: 'Обратитесь к администратору для создания планов подписки', cz: 'Kontaktujte správce pro vytvoření plánů předplatného' },
   
   // Common
   'common.currency': { en: 'CZK', ru: 'CZK', cz: 'CZK' },
