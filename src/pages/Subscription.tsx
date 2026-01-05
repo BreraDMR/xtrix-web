@@ -65,40 +65,62 @@ export default function Subscription() {
   })
 
   // Получаем список планов
-  const { data: plans, isLoading: plansLoading } = useQuery<SubscriptionPlan[]>({
+  const { data: plans, isLoading: plansLoading, error: plansError } = useQuery<SubscriptionPlan[]>({
     queryKey: ['subscription-plans'],
     queryFn: async () => {
-      const { data } = await api.get('/subscriptions/plans?active_only=true')
-      // Фильтруем trial планы из списка (они создаются автоматически)
-      return data.filter((plan: SubscriptionPlan) => !plan.is_trial)
+      try {
+        const { data } = await api.get('/subscriptions/plans?active_only=true')
+        console.log('[Subscription] Plans received from API:', data)
+        // Фильтруем trial планы из списка (они создаются автоматически)
+        const filtered = data.filter((plan: SubscriptionPlan) => !plan.is_trial)
+        console.log('[Subscription] Plans after filtering trial:', filtered)
+        return filtered
+      } catch (error) {
+        console.error('[Subscription] Error fetching plans:', error)
+        throw error
+      }
     },
   })
 
   // Фильтруем планы в зависимости от роли
   // Если планов нет или фильтрация не дает результатов, показываем все планы (кроме trial)
   const availablePlans = React.useMemo<SubscriptionPlan[]>(() => {
-    if (!plans || plans.length === 0) return []
+    console.log('[Subscription] Filtering plans. User role:', user?.role, 'Plans:', plans)
+    if (!plans || plans.length === 0) {
+      console.log('[Subscription] No plans available')
+      return []
+    }
     
     // Сначала фильтруем trial планы
     const nonTrialPlans = plans.filter((plan) => !plan.is_trial)
+    console.log('[Subscription] Non-trial plans:', nonTrialPlans)
     
-    if (nonTrialPlans.length === 0) return []
+    if (nonTrialPlans.length === 0) {
+      console.log('[Subscription] No non-trial plans')
+      return []
+    }
     
     // Для админа: показываем планы для админов или все планы с ценой >= 50€
     if (user?.role === 'admin') {
       const adminPlans = nonTrialPlans.filter((plan) => {
         const code = plan.code?.toLowerCase() || ''
-        return code.includes('admin') || 
+        const matches = code.includes('admin') || 
                code.includes('unlimited') ||
                (plan.price >= 50 && !code.includes('solo'))
+        console.log(`[Subscription] Plan ${plan.name} (code: ${code}, price: ${plan.price}) matches admin: ${matches}`)
+        return matches
       })
+      
+      console.log('[Subscription] Admin plans found:', adminPlans)
       
       // Если нашлись специфичные планы, возвращаем их, иначе все планы с ценой >= 30€
       if (adminPlans.length > 0) {
         return adminPlans
       }
       // Fallback: показываем все планы с ценой >= 30€ (admin планы обычно дороже)
-      return nonTrialPlans.filter((plan) => plan.price >= 30)
+      const fallback = nonTrialPlans.filter((plan) => plan.price >= 30)
+      console.log('[Subscription] Using fallback (price >= 30):', fallback)
+      return fallback
     }
     
     // Для специалиста: показываем Solo планы или все планы с ценой < 50€
@@ -118,6 +140,7 @@ export default function Subscription() {
     }
     
     // Для других ролей - пустой список
+    console.log('[Subscription] User role not admin or specialist')
     return []
   }, [plans, user?.role])
 
