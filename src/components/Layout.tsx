@@ -25,7 +25,11 @@ export default function Layout() {
       ? [
           { path: '/business', label: 'Business', icon: '🏢' },
           { path: '/employees', label: t('nav.employees'), icon: '👷' },
+          { path: '/subscription', label: t('nav.subscription') || 'Subscription', icon: '💳' },
         ]
+      : []),
+    ...(user?.role === 'specialist' && !user?.employer_id
+      ? [{ path: '/subscription', label: t('nav.subscription') || 'Subscription', icon: '💳' }]
       : []),
     ...(user?.role === 'employee'
       ? [{ path: '/my-salary', label: t('nav.my_salary'), icon: '💰' }]
