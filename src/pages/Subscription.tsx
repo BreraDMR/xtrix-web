@@ -295,9 +295,6 @@ export default function Subscription() {
                 </div>
                 <div className="mb-4 text-sm text-gray-600">
                   <p>Period: {plan.period_days} days</p>
-                  {plan.code && (
-                    <p className="text-xs text-gray-400">Code: {plan.code}</p>
-                  )}
                 </div>
                 <button
                   onClick={() => handleSubscribe(plan.id)}
