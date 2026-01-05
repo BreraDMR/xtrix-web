@@ -74,16 +74,22 @@ export default function Subscription() {
   })
 
   // Фильтруем планы в зависимости от роли
+  // Если планов нет или фильтрация не дает результатов, показываем все планы (кроме trial)
   const availablePlans = plans?.filter((plan) => {
+    if (!plan || plan.is_trial) return false
+    
     if (user?.role === 'admin') {
-      // Для админа показываем планы для админов
-      return plan.code.includes('admin') || plan.code.includes('unlimited')
+      // Для админа показываем планы для админов или любые планы с ценой > 50€ (admin планы дорогие)
+      return plan.code.toLowerCase().includes('admin') || 
+             plan.code.toLowerCase().includes('unlimited') ||
+             (plan.price > 50 && !plan.code.toLowerCase().includes('solo'))
     } else if (user?.role === 'specialist') {
-      // Для специалиста показываем Solo планы
-      return plan.code.includes('solo')
+      // Для специалиста показываем Solo планы или любые планы с ценой < 50€ (solo планы дешевые)
+      return plan.code.toLowerCase().includes('solo') ||
+             (plan.price < 50 && !plan.code.toLowerCase().includes('admin'))
     }
     return false
-  })
+  }) || []
 
   const handleSubscribe = async (planId: number) => {
     setLoading(true)
@@ -216,11 +222,11 @@ export default function Subscription() {
       )}
 
       {/* Список доступных планов */}
-      {availablePlans && availablePlans.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">
-            {t('subscription.availablePlans')}
-          </h2>
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">
+          {t('subscription.availablePlans')}
+        </h2>
+        {availablePlans.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {availablePlans.map((plan) => (
               <div
@@ -236,6 +242,9 @@ export default function Subscription() {
                 </div>
                 <div className="mb-4 text-sm text-gray-600">
                   <p>Period: {plan.period_days} days</p>
+                  {plan.code && (
+                    <p className="text-xs text-gray-400">Code: {plan.code}</p>
+                  )}
                 </div>
                 <button
                   onClick={() => handleSubscribe(plan.id)}
@@ -253,8 +262,31 @@ export default function Subscription() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+            <p className="text-yellow-800 mb-2">
+              {t('subscription.noPlansAvailable') || 'Нет доступных планов для вашей роли'}
+            </p>
+            <p className="text-sm text-yellow-700">
+              {t('subscription.contactAdmin') || 'Обратитесь к администратору для создания планов подписки'}
+            </p>
+            {plans && plans.length > 0 && (
+              <details className="mt-4 text-left">
+                <summary className="cursor-pointer text-sm text-yellow-700 font-medium">
+                  Отладочная информация: найдено планов в базе: {plans.length}
+                </summary>
+                <div className="mt-2 text-xs text-gray-600">
+                  {plans.map((p) => (
+                    <div key={p.id}>
+                      {p.name} - {p.code} - {p.price}€ (trial: {p.is_trial ? 'да' : 'нет'})
+                    </div>
+                  ))}
+                </div>
+              </details>
+            )}
+          </div>
+        )}
+      </div>
 
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
