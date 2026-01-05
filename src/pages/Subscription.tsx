@@ -75,21 +75,50 @@ export default function Subscription() {
 
   // Фильтруем планы в зависимости от роли
   // Если планов нет или фильтрация не дает результатов, показываем все планы (кроме trial)
-  const availablePlans = plans?.filter((plan) => {
-    if (!plan || plan.is_trial) return false
+  const availablePlans = React.useMemo(() => {
+    if (!plans || plans.length === 0) return []
     
+    // Сначала фильтруем trial планы
+    const nonTrialPlans = plans.filter((plan) => !plan.is_trial)
+    
+    if (nonTrialPlans.length === 0) return []
+    
+    // Для админа: показываем планы для админов или все планы с ценой >= 50€
     if (user?.role === 'admin') {
-      // Для админа показываем планы для админов или любые планы с ценой > 50€ (admin планы дорогие)
-      return plan.code.toLowerCase().includes('admin') || 
-             plan.code.toLowerCase().includes('unlimited') ||
-             (plan.price > 50 && !plan.code.toLowerCase().includes('solo'))
-    } else if (user?.role === 'specialist') {
-      // Для специалиста показываем Solo планы или любые планы с ценой < 50€ (solo планы дешевые)
-      return plan.code.toLowerCase().includes('solo') ||
-             (plan.price < 50 && !plan.code.toLowerCase().includes('admin'))
+      const adminPlans = nonTrialPlans.filter((plan) => {
+        const code = plan.code?.toLowerCase() || ''
+        return code.includes('admin') || 
+               code.includes('unlimited') ||
+               (plan.price >= 50 && !code.includes('solo'))
+      })
+      
+      // Если нашлись специфичные планы, возвращаем их, иначе все планы с ценой >= 30€
+      if (adminPlans.length > 0) {
+        return adminPlans
+      }
+      // Fallback: показываем все планы с ценой >= 30€ (admin планы обычно дороже)
+      return nonTrialPlans.filter((plan) => plan.price >= 30)
     }
-    return false
-  }) || []
+    
+    // Для специалиста: показываем Solo планы или все планы с ценой < 50€
+    if (user?.role === 'specialist') {
+      const soloPlans = nonTrialPlans.filter((plan) => {
+        const code = plan.code?.toLowerCase() || ''
+        return code.includes('solo') ||
+               (plan.price < 50 && !code.includes('admin'))
+      })
+      
+      // Если нашлись специфичные планы, возвращаем их, иначе все планы с ценой < 50€
+      if (soloPlans.length > 0) {
+        return soloPlans
+      }
+      // Fallback: показываем все планы с ценой < 50€
+      return nonTrialPlans.filter((plan) => plan.price < 50)
+    }
+    
+    // Для других ролей - пустой список
+    return []
+  }, [plans, user?.role])
 
   const handleSubscribe = async (planId: number) => {
     setLoading(true)
@@ -275,10 +304,17 @@ export default function Subscription() {
                 <summary className="cursor-pointer text-sm text-yellow-700 font-medium">
                   Отладочная информация: найдено планов в базе: {plans.length}
                 </summary>
-                <div className="mt-2 text-xs text-gray-600">
+                <div className="mt-2 text-xs text-gray-600 space-y-1">
+                  <div className="font-semibold">Все планы:</div>
                   {plans.map((p) => (
-                    <div key={p.id}>
-                      {p.name} - {p.code} - {p.price}€ (trial: {p.is_trial ? 'да' : 'нет'})
+                    <div key={p.id} className="ml-2">
+                      • {p.name} - код: {p.code || 'нет'} - {p.price}€ - trial: {p.is_trial ? 'да' : 'нет'} - активен: {p.is_active !== false ? 'да' : 'нет'}
+                    </div>
+                  ))}
+                  <div className="font-semibold mt-2">Отфильтровано (для роли {user?.role}): {availablePlans.length}</div>
+                  {availablePlans.map((p) => (
+                    <div key={p.id} className="ml-2 text-green-700">
+                      ✓ {p.name} - {p.price}€
                     </div>
                   ))}
                 </div>
