@@ -26,6 +26,7 @@ interface SubscriptionPlan {
   currency: string
   is_trial: boolean
   trial_days: number | null
+  is_active?: boolean
 }
 
 interface TrialStatus {
@@ -75,7 +76,7 @@ export default function Subscription() {
 
   // Фильтруем планы в зависимости от роли
   // Если планов нет или фильтрация не дает результатов, показываем все планы (кроме trial)
-  const availablePlans = React.useMemo(() => {
+  const availablePlans = React.useMemo<SubscriptionPlan[]>(() => {
     if (!plans || plans.length === 0) return []
     
     // Сначала фильтруем trial планы
