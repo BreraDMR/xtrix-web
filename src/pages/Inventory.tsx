@@ -270,7 +270,11 @@ export default function Inventory() {
       {/* Форма добавления товара */}
       {showAddForm && (
         <ProductForm
-          onSubmit={(product) => createMutation.mutate(product)}
+          product={undefined}
+          onSubmit={(product) => {
+            console.log('ProductForm onSubmit called with:', product)
+            createMutation.mutate(product)
+          }}
           onCancel={() => setShowAddForm(false)}
         />
       )}
