@@ -266,6 +266,19 @@ export type TranslationKey =
   // Nav
   | 'nav.employees'
   | 'nav.my_salary'
+  | 'nav.subscription'
+  // Subscription
+  | 'subscription.title'
+  | 'subscription.notRequired'
+  | 'subscription.employeeMessage'
+  | 'subscription.currentSubscription'
+  | 'subscription.trialActive'
+  | 'subscription.trialEnds'
+  | 'subscription.availablePlans'
+  | 'subscription.currentPlan'
+  | 'subscription.subscribe'
+  | 'subscription.noSubscription'
+  | 'subscription.selectPlan'
   // Common
   | 'common.currency'
   | 'common.close'
