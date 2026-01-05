@@ -304,7 +304,6 @@ function ExpenseForm({
 }) {
   const { t } = useTranslation()
   const { user } = useAuthStore()
-  const queryClient = useQueryClient()
 
   const [formData, setFormData] = useState({
     amount: '',
