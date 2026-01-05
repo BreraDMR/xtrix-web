@@ -14,6 +14,7 @@ import MySalary from './pages/MySalary'
 import EmployeeSalary from './pages/EmployeeSalary'
 import Business from './pages/Business'
 import Subscription from './pages/Subscription'
+import Inventory from './pages/Inventory'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -105,6 +106,7 @@ function App() {
           <Route path="employees/:id/salary" element={<EmployeeSalary />} />
           <Route path="my-salary" element={<MySalary />} />
           <Route path="business" element={<Business />} />
+          <Route path="inventory" element={<Inventory />} />
           <Route path="subscription" element={<Subscription />} />
         </Route>
       </Routes>

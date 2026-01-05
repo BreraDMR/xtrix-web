@@ -104,6 +104,7 @@ export type TranslationKey =
   | 'nav.services'
   | 'nav.profile'
   | 'nav.logout'
+  | 'nav.inventory'
   // Login
   | 'login.title'
   | 'login.subtitle'
@@ -267,6 +268,7 @@ export type TranslationKey =
   | 'nav.employees'
   | 'nav.my_salary'
   | 'nav.subscription'
+  | 'nav.inventory'
   // Subscription
   | 'subscription.title'
   | 'subscription.notRequired'
@@ -580,6 +582,33 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.employees': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'nav.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
   'nav.subscription': { en: 'Subscription', ru: 'Подписка', cz: 'Předplatné' },
+  'nav.inventory': { en: 'Inventory', ru: 'Склад', cz: 'Sklad' },
+  
+  // Inventory
+  'inventory.title': { en: 'Inventory Management', ru: 'Управление складом', cz: 'Správa skladu' },
+  'inventory.add_product': { en: 'Add Product', ru: 'Добавить товар', cz: 'Přidat produkt' },
+  'inventory.edit_product': { en: 'Edit Product', ru: 'Редактировать товар', cz: 'Upravit produkt' },
+  'inventory.name': { en: 'Name', ru: 'Название', cz: 'Název' },
+  'inventory.description': { en: 'Description', ru: 'Описание', cz: 'Popis' },
+  'inventory.category': { en: 'Category', ru: 'Категория', cz: 'Kategorie' },
+  'inventory.quantity': { en: 'Quantity', ru: 'Количество', cz: 'Množství' },
+  'inventory.min_quantity': { en: 'Min Quantity', ru: 'Мин. количество', cz: 'Min. množství' },
+  'inventory.unit': { en: 'Unit', ru: 'Единица', cz: 'Jednotka' },
+  'inventory.price': { en: 'Price', ru: 'Цена', cz: 'Cena' },
+  'inventory.barcode': { en: 'Barcode', ru: 'Штрихкод', cz: 'Čárový kód' },
+  'inventory.supplier': { en: 'Supplier', ru: 'Поставщик', cz: 'Dodavatel' },
+  'inventory.location': { en: 'Location', ru: 'Место хранения', cz: 'Umístění' },
+  'inventory.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
+  'inventory.edit': { en: 'Edit', ru: 'Редактировать', cz: 'Upravit' },
+  'inventory.delete': { en: 'Delete', ru: 'Удалить', cz: 'Smazat' },
+  'inventory.add_quantity': { en: 'Add Quantity', ru: 'Добавить количество', cz: 'Přidat množství' },
+  'inventory.add_quantity_to': { en: 'Add Quantity to', ru: 'Добавить количество в', cz: 'Přidat množství do' },
+  'inventory.low_stock': { en: 'Low Stock', ru: 'Низкий остаток', cz: 'Nízký stav' },
+  'inventory.low_stock_warning': { en: 'Low Stock Warning: {count} product(s) need restocking', ru: 'Предупреждение: {count} товар(ов) нуждается в пополнении', cz: 'Varování: {count} produktů potřebuje doplnění' },
+  'inventory.low_stock_description': { en: 'Some products are running low. Please restock to avoid shortages.', ru: 'Некоторые товары заканчиваются. Пожалуйста, пополните склад.', cz: 'Některé produkty docházejí. Prosím doplňte sklad.' },
+  'inventory.low_stock_only': { en: 'Low Stock Only', ru: 'Только низкий остаток', cz: 'Pouze nízký stav' },
+  'inventory.search_placeholder': { en: 'Search products...', ru: 'Поиск товаров...', cz: 'Hledat produkty...' },
+  'inventory.no_products': { en: 'No products found', ru: 'Товары не найдены', cz: 'Produkty nenalezeny' },
   
   // Subscription
   'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },
