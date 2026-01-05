@@ -517,6 +517,65 @@ export default function Subscription() {
           )}
         </div>
       )}
+
+      {/* История подписок */}
+      {subscriptionHistory && subscriptionHistory.length > 1 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">
+            {t('subscription.history') || 'Subscription History'}
+          </h2>
+          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Plan
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Created
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Period End
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {subscriptionHistory
+                  .filter((sub: Subscription) => sub.id !== subscription?.id)
+                  .map((sub: Subscription) => (
+                    <tr key={sub.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        Plan #{sub.plan_id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            sub.status === 'active'
+                              ? 'bg-green-100 text-green-800'
+                              : sub.status === 'cancelled' || sub.status === 'expired'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {sub.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDate(sub.created_at)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {formatDate(sub.current_period_end)}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
