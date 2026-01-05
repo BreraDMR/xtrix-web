@@ -26,6 +26,7 @@ export default function Layout() {
           { path: '/business', label: 'Business', icon: '🏢' },
           { path: '/employees', label: t('nav.employees'), icon: '👷' },
           { path: '/inventory', label: t('nav.inventory'), icon: '📦' },
+          { path: '/finance', label: t('nav.finance'), icon: '💰' },
           { path: '/subscription', label: t('nav.subscription'), icon: '💳' },
         ]
       : []),

@@ -119,6 +119,10 @@ export type TranslationKey =
   | 'dashboard.title'
   | 'dashboard.subtitle'
   | 'dashboard.monthlyRevenue'
+  | 'dashboard.monthlyProfit'
+  | 'dashboard.monthlyExpenses'
+  | 'dashboard.profitMargin'
+  | 'dashboard.margin'
   | 'dashboard.thisMonth'
   // Clients
   | 'clients.title'
@@ -269,6 +273,29 @@ export type TranslationKey =
   | 'nav.my_salary'
   | 'nav.subscription'
   | 'nav.inventory'
+  | 'nav.finance'
+  // Finance
+  | 'finance.title'
+  | 'finance.subtitle'
+  | 'finance.revenue'
+  | 'finance.expenses'
+  | 'finance.profit'
+  | 'finance.profit_margin'
+  | 'finance.date_from'
+  | 'finance.date_to'
+  | 'finance.category'
+  | 'finance.all_categories'
+  | 'finance.add_expense'
+  | 'finance.expenses_by_category'
+  | 'finance.expenses_list'
+  | 'finance.no_expenses'
+  | 'finance.date'
+  | 'finance.description'
+  | 'finance.amount'
+  | 'finance.payment_method'
+  | 'finance.actions'
+  | 'finance.confirm_delete'
+  | 'finance.form_coming_soon'
   // Subscription
   | 'subscription.title'
   | 'subscription.notRequired'
@@ -451,6 +478,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'dashboard.title': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },
   'dashboard.subtitle': { en: 'Overview of your business', ru: 'Обзор вашего бизнеса', cz: 'Přehled vašeho podnikání' },
   'dashboard.monthlyRevenue': { en: 'Monthly Revenue', ru: 'Месячный доход', cz: 'Měsíční příjem' },
+  'dashboard.monthlyProfit': { en: 'Monthly Profit', ru: 'Месячная прибыль', cz: 'Měsíční zisk' },
+  'dashboard.monthlyExpenses': { en: 'Monthly Expenses', ru: 'Месячные расходы', cz: 'Měsíční výdaje' },
+  'dashboard.profitMargin': { en: 'Profit Margin', ru: 'Рентабельность', cz: 'Zisková marže' },
+  'dashboard.margin': { en: 'Margin', ru: 'Маржа', cz: 'Marže' },
   'dashboard.thisMonth': { en: 'This month', ru: 'Этот месяц', cz: 'Tento měsíc' },
   
   // Clients
@@ -608,6 +639,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
   'nav.subscription': { en: 'Subscription', ru: 'Подписка', cz: 'Předplatné' },
   'nav.inventory': { en: 'Inventory', ru: 'Склад', cz: 'Sklad' },
+  'nav.finance': { en: 'Finance', ru: 'Финансы', cz: 'Finance' },
   
   // Inventory
   'inventory.title': { en: 'Inventory Management', ru: 'Управление складом', cz: 'Správa skladu' },
@@ -634,6 +666,29 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'inventory.low_stock_only': { en: 'Low Stock Only', ru: 'Только низкий остаток', cz: 'Pouze nízký stav' },
   'inventory.search_placeholder': { en: 'Search products...', ru: 'Поиск товаров...', cz: 'Hledat produkty...' },
   'inventory.no_products': { en: 'No products found', ru: 'Товары не найдены', cz: 'Produkty nenalezeny' },
+  
+  // Finance
+  'finance.title': { en: 'Financial Reports', ru: 'Финансовая отчетность', cz: 'Finanční zprávy' },
+  'finance.subtitle': { en: 'Revenue, expenses, and profit analysis', ru: 'Анализ доходов, расходов и прибыли', cz: 'Analýza příjmů, výdajů a zisku' },
+  'finance.revenue': { en: 'Revenue', ru: 'Доходы', cz: 'Příjmy' },
+  'finance.expenses': { en: 'Expenses', ru: 'Расходы', cz: 'Výdaje' },
+  'finance.profit': { en: 'Profit', ru: 'Прибыль', cz: 'Zisk' },
+  'finance.profit_margin': { en: 'Profit Margin', ru: 'Рентабельность', cz: 'Zisková marže' },
+  'finance.date_from': { en: 'Date From', ru: 'Дата от', cz: 'Datum od' },
+  'finance.date_to': { en: 'Date To', ru: 'Дата до', cz: 'Datum do' },
+  'finance.category': { en: 'Category', ru: 'Категория', cz: 'Kategorie' },
+  'finance.all_categories': { en: 'All Categories', ru: 'Все категории', cz: 'Všechny kategorie' },
+  'finance.add_expense': { en: 'Add Expense', ru: 'Добавить расход', cz: 'Přidat výdaj' },
+  'finance.expenses_by_category': { en: 'Expenses by Category', ru: 'Расходы по категориям', cz: 'Výdaje podle kategorií' },
+  'finance.expenses_list': { en: 'Expenses List', ru: 'Список расходов', cz: 'Seznam výdajů' },
+  'finance.no_expenses': { en: 'No expenses found', ru: 'Расходы не найдены', cz: 'Výdaje nenalezeny' },
+  'finance.date': { en: 'Date', ru: 'Дата', cz: 'Datum' },
+  'finance.description': { en: 'Description', ru: 'Описание', cz: 'Popis' },
+  'finance.amount': { en: 'Amount', ru: 'Сумма', cz: 'Částka' },
+  'finance.payment_method': { en: 'Payment Method', ru: 'Способ оплаты', cz: 'Způsob platby' },
+  'finance.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
+  'finance.confirm_delete': { en: 'Are you sure you want to delete this expense?', ru: 'Вы уверены, что хотите удалить этот расход?', cz: 'Opravdu chcete smazat tento výdaj?' },
+  'finance.form_coming_soon': { en: 'Expense form is coming soon', ru: 'Форма добавления расхода скоро появится', cz: 'Formulář pro přidání výdaje brzy přijde' },
   
   // Subscription
   'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },
