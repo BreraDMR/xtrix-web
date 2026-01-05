@@ -47,14 +47,42 @@ export default function Inventory() {
 
   const products: Product[] = productsResponse?.items || []
   const lowStockProducts = products.filter(p => p.quantity <= p.min_quantity)
+  
+  // Получаем бизнес пользователя для получения business_id
+  const { data: userBusiness } = useQuery({
+    queryKey: ['user-business'],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get('/businesses/me')
+        console.log('User business fetched:', data)
+        return data
+      } catch (error: any) {
+        console.error('Error fetching user business:', error)
+        // Если бизнес не найден, возвращаем null, но не выбрасываем ошибку
+        if (error?.response?.status === 404) {
+          return null
+        }
+        throw error
+      }
+    },
+    enabled: !!user,
+    retry: false,
+  })
 
   // Создание товара
   const createMutation = useMutation({
     mutationFn: async (product: Partial<Product>) => {
-      // Получаем business_id из текущего пользователя
-      const businessId = user?.business_id
+      // Получаем business_id из текущего пользователя или из API
+      let businessId = user?.business_id
+      
+      // Если business_id нет у пользователя, пробуем получить из API
+      if (!businessId && userBusiness?.id) {
+        businessId = userBusiness.id
+        console.log('Using business_id from API:', businessId)
+      }
+      
       if (!businessId) {
-        console.error('Business ID not found for user:', user)
+        console.error('Business ID not found. User:', user, 'UserBusiness:', userBusiness)
         throw new Error('Business ID not found. Please ensure you have a business assigned.')
       }
       
