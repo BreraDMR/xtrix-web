@@ -127,7 +127,7 @@ export default function Inventory() {
             <span className="text-yellow-600 text-xl mr-2">⚠️</span>
             <div>
               <h3 className="font-semibold text-yellow-900">
-                {t('inventory.low_stock_warning', { count: lowStockProducts.length })}
+                {t('inventory.low_stock_warning').replace('{count}', lowStockProducts.length.toString())}
               </h3>
               <p className="text-sm text-yellow-700">{t('inventory.low_stock_description')}</p>
             </div>
