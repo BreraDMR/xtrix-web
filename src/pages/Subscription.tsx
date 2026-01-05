@@ -65,7 +65,7 @@ export default function Subscription() {
   })
 
   // Получаем список планов
-  const { data: plans, isLoading: plansLoading, error: plansError } = useQuery<SubscriptionPlan[]>({
+  const { data: plans, isLoading: plansLoading } = useQuery<SubscriptionPlan[]>({
     queryKey: ['subscription-plans'],
     queryFn: async () => {
       try {
