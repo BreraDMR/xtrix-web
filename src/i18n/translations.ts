@@ -281,6 +281,12 @@ export type TranslationKey =
   | 'subscription.selectPlan'
   | 'subscription.noPlansAvailable'
   | 'subscription.contactAdmin'
+  | 'subscription.cancel'
+  | 'subscription.cancelled'
+  | 'subscription.reactivate'
+  | 'subscription.pendingCancellation'
+  | 'subscription.transactionHistory'
+  | 'subscription.history'
   // Common
   | 'common.currency'
   | 'common.close'
@@ -589,6 +595,12 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'subscription.selectPlan': { en: 'Please select a plan above to subscribe', ru: 'Пожалуйста, выберите план выше для подписки', cz: 'Vyberte prosím plán výše pro předplatné' },
   'subscription.noPlansAvailable': { en: 'No subscription plans available for your role', ru: 'Нет доступных планов для вашей роли', cz: 'Žádné dostupné plány pro vaši roli' },
   'subscription.contactAdmin': { en: 'Please contact administrator to create subscription plans', ru: 'Обратитесь к администратору для создания планов подписки', cz: 'Kontaktujte správce pro vytvoření plánů předplatného' },
+  'subscription.cancel': { en: 'Cancel Subscription', ru: 'Отменить подписку', cz: 'Zrušit předplatné' },
+  'subscription.cancelled': { en: 'Cancelled', ru: 'Отменена', cz: 'Zrušeno' },
+  'subscription.reactivate': { en: 'Reactivate', ru: 'Возобновить', cz: 'Obnovit' },
+  'subscription.pendingCancellation': { en: 'Pending Cancellation', ru: 'Ожидает отмены', cz: 'Čeká na zrušení' },
+  'subscription.transactionHistory': { en: 'Transaction History', ru: 'История транзакций', cz: 'Historie transakcí' },
+  'subscription.history': { en: 'Subscription History', ru: 'История подписок', cz: 'Historie předplatného' },
   
   // Common
   'common.currency': { en: 'CZK', ru: 'CZK', cz: 'CZK' },

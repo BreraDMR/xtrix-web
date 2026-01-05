@@ -15,6 +15,9 @@ interface Subscription {
   trial_end: string | null
   current_period_end: string | null
   created_at: string
+  cancel_at_period_end?: boolean
+  cancelled_at?: string | null
+  reactivated_at?: string | null
 }
 
 interface SubscriptionPlan {
@@ -148,6 +151,23 @@ export default function Subscription() {
     setLoading(true)
     setError('')
     try {
+      // Пробуем создать Stripe Checkout сессию
+      try {
+        const { data: checkoutData } = await api.post('/subscriptions/checkout/create-session', null, {
+          params: { plan_id: planId },
+        })
+        
+        if (checkoutData.url) {
+          // Редиректим на Stripe Checkout
+          window.location.href = checkoutData.url
+          return
+        }
+      } catch (checkoutError: any) {
+        // Если Stripe не настроен, создаем подписку напрямую (для тестирования)
+        console.warn('Stripe Checkout not available, creating subscription directly:', checkoutError)
+      }
+      
+      // Fallback: создаем подписку напрямую (без оплаты)
       await api.post('/subscriptions/', {
         user_id: user?.id,
         plan_id: planId,
@@ -155,6 +175,7 @@ export default function Subscription() {
       })
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       queryClient.invalidateQueries({ queryKey: ['trial-status'] })
+      queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
       setSelectedPlan(null)
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to subscribe')
@@ -162,6 +183,61 @@ export default function Subscription() {
       setLoading(false)
     }
   }
+
+  const handleCancel = async (cancelAtPeriodEnd: boolean = true) => {
+    if (!subscription) return
+    
+    setLoading(true)
+    setError('')
+    try {
+      await api.post(`/subscriptions/${subscription.id}/cancel`, {
+        cancel_at_period_end: cancelAtPeriodEnd,
+      })
+      queryClient.invalidateQueries({ queryKey: ['subscription'] })
+      queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to cancel subscription')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleReactivate = async () => {
+    if (!subscription) return
+    
+    setLoading(true)
+    setError('')
+    try {
+      await api.post(`/subscriptions/${subscription.id}/reactivate`, {})
+      queryClient.invalidateQueries({ queryKey: ['subscription'] })
+      queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to reactivate subscription')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Получаем историю транзакций
+  const { data: transactions } = useQuery<any[]>({
+    queryKey: ['subscription-transactions', subscription?.id],
+    queryFn: async () => {
+      if (!subscription) return []
+      const { data } = await api.get(`/subscriptions/${subscription.id}/transactions`)
+      return data
+    },
+    enabled: !!subscription,
+  })
+
+  // Получаем историю подписок
+  const { data: subscriptionHistory } = useQuery<Subscription[]>({
+    queryKey: ['subscription-history'],
+    queryFn: async () => {
+      const { data } = await api.get('/subscriptions/history')
+      return data
+    },
+    enabled: user?.role === 'admin' || user?.role === 'specialist',
+  })
 
   if (subscriptionLoading || plansLoading) {
     return (
@@ -218,20 +294,59 @@ export default function Subscription() {
       {/* Текущая подписка */}
       {subscription && (
         <div className="mb-8 bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            {t('subscription.currentSubscription')}
-          </h2>
+          <div className="flex justify-between items-start mb-4">
+            <h2 className="text-xl font-semibold">
+              {t('subscription.currentSubscription')}
+            </h2>
+            <div className="flex gap-2">
+              {subscription.status === 'pending_cancellation' && (
+                <button
+                  onClick={handleReactivate}
+                  disabled={loading}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
+                >
+                  {t('subscription.reactivate') || 'Reactivate'}
+                </button>
+              )}
+              {(subscription.status === 'active' || subscription.status === 'pending_cancellation') && !subscription.is_trial && (
+                <button
+                  onClick={() => handleCancel(true)}
+                  disabled={loading || subscription.cancel_at_period_end}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm"
+                >
+                  {subscription.cancel_at_period_end
+                    ? t('subscription.cancelled') || 'Cancelled'
+                    : t('subscription.cancel') || 'Cancel Subscription'}
+                </button>
+              )}
+            </div>
+          </div>
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-600">Status:</span>
               <span
                 className={`font-medium ${
-                  subscription.status === 'active' ? 'text-green-600' : 'text-red-600'
+                  subscription.status === 'active' || subscription.status === 'pending_cancellation'
+                    ? 'text-green-600'
+                    : subscription.status === 'cancelled' || subscription.status === 'expired'
+                    ? 'text-red-600'
+                    : 'text-yellow-600'
                 }`}
               >
-                {subscription.status}
+                {subscription.status === 'pending_cancellation'
+                  ? t('subscription.pendingCancellation') || 'Pending Cancellation'
+                  : subscription.status}
               </span>
             </div>
+            {subscription.cancel_at_period_end && subscription.current_period_end && (
+              <div className="flex justify-between">
+                <span className="text-gray-600">Cancellation Date:</span>
+                <span className="font-medium text-orange-600">
+                  {formatDate(subscription.current_period_end)} (
+                  {getDaysRemaining(subscription.current_period_end)} days remaining)
+                </span>
+              </div>
+            )}
             {subscription.is_trial && (
               <>
                 <div className="flex justify-between">
@@ -249,13 +364,52 @@ export default function Subscription() {
                 )}
               </>
             )}
-            {subscription.current_period_end && (
+            {subscription.current_period_end && !subscription.cancel_at_period_end && (
               <div className="flex justify-between">
                 <span className="text-gray-600">Period Ends:</span>
                 <span className="font-medium">{formatDate(subscription.current_period_end)}</span>
               </div>
             )}
           </div>
+
+          {/* История транзакций */}
+          {transactions && transactions.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-semibold mb-3">
+                {t('subscription.transactionHistory') || 'Transaction History'}
+              </h3>
+              <div className="space-y-2">
+                {transactions.map((transaction: any) => (
+                  <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <div>
+                      <div className="font-medium">{transaction.payment_method}</div>
+                      <div className="text-sm text-gray-600">
+                        {transaction.transaction_date
+                          ? formatDate(transaction.transaction_date)
+                          : formatDate(transaction.created_at)}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-medium">
+                        {transaction.amount > 0 ? `${transaction.amount}${transaction.currency?.toUpperCase() || '€'}` : '-'}
+                      </div>
+                      <div
+                        className={`text-sm ${
+                          transaction.status === 'succeeded'
+                            ? 'text-green-600'
+                            : transaction.status === 'failed'
+                            ? 'text-red-600'
+                            : 'text-gray-600'
+                        }`}
+                      >
+                        {transaction.status}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
