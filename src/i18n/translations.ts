@@ -296,6 +296,15 @@ export type TranslationKey =
   | 'finance.actions'
   | 'finance.confirm_delete'
   | 'finance.form_coming_soon'
+  | 'finance.currency'
+  | 'finance.no_category'
+  | 'finance.amount_required'
+  | 'finance.date_required'
+  | 'finance.description_placeholder'
+  | 'finance.payment_cash'
+  | 'finance.payment_card'
+  | 'finance.payment_transfer'
+  | 'finance.payment_other'
   // Subscription
   | 'subscription.title'
   | 'subscription.notRequired'
@@ -689,6 +698,15 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'finance.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
   'finance.confirm_delete': { en: 'Are you sure you want to delete this expense?', ru: 'Вы уверены, что хотите удалить этот расход?', cz: 'Opravdu chcete smazat tento výdaj?' },
   'finance.form_coming_soon': { en: 'Expense form is coming soon', ru: 'Форма добавления расхода скоро появится', cz: 'Formulář pro přidání výdaje brzy přijde' },
+  'finance.currency': { en: 'Currency', ru: 'Валюта', cz: 'Měna' },
+  'finance.no_category': { en: 'No Category', ru: 'Без категории', cz: 'Bez kategorie' },
+  'finance.amount_required': { en: 'Amount is required and must be greater than 0', ru: 'Сумма обязательна и должна быть больше 0', cz: 'Částka je povinná a musí být větší než 0' },
+  'finance.date_required': { en: 'Date is required', ru: 'Дата обязательна', cz: 'Datum je povinné' },
+  'finance.description_placeholder': { en: 'Enter expense description (optional)', ru: 'Введите описание расхода (необязательно)', cz: 'Zadejte popis výdaje (volitelné)' },
+  'finance.payment_cash': { en: 'Cash', ru: 'Наличные', cz: 'Hotovost' },
+  'finance.payment_card': { en: 'Card', ru: 'Карта', cz: 'Karta' },
+  'finance.payment_transfer': { en: 'Bank Transfer', ru: 'Банковский перевод', cz: 'Bankovní převod' },
+  'finance.payment_other': { en: 'Other', ru: 'Прочее', cz: 'Jiné' },
   
   // Subscription
   'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },

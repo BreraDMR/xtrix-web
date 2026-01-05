@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, FormEvent } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
@@ -276,21 +276,253 @@ export default function Finance() {
         )}
       </div>
 
-      {/* Форма добавления расхода - TODO: реализовать позже */}
+      {/* Форма добавления расхода */}
       {showAddExpense && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">{t('finance.add_expense')}</h3>
-            <p className="text-gray-600 mb-4">{t('finance.form_coming_soon')}</p>
+        <ExpenseForm
+          categories={categories || []}
+          onCancel={() => setShowAddExpense(false)}
+          onSuccess={() => {
+            setShowAddExpense(false)
+            queryClient.invalidateQueries({ queryKey: ['expenses'] })
+            queryClient.invalidateQueries({ queryKey: ['profit-report'] })
+          }}
+        />
+      )}
+    </div>
+  )
+}
+
+// Компонент формы добавления расхода
+function ExpenseForm({
+  categories,
+  onCancel,
+  onSuccess,
+}: {
+  categories: ExpenseCategory[]
+  onCancel: () => void
+  onSuccess: () => void
+}) {
+  const { t } = useTranslation()
+  const { user } = useAuthStore()
+  const queryClient = useQueryClient()
+
+  const [formData, setFormData] = useState({
+    amount: '',
+    currency: 'EUR',
+    description: '',
+    expense_date: new Date().toISOString().split('T')[0],
+    payment_method: 'other',
+    category_id: '',
+  })
+
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Получаем бизнес пользователя
+  const { data: userBusiness } = useQuery({
+    queryKey: ['user-business'],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get('/businesses/me')
+        return data
+      } catch (error: any) {
+        if (error?.response?.status === 404) {
+          return null
+        }
+        throw error
+      }
+    },
+    enabled: !!user,
+    retry: false,
+  })
+
+  // Создание расхода
+  const createMutation = useMutation({
+    mutationFn: async (expense: any) => {
+      let businessId = user?.business_id
+      if (!businessId && userBusiness?.id) {
+        businessId = userBusiness.id
+      }
+      if (!businessId) {
+        throw new Error('Business ID not found')
+      }
+
+      const { data } = await api.post('/expenses', {
+        ...expense,
+        business_id: businessId,
+      })
+      return data
+    },
+    onSuccess: () => {
+      onSuccess()
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to create expense'
+      alert(errorMessage)
+    },
+  })
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // Валидация
+    const newErrors: Record<string, string> = {}
+    if (!formData.amount || parseFloat(formData.amount) <= 0) {
+      newErrors.amount = t('finance.amount_required')
+    }
+    if (!formData.expense_date) {
+      newErrors.expense_date = t('finance.date_required')
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+
+    setErrors({})
+
+    const expenseData = {
+      amount: parseFloat(formData.amount),
+      currency: formData.currency,
+      description: formData.description || undefined,
+      expense_date: new Date(formData.expense_date + 'T12:00:00').toISOString(),
+      payment_method: formData.payment_method,
+      category_id: formData.category_id ? parseInt(formData.category_id) : undefined,
+    }
+
+    createMutation.mutate(expenseData)
+  }
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onCancel}
+    >
+      <div
+        className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="text-lg font-semibold mb-4">{t('finance.add_expense')}</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('finance.amount')} *
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.amount}
+                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  className={`w-full px-4 py-2 border rounded-lg ${
+                    errors.amount ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  required
+                />
+                {errors.amount && <p className="text-red-500 text-xs mt-1">{errors.amount}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('finance.currency')}
+                </label>
+                <select
+                  value={formData.currency}
+                  onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                >
+                  <option value="EUR">EUR</option>
+                  <option value="CZK">CZK</option>
+                  <option value="USD">USD</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('finance.date')} *
+              </label>
+              <input
+                type="date"
+                value={formData.expense_date}
+                onChange={(e) => setFormData({ ...formData, expense_date: e.target.value })}
+                className={`w-full px-4 py-2 border rounded-lg ${
+                  errors.expense_date ? 'border-red-500' : 'border-gray-300'
+                }`}
+                required
+              />
+              {errors.expense_date && (
+                <p className="text-red-500 text-xs mt-1">{errors.expense_date}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('finance.category')}
+              </label>
+              <select
+                value={formData.category_id}
+                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="">{t('finance.no_category')}</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('finance.payment_method')}
+              </label>
+              <select
+                value={formData.payment_method}
+                onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="cash">{t('finance.payment_cash')}</option>
+                <option value="card">{t('finance.payment_card')}</option>
+                <option value="transfer">{t('finance.payment_transfer')}</option>
+                <option value="other">{t('finance.payment_other')}</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('finance.description')}
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                rows={3}
+                placeholder={t('finance.description_placeholder')}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2 justify-end mt-6">
             <button
-              onClick={() => setShowAddExpense(false)}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
             >
               {t('common.cancel')}
             </button>
+            <button
+              type="submit"
+              disabled={createMutation.isPending}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {createMutation.isPending ? t('common.loading') : t('common.save')}
+            </button>
           </div>
-        </div>
-      )}
+        </form>
+      </div>
     </div>
   )
 }
