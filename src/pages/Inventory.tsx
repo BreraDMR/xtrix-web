@@ -271,6 +271,7 @@ export default function Inventory() {
       {showAddForm && (
         <ProductForm
           product={undefined}
+          isLoading={createMutation.isPending}
           onSubmit={(product) => {
             console.log('ProductForm onSubmit called with:', product)
             createMutation.mutate(product)
@@ -283,6 +284,7 @@ export default function Inventory() {
       {showEditForm && (
         <ProductForm
           product={showEditForm}
+          isLoading={updateMutation.isPending}
           onSubmit={(updates) => updateMutation.mutate({ id: showEditForm.id, ...updates })}
           onCancel={() => setShowEditForm(null)}
         />
@@ -338,10 +340,12 @@ function ProductForm({
   product,
   onSubmit,
   onCancel,
+  isLoading = false,
 }: {
   product?: Product
   onSubmit: (product: Partial<Product>) => void
   onCancel: () => void
+  isLoading?: boolean
 }) {
   const { t } = useTranslation()
   const [formData, setFormData] = useState<Partial<Product>>({
@@ -535,9 +539,9 @@ function ProductForm({
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={createMutation.isPending || updateMutation.isPending}
+              disabled={isLoading}
             >
-              {createMutation.isPending || updateMutation.isPending ? t('common.loading') : t('common.save')}
+              {isLoading ? t('common.loading') : t('common.save')}
             </button>
           </div>
         </form>
