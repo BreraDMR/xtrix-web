@@ -53,17 +53,32 @@ export default function Inventory() {
     mutationFn: async (product: Partial<Product>) => {
       // Получаем business_id из текущего пользователя
       const businessId = user?.business_id
-      if (!businessId) throw new Error('Business ID not found')
+      if (!businessId) {
+        console.error('Business ID not found for user:', user)
+        throw new Error('Business ID not found. Please ensure you have a business assigned.')
+      }
       
-      const { data } = await api.post('/products', {
-        ...product,
-        business_id: businessId,
-      })
-      return data
+      console.log('Creating product with data:', { ...product, business_id: businessId })
+      try {
+        const { data } = await api.post('/products', {
+          ...product,
+          business_id: businessId,
+        })
+        console.log('Product created successfully:', data)
+        return data
+      } catch (error: any) {
+        console.error('Error creating product:', error)
+        const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to create product'
+        throw new Error(errorMessage)
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
       setShowAddForm(false)
+    },
+    onError: (error: any) => {
+      console.error('Mutation error:', error)
+      alert(error?.message || 'Failed to create product. Please try again.')
     },
   })
 
@@ -341,16 +356,27 @@ function ProductForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    e.stopPropagation()
+    
+    console.log('Form submit triggered, formData:', formData)
+    
     // Валидация обязательных полей
     if (!formData.name || !formData.name.trim()) {
-      alert(t('inventory.name') + ' ' + t('common.error'))
+      alert(t('inventory.name') + ' обязательное поле')
       return
     }
     if (!formData.unit || !formData.unit.trim()) {
-      alert(t('inventory.unit') + ' ' + t('common.error'))
+      alert(t('inventory.unit') + ' обязательное поле')
       return
     }
-    onSubmit(formData)
+    
+    console.log('Validation passed, calling onSubmit')
+    try {
+      onSubmit(formData)
+    } catch (error) {
+      console.error('Error in onSubmit:', error)
+      alert('Ошибка при сохранении: ' + (error as Error).message)
+    }
   }
 
   return (
@@ -504,9 +530,10 @@ function ProductForm({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={createMutation.isPending || updateMutation.isPending}
             >
-              {t('common.save')}
+              {createMutation.isPending || updateMutation.isPending ? t('common.loading') : t('common.save')}
             </button>
           </div>
         </form>
