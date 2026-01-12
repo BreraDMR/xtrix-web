@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
@@ -43,6 +43,7 @@ interface LoyaltyPromotion {
   id: number
   program_id: number
   name: string
+  description?: string
   promotion_type: 'double_points' | 'extra_cashback' | 'bonus_points' | 'discount'
   bonus_points?: number
   discount_percent?: number
