@@ -6,9 +6,6 @@ import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
 
-export default function Clients() {
-  const { t } = useTranslation()
-
 interface Client {
   id: number
   full_name: string
@@ -17,6 +14,56 @@ interface Client {
   date_of_birth?: string
   gender?: string
 }
+
+function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
+  const { t } = useTranslation()
+  const { data: balance, isLoading } = useQuery({
+    queryKey: ['client-loyalty-balance', clientId],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get(`/loyalty/balance/${clientId}`)
+        return data
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          return null
+        }
+        return null
+      }
+    },
+    retry: false,
+  })
+
+  if (isLoading) {
+    return <span className="text-gray-400">...</span>
+  }
+
+  if (!balance || (balance.points === 0 && balance.cashback === 0)) {
+    return <span className="text-gray-400">-</span>
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      {balance.points > 0 && (
+        <span className="text-sm font-medium text-blue-600">
+          {balance.points.toFixed(0)} {t('loyalty.points')}
+        </span>
+      )}
+      {balance.cashback > 0 && (
+        <span className="text-sm font-medium text-green-600">
+          {balance.cashback.toFixed(2)} € {t('loyalty.cashback')}
+        </span>
+      )}
+      {balance.level && (
+        <span className="text-xs text-gray-500">
+          {balance.level.name}
+        </span>
+      )}
+    </div>
+  )
+}
+
+export default function Clients() {
+  const { t } = useTranslation()
 
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
@@ -142,12 +189,15 @@ interface Client {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 {t('clients.email')}
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                {t('loyalty.points')}
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredClients.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                   {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
                 </td>
               </tr>
@@ -162,6 +212,9 @@ interface Client {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {client.contact_email || '-'}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-500">
+                  <ClientLoyaltyBalance clientId={client.id} />
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button
