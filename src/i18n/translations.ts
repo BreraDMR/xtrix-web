@@ -351,6 +351,74 @@ export type TranslationKey =
   | 'inventory.low_stock_only'
   | 'inventory.search_placeholder'
   | 'inventory.no_products'
+  // Analytics
+  | 'analytics.title'
+  | 'analytics.subtitle'
+  | 'analytics.retention'
+  | 'analytics.cohorts'
+  | 'analytics.trends'
+  | 'analytics.forecast'
+  | 'analytics.services_specialists'
+  | 'analytics.insights'
+  | 'analytics.benchmarks'
+  | 'analytics.retention_7_days'
+  | 'analytics.retention_30_days'
+  | 'analytics.retention_90_days'
+  | 'analytics.repeat_rate'
+  | 'analytics.avg_days_between_visits'
+  | 'analytics.total_clients'
+  | 'analytics.repeat_clients'
+  | 'analytics.cohort_month'
+  | 'analytics.trend_metric'
+  | 'analytics.trend_comparison'
+  | 'analytics.current_value'
+  | 'analytics.previous_value'
+  | 'analytics.change'
+  | 'analytics.change_percent'
+  | 'analytics.trend_up'
+  | 'analytics.trend_down'
+  | 'analytics.trend_stable'
+  | 'analytics.forecast_type'
+  | 'analytics.forecast_periods'
+  | 'analytics.historical_average'
+  | 'analytics.last_value'
+  | 'analytics.service_name'
+  | 'analytics.visit_count'
+  | 'analytics.total_revenue'
+  | 'analytics.avg_price'
+  | 'analytics.unique_clients'
+  | 'analytics.ltv_per_client'
+  | 'analytics.visits_per_client'
+  | 'analytics.specialist_name'
+  | 'analytics.avg_check'
+  | 'analytics.revenue_per_client'
+  | 'analytics.insight_type_info'
+  | 'analytics.insight_type_warning'
+  | 'analytics.insight_type_success'
+  | 'analytics.insight_priority_low'
+  | 'analytics.insight_priority_medium'
+  | 'analytics.insight_priority_high'
+  | 'analytics.benchmarks_available'
+  | 'analytics.benchmarks_not_available'
+  | 'analytics.business_count'
+  | 'analytics.avg_check_benchmark'
+  | 'analytics.avg_visits_per_client'
+  | 'analytics.avg_retention_rate'
+  | 'analytics.avg_daily_load'
+  | 'analytics.no_data'
+  | 'analytics.loading'
+  | 'analytics.date_from'
+  | 'analytics.date_to'
+  | 'analytics.metric_revenue'
+  | 'analytics.metric_clients'
+  | 'analytics.metric_visits'
+  | 'analytics.metric_average_check'
+  | 'analytics.metric_load'
+  | 'analytics.comparison_mom'
+  | 'analytics.comparison_wow'
+  | 'analytics.comparison_yoy'
+  | 'analytics.forecast_revenue'
+  | 'analytics.forecast_visits'
   // Common
   | 'common.currency'
   | 'common.close'
@@ -677,6 +745,75 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'inventory.low_stock_only': { en: 'Low Stock Only', ru: 'Только низкий остаток', cz: 'Pouze nízký stav' },
   'inventory.search_placeholder': { en: 'Search products...', ru: 'Поиск товаров...', cz: 'Hledat produkty...' },
   'inventory.no_products': { en: 'No products found', ru: 'Товары не найдены', cz: 'Produkty nenalezeny' },
+  
+  // Analytics
+  'analytics.title': { en: 'Analytics', ru: 'Аналитика', cz: 'Analytika' },
+  'analytics.subtitle': { en: 'Advanced analytics and insights for your business', ru: 'Расширенная аналитика и инсайты для вашего бизнеса', cz: 'Pokročilá analytika a poznatky pro váš podnik' },
+  'analytics.retention': { en: 'Retention', ru: 'Удержание', cz: 'Retence' },
+  'analytics.cohorts': { en: 'Cohorts', ru: 'Когорты', cz: 'Kohorty' },
+  'analytics.trends': { en: 'Trends', ru: 'Тренды', cz: 'Trendy' },
+  'analytics.forecast': { en: 'Forecast', ru: 'Прогноз', cz: 'Předpověď' },
+  'analytics.services_specialists': { en: 'Services & Specialists', ru: 'Услуги и мастера', cz: 'Služby a specialisté' },
+  'analytics.insights': { en: 'Insights', ru: 'Инсайты', cz: 'Poznatky' },
+  'analytics.benchmarks': { en: 'Benchmarks', ru: 'Бенчмарки', cz: 'Srovnávací hodnoty' },
+  'analytics.retention_7_days': { en: '7-Day Retention', ru: 'Удержание за 7 дней', cz: '7denní retence' },
+  'analytics.retention_30_days': { en: '30-Day Retention', ru: 'Удержание за 30 дней', cz: '30denní retence' },
+  'analytics.retention_90_days': { en: '90-Day Retention', ru: 'Удержание за 90 дней', cz: '90denní retence' },
+  'analytics.repeat_rate': { en: 'Repeat Rate', ru: 'Процент повторных клиентов', cz: 'Míra opakování' },
+  'analytics.avg_days_between_visits': { en: 'Avg Days Between Visits', ru: 'Среднее дней между визитами', cz: 'Průměr dní mezi návštěvami' },
+  'analytics.total_clients': { en: 'Total Clients', ru: 'Всего клиентов', cz: 'Celkem klientů' },
+  'analytics.repeat_clients': { en: 'Repeat Clients', ru: 'Повторные клиенты', cz: 'Opakující se klienti' },
+  'analytics.cohort_month': { en: 'Cohort Month', ru: 'Месяц когорты', cz: 'Měsíc kohorty' },
+  'analytics.trend_metric': { en: 'Metric', ru: 'Метрика', cz: 'Metrika' },
+  'analytics.trend_comparison': { en: 'Comparison', ru: 'Сравнение', cz: 'Porovnání' },
+  'analytics.current_value': { en: 'Current', ru: 'Текущее', cz: 'Aktuální' },
+  'analytics.previous_value': { en: 'Previous', ru: 'Предыдущее', cz: 'Předchozí' },
+  'analytics.change': { en: 'Change', ru: 'Изменение', cz: 'Změna' },
+  'analytics.change_percent': { en: 'Change %', ru: 'Изменение %', cz: 'Změna %' },
+  'analytics.trend_up': { en: 'Up', ru: 'Вверх', cz: 'Nahoru' },
+  'analytics.trend_down': { en: 'Down', ru: 'Вниз', cz: 'Dolů' },
+  'analytics.trend_stable': { en: 'Stable', ru: 'Стабильно', cz: 'Stabilní' },
+  'analytics.forecast_type': { en: 'Forecast Type', ru: 'Тип прогноза', cz: 'Typ předpovědi' },
+  'analytics.forecast_periods': { en: 'Periods', ru: 'Периоды', cz: 'Období' },
+  'analytics.historical_average': { en: 'Historical Average', ru: 'Историческое среднее', cz: 'Historický průměr' },
+  'analytics.last_value': { en: 'Last Value', ru: 'Последнее значение', cz: 'Poslední hodnota' },
+  'analytics.service_name': { en: 'Service', ru: 'Услуга', cz: 'Služba' },
+  'analytics.visit_count': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'analytics.total_revenue': { en: 'Total Revenue', ru: 'Общая выручка', cz: 'Celkový příjem' },
+  'analytics.avg_price': { en: 'Avg Price', ru: 'Средняя цена', cz: 'Průměrná cena' },
+  'analytics.unique_clients': { en: 'Unique Clients', ru: 'Уникальные клиенты', cz: 'Unikátní klienti' },
+  'analytics.ltv_per_client': { en: 'LTV per Client', ru: 'LTV на клиента', cz: 'LTV na klienta' },
+  'analytics.visits_per_client': { en: 'Visits per Client', ru: 'Визиты на клиента', cz: 'Návštěvy na klienta' },
+  'analytics.specialist_name': { en: 'Specialist', ru: 'Мастер', cz: 'Specialista' },
+  'analytics.avg_check': { en: 'Avg Check', ru: 'Средний чек', cz: 'Průměrný šek' },
+  'analytics.revenue_per_client': { en: 'Revenue per Client', ru: 'Выручка на клиента', cz: 'Příjem na klienta' },
+  'analytics.insight_type_info': { en: 'Info', ru: 'Информация', cz: 'Informace' },
+  'analytics.insight_type_warning': { en: 'Warning', ru: 'Предупреждение', cz: 'Varování' },
+  'analytics.insight_type_success': { en: 'Success', ru: 'Успех', cz: 'Úspěch' },
+  'analytics.insight_priority_low': { en: 'Low', ru: 'Низкий', cz: 'Nízký' },
+  'analytics.insight_priority_medium': { en: 'Medium', ru: 'Средний', cz: 'Střední' },
+  'analytics.insight_priority_high': { en: 'High', ru: 'Высокий', cz: 'Vysoký' },
+  'analytics.benchmarks_available': { en: 'Benchmarks Available', ru: 'Бенчмарки доступны', cz: 'Srovnávací hodnoty dostupné' },
+  'analytics.benchmarks_not_available': { en: 'Not enough data for benchmarks', ru: 'Недостаточно данных для бенчмарков', cz: 'Nedostatek dat pro srovnávací hodnoty' },
+  'analytics.business_count': { en: 'Businesses Analyzed', ru: 'Бизнесов проанализировано', cz: 'Analyzovaných podniků' },
+  'analytics.avg_check_benchmark': { en: 'Avg Check', ru: 'Средний чек', cz: 'Průměrný šek' },
+  'analytics.avg_visits_per_client': { en: 'Avg Visits per Client', ru: 'Среднее визитов на клиента', cz: 'Průměr návštěv na klienta' },
+  'analytics.avg_retention_rate': { en: 'Avg Retention Rate', ru: 'Средняя удерживаемость', cz: 'Průměrná retence' },
+  'analytics.avg_daily_load': { en: 'Avg Daily Load', ru: 'Средняя дневная загрузка', cz: 'Průměrné denní zatížení' },
+  'analytics.no_data': { en: 'No data available', ru: 'Нет данных', cz: 'Žádná data' },
+  'analytics.loading': { en: 'Loading...', ru: 'Загрузка...', cz: 'Načítání...' },
+  'analytics.date_from': { en: 'Date From', ru: 'Дата от', cz: 'Datum od' },
+  'analytics.date_to': { en: 'Date To', ru: 'Дата до', cz: 'Datum do' },
+  'analytics.metric_revenue': { en: 'Revenue', ru: 'Выручка', cz: 'Příjem' },
+  'analytics.metric_clients': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },
+  'analytics.metric_visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'analytics.metric_average_check': { en: 'Average Check', ru: 'Средний чек', cz: 'Průměrný šek' },
+  'analytics.metric_load': { en: 'Load', ru: 'Загрузка', cz: 'Zatížení' },
+  'analytics.comparison_mom': { en: 'Month over Month', ru: 'Месяц к месяцу', cz: 'Měsíc k měsíci' },
+  'analytics.comparison_wow': { en: 'Week over Week', ru: 'Неделя к неделе', cz: 'Týden k týdnu' },
+  'analytics.comparison_yoy': { en: 'Year over Year', ru: 'Год к году', cz: 'Rok k roku' },
+  'analytics.forecast_revenue': { en: 'Revenue', ru: 'Выручка', cz: 'Příjem' },
+  'analytics.forecast_visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
   
   // Finance
   'finance.title': { en: 'Financial Reports', ru: 'Финансовая отчетность', cz: 'Finanční zprávy' },
