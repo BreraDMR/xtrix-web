@@ -72,6 +72,110 @@ interface LoyaltyTransaction {
   created_at: string
 }
 
+function TransactionsList({ clientId, transactionType }: { clientId: number; transactionType: string | null }) {
+  const { t } = useTranslation()
+  const [page, setPage] = useState(1)
+  const perPage = 20
+
+  const { data: transactionsResponse, isLoading } = useQuery({
+    queryKey: ['loyalty-transactions', clientId, transactionType, page],
+    queryFn: async () => {
+      const params = new URLSearchParams()
+      if (transactionType) params.append('transaction_type', transactionType)
+      params.append('page', page.toString())
+      params.append('per_page', perPage.toString())
+      const { data } = await api.get(`/loyalty/transactions/${clientId}?${params.toString()}`)
+      return data
+    },
+  })
+
+  const transactions: LoyaltyTransaction[] = transactionsResponse?.items || []
+  const total = transactionsResponse?.total || 0
+  const pages = transactionsResponse?.pages || 1
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
+
+  if (transactions.length === 0) {
+    return <p className="text-gray-600">{t('loyalty.no_transactions')}</p>
+  }
+
+  return (
+    <div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {t('loyalty.transaction_type')}
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {t('loyalty.points')}
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {t('loyalty.cashback')}
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Description
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {transactions.map((transaction) => (
+              <tr key={transaction.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {t(`loyalty.transaction_${transaction.transaction_type}`)}
+                </td>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm ${transaction.points_amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {transaction.points_amount > 0 ? '+' : ''}{transaction.points_amount.toFixed(2)}
+                </td>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm ${transaction.cashback_amount && transaction.cashback_amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {transaction.cashback_amount !== null && transaction.cashback_amount !== undefined
+                    ? `${transaction.cashback_amount >= 0 ? '+' : ''}${transaction.cashback_amount.toFixed(2)}`
+                    : '-'}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900">
+                  {transaction.description || '-'}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(transaction.created_at).toLocaleString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
+      {/* Pagination */}
+      {pages > 1 && (
+        <div className="mt-4 flex justify-between items-center">
+          <button
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {page} of {pages}
+          </span>
+          <button
+            onClick={() => setPage(p => Math.min(pages, p + 1))}
+            disabled={page >= pages}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Loyalty() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
@@ -219,6 +323,8 @@ export default function Loyalty() {
   const [showPromotionForm, setShowPromotionForm] = useState(false)
   const [editingLevel, setEditingLevel] = useState<LoyaltyLevel | null>(null)
   const [editingPromotion, setEditingPromotion] = useState<LoyaltyPromotion | null>(null)
+  const [selectedClientId, setSelectedClientId] = useState<number | null>(null)
+  const [transactionType, setTransactionType] = useState<string | null>(null)
 
   const handleCreateProgram = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -595,6 +701,136 @@ export default function Loyalty() {
               )}
             </div>
           )}
+
+          {/* Level Form Modal */}
+          {showLevelForm && isAdmin && program && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowLevelForm(false)}>
+              <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">{editingLevel ? t('loyalty.edit_level') : t('loyalty.add_level')}</h3>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault()
+                    const formData = new FormData(e.currentTarget)
+                    const levelData: any = {
+                      program_id: program.id,
+                      name: formData.get('name') as string,
+                      level_number: parseInt(formData.get('level_number') as string),
+                      min_spending: parseFloat(formData.get('min_spending') as string),
+                      points_multiplier: formData.get('points_multiplier') ? parseFloat(formData.get('points_multiplier') as string) : 1.0,
+                      cashback_multiplier: formData.get('cashback_multiplier') ? parseFloat(formData.get('cashback_multiplier') as string) : 1.0,
+                      benefits: formData.get('benefits') as string || undefined,
+                      color: formData.get('color') as string || undefined,
+                    }
+                    try {
+                      if (editingLevel) {
+                        await updateLevelMutation.mutateAsync({ id: editingLevel.id, data: levelData })
+                      } else {
+                        await createLevelMutation.mutateAsync(levelData)
+                      }
+                      setShowLevelForm(false)
+                      setEditingLevel(null)
+                    } catch (error) {
+                      console.error('Error saving level:', error)
+                    }
+                  }}
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.level_name')} *</label>
+                      <input
+                        type="text"
+                        name="name"
+                        defaultValue={editingLevel?.name}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.level_number')} *</label>
+                      <input
+                        type="number"
+                        name="level_number"
+                        min="1"
+                        defaultValue={editingLevel?.level_number || 1}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.min_spending')} *</label>
+                      <input
+                        type="number"
+                        name="min_spending"
+                        step="0.01"
+                        min="0"
+                        defaultValue={editingLevel?.min_spending}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_multiplier')}</label>
+                      <input
+                        type="number"
+                        name="points_multiplier"
+                        step="0.01"
+                        min="0"
+                        defaultValue={editingLevel?.points_multiplier || 1.0}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.cashback_multiplier')}</label>
+                      <input
+                        type="number"
+                        name="cashback_multiplier"
+                        step="0.01"
+                        min="0"
+                        defaultValue={editingLevel?.cashback_multiplier || 1.0}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.benefits')}</label>
+                      <textarea
+                        name="benefits"
+                        rows={3}
+                        defaultValue={editingLevel?.benefits}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.color')}</label>
+                      <input
+                        type="color"
+                        name="color"
+                        defaultValue={editingLevel?.color || '#3B82F6'}
+                        className="w-full h-10 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-6">
+                    <button
+                      type="submit"
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                    >
+                      {t('common.save')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowLevelForm(false)
+                        setEditingLevel(null)
+                      }}
+                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                    >
+                      {t('common.cancel')}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -674,7 +910,47 @@ export default function Loyalty() {
       {activeTab === 'transactions' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('loyalty.transactions')}</h2>
-          <p className="text-gray-600">{t('loyalty.no_transactions')}</p>
+          
+          {!program ? (
+            <p className="text-gray-600">{t('loyalty.no_program')}</p>
+          ) : (
+            <>
+              {/* Filters */}
+              <div className="mb-6 flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Client ID</label>
+                  <input
+                    type="number"
+                    value={selectedClientId || ''}
+                    onChange={(e) => setSelectedClientId(e.target.value ? parseInt(e.target.value) : null)}
+                    placeholder="Enter client ID"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.transaction_type')}</label>
+                  <select
+                    value={transactionType || ''}
+                    onChange={(e) => setTransactionType(e.target.value || null)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="">All</option>
+                    <option value="earned">{t('loyalty.transaction_earned')}</option>
+                    <option value="spent">{t('loyalty.transaction_spent')}</option>
+                    <option value="birthday_bonus">{t('loyalty.transaction_birthday')}</option>
+                    <option value="level_up">{t('loyalty.transaction_level_up')}</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Transactions List */}
+              {selectedClientId ? (
+                <TransactionsList clientId={selectedClientId} transactionType={transactionType} />
+              ) : (
+                <p className="text-gray-600">Please enter a client ID to view transactions</p>
+              )}
+            </>
+          )}
         </div>
       )}
     </div>
