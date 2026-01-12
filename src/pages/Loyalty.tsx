@@ -73,6 +73,80 @@ interface LoyaltyTransaction {
   created_at: string
 }
 
+function PromotionTypeFields({ editingPromotion }: { editingPromotion: LoyaltyPromotion | null }) {
+  const { t } = useTranslation()
+  const [promotionType, setPromotionType] = useState<string>(editingPromotion?.promotion_type || 'double_points')
+
+  useEffect(() => {
+    const select = document.querySelector('select[name="promotion_type"]') as HTMLSelectElement
+    if (select) {
+      setPromotionType(select.value)
+      select.addEventListener('change', (e) => {
+        setPromotionType((e.target as HTMLSelectElement).value)
+      })
+    }
+  }, [])
+
+  return (
+    <>
+      {promotionType === 'double_points' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_multiplier')}</label>
+          <input
+            type="number"
+            name="points_multiplier"
+            step="0.01"
+            min="0"
+            defaultValue={editingPromotion?.points_multiplier || 2.0}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+      )}
+      {promotionType === 'extra_cashback' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.cashback_percent')}</label>
+          <input
+            type="number"
+            name="cashback_percent"
+            step="0.01"
+            min="0"
+            max="100"
+            defaultValue={editingPromotion?.cashback_percent}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+      )}
+      {promotionType === 'bonus_points' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.bonus_points')}</label>
+          <input
+            type="number"
+            name="bonus_points"
+            step="0.01"
+            min="0"
+            defaultValue={editingPromotion?.bonus_points}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+      )}
+      {promotionType === 'discount' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.discount_percent')}</label>
+          <input
+            type="number"
+            name="discount_percent"
+            step="0.01"
+            min="0"
+            max="100"
+            defaultValue={editingPromotion?.discount_percent}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+      )}
+    </>
+  )
+}
+
 function TransactionsList({ clientId, transactionType }: { clientId: number; transactionType: string | null }) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -347,11 +421,6 @@ export default function Loyalty() {
   // Used when promotion form is implemented
   const [editingPromotion, setEditingPromotion] = useState<LoyaltyPromotion | null>(null)
   
-  // Suppress unused variable warnings - these will be used when promotion form is implemented
-  void showPromotionForm
-  void editingPromotion
-  void createPromotionMutation
-  void updatePromotionMutation
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null)
   const [transactionType, setTransactionType] = useState<string | null>(null)
 
@@ -959,6 +1028,213 @@ export default function Loyalty() {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Promotion Form Modal */}
+          {showPromotionForm && isAdmin && program && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowPromotionForm(false)}>
+              <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">{editingPromotion ? t('loyalty.edit_promotion') : t('loyalty.add_promotion')}</h3>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault()
+                    const formData = new FormData(e.currentTarget)
+                    const promotionData: any = {
+                      program_id: program.id,
+                      name: formData.get('name') as string,
+                      description: formData.get('description') as string || undefined,
+                      promotion_type: formData.get('promotion_type') as string,
+                      start_date: formData.get('start_date') as string,
+                      end_date: formData.get('end_date') as string,
+                      min_amount: formData.get('min_amount') ? parseFloat(formData.get('min_amount') as string) : undefined,
+                      client_id: formData.get('client_id') ? parseInt(formData.get('client_id') as string) : undefined,
+                      service_ids: formData.get('service_ids') ? JSON.stringify((formData.get('service_ids') as string).split(',').map(id => parseInt(id.trim()))) : undefined,
+                      is_active: formData.get('is_active') === 'on',
+                    }
+                    
+                    // Add type-specific fields
+                    const promotionType = promotionData.promotion_type
+                    if (promotionType === 'double_points') {
+                      promotionData.points_multiplier = formData.get('points_multiplier') ? parseFloat(formData.get('points_multiplier') as string) : 2.0
+                    } else if (promotionType === 'extra_cashback') {
+                      promotionData.cashback_percent = formData.get('cashback_percent') ? parseFloat(formData.get('cashback_percent') as string) : undefined
+                    } else if (promotionType === 'bonus_points') {
+                      promotionData.bonus_points = formData.get('bonus_points') ? parseFloat(formData.get('bonus_points') as string) : undefined
+                    } else if (promotionType === 'discount') {
+                      promotionData.discount_percent = formData.get('discount_percent') ? parseFloat(formData.get('discount_percent') as string) : undefined
+                    }
+                    
+                    try {
+                      if (editingPromotion) {
+                        await updatePromotionMutation.mutateAsync({ id: editingPromotion.id, data: promotionData })
+                      } else {
+                        await createPromotionMutation.mutateAsync(promotionData)
+                      }
+                      setShowPromotionForm(false)
+                      setEditingPromotion(null)
+                    } catch (error) {
+                      console.error('Error saving promotion:', error)
+                      alert('Failed to save promotion')
+                    }
+                  }}
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.promotion_name')} *</label>
+                      <input
+                        type="text"
+                        name="name"
+                        defaultValue={editingPromotion?.name}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.promotion_type')} *</label>
+                      <select
+                        name="promotion_type"
+                        id="promotion_type_select"
+                        defaultValue={editingPromotion?.promotion_type}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        required
+                        onChange={(e) => {
+                          const fieldsDiv = document.getElementById('promotion-type-specific-fields')
+                          if (fieldsDiv) {
+                            fieldsDiv.innerHTML = ''
+                            const type = e.target.value
+                            if (type === 'double_points') {
+                              fieldsDiv.innerHTML = `
+                                <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">${t('loyalty.points_multiplier')}</label>
+                                  <input type="number" name="points_multiplier" step="0.01" min="0" value="${editingPromotion?.points_multiplier || 2.0}" class="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                                </div>
+                              `
+                            } else if (type === 'extra_cashback') {
+                              fieldsDiv.innerHTML = `
+                                <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">${t('loyalty.cashback_percent')}</label>
+                                  <input type="number" name="cashback_percent" step="0.01" min="0" max="100" value="${editingPromotion?.cashback_percent || ''}" class="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                                </div>
+                              `
+                            } else if (type === 'bonus_points') {
+                              fieldsDiv.innerHTML = `
+                                <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">${t('loyalty.bonus_points')}</label>
+                                  <input type="number" name="bonus_points" step="0.01" min="0" value="${editingPromotion?.bonus_points || ''}" class="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                                </div>
+                              `
+                            } else if (type === 'discount') {
+                              fieldsDiv.innerHTML = `
+                                <div>
+                                  <label class="block text-sm font-medium text-gray-700 mb-1">${t('loyalty.discount_percent')}</label>
+                                  <input type="number" name="discount_percent" step="0.01" min="0" max="100" value="${editingPromotion?.discount_percent || ''}" class="w-full px-4 py-2 border border-gray-300 rounded-lg" />
+                                </div>
+                              `
+                            }
+                          }
+                        }}
+                      >
+                        <option value="double_points">{t('loyalty.promotion_double_points')}</option>
+                        <option value="extra_cashback">{t('loyalty.promotion_extra_cashback')}</option>
+                        <option value="bonus_points">{t('loyalty.promotion_bonus_points')}</option>
+                        <option value="discount">{t('loyalty.promotion_discount')}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.description')}</label>
+                      <textarea
+                        name="description"
+                        defaultValue={editingPromotion?.description || ''}
+                        rows={3}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.start_date')} *</label>
+                        <input
+                          type="date"
+                          name="start_date"
+                          defaultValue={editingPromotion?.start_date ? editingPromotion.start_date.split('T')[0] : ''}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.end_date')} *</label>
+                        <input
+                          type="date"
+                          name="end_date"
+                          defaultValue={editingPromotion?.end_date ? editingPromotion.end_date.split('T')[0] : ''}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.min_amount')}</label>
+                      <input
+                        type="number"
+                        name="min_amount"
+                        step="0.01"
+                        min="0"
+                        defaultValue={editingPromotion?.min_amount}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Client ID (optional, leave empty for all clients)</label>
+                      <input
+                        type="number"
+                        name="client_id"
+                        defaultValue={editingPromotion?.client_id}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Service IDs (optional, comma-separated, leave empty for all services)</label>
+                      <input
+                        type="text"
+                        name="service_ids"
+                        defaultValue={editingPromotion?.service_ids ? JSON.parse(editingPromotion.service_ids).join(', ') : ''}
+                        placeholder="1, 2, 3"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div id="promotion-type-specific-fields">
+                      {/* Fields will be shown based on promotion_type via JavaScript or conditionally rendered */}
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="is_active"
+                        defaultChecked={editingPromotion?.is_active ?? true}
+                        className="mr-2"
+                      />
+                      <label className="text-sm font-medium text-gray-700">{t('loyalty.is_active')}</label>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-6">
+                    <button
+                      type="submit"
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                    >
+                      {t('common.save')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowPromotionForm(false)
+                        setEditingPromotion(null)
+                      }}
+                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                    >
+                      {t('common.cancel')}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           )}
         </div>

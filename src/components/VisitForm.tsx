@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
@@ -59,6 +60,29 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     date_end: initialDateEnd ? getInitialDate(initialDateEnd) : undefined,
     status: 'planned',
   })
+  
+  const [pointsToUse, setPointsToUse] = useState<number>(0)
+  const [cashbackToUse, setCashbackToUse] = useState<number>(0)
+  
+  // Загружаем баланс клиента для списания баллов
+  const currentClientId = formData.client_id || selectedClient?.id
+  const { data: clientBalance } = useQuery({
+    queryKey: ['client-loyalty-balance', currentClientId],
+    queryFn: async () => {
+      if (!currentClientId) return null
+      try {
+        const { data } = await api.get(`/loyalty/balance/${currentClientId}`)
+        return data
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          return null
+        }
+        return null
+      }
+    },
+    enabled: !!currentClientId,
+    retry: false,
+  })
 
   useEffect(() => {
     loadClients()
@@ -67,6 +91,12 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       loadVisit()
     }
   }, [visitId])
+  
+  // Сбрасываем баллы при смене клиента
+  useEffect(() => {
+    setPointsToUse(0)
+    setCashbackToUse(0)
+  }, [currentClientId])
 
   const loadClients = async () => {
     try {
@@ -291,11 +321,30 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         date_end: formData.date_end ? new Date(formData.date_end).toISOString() : undefined,
       }
 
+      let savedVisitId = visitId
       if (visitId) {
-        await api.put(`/visits/${visitId}`, submitData)
+        const { data } = await api.put(`/visits/${visitId}`, submitData)
+        savedVisitId = data.id || visitId
       } else {
-        await api.post('/visits', submitData)
+        const { data } = await api.post('/visits', submitData)
+        savedVisitId = data.id
       }
+      
+      // Если указаны баллы для списания, списываем их
+      if (currentClientId && (pointsToUse > 0 || cashbackToUse > 0)) {
+        try {
+          await api.post(`/loyalty/use-points/${currentClientId}`, {
+            points_to_use: pointsToUse > 0 ? pointsToUse : undefined,
+            cashback_to_use: cashbackToUse > 0 ? cashbackToUse : undefined,
+            visit_id: savedVisitId,
+          })
+        } catch (error: any) {
+          console.error('Error using loyalty points:', error)
+          alert(error.response?.data?.detail || 'Failed to use loyalty points')
+          // Не блокируем сохранение визита, если не удалось списать баллы
+        }
+      }
+      
       onSuccess()
     } catch (error: any) {
       alert(error.response?.data?.detail || 'Failed to save visit')
@@ -500,6 +549,49 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           </select>
         </div>
       </div>
+
+      {/* Loyalty Points Section */}
+      {currentClientId && clientBalance && (
+        <div className="border-t border-gray-200 pt-4 mt-4">
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">{t('loyalty.use_points')}</h3>
+            {clientBalance.points > 0 && (
+              <p className="text-xs text-gray-600 mb-2">
+                {t('loyalty.client_balance')}: {clientBalance.points.toFixed(0)} {t('loyalty.points')}
+                {clientBalance.cashback > 0 && `, ${clientBalance.cashback.toFixed(2)} € ${t('loyalty.cashback')}`}
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">{t('loyalty.points_to_use')}</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max={clientBalance.points || 0}
+                value={pointsToUse || ''}
+                onChange={(e) => setPointsToUse(e.target.value ? parseFloat(e.target.value) : 0)}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">{t('loyalty.cashback_to_use')}</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max={clientBalance.cashback || 0}
+                value={cashbackToUse || ''}
+                onChange={(e) => setCashbackToUse(e.target.value ? parseFloat(e.target.value) : 0)}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="0"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.notes')}</label>
