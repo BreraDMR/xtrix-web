@@ -1046,7 +1046,7 @@ export default function Loyalty() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.description')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                       <textarea
                         name="description"
                         defaultValue={editingPromotion?.description || ''}
