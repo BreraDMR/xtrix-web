@@ -328,6 +328,12 @@ export default function Loyalty() {
   const [editingLevel, setEditingLevel] = useState<LoyaltyLevel | null>(null)
   // Used when promotion form is implemented
   const [editingPromotion, setEditingPromotion] = useState<LoyaltyPromotion | null>(null)
+  
+  // Suppress unused variable warnings - these will be used when promotion form is implemented
+  void showPromotionForm
+  void editingPromotion
+  void createPromotionMutation
+  void updatePromotionMutation
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null)
   const [transactionType, setTransactionType] = useState<string | null>(null)
 
