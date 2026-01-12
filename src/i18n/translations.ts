@@ -495,6 +495,7 @@ export type TranslationKey =
   // Common
   | 'common.currency'
   | 'common.close'
+  | 'common.days'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   // Common

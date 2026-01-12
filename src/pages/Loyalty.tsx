@@ -298,7 +298,8 @@ export default function Loyalty() {
     },
   })
 
-  // Update promotion mutation
+  // Update promotion mutation - used when promotion form is implemented
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updatePromotionMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<LoyaltyPromotion> }) => {
       const { data: result } = await api.put(`/loyalty/promotions/${id}`, data)
@@ -321,8 +322,11 @@ export default function Loyalty() {
 
   const [showProgramForm, setShowProgramForm] = useState(false)
   const [showLevelForm, setShowLevelForm] = useState(false)
+  // Promotion form state - used when promotion form is implemented
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showPromotionForm, setShowPromotionForm] = useState(false)
   const [editingLevel, setEditingLevel] = useState<LoyaltyLevel | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [editingPromotion, setEditingPromotion] = useState<LoyaltyPromotion | null>(null)
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null)
   const [transactionType, setTransactionType] = useState<string | null>(null)
@@ -458,7 +462,13 @@ export default function Loyalty() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.program_type')}</label>
-                  <p className="text-gray-900">{t(`loyalty.program_${program.program_type}`)}</p>
+                  <p className="text-gray-900">
+                    {program.program_type === 'points' 
+                      ? t('loyalty.program_points') 
+                      : program.program_type === 'cashback' 
+                      ? t('loyalty.program_cashback') 
+                      : t('loyalty.program_hybrid')}
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_per_currency')}</label>
