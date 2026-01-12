@@ -4,6 +4,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
+import LoyaltyAnalytics from './LoyaltyAnalytics'
 
 type TabType = 'program' | 'levels' | 'promotions' | 'transactions' | 'analytics'
 
