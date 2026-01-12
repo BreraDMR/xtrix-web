@@ -440,6 +440,18 @@ export default function Loyalty() {
                 {isAdmin && (
                   <div className="flex gap-2">
                     <button
+                      onClick={async () => {
+                        await programMutation.mutateAsync({ is_active: !program.is_active })
+                      }}
+                      className={`px-4 py-2 rounded-lg font-medium ${
+                        program.is_active
+                          ? 'bg-yellow-600 text-white hover:bg-yellow-700'
+                          : 'bg-green-600 text-white hover:bg-green-700'
+                      }`}
+                    >
+                      {program.is_active ? t('loyalty.deactivate_program') : t('loyalty.activate_program')}
+                    </button>
+                    <button
                       onClick={() => setShowProgramForm(true)}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
                     >
