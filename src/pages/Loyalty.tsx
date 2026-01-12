@@ -287,8 +287,8 @@ export default function Loyalty() {
     },
   })
 
-  // Create promotion mutation
-  const createPromotionMutation = useMutation({
+  // Create promotion mutation - used when promotion form is implemented
+  const _createPromotionMutation = useMutation({
     mutationFn: async (promotionData: Partial<LoyaltyPromotion>) => {
       const { data } = await api.post('/loyalty/promotions', promotionData)
       return data
@@ -299,8 +299,7 @@ export default function Loyalty() {
   })
 
   // Update promotion mutation - used when promotion form is implemented
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const updatePromotionMutation = useMutation({
+  const _updatePromotionMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<LoyaltyPromotion> }) => {
       const { data: result } = await api.put(`/loyalty/promotions/${id}`, data)
       return result
@@ -323,10 +322,9 @@ export default function Loyalty() {
   const [showProgramForm, setShowProgramForm] = useState(false)
   const [showLevelForm, setShowLevelForm] = useState(false)
   // Promotion form state - used when promotion form is implemented
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showPromotionForm, setShowPromotionForm] = useState(false)
   const [editingLevel, setEditingLevel] = useState<LoyaltyLevel | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // Used when promotion form is implemented
   const [editingPromotion, setEditingPromotion] = useState<LoyaltyPromotion | null>(null)
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null)
   const [transactionType, setTransactionType] = useState<string | null>(null)
