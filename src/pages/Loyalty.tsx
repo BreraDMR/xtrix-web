@@ -288,7 +288,8 @@ export default function Loyalty() {
   })
 
   // Create promotion mutation - used when promotion form is implemented
-  const _createPromotionMutation = useMutation({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const createPromotionMutation = useMutation({
     mutationFn: async (promotionData: Partial<LoyaltyPromotion>) => {
       const { data } = await api.post('/loyalty/promotions', promotionData)
       return data
@@ -299,7 +300,8 @@ export default function Loyalty() {
   })
 
   // Update promotion mutation - used when promotion form is implemented
-  const _updatePromotionMutation = useMutation({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const updatePromotionMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<LoyaltyPromotion> }) => {
       const { data: result } = await api.put(`/loyalty/promotions/${id}`, data)
       return result
