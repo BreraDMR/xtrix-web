@@ -274,6 +274,7 @@ export type TranslationKey =
   | 'nav.subscription'
   | 'nav.inventory'
   | 'nav.finance'
+  | 'nav.analytics'
   // Finance
   | 'finance.title'
   | 'finance.subtitle'
@@ -649,6 +650,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.subscription': { en: 'Subscription', ru: 'Подписка', cz: 'Předplatné' },
   'nav.inventory': { en: 'Inventory', ru: 'Склад', cz: 'Sklad' },
   'nav.finance': { en: 'Finance', ru: 'Финансы', cz: 'Finance' },
+  'nav.analytics': { en: 'Analytics', ru: 'Аналитика', cz: 'Analytika' },
   
   // Inventory
   'inventory.title': { en: 'Inventory Management', ru: 'Управление складом', cz: 'Správa skladu' },

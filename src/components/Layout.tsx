@@ -38,6 +38,7 @@ export default function Layout() {
           { path: '/employees', label: t('nav.employees'), icon: '👷' },
           { path: '/inventory', label: t('nav.inventory'), icon: '📦' },
           { path: '/finance', label: t('nav.finance'), icon: '💰' },
+          { path: '/analytics', label: t('nav.analytics'), icon: '📈' },
           { path: '/subscription', label: t('nav.subscription'), icon: '💳' },
         ]
       : []),
