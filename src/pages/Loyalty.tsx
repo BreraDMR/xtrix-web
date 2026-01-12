@@ -181,6 +181,24 @@ export default function Loyalty() {
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<TabType>('program')
+
+  // Получаем бизнес пользователя для получения business_id
+  const { data: userBusiness } = useQuery({
+    queryKey: ['user-business'],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get('/businesses/me')
+        return data
+      } catch (error: any) {
+        if (error?.response?.status === 404) {
+          return null
+        }
+        throw error
+      }
+    },
+    enabled: !!user,
+    retry: false,
+  })
   
   const isAdmin = user?.role === 'admin' || user?.role === 'business_owner'
   
@@ -340,8 +358,19 @@ export default function Loyalty() {
   const handleCreateProgram = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
+    
+    // Получаем business_id из текущего пользователя или из API
+    let businessId = user?.business_id
+    if (!businessId && userBusiness?.id) {
+      businessId = userBusiness.id
+    }
+    if (!businessId) {
+      alert('Business ID not found. Please ensure you have a business assigned.')
+      return
+    }
+    
     const programData: any = {
-      business_id: user?.business_id,
+      business_id: businessId,
       program_type: formData.get('program_type'),
       points_per_currency: parseFloat(formData.get('points_per_currency') as string),
       points_name: formData.get('points_name') as string || undefined,
