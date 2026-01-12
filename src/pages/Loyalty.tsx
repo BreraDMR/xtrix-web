@@ -61,7 +61,7 @@ interface LoyaltyTransaction {
   id: number
   client_id: number
   business_id: number
-  transaction_type: 'earned' | 'spent' | 'birthday_bonus' | 'level_up'
+  transaction_type: 'earned' | 'spent' | 'birthday' | 'level_up'
   points_amount: number
   cashback_amount?: number
   program_id: number
@@ -91,7 +91,6 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
   })
 
   const transactions: LoyaltyTransaction[] = transactionsResponse?.items || []
-  const total = transactionsResponse?.total || 0
   const pages = transactionsResponse?.pages || 1
 
   if (isLoading) {
