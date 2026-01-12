@@ -955,6 +955,13 @@ export default function Loyalty() {
           )}
         </div>
       )}
+
+      {/* Analytics Tab */}
+      {activeTab === 'analytics' && (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <LoyaltyAnalytics />
+        </div>
+      )}
     </div>
   )
 }
