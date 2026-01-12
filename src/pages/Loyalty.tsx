@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 
-type TabType = 'program' | 'levels' | 'promotions' | 'transactions'
+type TabType = 'program' | 'levels' | 'promotions' | 'transactions' | 'analytics'
 
 interface LoyaltyProgram {
   id: number
@@ -189,6 +189,7 @@ export default function Loyalty() {
     { id: 'levels', label: t('loyalty.levels'), icon: '⭐' },
     { id: 'promotions', label: t('loyalty.promotions'), icon: '🎁' },
     { id: 'transactions', label: t('loyalty.transactions'), icon: '📋' },
+    { id: 'analytics', label: t('analytics.title'), icon: '📊' },
   ]
 
   // Fetch program
