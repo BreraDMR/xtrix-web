@@ -17,6 +17,7 @@ import Subscription from './pages/Subscription'
 import Inventory from './pages/Inventory'
 import Finance from './pages/Finance'
 import Analytics from './pages/Analytics'
+import Loyalty from './pages/Loyalty'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -111,6 +112,7 @@ function App() {
           <Route path="inventory" element={<Inventory />} />
           <Route path="finance" element={<Finance />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="loyalty" element={<Loyalty />} />
           <Route path="subscription" element={<Subscription />} />
         </Route>
       </Routes>
