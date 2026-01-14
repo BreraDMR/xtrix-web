@@ -226,8 +226,15 @@ export default function Inventory() {
                 </th>
               </tr>
             </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((product) => (
+            <tbody className="bg-white divide-y divide-gray-200">
+              {products.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-2 sm:px-6 py-12 text-center text-gray-500">
+                    {t('inventory.no_products')}
+                  </td>
+                </tr>
+              ) : (
+                products.map((product) => (
               <tr
                 key={product.id}
                 className={product.quantity <= product.min_quantity ? 'bg-yellow-50' : ''}
@@ -293,15 +300,12 @@ export default function Inventory() {
                     </>
                   )}
                 </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {products.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            {t('inventory.no_products')}
-          </div>
-        )}
+                </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Форма добавления товара */}
