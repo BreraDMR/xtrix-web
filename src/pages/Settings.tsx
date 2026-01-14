@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { CURRENCIES, Currency, getCurrencySymbol } from '../utils/currency'
 import LoadingSpinner from '../components/LoadingSpinner'
+import type { TranslationKey } from '../i18n/translations'
 
 interface UserPreferences {
   id: number
@@ -131,7 +132,7 @@ export default function Settings() {
       const { data } = await api.put('/user-preferences/me', updates)
       return data
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['user-preferences'] })
       // Применяем тему сразу
       if (variables.theme !== undefined) {
@@ -145,8 +146,6 @@ export default function Settings() {
     { code: 'ru' as const, label: 'Russian', native: 'Русский' },
     { code: 'cz' as const, label: 'Czech', native: 'Čeština' },
   ]
-
-  const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]
 
   const handleLanguageChange = (langCode: 'en' | 'ru' | 'cz') => {
     setLocale(langCode)
@@ -244,7 +243,7 @@ export default function Settings() {
                     <span>{getCurrencySymbol(currency)}</span>
                     <span>{currency}</span>
                   </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t(`settings.currency_${currency.toLowerCase()}`)}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t(`settings.currency_${currency.toLowerCase()}` as TranslationKey)}</div>
                 </button>
               ))}
             </div>
@@ -280,7 +279,7 @@ export default function Settings() {
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <div className="font-medium">{t(`settings.theme_${theme.value}`)}</div>
+                  <div className="font-medium">{t(`settings.theme_${theme.value}` as TranslationKey)}</div>
                 </button>
               ))}
             </div>

@@ -28,6 +28,7 @@ export default function Inventory() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
+  const currency = useBusinessCurrency()
   const [showAddForm, setShowAddForm] = useState(false)
   const [showEditForm, setShowEditForm] = useState<Product | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
