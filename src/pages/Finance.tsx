@@ -4,6 +4,8 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 interface Expense {
   id: number
@@ -31,6 +33,7 @@ export default function Finance() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
+  const currency = useBusinessCurrency()
   
   // Фильтры периода
   const [dateFrom, setDateFrom] = useState<string>(() => {
@@ -158,16 +161,16 @@ export default function Finance() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('finance.revenue')}</h3>
-            <p className="text-3xl font-bold text-green-600">{profitReport.revenue?.toFixed(2) || '0.00'} €</p>
+            <p className="text-3xl font-bold text-green-600">{formatCurrency(profitReport.revenue, currency)}</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('finance.expenses')}</h3>
-            <p className="text-3xl font-bold text-red-600">{profitReport.expenses?.toFixed(2) || '0.00'} €</p>
+            <p className="text-3xl font-bold text-red-600">{formatCurrency(profitReport.expenses, currency)}</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('finance.profit')}</h3>
             <p className={`text-3xl font-bold ${(profitReport.profit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {profitReport.profit?.toFixed(2) || '0.00'} €
+              {formatCurrency(profitReport.profit, currency)}
             </p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
@@ -193,7 +196,7 @@ export default function Finance() {
                   />
                   <span className="font-medium">{item.category_name}</span>
                 </div>
-                <span className="font-bold text-red-600">{item.total.toFixed(2)} €</span>
+                <span className="font-bold text-red-600">{formatCurrency(item.total, currency)}</span>
               </div>
             ))}
           </div>

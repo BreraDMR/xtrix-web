@@ -3,9 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 export default function LoyaltyAnalytics() {
   const { t } = useTranslation()
+  const currency = useBusinessCurrency()
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0]
@@ -157,7 +160,7 @@ export default function LoyaltyAnalytics() {
                       {client.points?.toFixed(0) || '0'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                      {client.cashback?.toFixed(2) || '0.00'} €
+                      {formatCurrency(client.cashback, currency)}
                     </td>
                   </tr>
                 ))}

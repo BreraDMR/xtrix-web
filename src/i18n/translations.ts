@@ -277,6 +277,44 @@ export type TranslationKey =
   | 'nav.finance'
   | 'nav.analytics'
   | 'nav.loyalty'
+  | 'nav.settings'
+  // Settings
+  | 'settings.title'
+  | 'settings.subtitle'
+  | 'settings.language'
+  | 'settings.language_description'
+  | 'settings.currency'
+  | 'settings.currency_description'
+  | 'settings.currency_eur'
+  | 'settings.currency_usd'
+  | 'settings.currency_czk'
+  | 'settings.currency_rub'
+  | 'settings.currency_uah'
+  | 'settings.saving'
+  | 'settings.saved'
+  | 'settings.error_saving'
+  | 'settings.theme'
+  | 'settings.theme_description'
+  | 'settings.theme_light'
+  | 'settings.theme_dark'
+  | 'settings.theme_system'
+  | 'settings.timezone'
+  | 'settings.timezone_description'
+  | 'settings.date_time_format'
+  | 'settings.date_format'
+  | 'settings.time_format'
+  | 'settings.notifications'
+  | 'settings.email_notifications'
+  | 'settings.email_notifications_description'
+  | 'settings.push_notifications'
+  | 'settings.push_notifications_description'
+  | 'settings.auto_save'
+  | 'settings.auto_save_enabled'
+  | 'settings.auto_save_description'
+  | 'settings.auto_save_interval'
+  | 'settings.seconds'
+  | 'settings.export_format'
+  | 'settings.export_format_description'
   // Finance
   | 'finance.title'
   | 'finance.subtitle'
@@ -797,6 +835,45 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.finance': { en: 'Finance', ru: 'Финансы', cz: 'Finance' },
   'nav.analytics': { en: 'Analytics', ru: 'Аналитика', cz: 'Analytika' },
   'nav.loyalty': { en: 'Loyalty', ru: 'Лояльность', cz: 'Věrnost' },
+  'nav.settings': { en: 'Settings', ru: 'Настройки', cz: 'Nastavení' },
+  
+  // Settings
+  'settings.title': { en: 'Settings', ru: 'Настройки', cz: 'Nastavení' },
+  'settings.subtitle': { en: 'Manage your account preferences', ru: 'Управляйте настройками аккаунта', cz: 'Spravujte nastavení účtu' },
+  'settings.language': { en: 'Language', ru: 'Язык', cz: 'Jazyk' },
+  'settings.language_description': { en: 'Select your preferred language for the interface', ru: 'Выберите предпочитаемый язык интерфейса', cz: 'Vyberte preferovaný jazyk rozhraní' },
+  'settings.currency': { en: 'Currency', ru: 'Валюта', cz: 'Měna' },
+  'settings.currency_description': { en: 'Select the currency for displaying amounts throughout the application', ru: 'Выберите валюту для отображения сумм во всем приложении', cz: 'Vyberte měnu pro zobrazení částek v celé aplikaci' },
+  'settings.currency_eur': { en: 'Euro', ru: 'Евро', cz: 'Euro' },
+  'settings.currency_usd': { en: 'US Dollar', ru: 'Доллар США', cz: 'Americký dolar' },
+  'settings.currency_czk': { en: 'Czech Koruna', ru: 'Чешская крона', cz: 'Česká koruna' },
+  'settings.currency_rub': { en: 'Russian Ruble', ru: 'Российский рубль', cz: 'Ruský rubl' },
+  'settings.currency_uah': { en: 'Ukrainian Hryvnia', ru: 'Украинская гривна', cz: 'Ukrajinská hřivna' },
+  'settings.saving': { en: 'Saving...', ru: 'Сохранение...', cz: 'Ukládání...' },
+  'settings.saved': { en: 'Settings saved successfully', ru: 'Настройки успешно сохранены', cz: 'Nastavení úspěšně uloženo' },
+  'settings.error_saving': { en: 'Error saving settings', ru: 'Ошибка при сохранении настроек', cz: 'Chyba při ukládání nastavení' },
+  'settings.theme': { en: 'Theme', ru: 'Тема оформления', cz: 'Téma' },
+  'settings.theme_description': { en: 'Select the appearance theme', ru: 'Выберите тему оформления', cz: 'Vyberte téma vzhledu' },
+  'settings.theme_light': { en: 'Light', ru: 'Светлая', cz: 'Světlá' },
+  'settings.theme_dark': { en: 'Dark', ru: 'Тёмная', cz: 'Tmavá' },
+  'settings.theme_system': { en: 'System', ru: 'Системная', cz: 'Systémová' },
+  'settings.timezone': { en: 'Timezone', ru: 'Часовой пояс', cz: 'Časové pásmo' },
+  'settings.timezone_description': { en: 'Select your timezone for displaying dates and times', ru: 'Выберите часовой пояс для отображения дат и времени', cz: 'Vyberte časové pásmo pro zobrazení dat a času' },
+  'settings.date_time_format': { en: 'Date and Time Format', ru: 'Формат даты и времени', cz: 'Formát data a času' },
+  'settings.date_format': { en: 'Date Format', ru: 'Формат даты', cz: 'Formát data' },
+  'settings.time_format': { en: 'Time Format', ru: 'Формат времени', cz: 'Formát času' },
+  'settings.notifications': { en: 'Notifications', ru: 'Уведомления', cz: 'Oznámení' },
+  'settings.email_notifications': { en: 'Email Notifications', ru: 'Email уведомления', cz: 'E-mailová oznámení' },
+  'settings.email_notifications_description': { en: 'Receive notifications via email', ru: 'Получать уведомления по электронной почте', cz: 'Přijímat oznámení e-mailem' },
+  'settings.push_notifications': { en: 'Push Notifications', ru: 'Push уведомления', cz: 'Push oznámení' },
+  'settings.push_notifications_description': { en: 'Receive push notifications in browser', ru: 'Получать push уведомления в браузере', cz: 'Přijímat push oznámení v prohlížeči' },
+  'settings.auto_save': { en: 'Auto-save', ru: 'Автосохранение', cz: 'Automatické ukládání' },
+  'settings.auto_save_enabled': { en: 'Enable Auto-save', ru: 'Включить автосохранение', cz: 'Povolit automatické ukládání' },
+  'settings.auto_save_description': { en: 'Automatically save form data while editing', ru: 'Автоматически сохранять данные форм при редактировании', cz: 'Automaticky ukládat data formulářů při úpravách' },
+  'settings.auto_save_interval': { en: 'Auto-save Interval', ru: 'Интервал автосохранения', cz: 'Interval automatického ukládání' },
+  'settings.seconds': { en: 'seconds', ru: 'секунд', cz: 'sekund' },
+  'settings.export_format': { en: 'Export Format', ru: 'Формат экспорта', cz: 'Formát exportu' },
+  'settings.export_format_description': { en: 'Default format for exporting data', ru: 'Формат по умолчанию для экспорта данных', cz: 'Výchozí formát pro export dat' },
   
   // Inventory
   'inventory.title': { en: 'Inventory Management', ru: 'Управление складом', cz: 'Správa skladu' },

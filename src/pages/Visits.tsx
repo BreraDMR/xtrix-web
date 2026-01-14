@@ -10,10 +10,13 @@ import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 export default function Visits() {
   const { t } = useTranslation()
   const locale = useLocaleStore((state) => state.locale)
+  const currency = useBusinessCurrency()
   
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
   
@@ -237,7 +240,7 @@ interface Visit {
                     </span>
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
-                    {visit.price ? `${visit.price.toFixed(2)} €` : '-'}
+                    {visit.price ? formatCurrency(visit.price, currency) : '-'}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button

@@ -4,6 +4,8 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 interface Product {
   id: number
@@ -274,7 +276,7 @@ export default function Inventory() {
                   {product.min_quantity} {product.unit}
                 </td>
                 <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                  {product.price_per_unit ? `${product.price_per_unit} €` : '-'}
+                  {product.price_per_unit ? formatCurrency(product.price_per_unit, currency) : '-'}
                 </td>
                 <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1 sm:space-x-2">
                   {(user?.role === 'admin' || user?.role === 'business_owner') && (

@@ -15,6 +15,7 @@ interface BusinessData {
   phone?: string
   email?: string
   description?: string
+  currency?: string
 }
 
 export default function BusinessForm({ businessId, onSuccess, onCancel }: BusinessFormProps) {
@@ -22,6 +23,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
   const [formData, setFormData] = useState<BusinessData>({
     name: '',
     business_type: 'salon',
+    currency: 'EUR',
   })
 
   useEffect(() => {
@@ -40,6 +42,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
         phone: data.phone || '',
         email: data.email || '',
         description: data.description || '',
+        currency: data.currency || 'EUR',
       })
     } catch (error) {
       console.error('Failed to load business:', error)
@@ -150,6 +153,21 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
           className="w-full px-3 py-2 border rounded-md"
           placeholder="Business description"
         />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Currency</label>
+        <select
+          value={formData.currency || 'EUR'}
+          onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+          className="w-full px-3 py-2 border rounded-md"
+        >
+          <option value="EUR">EUR (€)</option>
+          <option value="USD">USD ($)</option>
+          <option value="CZK">CZK (Kč)</option>
+          <option value="RUB">RUB (₽)</option>
+          <option value="UAH">UAH (₴)</option>
+        </select>
       </div>
 
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">

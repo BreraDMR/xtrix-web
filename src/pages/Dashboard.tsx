@@ -3,9 +3,12 @@ import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 export default function Dashboard() {
   const { t } = useTranslation()
+  const currency = useBusinessCurrency()
   
   // Получаем прибыль за текущий месяц (доходы - расходы)
   const { data: profitData, isLoading: isLoadingProfit } = useQuery({
@@ -41,7 +44,7 @@ export default function Dashboard() {
             <LoadingSpinner size="md" />
           ) : (
             <p className={`text-3xl font-bold ${(profitData?.profit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {profitData?.profit?.toFixed(2) || '0.00'} €
+              {formatCurrency(profitData?.profit, currency)}
             </p>
           )}
           <p className="text-sm text-gray-500 mt-2">{t('dashboard.thisMonth')}</p>
@@ -56,7 +59,7 @@ export default function Dashboard() {
             <LoadingSpinner size="md" />
           ) : (
             <p className="text-3xl font-bold text-green-600">
-              {profitData?.revenue?.toFixed(2) || '0.00'} €
+              {formatCurrency(profitData?.revenue, currency)}
             </p>
           )}
           <p className="text-sm text-gray-500 mt-2">{t('dashboard.thisMonth')}</p>
@@ -71,7 +74,7 @@ export default function Dashboard() {
             <LoadingSpinner size="md" />
           ) : (
             <p className="text-3xl font-bold text-red-600">
-              {profitData?.expenses?.toFixed(2) || '0.00'} €
+              {formatCurrency(profitData?.expenses, currency)}
             </p>
           )}
           <p className="text-sm text-gray-500 mt-2">{t('dashboard.thisMonth')}</p>

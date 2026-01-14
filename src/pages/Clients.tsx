@@ -5,6 +5,8 @@ import ClientForm from '../components/ClientForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 interface Client {
   id: number
@@ -17,6 +19,7 @@ interface Client {
 
 function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
   const { t } = useTranslation()
+  const currency = useBusinessCurrency()
   const { data: balance, isLoading } = useQuery({
     queryKey: ['client-loyalty-balance', clientId],
     queryFn: async () => {
@@ -50,7 +53,7 @@ function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
       )}
       {balance.cashback > 0 && (
         <span className="text-sm font-medium text-green-600">
-          {balance.cashback.toFixed(2)} € {t('loyalty.cashback')}
+          {formatCurrency(balance.cashback, currency)} {t('loyalty.cashback')}
         </span>
       )}
       {balance.level && (

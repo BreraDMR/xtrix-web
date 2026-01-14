@@ -13,6 +13,7 @@ interface Business {
   phone?: string
   email?: string
   description?: string
+  currency?: string
   created_at: string
 }
 

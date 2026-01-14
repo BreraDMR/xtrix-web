@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import LanguageSwitcher from './LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
 
 export default function Layout() {
@@ -49,6 +48,7 @@ export default function Layout() {
     ...(user?.role === 'employee'
       ? [{ path: '/my-salary', label: t('nav.my_salary') }]
       : []),
+    { path: '/settings', label: t('nav.settings') },
   ]
 
   return (
@@ -119,7 +119,6 @@ export default function Layout() {
 
           <div className="flex-1"></div>
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <LanguageSwitcher />
             <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-gray-100 rounded-full">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                 {user?.full_name?.charAt(0).toUpperCase() || 'U'}

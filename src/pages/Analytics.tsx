@@ -3,11 +3,14 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 type TabType = 'retention' | 'cohorts' | 'trends' | 'forecast' | 'services' | 'insights' | 'benchmarks'
 
 export default function Analytics() {
   const { t } = useTranslation()
+  const currency = useBusinessCurrency()
   const [activeTab, setActiveTab] = useState<TabType>('retention')
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const now = new Date()
@@ -426,10 +429,10 @@ export default function Analytics() {
                       <tr key={idx}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{service.service_name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.visit_count}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.total_revenue?.toFixed(2)} €</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.average_price?.toFixed(2)} €</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(service.total_revenue, currency)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(service.average_price, currency)}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.unique_clients}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.ltv_per_client?.toFixed(2)} €</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(service.ltv_per_client, currency)}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.visits_per_client?.toFixed(2)}</td>
                       </tr>
                     ))}
@@ -456,10 +459,10 @@ export default function Analytics() {
                       <tr key={idx}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{specialist.specialist_name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{specialist.visit_count}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{specialist.total_revenue?.toFixed(2)} €</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{specialist.average_check?.toFixed(2)} €</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(specialist.total_revenue, currency)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(specialist.average_check, currency)}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{specialist.unique_clients}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{specialist.revenue_per_client?.toFixed(2)} €</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(specialist.revenue_per_client, currency)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -536,7 +539,7 @@ export default function Analytics() {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1">{t('analytics.avg_check_benchmark')}</h4>
-                    <p className="text-2xl font-bold text-green-600">{benchmarksData.average_check?.toFixed(2)} €</p>
+                    <p className="text-2xl font-bold text-green-600">{formatCurrency(benchmarksData.average_check, currency)}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1">{t('analytics.avg_visits_per_client')}</h4>
