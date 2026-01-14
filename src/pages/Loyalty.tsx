@@ -203,12 +203,12 @@ export default function Loyalty() {
   
   const isAdmin = user?.role === 'admin' || user?.role === 'business_owner'
   
-  const tabs: { id: TabType; label: string; icon: string }[] = [
-    { id: 'program', label: t('loyalty.program_settings'), icon: '⚙️' },
-    { id: 'levels', label: t('loyalty.levels'), icon: '⭐' },
-    { id: 'promotions', label: t('loyalty.promotions'), icon: '🎁' },
-    { id: 'transactions', label: t('loyalty.transactions'), icon: '📋' },
-    { id: 'analytics', label: t('analytics.title'), icon: '📊' },
+  const tabs: { id: TabType; label: string }[] = [
+    { id: 'program', label: t('loyalty.program_settings') },
+    { id: 'levels', label: t('loyalty.levels') },
+    { id: 'promotions', label: t('loyalty.promotions') },
+    { id: 'transactions', label: t('loyalty.transactions') },
+    { id: 'analytics', label: t('analytics.title') },
   ]
 
   // Fetch program
@@ -427,9 +427,9 @@ export default function Loyalty() {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('loyalty.title')}</h1>
-        <p className="text-gray-600">{t('loyalty.subtitle')}</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('loyalty.title')}</h1>
+        <p className="text-sm sm:text-base text-gray-600">{t('loyalty.subtitle')}</p>
       </div>
 
       {/* Tabs */}
@@ -439,13 +439,12 @@ export default function Loyalty() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-4 font-medium text-sm whitespace-nowrap transition-colors ${
+              className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'text-blue-600 border-b-2 border-blue-600'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              <span className="mr-2">{tab.icon}</span>
               {tab.label}
             </button>
           ))}

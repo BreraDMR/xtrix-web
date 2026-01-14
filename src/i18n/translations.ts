@@ -269,6 +269,7 @@ export type TranslationKey =
   | 'salary.view_details'
   | 'salary.calculated_by'
   // Nav
+  | 'nav.business'
   | 'nav.employees'
   | 'nav.my_salary'
   | 'nav.subscription'
@@ -496,6 +497,7 @@ export type TranslationKey =
   | 'common.currency'
   | 'common.close'
   | 'common.days'
+  | 'common.actions'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   // Common
@@ -787,6 +789,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.calculated_by': { en: 'Calculated by', ru: 'Рассчитано', cz: 'Vypočítáno' },
   
   // Nav
+  'nav.business': { en: 'Business', ru: 'Бизнес', cz: 'Podnikání' },
   'nav.employees': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'nav.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
   'nav.subscription': { en: 'Subscription', ru: 'Подписка', cz: 'Předplatné' },
@@ -1020,6 +1023,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.currency': { en: 'CZK', ru: 'CZK', cz: 'CZK' },
   'common.close': { en: 'Close', ru: 'Закрыть', cz: 'Zavřít' },
   'common.days': { en: 'days', ru: 'дней', cz: 'dny' },
+  'common.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
 }
 
 export default translations

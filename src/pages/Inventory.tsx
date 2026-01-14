@@ -151,12 +151,12 @@ export default function Inventory() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">{t('inventory.title')}</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('inventory.title')}</h1>
         {(user?.role === 'admin' || user?.role === 'business_owner') && (
           <button
             onClick={() => setShowAddForm(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             + {t('inventory.add_product')}
           </button>
@@ -167,7 +167,9 @@ export default function Inventory() {
       {lowStockProducts.length > 0 && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <div className="flex items-center">
-            <span className="text-yellow-600 text-xl mr-2">⚠️</span>
+            <svg className="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
             <div>
               <h3 className="font-semibold text-yellow-900">
                 {t('inventory.low_stock_warning').replace('{count}', lowStockProducts.length.toString())}
@@ -200,46 +202,50 @@ export default function Inventory() {
 
       {/* Таблица товаров */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('inventory.name')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('inventory.category')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('inventory.quantity')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('inventory.min_quantity')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('inventory.price')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('inventory.actions')}
-              </th>
-            </tr>
-          </thead>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('inventory.name')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                  {t('inventory.category')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('inventory.quantity')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                  {t('inventory.min_quantity')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                  {t('inventory.price')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('inventory.actions')}
+                </th>
+              </tr>
+            </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {products.map((product) => (
               <tr
                 key={product.id}
                 className={product.quantity <= product.min_quantity ? 'bg-yellow-50' : ''}
               >
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-2 sm:px-6 py-4">
                   <div className="text-sm font-medium text-gray-900">{product.name}</div>
                   {product.description && (
-                    <div className="text-sm text-gray-500">{product.description}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 mt-1">{product.description}</div>
                   )}
+                  <div className="text-xs text-gray-500 md:hidden mt-1">
+                    {product.category || '-'}
+                  </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
                   {product.category || '-'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center gap-2">
+                <td className="px-2 sm:px-6 py-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                     <span
                       className={`text-sm font-medium ${
                         product.quantity <= product.min_quantity ? 'text-red-600' : 'text-gray-900'
@@ -252,15 +258,18 @@ export default function Inventory() {
                         {t('inventory.low_stock')}
                       </span>
                     )}
+                    <div className="text-xs text-gray-500 lg:hidden">
+                      {t('inventory.min_quantity')}: {product.min_quantity} {product.unit}
+                    </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                   {product.min_quantity} {product.unit}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                   {product.price_per_unit ? `${product.price_per_unit} €` : '-'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1 sm:space-x-2">
                   {(user?.role === 'admin' || user?.role === 'business_owner') && (
                     <>
                       <button

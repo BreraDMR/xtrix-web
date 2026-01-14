@@ -101,7 +101,7 @@ interface Visit {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold">{t('visits.title')}</h1>
         {!showForm && (
           <button
@@ -109,7 +109,7 @@ interface Visit {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
             {t('visits.newVisit')}
           </button>
@@ -122,7 +122,7 @@ interface Visit {
             placeholder={t('visits.searchPlaceholder')}
             onSearch={setSearchQuery}
           />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <select
               value={statusFilter || ''}
               onChange={(e) => setStatusFilter(e.target.value || null)}
@@ -182,62 +182,77 @@ interface Visit {
         </div>
       ) : (
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('visits.date')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('visits.service')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('visits.status')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('services.price')}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredVisits.length === 0 ? (
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  {searchQuery || statusFilter || dateFrom || dateTo
-                    ? t('visits.noVisitsMatch')
-                    : t('visits.noVisitsFound')}
-                </td>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  {t('visits.date')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  {t('visits.service')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">
+                  {t('visits.status')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">
+                  {t('services.price')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  {t('common.actions')}
+                </th>
               </tr>
-            ) : (
-              filteredVisits.map((visit) => (
-              <tr key={visit.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {format(new Date(visit.date_start), 'PPp', { locale: dateLocale })}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {visit.service_name || '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                    {getStatusTranslation(visit.status)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {visit.price ? visit.price.toFixed(2) : '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
-                    onClick={() => handleEdit(visit.id)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    {t('common.edit')}
-                  </button>
-                </td>
-              </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredVisits.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-gray-500">
+                    {searchQuery || statusFilter || dateFrom || dateTo
+                      ? t('visits.noVisitsMatch')
+                      : t('visits.noVisitsFound')}
+                  </td>
+                </tr>
+              ) : (
+                filteredVisits.map((visit) => (
+                <tr key={visit.id} className="hover:bg-gray-50">
+                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-900">
+                    <div className="flex flex-col">
+                      <span className="whitespace-nowrap">{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
+                      <span className="text-xs text-gray-500 sm:hidden">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
+                    </div>
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-500">
+                    <div className="flex flex-col">
+                      <span>{visit.service_name || '-'}</span>
+                      <span className="text-xs sm:hidden mt-1">
+                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                          {getStatusTranslation(visit.status)}
+                        </span>
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                      {getStatusTranslation(visit.status)}
+                    </span>
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                    {visit.price ? `${visit.price.toFixed(2)} €` : '-'}
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button
+                      onClick={() => handleEdit(visit.id)}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      {t('common.edit')}
+                    </button>
+                  </td>
+                </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       )}
     </div>

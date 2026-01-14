@@ -177,58 +177,68 @@ export default function Clients() {
         </div>
       ) : (
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('clients.name')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('clients.phone')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('clients.email')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('loyalty.points')}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredClients.length === 0 ? (
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
-                </td>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  {t('clients.name')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">
+                  {t('clients.phone')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">
+                  {t('clients.email')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">
+                  {t('loyalty.points')}
+                </th>
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  {t('common.actions')}
+                </th>
               </tr>
-            ) : (
-              filteredClients.map((client) => (
-              <tr key={client.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {client.full_name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {client.contact_phone || '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {client.contact_email || '-'}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  <ClientLoyaltyBalance clientId={client.id} />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
-                    onClick={() => handleEdit(client.id)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    {t('common.edit')}
-                  </button>
-                </td>
-              </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredClients.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-gray-500">
+                    {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
+                  </td>
+                </tr>
+              ) : (
+                filteredClients.map((client) => (
+                <tr key={client.id} className="hover:bg-gray-50">
+                  <td className="px-2 sm:px-6 py-4 text-sm font-medium text-gray-900">
+                    <div className="flex flex-col">
+                      <span>{client.full_name}</span>
+                      <span className="text-xs text-gray-500 sm:hidden mt-1">
+                        {client.contact_phone || '-'}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                    {client.contact_phone || '-'}
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                    {client.contact_email || '-'}
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
+                    <ClientLoyaltyBalance clientId={client.id} />
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button
+                      onClick={() => handleEdit(client.id)}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      {t('common.edit')}
+                    </button>
+                  </td>
+                </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       )}
     </div>

@@ -23,14 +23,14 @@ export default function Analytics() {
   const [forecastType, setForecastType] = useState<'revenue' | 'visits'>('revenue')
   const [forecastPeriods, setForecastPeriods] = useState(3)
 
-  const tabs: { id: TabType; label: string; icon: string }[] = [
-    { id: 'retention', label: t('analytics.retention'), icon: '📊' },
-    { id: 'cohorts', label: t('analytics.cohorts'), icon: '👥' },
-    { id: 'trends', label: t('analytics.trends'), icon: '📈' },
-    { id: 'forecast', label: t('analytics.forecast'), icon: '🔮' },
-    { id: 'services', label: t('analytics.services_specialists'), icon: '💆' },
-    { id: 'insights', label: t('analytics.insights'), icon: '💡' },
-    { id: 'benchmarks', label: t('analytics.benchmarks'), icon: '📊' },
+  const tabs: { id: TabType; label: string }[] = [
+    { id: 'retention', label: t('analytics.retention') },
+    { id: 'cohorts', label: t('analytics.cohorts') },
+    { id: 'trends', label: t('analytics.trends') },
+    { id: 'forecast', label: t('analytics.forecast') },
+    { id: 'services', label: t('analytics.services_specialists') },
+    { id: 'insights', label: t('analytics.insights') },
+    { id: 'benchmarks', label: t('analytics.benchmarks') },
   ]
 
   // Retention metrics
@@ -124,9 +124,9 @@ export default function Analytics() {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('analytics.title')}</h1>
-        <p className="text-gray-600">{t('analytics.subtitle')}</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('analytics.title')}</h1>
+        <p className="text-sm sm:text-base text-gray-600">{t('analytics.subtitle')}</p>
       </div>
 
       {/* Tabs */}
@@ -136,13 +136,12 @@ export default function Analytics() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-4 font-medium text-sm whitespace-nowrap transition-colors ${
+              className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'text-blue-600 border-b-2 border-blue-600'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              <span className="mr-2">{tab.icon}</span>
               {tab.label}
             </button>
           ))}

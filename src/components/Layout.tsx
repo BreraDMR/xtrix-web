@@ -26,28 +26,28 @@ export default function Layout() {
   }
 
   const navItems = [
-    { path: '/', label: t('nav.dashboard'), icon: '📊' },
-    { path: '/clients', label: t('nav.clients'), icon: '👥' },
-    { path: '/visits', label: t('nav.visits'), icon: '📅' },
-    { path: '/calendar', label: t('nav.calendar'), icon: '🗓️' },
-    { path: '/services', label: t('nav.services'), icon: '💆' },
-    ...(user?.role === 'specialist' ? [{ path: '/profile', label: t('nav.profile'), icon: '👤' }] : []),
+    { path: '/', label: t('nav.dashboard') },
+    { path: '/clients', label: t('nav.clients') },
+    { path: '/visits', label: t('nav.visits') },
+    { path: '/calendar', label: t('nav.calendar') },
+    { path: '/services', label: t('nav.services') },
+    ...(user?.role === 'specialist' ? [{ path: '/profile', label: t('nav.profile') }] : []),
     ...(user?.role === 'admin' || user?.role === 'business_owner'
       ? [
-          { path: '/business', label: 'Business', icon: '🏢' },
-          { path: '/employees', label: t('nav.employees'), icon: '👷' },
-          { path: '/inventory', label: t('nav.inventory'), icon: '📦' },
-          { path: '/finance', label: t('nav.finance'), icon: '💰' },
-          { path: '/analytics', label: t('nav.analytics'), icon: '📈' },
-          { path: '/loyalty', label: t('nav.loyalty'), icon: '🎁' },
-          { path: '/subscription', label: t('nav.subscription'), icon: '💳' },
+          { path: '/business', label: t('nav.business') },
+          { path: '/employees', label: t('nav.employees') },
+          { path: '/inventory', label: t('nav.inventory') },
+          { path: '/finance', label: t('nav.finance') },
+          { path: '/analytics', label: t('nav.analytics') },
+          { path: '/loyalty', label: t('nav.loyalty') },
+          { path: '/subscription', label: t('nav.subscription') },
         ]
       : []),
     ...(user?.role === 'specialist' && !user?.employer_id
-      ? [{ path: '/subscription', label: t('nav.subscription'), icon: '💳' }]
+      ? [{ path: '/subscription', label: t('nav.subscription') }]
       : []),
     ...(user?.role === 'employee'
-      ? [{ path: '/my-salary', label: t('nav.my_salary'), icon: '💰' }]
+      ? [{ path: '/my-salary', label: t('nav.my_salary') }]
       : []),
   ]
 
@@ -97,7 +97,6 @@ export default function Layout() {
                   : 'text-gray-300 hover:bg-gray-700 hover:text-white'
               }`}
             >
-              <span className="mr-3 text-lg">{item.icon}</span>
               {item.label}
             </Link>
           ))}
@@ -131,8 +130,7 @@ export default function Layout() {
               onClick={handleLogout}
               className="px-2 sm:px-4 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all font-medium"
             >
-              <span className="hidden sm:inline">{t('nav.logout')}</span>
-              <span className="sm:hidden">🚪</span>
+              {t('nav.logout')}
             </button>
           </div>
         </header>
