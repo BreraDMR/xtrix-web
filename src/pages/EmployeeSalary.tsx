@@ -4,6 +4,8 @@ import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 interface SalaryCalculation {
   id: number
