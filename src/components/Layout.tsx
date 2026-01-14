@@ -103,7 +103,7 @@ export default function Layout() {
           {/* PRIMARY */}
           {primaryItems.length > 0 && (
             <>
-              <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">PRIMARY</div>
+              <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('nav.primary')}</div>
               {primaryItems.map((item) => (
                 <Link
                   key={item.path}
@@ -123,7 +123,7 @@ export default function Layout() {
           {/* MANAGE */}
           {manageItems.length > 0 && (
             <>
-              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">MANAGE</div>
+              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('nav.manage')}</div>
               {manageItems.map((item) => (
                 <Link
                   key={item.path}
@@ -143,7 +143,7 @@ export default function Layout() {
           {/* SYSTEM */}
           {systemItems.length > 0 && (
             <>
-              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">SYSTEM</div>
+              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('nav.system')}</div>
               {systemItems.map((item) => (
                 <Link
                   key={item.path}

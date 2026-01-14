@@ -34,6 +34,7 @@ export default function EmployeeSalary() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
+  const currency = useBusinessCurrency()
 
   const employeeId = id ? parseInt(id, 10) : null
 
@@ -160,7 +161,7 @@ export default function EmployeeSalary() {
             <div>
               <p className="text-sm text-gray-600">{t('salary.total_revenue')}</p>
               <p className="text-lg font-medium">
-                {currentSalary.total_revenue.toFixed(2)} {t('common.currency')}
+                {formatCurrency(currentSalary.total_revenue, currency)}
               </p>
             </div>
           </div>
@@ -168,19 +169,19 @@ export default function EmployeeSalary() {
             <div>
               <p className="text-sm text-gray-600">{t('salary.base')}</p>
               <p className="text-lg font-medium">
-                {currentSalary.base_salary.toFixed(2)} {t('common.currency')}
+                {formatCurrency(currentSalary.base_salary, currency)}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600">{t('salary.commission')} ({currentSalary.commission_percentage}%)</p>
               <p className="text-lg font-medium">
-                {currentSalary.commission_amount.toFixed(2)} {t('common.currency')}
+                {formatCurrency(currentSalary.commission_amount, currency)}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600 font-semibold">{t('salary.total_salary')}</p>
               <p className="text-2xl font-bold text-green-600">
-                {currentSalary.total_salary.toFixed(2)} {t('common.currency')}
+                {formatCurrency(currentSalary.total_salary, currency)}
               </p>
             </div>
             <div className="flex items-end">
@@ -254,10 +255,10 @@ export default function EmployeeSalary() {
                       {salary.completed_visits} / {salary.total_visits}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {salary.total_revenue.toFixed(2)} {t('common.currency')}
+                      {formatCurrency(salary.total_revenue, currency)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {salary.total_salary.toFixed(2)} {t('common.currency')}
+                      {formatCurrency(salary.total_salary, currency)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       {salary.is_paid ? (

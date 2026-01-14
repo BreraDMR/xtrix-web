@@ -3,6 +3,8 @@ import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 interface SalaryCalculation {
   id: number
@@ -25,6 +27,7 @@ interface SalaryCalculation {
 export default function MySalary() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
+  const currency = useBusinessCurrency()
 
   const { data: currentSalary, isLoading: isLoadingCurrent } = useQuery<SalaryCalculation>({
     queryKey: ['my-salary-current'],
@@ -105,14 +108,14 @@ export default function MySalary() {
             <div className="bg-gray-50 p-4 rounded-lg">
               <div className="text-sm text-gray-600 mb-1">{t('salary.total_revenue')}</div>
               <div className="text-lg font-semibold text-gray-900">
-                {currentSalary.total_revenue.toFixed(2)} {t('common.currency')}
+                {formatCurrency(currentSalary.total_revenue, currency)}
               </div>
             </div>
 
             <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
               <div className="text-sm text-green-600 mb-1">{t('salary.total_salary')}</div>
               <div className="text-2xl font-bold text-green-900">
-                {currentSalary.total_salary.toFixed(2)} {t('common.currency')}
+                {formatCurrency(currentSalary.total_salary, currency)}
               </div>
               <div className="text-xs text-green-600 mt-1">
                 {currentSalary.base_salary > 0 && (
@@ -194,10 +197,10 @@ export default function MySalary() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {salary.total_revenue.toFixed(2)} {t('common.currency')}
+                      {formatCurrency(salary.total_revenue, currency)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                      {salary.total_salary.toFixed(2)} {t('common.currency')}
+                      {formatCurrency(salary.total_salary, currency)}
                       <div className="text-xs text-gray-500 font-normal">
                         {salary.base_salary > 0 && (
                           <>
