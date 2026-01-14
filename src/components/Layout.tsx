@@ -24,25 +24,38 @@ export default function Layout() {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
-  const navItems = [
+  // PRIMARY section
+  const primaryItems = [
     { path: '/', label: t('nav.dashboard') },
     { path: '/clients', label: t('nav.clients') },
     { path: '/visits', label: t('nav.visits') },
     { path: '/calendar', label: t('nav.calendar') },
     { path: '/services', label: t('nav.services') },
-    ...(user?.role === 'specialist' ? [{ path: '/profile', label: t('nav.profile') }] : []),
     ...(user?.role === 'admin' || user?.role === 'business_owner'
       ? [
-          { path: '/business', label: t('nav.business') },
-          { path: '/employees', label: t('nav.employees') },
           { path: '/inventory', label: t('nav.inventory') },
           { path: '/finance', label: t('nav.finance') },
-          { path: '/analytics', label: t('nav.analytics') },
-          { path: '/loyalty', label: t('nav.loyalty') },
-          { path: '/subscription', label: t('nav.subscription') },
         ]
       : []),
-    ...(user?.role === 'specialist' && !user?.employer_id
+  ]
+
+  // MANAGE section
+  const manageItems = [
+    ...(user?.role === 'admin' || user?.role === 'business_owner'
+      ? [
+          { path: '/analytics', label: t('nav.analytics') },
+          { path: '/loyalty', label: t('nav.loyalty') },
+          { path: '/employees', label: t('nav.employees') },
+        ]
+      : []),
+  ]
+
+  // SYSTEM section
+  const systemItems = [
+    ...(user?.role === 'admin' || user?.role === 'business_owner'
+      ? [{ path: '/business', label: t('nav.business') }]
+      : []),
+    ...(user?.role === 'admin' || user?.role === 'business_owner' || (user?.role === 'specialist' && !user?.employer_id)
       ? [{ path: '/subscription', label: t('nav.subscription') }]
       : []),
     ...(user?.role === 'employee'
@@ -87,19 +100,65 @@ export default function Layout() {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center px-4 py-3 text-sm font-medium transition-all ${
-                location.pathname === item.path
-                  ? 'bg-purple-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {/* PRIMARY */}
+          {primaryItems.length > 0 && (
+            <>
+              <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">PRIMARY</div>
+              {primaryItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center px-4 py-3 text-sm font-medium transition-all ${
+                    location.pathname === item.path
+                      ? 'bg-purple-600 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </>
+          )}
+
+          {/* MANAGE */}
+          {manageItems.length > 0 && (
+            <>
+              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">MANAGE</div>
+              {manageItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center px-4 py-3 text-sm font-medium transition-all ${
+                    location.pathname === item.path
+                      ? 'bg-purple-600 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </>
+          )}
+
+          {/* SYSTEM */}
+          {systemItems.length > 0 && (
+            <>
+              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">SYSTEM</div>
+              {systemItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center px-4 py-3 text-sm font-medium transition-all ${
+                    location.pathname === item.path
+                      ? 'bg-purple-600 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </>
+          )}
         </nav>
       </aside>
 
