@@ -32,8 +32,21 @@ export default function Dashboard() {
   const { data: visitStats, isLoading: isLoadingVisitStats } = useQuery({
     queryKey: ['visits-statistics'],
     queryFn: async () => {
-      const { data } = await api.get('/analytics/visits/statistics')
-      return data
+      try {
+        const { data } = await api.get('/analytics/visits/statistics')
+        return data
+      } catch (error: any) {
+        // Возвращаем дефолтные значения при ошибке
+        return {
+          total_visits: 0,
+          visits_by_status: {
+            completed: 0,
+            planned: 0,
+            in_progress: 0,
+            cancelled: 0,
+          },
+        }
+      }
     },
     retry: false,
     enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
@@ -43,8 +56,17 @@ export default function Dashboard() {
   const { data: clientStats, isLoading: isLoadingClientStats } = useQuery({
     queryKey: ['clients-statistics'],
     queryFn: async () => {
-      const { data } = await api.get('/analytics/clients/statistics')
-      return data
+      try {
+        const { data } = await api.get('/analytics/clients/statistics')
+        return data
+      } catch (error: any) {
+        // Возвращаем дефолтные значения при ошибке
+        return {
+          total_clients: 0,
+          new_clients: 0,
+          average_spending: 0,
+        }
+      }
     },
     retry: false,
     enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
@@ -111,15 +133,15 @@ export default function Dashboard() {
           <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.reservations')}</h3>
           {isLoadingVisitStats ? (
             <LoadingSpinner size="md" />
-          ) : visitStats ? (
+          ) : (
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
                       data={[
-                        { name: t('dashboard.completedVisits'), value: visitStats.visits_by_status?.completed || 0 },
-                        { name: 'Remaining', value: (visitStats.total_visits || 0) - (visitStats.visits_by_status?.completed || 0) },
+                        { name: t('dashboard.completedVisits'), value: visitStats?.visits_by_status?.completed || 0 },
+                        { name: 'Remaining', value: (visitStats?.total_visits || 0) - (visitStats?.visits_by_status?.completed || 0) },
                       ]}
                       cx="50%"
                       cy="50%"
@@ -139,8 +161,8 @@ export default function Dashboard() {
                       dominantBaseline="middle"
                       className="text-2xl font-bold fill-purple-600"
                     >
-                      {visitStats.total_visits > 0
-                        ? `${Math.round(((visitStats.visits_by_status?.completed || 0) / visitStats.total_visits) * 100)}%`
+                      {(visitStats?.total_visits || 0) > 0
+                        ? `${Math.round(((visitStats?.visits_by_status?.completed || 0) / (visitStats?.total_visits || 1)) * 100)}%`
                         : '0%'}
                     </text>
                     <text
@@ -150,7 +172,7 @@ export default function Dashboard() {
                       dominantBaseline="middle"
                       className="text-sm fill-gray-600"
                     >
-                      {visitStats.visits_by_status?.completed || 0}/{visitStats.total_visits || 0} {t('dashboard.completedVisits').toLowerCase()}
+                      {visitStats?.visits_by_status?.completed || 0}/{visitStats?.total_visits || 0} {t('dashboard.completedVisits').toLowerCase()}
                     </text>
                   </PieChart>
                 </ResponsiveContainer>
@@ -166,7 +188,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          ) : null}
+          )}
         </div>
 
         {/* Quick Status Widget with Purple Pills */}
@@ -177,30 +199,28 @@ export default function Dashboard() {
           </div>
           {isLoadingClientStats ? (
             <LoadingSpinner size="md" />
-          ) : clientStats ? (
+          ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">{t('dashboard.totalClients')}</span>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
-                  {clientStats.total_clients || 0}
+                  {clientStats?.total_clients || 0}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">{t('dashboard.newClients')}</span>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
-                  {clientStats.total_clients || 0}
+                  {clientStats?.new_clients || clientStats?.total_clients || 0}
                 </span>
               </div>
-              {clientStats.average_spending !== null && clientStats.average_spending !== undefined && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">{t('dashboard.averageSpending')}</span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
-                    {formatCurrency(clientStats.average_spending, currency)}
-                  </span>
-                </div>
-              )}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">{t('dashboard.averageSpending')}</span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
+                  {formatCurrency(clientStats?.average_spending || 0, currency)}
+                </span>
+              </div>
             </div>
-          ) : null}
+          )}
         </div>
       </div>
 
