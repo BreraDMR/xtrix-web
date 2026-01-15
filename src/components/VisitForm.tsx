@@ -22,6 +22,7 @@ interface VisitData {
   note?: string
   price?: number
   status: string
+  payment_method?: string
 }
 
 interface ClientSearchResult {
@@ -539,7 +540,15 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           <label className="block text-sm font-medium mb-1">{t('visits.status')}</label>
           <select
             value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+            onChange={(e) => {
+              const newStatus = e.target.value
+              setFormData({ 
+                ...formData, 
+                status: newStatus,
+                // Очищаем способ оплаты, если статус не completed
+                payment_method: newStatus === 'completed' ? formData.payment_method : undefined
+              })
+            }}
             className="w-full px-3 py-2 border rounded-md"
           >
             <option value="planned">{t('visits.planned')}</option>
@@ -549,6 +558,26 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           </select>
         </div>
       </div>
+
+      {/* Payment Method - показываем только для завершенных визитов */}
+      {formData.status === 'completed' && (
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            {t('finance.payment_method')} {formData.price ? `(${t('common.required_field')})` : ''}
+          </label>
+          <select
+            value={formData.payment_method || ''}
+            onChange={(e) => setFormData({ ...formData, payment_method: e.target.value || undefined })}
+            required={!!formData.price}
+            className="w-full px-3 py-2 border rounded-md"
+          >
+            <option value="">{t('visits.selectPaymentMethod') || 'Выберите способ оплаты'}</option>
+            <option value="card">{t('finance.payment_card')}</option>
+            <option value="cash">{t('finance.payment_cash')}</option>
+            <option value="other">{t('visits.paymentOther') || 'Другое'}</option>
+          </select>
+        </div>
+      )}
 
       {/* Loyalty Points Section */}
       {currentClientId && clientBalance && (

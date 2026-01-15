@@ -189,6 +189,8 @@ export type TranslationKey =
   | 'visits.selectService'
   | 'visits.createVisit'
   | 'visits.updateVisit'
+  | 'visits.selectPaymentMethod'
+  | 'visits.paymentOther'
   | 'visits.clientList'
   | 'visits.clientSearch'
   | 'visits.searchClientPlaceholder'
@@ -784,6 +786,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.selectService': { en: 'Select service...', ru: 'Выберите услугу...', cz: 'Vyberte službu...' },
   'visits.createVisit': { en: 'Create Visit', ru: 'Создать визит', cz: 'Vytvořit návštěvu' },
   'visits.updateVisit': { en: 'Update Visit', ru: 'Обновить визит', cz: 'Aktualizovat návštěvu' },
+  'visits.selectPaymentMethod': { en: 'Select payment method', ru: 'Выберите способ оплаты', cz: 'Vyberte způsob platby' },
+  'visits.paymentOther': { en: 'Other', ru: 'Другое', cz: 'Jiné' },
   
   // Calendar
   'calendar.title': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },
