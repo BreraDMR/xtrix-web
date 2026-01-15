@@ -112,20 +112,6 @@ export default function Finance() {
     },
   })
 
-  // Получаем визиты для таблицы платежей
-  const { data: visitsData } = useQuery({
-    queryKey: ['visits', dateFrom, dateTo],
-    queryFn: async () => {
-      const params = new URLSearchParams()
-      if (dateFrom) params.append('date_from', new Date(dateFrom).toISOString())
-      if (dateTo) params.append('date_to', new Date(dateTo + 'T23:59:59').toISOString())
-      params.append('status', 'completed')
-      params.append('per_page', '1000')
-      const { data } = await api.get(`/visits/?${params.toString()}`)
-      return Array.isArray(data) ? data : (data?.items || data?.data || [])
-    },
-  })
-
   const expenses: Expense[] = expensesResponse?.items || []
 
   // Удаление расхода
