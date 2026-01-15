@@ -363,13 +363,10 @@ export type TranslationKey =
   | 'finance.payment_cash'
   | 'finance.payment_card'
   | 'finance.payment_transfer'
+  | 'finance.payment_other'
   | 'finance.payments_volume'
-  | 'finance.gateway_payments_volume'
-  | 'finance.gateway_payments'
-  | 'finance.terminal_payments'
-  | 'finance.physical_card_payments'
-  | 'finance.virtual_card_payments'
   | 'finance.completed'
+  | 'finance.total'
   | 'finance.payment_other'
   // Subscription
   | 'subscription.title'
@@ -1063,12 +1060,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'finance.payment_transfer': { en: 'Bank Transfer', ru: 'Банковский перевод', cz: 'Bankovní převod' },
   'finance.payment_other': { en: 'Other', ru: 'Прочее', cz: 'Jiné' },
   'finance.payments_volume': { en: 'Payments volume', ru: 'Объем платежей', cz: 'Objem plateb' },
-  'finance.gateway_payments_volume': { en: 'Gateway payments volume', ru: 'Объем платежей через шлюз', cz: 'Objem plateb přes bránu' },
-  'finance.gateway_payments': { en: 'Gateway payments', ru: 'Платежи через шлюз', cz: 'Platby přes bránu' },
-  'finance.terminal_payments': { en: 'Terminal payments', ru: 'Терминальные платежи', cz: 'Terminálové platby' },
-  'finance.physical_card_payments': { en: 'Physical card payments', ru: 'Платежи физической картой', cz: 'Platby fyzickou kartou' },
-  'finance.virtual_card_payments': { en: 'Virtual card payments', ru: 'Платежи виртуальной картой', cz: 'Platby virtuální kartou' },
   'finance.completed': { en: 'completed', ru: 'завершено', cz: 'dokončeno' },
+  'finance.total': { en: 'Total', ru: 'Итого', cz: 'Celkem' },
   
   // Subscription
   'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },

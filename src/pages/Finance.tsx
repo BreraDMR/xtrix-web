@@ -181,10 +181,9 @@ export default function Finance() {
         </div>
       </div>
 
-      {/* Виджеты платежей */}
+      {/* Виджет платежей */}
       {!isLoadingPayments && paymentStats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          {/* Payments volume */}
+        <div className="mb-6">
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">{t('finance.payments_volume')}</h3>
@@ -192,97 +191,86 @@ export default function Finance() {
                 ×
               </button>
             </div>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-8">
               <div className="flex-shrink-0">
-                <ResponsiveContainer width={120} height={120}>
+                <ResponsiveContainer width={140} height={140}>
                   <PieChart>
                     <Pie
                       data={[
-                        { name: 'Gateway', value: paymentStats.gateway_payments?.percentage || 0 },
-                        { name: 'Terminal', value: Math.max(0, 100 - (paymentStats.gateway_payments?.percentage || 0)) },
+                        { name: 'Card', value: paymentStats.card_payments?.percentage || 0 },
+                        { name: 'Cash', value: paymentStats.cash_payments?.percentage || 0 },
+                        { name: 'Other', value: paymentStats.other_payments?.percentage || 0 },
                       ]}
                       cx="50%"
                       cy="50%"
-                      innerRadius={35}
-                      outerRadius={50}
+                      innerRadius={40}
+                      outerRadius={60}
                       startAngle={90}
                       endAngle={-270}
                       dataKey="value"
                     >
                       <Cell fill="#EC4899" />
+                      <Cell fill="#10B981" />
                       <Cell fill="#F3F4F6" />
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
-                <div className="text-center mt-2">
-                  <p className="text-2xl font-bold text-purple-600">
-                    {Math.round(paymentStats.gateway_payments?.percentage || 0)}%
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {paymentStats.gateway_payments?.count || 0}/{paymentStats.total_count || 0} {t('finance.completed')}
-                  </p>
-                </div>
               </div>
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-pink-500 rounded"></div>
-                  <span className="text-sm text-gray-700">{t('finance.gateway_payments')}</span>
+              <div className="flex-1">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-pink-500 rounded"></div>
+                      <span className="text-sm text-gray-700">{t('finance.payment_card')}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-gray-900">
+                        {formatCurrency(paymentStats.card_payments?.total || 0, currency)}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {Math.round(paymentStats.card_payments?.percentage || 0)}% ({paymentStats.card_payments?.count || 0})
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-green-500 rounded"></div>
+                      <span className="text-sm text-gray-700">{t('finance.payment_cash')}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-gray-900">
+                        {formatCurrency(paymentStats.cash_payments?.total || 0, currency)}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {Math.round(paymentStats.cash_payments?.percentage || 0)}% ({paymentStats.cash_payments?.count || 0})
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-gray-300 rounded"></div>
+                      <span className="text-sm text-gray-700">{t('finance.payment_other')}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-gray-900">
+                        {formatCurrency(paymentStats.other_payments?.total || 0, currency)}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {Math.round(paymentStats.other_payments?.percentage || 0)}% ({paymentStats.other_payments?.count || 0})
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-gray-200 rounded"></div>
-                  <span className="text-sm text-gray-700">{t('finance.terminal_payments')}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Gateway payments volume */}
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">{t('finance.gateway_payments_volume')}</h3>
-              <button className="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                ×
-              </button>
-            </div>
-            <div className="flex items-center gap-6">
-              <div className="flex-shrink-0">
-                <ResponsiveContainer width={120} height={120}>
-                  <PieChart>
-                    <Pie
-                      data={[
-                        { name: 'Physical', value: paymentStats.physical_card?.percentage || 0 },
-                        { name: 'Virtual', value: Math.max(0, 100 - (paymentStats.physical_card?.percentage || 0)) },
-                      ]}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={35}
-                      outerRadius={50}
-                      startAngle={90}
-                      endAngle={-270}
-                      dataKey="value"
-                    >
-                      <Cell fill="#EC4899" />
-                      <Cell fill="#F3F4F6" />
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="text-center mt-2">
-                  <p className="text-2xl font-bold text-purple-600">
-                    {Math.round(paymentStats.physical_card?.percentage || 0)}%
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">{t('finance.total')}</span>
+                    <span className="text-lg font-bold text-gray-900">
+                      {formatCurrency(paymentStats.total_payments || 0, currency)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {paymentStats.total_count || 0} {t('finance.completed')}
                   </p>
-                  <p className="text-xs text-gray-500">
-                    {paymentStats.physical_card?.count || 0}/{paymentStats.total_count || 0} {t('finance.completed')}
-                  </p>
-                </div>
-              </div>
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-pink-500 rounded"></div>
-                  <span className="text-sm text-gray-700">{t('finance.physical_card_payments')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-gray-200 rounded"></div>
-                  <span className="text-sm text-gray-700">{t('finance.virtual_card_payments')}</span>
                 </div>
               </div>
             </div>
