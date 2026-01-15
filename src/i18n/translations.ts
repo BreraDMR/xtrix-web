@@ -124,6 +124,13 @@ export type TranslationKey =
   | 'dashboard.profitMargin'
   | 'dashboard.margin'
   | 'dashboard.thisMonth'
+  | 'dashboard.reservations'
+  | 'dashboard.totalVisits'
+  | 'dashboard.completedVisits'
+  | 'dashboard.totalClients'
+  | 'dashboard.newClients'
+  | 'dashboard.averageSpending'
+  | 'dashboard.quickStatus'
   // Clients
   | 'clients.title'
   | 'clients.addClient'
@@ -696,6 +703,13 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'dashboard.profitMargin': { en: 'Profit Margin', ru: 'Рентабельность', cz: 'Zisková marže' },
   'dashboard.margin': { en: 'Margin', ru: 'Маржа', cz: 'Marže' },
   'dashboard.thisMonth': { en: 'This month', ru: 'Этот месяц', cz: 'Tento měsíc' },
+  'dashboard.reservations': { en: 'Reservations', ru: 'Бронирования', cz: 'Rezervace' },
+  'dashboard.totalVisits': { en: 'Total Visits', ru: 'Всего визитов', cz: 'Celkem návštěv' },
+  'dashboard.completedVisits': { en: 'Completed', ru: 'Завершено', cz: 'Dokončeno' },
+  'dashboard.totalClients': { en: 'Total Clients', ru: 'Всего клиентов', cz: 'Celkem klientů' },
+  'dashboard.newClients': { en: 'New Clients', ru: 'Новые клиенты', cz: 'Noví klienti' },
+  'dashboard.averageSpending': { en: 'Average Spending', ru: 'Средние траты', cz: 'Průměrné výdaje' },
+  'dashboard.quickStatus': { en: 'Quick Status', ru: 'Быстрый статус', cz: 'Rychlý status' },
   
   // Clients
   'clients.title': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },

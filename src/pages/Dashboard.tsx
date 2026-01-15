@@ -28,6 +28,28 @@ export default function Dashboard() {
     enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
   })
 
+  // Получаем статистику визитов
+  const { data: visitStats, isLoading: isLoadingVisitStats } = useQuery({
+    queryKey: ['visits-statistics'],
+    queryFn: async () => {
+      const { data } = await api.get('/analytics/visits/statistics')
+      return data
+    },
+    retry: false,
+    enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
+  })
+
+  // Получаем статистику клиентов
+  const { data: clientStats, isLoading: isLoadingClientStats } = useQuery({
+    queryKey: ['clients-statistics'],
+    queryFn: async () => {
+      const { data } = await api.get('/analytics/clients/statistics')
+      return data
+    },
+    retry: false,
+    enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
+  })
+
   return (
     <div className="animate-fade-in">
       <div className="mb-8">
@@ -79,6 +101,49 @@ export default function Dashboard() {
             </p>
           )}
           <p className="text-sm text-gray-500 mt-2">{t('dashboard.thisMonth')}</p>
+        </div>
+      </div>
+
+      {/* Widgets - Reservations and Quick Status */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Reservations Widget */}
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.reservations')}</h3>
+          {isLoadingVisitStats ? (
+            <LoadingSpinner size="md" />
+          ) : visitStats ? (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-gray-600">{t('dashboard.totalVisits')}</span>
+                <span className="text-2xl font-bold text-gray-900">{visitStats.total_visits || 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">{t('dashboard.completedVisits')}</span>
+                <span className="text-xl font-semibold text-green-600">{visitStats.visits_by_status?.completed || 0}</span>
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        {/* Quick Status Widget */}
+        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.quickStatus')}</h3>
+          {isLoadingClientStats ? (
+            <LoadingSpinner size="md" />
+          ) : clientStats ? (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm text-gray-600">{t('dashboard.totalClients')}</span>
+                <span className="text-2xl font-bold text-gray-900">{clientStats.total_clients || 0}</span>
+              </div>
+              {clientStats.average_spending !== null && clientStats.average_spending !== undefined && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">{t('dashboard.averageSpending')}</span>
+                  <span className="text-xl font-semibold text-purple-600">{formatCurrency(clientStats.average_spending, currency)}</span>
+                </div>
+              )}
+            </div>
+          ) : null}
         </div>
       </div>
 
