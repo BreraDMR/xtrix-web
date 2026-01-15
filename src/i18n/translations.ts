@@ -209,6 +209,12 @@ export type TranslationKey =
   | 'calendar.previous'
   | 'calendar.next'
   | 'calendar.more'
+  | 'calendar.monthView'
+  | 'calendar.eventsThisMonth'
+  | 'calendar.selectedDay'
+  | 'calendar.insights'
+  | 'calendar.insightsTitle'
+  | 'calendar.searchEvents'
   // Employees
   | 'employees.title'
   | 'employees.add_employee'
@@ -792,6 +798,12 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.previous': { en: 'Previous', ru: 'Назад', cz: 'Předchozí' },
   'calendar.next': { en: 'Next', ru: 'Вперед', cz: 'Další' },
   'calendar.more': { en: 'more', ru: 'еще', cz: 'více' },
+  'calendar.monthView': { en: 'Month view', ru: 'Вид месяца', cz: 'Měsíční zobrazení' },
+  'calendar.eventsThisMonth': { en: 'events this month', ru: 'событий в этом месяце', cz: 'událostí tento měsíc' },
+  'calendar.selectedDay': { en: 'Selected day', ru: 'Выбранный день', cz: 'Vybraný den' },
+  'calendar.insights': { en: 'Insights', ru: 'Аналитика', cz: 'Přehledy' },
+  'calendar.insightsTitle': { en: 'This month breakdown', ru: 'Разбивка этого месяца', cz: 'Rozpis tohoto měsíce' },
+  'calendar.searchEvents': { en: 'Search events...', ru: 'Поиск событий...', cz: 'Hledat události...' },
   
   // Employees
   'employees.title': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },

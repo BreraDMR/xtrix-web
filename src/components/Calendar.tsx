@@ -19,6 +19,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
   const [editingVisitId, setEditingVisitId] = useState<number | undefined>()
   const [showForm, setShowForm] = useState(false)
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null)
   
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
 
@@ -35,17 +36,13 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
   }, [visits])
 
   const handleDateClick = (date: Date) => {
+    setSelectedDay(date)
     const start = new Date(date)
     start.setHours(9, 0, 0, 0)
     const end = new Date(start)
     end.setHours(10, 0, 0, 0)
     setSelectedSlot({ start, end })
     setEditingVisitId(undefined)
-    setShowForm(true)
-  }
-
-  const handleVisitClick = (visit: any) => {
-    setEditingVisitId(visit.id)
     setShowForm(true)
   }
 
@@ -163,43 +160,26 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
               const dayVisits = visitsByDate[dateKey] || []
               const isCurrentMonth = day.getMonth() === currentMonth.getMonth()
               const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
+              const isSelected = selectedDay && format(day, 'yyyy-MM-dd') === format(selectedDay, 'yyyy-MM-dd')
               
               return (
                 <div
                   key={idx}
                   onClick={() => handleDateClick(day)}
-                  className={`p-2 min-h-[80px] border rounded cursor-pointer hover:bg-blue-50 transition-colors ${
+                  className={`p-2 min-h-[80px] border rounded cursor-pointer transition-colors ${
                     !isCurrentMonth ? 'text-gray-400' : ''
-                  } ${isToday ? 'bg-blue-100 border-blue-300' : ''}`}
+                  } ${isSelected ? 'bg-purple-100 border-purple-300' : isToday ? 'bg-gray-50 border-gray-300' : 'hover:bg-gray-50'}`}
                 >
-                  <div className="text-sm font-medium mb-1">{day.getDate()}</div>
+                  <div className={`text-sm font-medium mb-1 ${isSelected ? 'text-purple-700' : ''}`}>
+                    {day.getDate()}
+                  </div>
                   {dayVisits.length > 0 && (
-                    <div className="space-y-1">
-                      {dayVisits.slice(0, 2).map((visit) => (
-                        <div
-                          key={visit.id}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleVisitClick(visit)
-                          }}
-                          className={`text-xs p-1 rounded truncate ${
-                            visit.status === 'completed'
-                              ? 'bg-purple-200 text-purple-800'
-                              : visit.status === 'cancelled'
-                              ? 'bg-pink-200 text-pink-800'
-                              : visit.status === 'in_progress'
-                              ? 'bg-purple-200 text-purple-800'
-                              : 'bg-purple-200 text-purple-800'
-                          }`}
-                          title={visit.service_name || 'Visit'}
-                        >
-                          {format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })} {visit.service_name || t('visits.title')}
-                        </div>
-                      ))}
-                      {dayVisits.length > 2 && (
-                        <div className="text-xs text-gray-500">
-                          +{dayVisits.length - 2} {t('calendar.more')}
-                        </div>
+                    <div className="flex items-center gap-1 mt-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-purple-600"></div>
+                      {dayVisits.length > 1 && (
+                        <span className="inline-flex items-center px-1 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
+                          {dayVisits.length}
+                        </span>
                       )}
                     </div>
                   )}

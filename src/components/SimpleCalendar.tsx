@@ -23,16 +23,6 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
   const [showForm, setShowForm] = useState(false)
   
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
-  
-  const getStatusTranslation = (status: string) => {
-    const statusMap: Record<string, string> = {
-      'planned': t('visits.planned'),
-      'in_progress': t('visits.inProgress'),
-      'completed': t('visits.completed'),
-      'cancelled': t('visits.cancelled'),
-    }
-    return statusMap[status] || status
-  }
 
   const visitsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {}
@@ -81,19 +71,40 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     if (dayVisits.length === 0) return null
 
     return (
-      <div className="mt-1">
-        <div className="text-xs text-blue-600 font-semibold">
-          {dayVisits.length} {dayVisits.length === 1 ? t('calendar.visit') : t('calendar.visits')}
-        </div>
+      <div className="mt-1 flex items-center justify-center gap-1">
+        <div className="w-2 h-2 rounded-full bg-purple-600"></div>
+        {dayVisits.length > 1 && (
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
+            {dayVisits.length}
+          </span>
+        )}
       </div>
     )
   }
+
+  // Calculate total events for current month
+  const totalEventsThisMonth = useMemo(() => {
+    const currentMonth = selectedDate.getMonth()
+    const currentYear = selectedDate.getFullYear()
+    return visits.filter((visit) => {
+      const visitDate = new Date(visit.date_start)
+      return visitDate.getMonth() === currentMonth && visitDate.getFullYear() === currentYear
+    }).length
+  }, [visits, selectedDate])
 
   const dayVisits = visitsByDate[format(selectedDate, 'yyyy-MM-dd')] || []
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
+        <div className="flex items-center justify-between mb-4">
+          <button className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium">
+            {t('calendar.monthView')}
+          </button>
+          <span className="text-sm text-gray-500">
+            {totalEventsThisMonth} {t('calendar.eventsThisMonth')}
+          </span>
+        </div>
         <Calendar
           onChange={(value) => {
             if (value instanceof Date) {
@@ -109,83 +120,88 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
         />
       </div>
 
-      <div>
-        <h3 className="text-lg font-semibold mb-4">
-          {t('visits.title')} {format(selectedDate, 'd MMMM yyyy', { locale: dateLocale })}
-        </h3>
-        {showForm ? (
-          <div className="bg-white p-4 rounded-lg shadow">
-            <button
-              onClick={handleFormCancel}
-              className="mb-4 text-sm text-gray-600 hover:text-gray-800"
-            >
-              ← {t('common.cancel')}
-            </button>
-            <VisitForm
-              visitId={editingVisitId}
-              onSuccess={handleFormSuccess}
-              onCancel={handleFormCancel}
-              initialDateStart={selectedSlot?.start}
-              initialDateEnd={selectedSlot?.end}
-            />
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {dayVisits.length === 0 ? (
-              <p className="text-gray-500">{t('calendar.noVisits')}</p>
-            ) : (
-              dayVisits.map((visit) => (
-                <div
-                  key={visit.id}
-                  onClick={() => handleVisitClick(visit)}
-                  className="p-3 bg-white rounded-lg shadow cursor-pointer hover:shadow-md transition-shadow"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-semibold">
-                        {visit.service_name || t('visits.title')}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })}
-                        {visit.date_end && ` - ${format(new Date(visit.date_end), 'HH:mm', { locale: dateLocale })}`}
-                      </p>
-                    </div>
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        visit.status === 'completed'
-                          ? 'bg-purple-100 text-purple-700'
-                          : visit.status === 'cancelled'
-                          ? 'bg-pink-100 text-pink-700'
-                          : visit.status === 'in_progress'
-                          ? 'bg-purple-100 text-purple-700'
-                          : 'bg-purple-100 text-purple-700'
-                      }`}
-                    >
-                      {getStatusTranslation(visit.status)}
-                    </span>
+      <div className="space-y-4">
+        {/* Selected Day Card */}
+        <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('calendar.selectedDay')}</h3>
+          <p className="text-lg font-bold text-gray-900 mb-2">
+            {format(selectedDate, 'EEEE, MMMM d', { locale: dateLocale })}
+          </p>
+          {showForm ? (
+            <div>
+              <button
+                onClick={handleFormCancel}
+                className="mb-4 text-sm text-gray-600 hover:text-gray-800"
+              >
+                ← {t('common.cancel')}
+              </button>
+              <VisitForm
+                visitId={editingVisitId}
+                onSuccess={handleFormSuccess}
+                onCancel={handleFormCancel}
+                initialDateStart={selectedSlot?.start}
+                initialDateEnd={selectedSlot?.end}
+              />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {dayVisits.length === 0 ? (
+                <p className="text-sm text-gray-500">{t('calendar.noVisits')}</p>
+              ) : (
+                dayVisits.map((visit) => (
+                  <div
+                    key={visit.id}
+                    onClick={() => handleVisitClick(visit)}
+                    className="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    <p className="text-sm font-medium text-gray-900">
+                      {visit.service_name || t('visits.title')}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      {format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })}
+                    </p>
                   </div>
-                  {visit.price && (
-                    <p className="text-sm text-gray-500 mt-1">{visit.price.toFixed(2)}</p>
-                  )}
-                </div>
-              ))
-            )}
-            <button
-              onClick={() => {
-                const start = new Date(selectedDate)
-                start.setHours(9, 0, 0, 0)
-                const end = new Date(start)
-                end.setHours(10, 0, 0, 0)
-                setSelectedSlot({ start, end })
-                setEditingVisitId(undefined)
-                setShowForm(true)
-              }}
-              className="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
-            >
-              {t('visits.newVisit')}
-            </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Insights Card */}
+        <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('calendar.insights')}</h3>
+          <p className="text-xs text-gray-500 mb-3">{t('calendar.insightsTitle')}</p>
+          <div className="space-y-3">
+            <div>
+              <p className="text-lg font-bold text-purple-600">
+                {visits.filter((v) => v.status === 'completed' || v.status === 'in_progress').length}
+              </p>
+              <p className="text-xs text-gray-600">Meetings</p>
+              <p className="text-xs text-gray-500">sync/planning</p>
+            </div>
+            <div>
+              <p className="text-lg font-bold text-purple-600">
+                {visits.filter((v) => v.status === 'planned').length}
+              </p>
+              <p className="text-xs text-gray-600">Calls</p>
+              <p className="text-xs text-gray-500">clients</p>
+            </div>
+            <div>
+              <p className="text-lg font-bold text-purple-600">
+                {visits.filter((v) => v.status === 'completed').length}
+              </p>
+              <p className="text-xs text-gray-600">Finance</p>
+              <p className="text-xs text-gray-500">Invoices</p>
+            </div>
+            <div>
+              <p className="text-lg font-bold text-purple-600">
+                {visits.filter((v) => v.status === 'cancelled').length}
+              </p>
+              <p className="text-xs text-gray-600">Releases</p>
+              <p className="text-xs text-gray-500">Deploy windows</p>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

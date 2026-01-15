@@ -106,40 +106,97 @@ export default function Dashboard() {
 
       {/* Widgets - Reservations and Quick Status */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Reservations Widget */}
+        {/* Reservations Widget with Donut Chart */}
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.reservations')}</h3>
           {isLoadingVisitStats ? (
             <LoadingSpinner size="md" />
           ) : visitStats ? (
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-gray-600">{t('dashboard.totalVisits')}</span>
-                <span className="text-2xl font-bold text-gray-900">{visitStats.total_visits || 0}</span>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: t('dashboard.completedVisits'), value: visitStats.visits_by_status?.completed || 0 },
+                        { name: 'Remaining', value: (visitStats.total_visits || 0) - (visitStats.visits_by_status?.completed || 0) },
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      <Cell fill="#8B5CF6" />
+                      <Cell fill="#E5E7EB" />
+                    </Pie>
+                    <text
+                      x="50%"
+                      y="50%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="text-2xl font-bold fill-purple-600"
+                    >
+                      {visitStats.total_visits > 0
+                        ? `${Math.round(((visitStats.visits_by_status?.completed || 0) / visitStats.total_visits) * 100)}%`
+                        : '0%'}
+                    </text>
+                    <text
+                      x="50%"
+                      y="60%"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="text-sm fill-gray-600"
+                    >
+                      {visitStats.visits_by_status?.completed || 0}/{visitStats.total_visits || 0} {t('dashboard.completedVisits').toLowerCase()}
+                    </text>
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">{t('dashboard.completedVisits')}</span>
-                <span className="text-xl font-semibold text-green-600">{visitStats.visits_by_status?.completed || 0}</span>
+              <div className="ml-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-purple-600"></div>
+                  <span className="text-sm text-gray-600">{t('dashboard.completedVisits')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-gray-300"></div>
+                  <span className="text-sm text-gray-600">Remaining</span>
+                </div>
               </div>
             </div>
           ) : null}
         </div>
 
-        {/* Quick Status Widget */}
+        {/* Quick Status Widget with Purple Pills */}
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.quickStatus')}</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.quickStatus')}</h3>
+            <span className="text-xs text-gray-500">Today</span>
+          </div>
           {isLoadingClientStats ? (
             <LoadingSpinner size="md" />
           ) : clientStats ? (
-            <div>
-              <div className="flex items-center justify-between mb-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">{t('dashboard.totalClients')}</span>
-                <span className="text-2xl font-bold text-gray-900">{clientStats.total_clients || 0}</span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
+                  {clientStats.total_clients || 0}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">{t('dashboard.newClients')}</span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
+                  {clientStats.total_clients || 0}
+                </span>
               </div>
               {clientStats.average_spending !== null && clientStats.average_spending !== undefined && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">{t('dashboard.averageSpending')}</span>
-                  <span className="text-xl font-semibold text-purple-600">{formatCurrency(clientStats.average_spending, currency)}</span>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
+                    {formatCurrency(clientStats.average_spending, currency)}
+                  </span>
                 </div>
               )}
             </div>
