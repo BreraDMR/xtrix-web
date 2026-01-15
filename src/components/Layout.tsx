@@ -1,7 +1,21 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
+import { 
+  HiOutlineViewGrid, 
+  HiOutlineUsers, 
+  HiOutlineOfficeBuilding, 
+  HiOutlineCalendar,
+  HiOutlinePaperClip,
+  HiOutlineCurrencyDollar,
+  HiOutlineShoppingCart,
+  HiOutlineChartBar,
+  HiOutlineHeart,
+  HiOutlineCog,
+  HiOutlineBriefcase,
+  HiOutlineDocumentText
+} from 'react-icons/hi'
 
 export default function Layout() {
   const { user, logout } = useAuthStore()
@@ -22,6 +36,27 @@ export default function Layout() {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  // Function to get icon component by path
+  const getIcon = (path: string) => {
+    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+      '/': HiOutlineViewGrid,
+      '/clients': HiOutlineUsers,
+      '/visits': HiOutlineOfficeBuilding,
+      '/calendar': HiOutlineCalendar,
+      '/services': HiOutlinePaperClip,
+      '/inventory': HiOutlineShoppingCart,
+      '/finance': HiOutlineCurrencyDollar,
+      '/analytics': HiOutlineChartBar,
+      '/loyalty': HiOutlineHeart,
+      '/employees': HiOutlineUsers,
+      '/business': HiOutlineBriefcase,
+      '/subscription': HiOutlineDocumentText,
+      '/my-salary': HiOutlineCurrencyDollar,
+      '/settings': HiOutlineCog,
+    }
+    return iconMap[path] || null
   }
 
   // PRIMARY section
@@ -104,19 +139,23 @@ export default function Layout() {
           {primaryItems.length > 0 && (
             <>
               <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('nav.primary')}</div>
-              {primaryItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 ${
-                    location.pathname === item.path
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {primaryItems.map((item) => {
+                const Icon = getIcon(item.path)
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 ${
+                      location.pathname === item.path
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {Icon && <Icon className="w-5 h-5 mr-3" />}
+                    {item.label}
+                  </Link>
+                )
+              })}
             </>
           )}
 
@@ -124,19 +163,23 @@ export default function Layout() {
           {manageItems.length > 0 && (
             <>
               <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('nav.manage')}</div>
-              {manageItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 ${
-                    location.pathname === item.path
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {manageItems.map((item) => {
+                const Icon = getIcon(item.path)
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 ${
+                      location.pathname === item.path
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {Icon && <Icon className="w-5 h-5 mr-3" />}
+                    {item.label}
+                  </Link>
+                )
+              })}
             </>
           )}
 
@@ -144,19 +187,23 @@ export default function Layout() {
           {systemItems.length > 0 && (
             <>
               <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('nav.system')}</div>
-              {systemItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 ${
-                    location.pathname === item.path
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {systemItems.map((item) => {
+                const Icon = getIcon(item.path)
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 ${
+                      location.pathname === item.path
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {Icon && <Icon className="w-5 h-5 mr-3" />}
+                    {item.label}
+                  </Link>
+                )
+              })}
             </>
           )}
         </nav>

@@ -228,14 +228,14 @@ interface Visit {
                     <div className="flex flex-col">
                       <span>{visit.service_name || '-'}</span>
                       <span className="text-xs sm:hidden mt-1">
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">
                           {getStatusTranslation(visit.status)}
                         </span>
                       </span>
                     </div>
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">
                       {getStatusTranslation(visit.status)}
                     </span>
                   </td>

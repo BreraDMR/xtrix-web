@@ -184,12 +184,12 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                           }}
                           className={`text-xs p-1 rounded truncate ${
                             visit.status === 'completed'
-                              ? 'bg-green-200 text-green-800'
+                              ? 'bg-purple-200 text-purple-800'
                               : visit.status === 'cancelled'
-                              ? 'bg-red-200 text-red-800'
+                              ? 'bg-pink-200 text-pink-800'
                               : visit.status === 'in_progress'
-                              ? 'bg-yellow-200 text-yellow-800'
-                              : 'bg-blue-200 text-blue-800'
+                              ? 'bg-purple-200 text-purple-800'
+                              : 'bg-purple-200 text-purple-800'
                           }`}
                           title={visit.service_name || 'Visit'}
                         >

@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 
 export default function Dashboard() {
   const { t } = useTranslation()
@@ -81,21 +82,50 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Рентабельность */}
+      {/* Charts */}
       {profitData && (
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.profitMargin')}</h3>
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                <span>{t('dashboard.margin')}</span>
-                <span className="font-semibold">{profitData.profit_margin?.toFixed(2) || '0.00'}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className={`h-2 rounded-full ${profitData.profit_margin >= 0 ? 'bg-green-500' : 'bg-red-500'}`}
-                  style={{ width: `${Math.min(Math.abs(profitData.profit_margin || 0), 100)}%` }}
-                />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Donut Chart - Revenue vs Expenses */}
+          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.monthlyRevenue')} vs {t('dashboard.monthlyExpenses')}</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: t('dashboard.monthlyRevenue'), value: profitData.revenue || 0 },
+                    { name: t('dashboard.monthlyExpenses'), value: profitData.expenses || 0 },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  dataKey="value"
+                  label={({ name, percent }) => `${name}: ${((percent || 0) * 100).toFixed(0)}%`}
+                >
+                  <Cell fill="#10b981" />
+                  <Cell fill="#ef4444" />
+                </Pie>
+                <Tooltip formatter={(value: number | undefined) => formatCurrency(value || 0, currency)} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Profit Margin Bar */}
+          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.profitMargin')}</h3>
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                  <span>{t('dashboard.margin')}</span>
+                  <span className="font-semibold">{profitData.profit_margin?.toFixed(2) || '0.00'}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full ${profitData.profit_margin >= 0 ? 'bg-green-500' : 'bg-red-500'}`}
+                    style={{ width: `${Math.min(Math.abs(profitData.profit_margin || 0), 100)}%` }}
+                  />
+                </div>
               </div>
             </div>
           </div>
