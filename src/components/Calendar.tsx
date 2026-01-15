@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { cs } from 'date-fns/locale'
 import { enUS } from 'date-fns/locale'
+import { useQueryClient } from '@tanstack/react-query'
 import VisitForm from './VisitForm'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
@@ -15,6 +16,7 @@ interface CalendarProps {
 export default function Calendar({ visits, onRefresh }: CalendarProps) {
   const { t } = useTranslation()
   const locale = useLocaleStore((state) => state.locale)
+  const queryClient = useQueryClient()
   const [selectedSlot, setSelectedSlot] = useState<{ start: Date; end: Date } | null>(null)
   const [editingVisitId, setEditingVisitId] = useState<number | undefined>()
   const [showForm, setShowForm] = useState(false)
@@ -51,6 +53,9 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
     setSelectedSlot(null)
     setEditingVisitId(undefined)
     onRefresh()
+    // Инвалидируем кеш статистики для Dashboard виджетов
+    queryClient.invalidateQueries({ queryKey: ['visits-statistics'] })
+    queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }
 
   const handleFormCancel = () => {

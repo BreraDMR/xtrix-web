@@ -87,6 +87,9 @@ interface Visit {
     setShowForm(false)
     setEditingId(undefined)
     queryClient.invalidateQueries({ queryKey: ['visits'] })
+    // Инвалидируем кеш статистики для Dashboard виджетов
+    queryClient.invalidateQueries({ queryKey: ['visits-statistics'] })
+    queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }
 
   const handleEdit = (id: number) => {
