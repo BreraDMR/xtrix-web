@@ -159,7 +159,7 @@ export default function Inventory() {
         {(user?.role === 'admin' || user?.role === 'business_owner') && (
           <button
             onClick={() => setShowAddForm(true)}
-            className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             + {t('inventory.add_product')}
           </button>
@@ -367,7 +367,7 @@ export default function Inventory() {
                     addQuantityMutation.mutate({ id: addQuantityProduct.id, quantity })
                   }
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
               >
                 {t('common.save')}
               </button>
@@ -582,7 +582,7 @@ function ProductForm({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? t('common.loading') : t('common.save')}

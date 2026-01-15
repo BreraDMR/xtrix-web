@@ -178,7 +178,7 @@ export default function Subscription() {
       queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
       setSelectedPlan(null)
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to subscribe')
+      setError(err.response?.data?.detail || t('subscription.failed_subscribe'))
     } finally {
       setLoading(false)
     }
@@ -196,7 +196,7 @@ export default function Subscription() {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to cancel subscription')
+      setError(err.response?.data?.detail || t('subscription.failed_cancel'))
     } finally {
       setLoading(false)
     }
@@ -212,7 +212,7 @@ export default function Subscription() {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to reactivate subscription')
+      setError(err.response?.data?.detail || t('subscription.failed_reactivate'))
     } finally {
       setLoading(false)
     }
@@ -305,7 +305,7 @@ export default function Subscription() {
                   disabled={loading}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
                 >
-                  {t('subscription.reactivate') || 'Reactivate'}
+                  {t('subscription.reactivate')}
                 </button>
               )}
               {(subscription.status === 'active' || subscription.status === 'pending_cancellation') && !subscription.is_trial && (
@@ -315,15 +315,15 @@ export default function Subscription() {
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm"
                 >
                   {subscription.cancel_at_period_end
-                    ? t('subscription.cancelled') || 'Cancelled'
-                    : t('subscription.cancel') || 'Cancel Subscription'}
+                    ? t('subscription.cancelled')
+                    : t('subscription.cancel')}
                 </button>
               )}
             </div>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-gray-600">Status:</span>
+              <span className="text-gray-600">{t('subscription.status_label')}:</span>
               <span
                 className={`font-medium ${
                   subscription.status === 'active' || subscription.status === 'pending_cancellation'
@@ -334,31 +334,29 @@ export default function Subscription() {
                 }`}
               >
                 {subscription.status === 'pending_cancellation'
-                  ? t('subscription.pendingCancellation') || 'Pending Cancellation'
+                  ? t('subscription.pendingCancellation')
                   : subscription.status}
               </span>
             </div>
             {subscription.cancel_at_period_end && subscription.current_period_end && (
               <div className="flex justify-between">
-                <span className="text-gray-600">Cancellation Date:</span>
+                <span className="text-gray-600">{t('subscription.cancellation_date')}:</span>
                 <span className="font-medium text-orange-600">
-                  {formatDate(subscription.current_period_end)} (
-                  {getDaysRemaining(subscription.current_period_end)} days remaining)
+                  {formatDate(subscription.current_period_end)} ({getDaysRemaining(subscription.current_period_end)} {t('subscription.days_remaining')})
                 </span>
               </div>
             )}
             {subscription.is_trial && (
               <>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Trial Period:</span>
-                  <span className="font-medium text-yellow-600">Active</span>
+                  <span className="text-gray-600">{t('subscription.trial_period')}:</span>
+                  <span className="font-medium text-yellow-600">{t('subscription.trial_period_active')}</span>
                 </div>
                 {subscription.trial_end && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Trial Ends:</span>
+                    <span className="text-gray-600">{t('subscription.trialEnds')}:</span>
                     <span className="font-medium">
-                      {formatDate(subscription.trial_end)} (
-                      {getDaysRemaining(subscription.trial_end)} days remaining)
+                      {formatDate(subscription.trial_end)} ({getDaysRemaining(subscription.trial_end)} {t('subscription.days_remaining')})
                     </span>
                   </div>
                 )}
@@ -366,7 +364,7 @@ export default function Subscription() {
             )}
             {subscription.current_period_end && !subscription.cancel_at_period_end && (
               <div className="flex justify-between">
-                <span className="text-gray-600">Period Ends:</span>
+                <span className="text-gray-600">{t('subscription.period_ends')}:</span>
                 <span className="font-medium">{formatDate(subscription.current_period_end)}</span>
               </div>
             )}
@@ -376,7 +374,7 @@ export default function Subscription() {
           {transactions && transactions.length > 0 && (
             <div className="mt-6 pt-6 border-t border-gray-200">
               <h3 className="text-lg font-semibold mb-3">
-                {t('subscription.transactionHistory') || 'Transaction History'}
+                {t('subscription.transactionHistory')}
               </h3>
               <div className="space-y-2">
                 {transactions.map((transaction: any) => (
@@ -421,8 +419,7 @@ export default function Subscription() {
           </p>
           {trialStatus.trial_end && (
             <p className="text-sm text-yellow-700">
-              {t('subscription.trialEnds')}: {formatDate(trialStatus.trial_end)} (
-              {getDaysRemaining(trialStatus.trial_end)} days remaining)
+              {t('subscription.trialEnds')}: {formatDate(trialStatus.trial_end)} ({getDaysRemaining(trialStatus.trial_end)} {t('subscription.days_remaining')})
             </p>
           )}
         </div>
@@ -445,10 +442,10 @@ export default function Subscription() {
                 <h3 className="text-lg font-semibold mb-2">{plan.name}</h3>
                 <div className="mb-4">
                   <span className="text-3xl font-bold">{plan.price}€</span>
-                  <span className="text-gray-600"> / month</span>
+                  <span className="text-gray-600">{t('subscription.per_month')}</span>
                 </div>
                 <div className="mb-4 text-sm text-gray-600">
-                  <p>Period: {plan.period_days} days</p>
+                  <p>{t('subscription.period_days')}: {plan.period_days} {t('common.days')}</p>
                 </div>
                 <button
                   onClick={() => handleSubscribe(plan.id)}
@@ -456,7 +453,7 @@ export default function Subscription() {
                   className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
                     subscription?.status === 'active'
                       ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-primary-600 text-white hover:bg-primary-700'
                   }`}
                 >
                     {subscription?.status === 'active'
@@ -522,23 +519,23 @@ export default function Subscription() {
       {subscriptionHistory && subscriptionHistory.length > 1 && (
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">
-            {t('subscription.history') || 'Subscription History'}
+            {t('subscription.history')}
           </h2>
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Plan
+                    {t('subscription.plan_label')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
+                    {t('subscription.status_label')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Created
+                    {t('subscription.created_label')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Period End
+                    {t('subscription.period_end_label')}
                   </th>
                 </tr>
               </thead>
@@ -548,7 +545,7 @@ export default function Subscription() {
                   .map((sub: Subscription) => (
                     <tr key={sub.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Plan #{sub.plan_id}
+                        {t('subscription.plan_number')} #{sub.plan_id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span

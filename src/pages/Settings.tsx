@@ -359,7 +359,7 @@ export default function Settings() {
                   onClick={() => handlePreferenceChange('email_notifications', !preferences.email_notifications)}
                   disabled={updatePreferencesMutation.isPending}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.email_notifications ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                    preferences.email_notifications ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <span
@@ -378,7 +378,7 @@ export default function Settings() {
                   onClick={() => handlePreferenceChange('push_notifications', !preferences.push_notifications)}
                   disabled={updatePreferencesMutation.isPending}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.push_notifications ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                    preferences.push_notifications ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <span
@@ -406,7 +406,7 @@ export default function Settings() {
                   onClick={() => handlePreferenceChange('auto_save_enabled', !preferences.auto_save_enabled)}
                   disabled={updatePreferencesMutation.isPending}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.auto_save_enabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                    preferences.auto_save_enabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <span

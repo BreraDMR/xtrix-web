@@ -462,7 +462,7 @@ export default function Loyalty() {
               {isAdmin && (
                 <button
                   onClick={() => setShowProgramForm(true)}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                  className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                 >
                   {t('loyalty.create_program')}
                 </button>
@@ -493,7 +493,7 @@ export default function Loyalty() {
                     </button>
                     <button
                       onClick={() => setShowProgramForm(true)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                     >
                       {t('loyalty.edit_program')}
                     </button>
@@ -672,7 +672,7 @@ export default function Loyalty() {
                   <div className="flex gap-2 mt-6">
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                     >
                       {t('common.save')}
                     </button>
@@ -708,7 +708,7 @@ export default function Loyalty() {
                       setEditingLevel(null)
                       setShowLevelForm(true)
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                   >
                     {t('loyalty.add_level')}
                   </button>
@@ -741,7 +741,7 @@ export default function Loyalty() {
                                 setEditingLevel(level)
                                 setShowLevelForm(true)
                               }}
-                              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                              className="px-3 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
                             >
                               {t('common.edit')}
                             </button>
@@ -875,7 +875,7 @@ export default function Loyalty() {
                   <div className="flex gap-2 mt-6">
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                     >
                       {t('common.save')}
                     </button>
@@ -915,7 +915,7 @@ export default function Loyalty() {
                       setPromotionType('double_points')
                       setShowPromotionForm(true)
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                   >
                     {t('loyalty.add_promotion')}
                   </button>
@@ -945,7 +945,7 @@ export default function Loyalty() {
                                 setPromotionType(promotion.promotion_type)
                                 setShowPromotionForm(true)
                               }}
-                              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                              className="px-3 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
                             >
                               {t('common.edit')}
                             </button>
@@ -1172,7 +1172,7 @@ export default function Loyalty() {
                   <div className="flex gap-2 mt-6">
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                     >
                       {t('common.save')}
                     </button>

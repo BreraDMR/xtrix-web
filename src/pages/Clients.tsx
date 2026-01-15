@@ -128,7 +128,7 @@ export default function Clients() {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
           >
             {t('clients.addClient')}
           </button>

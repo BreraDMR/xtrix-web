@@ -108,7 +108,7 @@ export default function Finance() {
         {(user?.role === 'admin' || user?.role === 'business_owner') && (
           <button
             onClick={() => setShowAddExpense(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
           >
             {t('finance.add_expense')}
           </button>
@@ -518,7 +518,7 @@ function ExpenseForm({
             <button
               type="submit"
               disabled={createMutation.isPending}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createMutation.isPending ? t('common.loading') : t('common.save')}
             </button>

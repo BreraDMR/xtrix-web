@@ -369,6 +369,22 @@ export type TranslationKey =
   | 'subscription.pendingCancellation'
   | 'subscription.transactionHistory'
   | 'subscription.history'
+  | 'subscription.status_label'
+  | 'subscription.cancellation_date'
+  | 'subscription.days_remaining'
+  | 'subscription.trial_period'
+  | 'subscription.trial_period_active'
+  | 'subscription.period_ends'
+  | 'subscription.per_month'
+  | 'subscription.period_days'
+  | 'subscription.plan_label'
+  | 'subscription.created_label'
+  | 'subscription.period_end_label'
+  | 'subscription.plan_number'
+  | 'subscription.failed_subscribe'
+  | 'subscription.failed_cancel'
+  | 'subscription.failed_reactivate'
+  | 'subscription.active_label'
   // Inventory
   | 'inventory.title'
   | 'inventory.add_product'
@@ -539,6 +555,8 @@ export type TranslationKey =
   | 'common.close'
   | 'common.days'
   | 'common.actions'
+  | 'common.required_field'
+  | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   // Common
@@ -1028,6 +1046,22 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'subscription.pendingCancellation': { en: 'Pending Cancellation', ru: 'Ожидает отмены', cz: 'Čeká na zrušení' },
   'subscription.transactionHistory': { en: 'Transaction History', ru: 'История транзакций', cz: 'Historie transakcí' },
   'subscription.history': { en: 'Subscription History', ru: 'История подписок', cz: 'Historie předplatného' },
+  'subscription.status_label': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'subscription.cancellation_date': { en: 'Cancellation Date', ru: 'Дата отмены', cz: 'Datum zrušení' },
+  'subscription.days_remaining': { en: 'days remaining', ru: 'дней осталось', cz: 'dní zbývá' },
+  'subscription.trial_period': { en: 'Trial Period', ru: 'Пробный период', cz: 'Zkušební období' },
+  'subscription.trial_period_active': { en: 'Active', ru: 'Активен', cz: 'Aktivní' },
+  'subscription.period_ends': { en: 'Period Ends', ru: 'Период заканчивается', cz: 'Období končí' },
+  'subscription.per_month': { en: '/ month', ru: ' / месяц', cz: ' / měsíc' },
+  'subscription.period_days': { en: 'Period', ru: 'Период', cz: 'Období' },
+  'subscription.plan_label': { en: 'Plan', ru: 'План', cz: 'Plán' },
+  'subscription.created_label': { en: 'Created', ru: 'Создано', cz: 'Vytvořeno' },
+  'subscription.period_end_label': { en: 'Period End', ru: 'Конец периода', cz: 'Konec období' },
+  'subscription.plan_number': { en: 'Plan', ru: 'План', cz: 'Plán' },
+  'subscription.failed_subscribe': { en: 'Failed to subscribe', ru: 'Не удалось подписаться', cz: 'Nepodařilo se přihlásit' },
+  'subscription.failed_cancel': { en: 'Failed to cancel subscription', ru: 'Не удалось отменить подписку', cz: 'Nepodařilo se zrušit předplatné' },
+  'subscription.failed_reactivate': { en: 'Failed to reactivate subscription', ru: 'Не удалось возобновить подписку', cz: 'Nepodařilo se obnovit předplatné' },
+  'subscription.active_label': { en: 'Active', ru: 'Активен', cz: 'Aktivní' },
   
   // Loyalty
   'loyalty.title': { en: 'Loyalty Program', ru: 'Программа лояльности', cz: 'Věrnostní program' },
@@ -1107,6 +1141,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.close': { en: 'Close', ru: 'Закрыть', cz: 'Zavřít' },
   'common.days': { en: 'days', ru: 'дней', cz: 'dny' },
   'common.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
+  'common.required_field': { en: 'is a required field', ru: 'обязательное поле', cz: 'je povinné pole' },
+  'common.error_saving': { en: 'Error saving', ru: 'Ошибка при сохранении', cz: 'Chyba při ukládání' },
 }
 
 export default translations

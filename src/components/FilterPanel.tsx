@@ -45,7 +45,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
         </svg>
         Filters
         {hasActiveFilters && (
-          <span className="ml-1 px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full">
+          <span className="ml-1 px-2 py-0.5 bg-primary-600 text-white text-xs rounded-full">
             {Object.values(filters).filter((f) => f.value !== null).length}
           </span>
         )}

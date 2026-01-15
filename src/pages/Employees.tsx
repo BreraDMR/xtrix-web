@@ -6,6 +6,8 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import EmployeeForm from '../components/EmployeeForm'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 
 interface Employee {
   id: number
@@ -37,6 +39,7 @@ export default function Employees() {
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
+  const currency = useBusinessCurrency()
 
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
@@ -109,7 +112,7 @@ export default function Employees() {
             setEditingId(undefined)
             setShowForm(true)
           }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
         >
           {t('employees.add_employee')}
         </button>
@@ -194,7 +197,7 @@ export default function Employees() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {employee.base_salary !== undefined
-                      ? `${employee.base_salary.toFixed(2)} ${t('common.currency')}`
+                      ? formatCurrency(employee.base_salary, currency)
                       : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

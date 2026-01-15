@@ -180,7 +180,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                 setEditingVisitId(undefined)
                 setShowForm(true)
               }}
-              className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
             >
               {t('visits.newVisit')}
             </button>

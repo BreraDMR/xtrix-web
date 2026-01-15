@@ -34,7 +34,7 @@ export default function CalendarPage() {
             onClick={() => setView('simple')}
             className={`px-4 py-2 rounded-md ${
               view === 'simple'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-primary-600 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
@@ -44,7 +44,7 @@ export default function CalendarPage() {
             onClick={() => setView('advanced')}
             className={`px-4 py-2 rounded-md ${
               view === 'advanced'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-primary-600 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >

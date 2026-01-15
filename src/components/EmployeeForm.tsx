@@ -522,7 +522,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         </button>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
           disabled={loading}
         >
           {loading ? t('common.loading') + '...' : t('common.save')}

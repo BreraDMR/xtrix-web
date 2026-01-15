@@ -112,7 +112,7 @@ interface Visit {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
           >
             {t('visits.newVisit')}
           </button>
