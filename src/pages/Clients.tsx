@@ -57,7 +57,7 @@ function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
         </span>
       )}
       {balance.level && (
-        <span className="text-xs text-gray-500">
+        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">
           {balance.level.name}
         </span>
       )}
