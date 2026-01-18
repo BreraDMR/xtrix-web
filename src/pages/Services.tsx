@@ -138,19 +138,17 @@ interface Service {
             </div>
             {filteredServices.length > 0 && (
               <ExportButton
-                data={filteredServices.map(s => ({
-                  ...s,
-                  price: formatCurrency(s.price, currency),
-                  is_active: s.is_active ? t('services.active') : t('services.inactive'),
-                  duration_minutes: `${s.duration_minutes} ${t('services.min')}`,
-                }))}
+                data={filteredServices}
                 columns={[
                   { key: 'name', label: t('services.name') },
-                  { key: 'duration_minutes', label: t('services.duration') },
-                  { key: 'price', label: t('services.price') },
-                  { key: 'is_active', label: t('services.status') },
+                  { key: 'duration_minutes', label: t('services.duration'), format: (val) => `${val} ${t('services.min')}` },
+                  { key: 'price', label: t('services.price'), format: (val) => formatCurrency(val, currency) },
+                  { key: 'is_active', label: t('services.status'), format: (val) => val ? t('services.active') : t('services.inactive') },
                 ]}
-                filename={`services-${new Date().toISOString().split('T')[0]}.csv`}
+                  filename={`services-${new Date().toISOString().split('T')[0]}`}
+                  title={t('export.servicesReport')}
+                  reportTypes={[t('export.servicesReport')]}
+                  dataType={searchQuery || activeFilter ? 'filtered' : 'all'}
               />
             )}
           </div>

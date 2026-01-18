@@ -195,26 +195,20 @@ export default function Employees() {
           </label>
           {filteredEmployees.length > 0 && (
             <ExportButton
-              data={filteredEmployees.map(emp => ({
-                employee: emp.employee_user?.full_name || t('employees.unknown'),
-                email: emp.employee_user?.email || '-',
-                phone: emp.employee_user?.phone || '-',
-                position: emp.position || '-',
-                commission: emp.commission_percentage ? `${emp.commission_percentage}%` : '-',
-                base_salary: emp.base_salary ? formatCurrency(emp.base_salary, currency) : '-',
-                status: emp.is_active ? t('employees.active') : t('employees.inactive'),
-                hired_at: emp.hired_at ? new Date(emp.hired_at).toLocaleDateString() : '-',
-              }))}
+              data={filteredEmployees}
               columns={[
-                { key: 'employee', label: t('employees.employee') },
-                { key: 'email', label: 'Email' },
+                { key: 'employee_user', label: t('employees.employee'), format: (val) => val?.full_name || t('employees.unknown') },
+                { key: 'employee_user', label: 'Email', format: (val) => val?.email || '-' },
                 { key: 'position', label: t('employees.position') },
-                { key: 'commission', label: t('employees.commission') },
-                { key: 'base_salary', label: t('employees.base_salary') },
-                { key: 'status', label: t('employees.status') },
-                { key: 'hired_at', label: t('employees.hired_at') },
+                { key: 'commission_percentage', label: t('employees.commission'), format: (val) => val ? `${val}%` : '-' },
+                { key: 'base_salary', label: t('employees.base_salary'), format: (val) => val ? formatCurrency(val, currency) : '-' },
+                { key: 'is_active', label: t('employees.status'), format: (val) => val ? t('employees.active') : t('employees.inactive') },
+                { key: 'hired_at', label: t('employees.hired_at'), format: (val) => val ? new Date(val).toLocaleDateString() : '-' },
               ]}
-              filename={`employees-${new Date().toISOString().split('T')[0]}.csv`}
+              filename={`employees-${new Date().toISOString().split('T')[0]}`}
+              title={t('export.employeesReport')}
+              reportTypes={[t('export.employeesReport')]}
+              dataType={searchQuery ? 'filtered' : 'all'}
             />
           )}
         </div>

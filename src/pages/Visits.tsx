@@ -172,20 +172,18 @@ interface Visit {
             </div>
             {filteredVisits.length > 0 && (
               <ExportButton
-                data={filteredVisits.map(v => ({
-                  ...v,
-                  date_start: format(new Date(v.date_start), 'PP', { locale: dateLocale }),
-                  status: getStatusTranslation(v.status),
-                  price: v.price ? formatCurrency(v.price, currency) : '-',
-                }))}
+                data={filteredVisits}
                 columns={[
-                  { key: 'date_start', label: t('visits.date') },
+                  { key: 'date_start', label: t('visits.date'), format: (val) => format(new Date(val), 'PP', { locale: dateLocale }) },
                   { key: 'service_name', label: t('visits.service') },
                   { key: 'client_name', label: t('visits.client') },
-                  { key: 'status', label: t('visits.status') },
-                  { key: 'price', label: t('services.price') },
+                  { key: 'status', label: t('visits.status'), format: (val) => getStatusTranslation(val) },
+                  { key: 'price', label: t('visits.price'), format: (val) => val ? formatCurrency(val, currency) : '-' },
                 ]}
-                filename={`visits-${new Date().toISOString().split('T')[0]}.csv`}
+                filename={`visits-${new Date().toISOString().split('T')[0]}`}
+                title={t('export.visitsReport')}
+                reportTypes={[t('export.visitsReport')]}
+                dataType={searchQuery || statusFilter || dateFrom || dateTo ? 'filtered' : 'all'}
               />
             )}
           </div>

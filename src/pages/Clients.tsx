@@ -7,6 +7,8 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
 import ExportButton from '../components/ExportButton'
+import ClientPersonalReportModal from '../components/ClientPersonalReportModal'
+import { HiPrinter } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -79,6 +81,7 @@ export default function Clients() {
   const [sortConfig, setSortConfig] = useState<SortConfig<Client>>({ key: null, direction: null })
   const [currentPage, setCurrentPage] = useState(1)
   const [perPage, setPerPage] = useState(20)
+  const [clientReportId, setClientReportId] = useState<number | null>(null)
   const queryClient = useQueryClient()
 
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -206,8 +209,17 @@ export default function Clients() {
                     { key: 'full_name', label: t('clients.name') },
                     { key: 'contact_phone', label: t('clients.phone') },
                     { key: 'contact_email', label: t('clients.email') },
+                    { key: 'gender', label: 'Gender' },
+                    { key: 'date_of_birth', label: 'Date of Birth', format: (val) => val ? new Date(val).toLocaleDateString() : '-' },
                   ]}
-                  filename={`clients-${new Date().toISOString().split('T')[0]}.csv`}
+                  filename={`clients-${new Date().toISOString().split('T')[0]}`}
+                  title={t('export.clientReport')}
+                  reportTypes={[
+                    t('export.clientProfile'),
+                    t('export.clientContacts'),
+                    t('export.clientVisits'),
+                  ]}
+                  dataType={searchQuery || genderFilter ? 'filtered' : 'all'}
                 />
               )}
               {(searchQuery || genderFilter) && (
@@ -225,6 +237,15 @@ export default function Clients() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Client Personal Report Modal */}
+      {clientReportId && (
+        <ClientPersonalReportModal
+          isOpen={!!clientReportId}
+          onClose={() => setClientReportId(null)}
+          clientId={clientReportId}
+        />
       )}
 
       {showForm ? (
@@ -301,12 +322,22 @@ export default function Clients() {
                     <ClientLoyaltyBalance clientId={client.id} />
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button
-                      onClick={() => handleEdit(client.id)}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      {t('common.edit')}
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleEdit(client.id)}
+                        className="text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        {t('common.edit')}
+                      </button>
+                      <button
+                        onClick={() => setClientReportId(client.id)}
+                        className="text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
+                        title={t('export.personalReport')}
+                      >
+                        <HiPrinter className="w-4 h-4" />
+                        <span className="hidden sm:inline">{t('common.print')}</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
                 ))

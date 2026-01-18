@@ -12,6 +12,53 @@ export type TranslationKey =
   | 'common.success'
   | 'common.export'
   | 'common.noData'
+  | 'common.print'
+  // Export
+  | 'export.title'
+  | 'export.format'
+  | 'export.reportType'
+  | 'export.export'
+  | 'export.print'
+  | 'export.exporting'
+  | 'export.error'
+  | 'export.includeCharts'
+  | 'export.itemsCount'
+  | 'export.items'
+  | 'export.clientReport'
+  | 'export.clientProfile'
+  | 'export.clientContacts'
+  | 'export.clientVisits'
+  | 'export.clientFinance'
+  | 'export.visitsReport'
+  | 'export.servicesReport'
+  | 'export.financeReport'
+  | 'export.payments'
+  | 'export.revenue'
+  | 'export.periods'
+  | 'export.employeesReport'
+  | 'export.employeeVisits'
+  | 'export.employeeServices'
+  | 'export.employeeSalary'
+  | 'export.analyticsReport'
+  | 'export.attendance'
+  | 'export.topMetrics'
+  | 'export.inventoryReport'
+  | 'export.stockRemaining'
+  | 'export.movements'
+  | 'export.writeoffs'
+  | 'export.expensesReport'
+  | 'export.expenseItems'
+  | 'export.amounts'
+  | 'export.selectPeriod'
+  | 'export.selectReportType'
+  | 'export.period'
+  | 'export.fromDate'
+  | 'export.toDate'
+  | 'export.personalReport'
+  | 'export.selectData'
+  | 'export.allData'
+  | 'export.filteredData'
+  | 'export.selectedRows'
   // Specialist types
   | 'specialistType.massage'
   | 'specialistType.cosmetologist'
@@ -599,6 +646,54 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.success': { en: 'Success', ru: 'Успешно', cz: 'Úspěch' },
   'common.export': { en: 'Export', ru: 'Экспорт', cz: 'Export' },
   'common.noData': { en: 'No data available', ru: 'Нет данных', cz: 'Žádná data' },
+  'common.print': { en: 'Print', ru: 'Печать', cz: 'Tisk' },
+  
+  // Export
+  'export.title': { en: 'Export Data', ru: 'Экспорт данных', cz: 'Export dat' },
+  'export.format': { en: 'Format', ru: 'Формат', cz: 'Formát' },
+  'export.reportType': { en: 'Report Type', ru: 'Тип отчета', cz: 'Typ reportu' },
+  'export.export': { en: 'Export', ru: 'Экспортировать', cz: 'Exportovat' },
+  'export.print': { en: 'Print', ru: 'Печать', cz: 'Tisk' },
+  'export.exporting': { en: 'Exporting...', ru: 'Экспортирование...', cz: 'Exportování...' },
+  'export.error': { en: 'Error during export. Please try again.', ru: 'Ошибка при экспорте. Попробуйте снова.', cz: 'Chyba při exportu. Zkuste to znovu.' },
+  'export.includeCharts': { en: 'Include charts/graphs', ru: 'Включить графики', cz: 'Zahrnout grafy' },
+  'export.itemsCount': { en: 'Items to export', ru: 'Элементов для экспорта', cz: 'Položek k exportu' },
+  'export.items': { en: 'items', ru: 'элементов', cz: 'položek' },
+  'export.clientReport': { en: 'Client Report', ru: 'Отчет по клиенту', cz: 'Report klienta' },
+  'export.clientProfile': { en: 'Profile & Contacts', ru: 'Профиль и контакты', cz: 'Profil a kontakty' },
+  'export.clientContacts': { en: 'Contacts', ru: 'Контакты', cz: 'Kontakty' },
+  'export.clientVisits': { en: 'Visit History', ru: 'История визитов', cz: 'Historie návštěv' },
+  'export.clientFinance': { en: 'Client Finances', ru: 'Финансы клиента', cz: 'Finance klienta' },
+  'export.visitsReport': { en: 'Visits Report', ru: 'Отчет по визитам', cz: 'Report návštěv' },
+  'export.servicesReport': { en: 'Services Report', ru: 'Отчет по услугам', cz: 'Report služeb' },
+  'export.financeReport': { en: 'Financial Report', ru: 'Финансовый отчет', cz: 'Finanční report' },
+  'export.payments': { en: 'Payments', ru: 'Платежи', cz: 'Platby' },
+  'export.revenue': { en: 'Revenue', ru: 'Выручка', cz: 'Příjmy' },
+  'export.periods': { en: 'Periods', ru: 'Периоды', cz: 'Období' },
+  'export.employeesReport': { en: 'Employees Report', ru: 'Отчет по сотрудникам', cz: 'Report zaměstnanců' },
+  'export.employeeVisits': { en: 'Employee Visits', ru: 'Визиты сотрудника', cz: 'Návštěvy zaměstnance' },
+  'export.employeeServices': { en: 'Employee Services', ru: 'Услуги сотрудника', cz: 'Služby zaměstnance' },
+  'export.employeeSalary': { en: 'Employee Salary', ru: 'Зарплата сотрудника', cz: 'Plat zaměstnance' },
+  'export.analyticsReport': { en: 'Analytics Report', ru: 'Аналитический отчет', cz: 'Analytický report' },
+  'export.attendance': { en: 'Attendance', ru: 'Посещаемость', cz: 'Návštěvnost' },
+  'export.topMetrics': { en: 'Top Metrics', ru: 'Топ-показатели', cz: 'Nejlepší metriky' },
+  'export.inventoryReport': { en: 'Inventory Report', ru: 'Отчет по складу', cz: 'Report skladu' },
+  'export.stockRemaining': { en: 'Stock Remaining', ru: 'Остатки товаров', cz: 'Zbývající zásoby' },
+  'export.movements': { en: 'Movements', ru: 'Движения', cz: 'Pohyby' },
+  'export.writeoffs': { en: 'Writeoffs', ru: 'Списания', cz: 'Odpisy' },
+  'export.expensesReport': { en: 'Expenses Report', ru: 'Отчет по расходам', cz: 'Report výdajů' },
+  'export.expenseItems': { en: 'Expense Items', ru: 'Статьи расходов', cz: 'Položky výdajů' },
+  'export.amounts': { en: 'Amounts', ru: 'Суммы', cz: 'Částky' },
+  'export.selectPeriod': { en: 'Select Period', ru: 'Выберите период', cz: 'Vyberte období' },
+  'export.selectReportType': { en: 'Select Report Type', ru: 'Выберите тип отчета', cz: 'Vyberte typ reportu' },
+  'export.period': { en: 'Period', ru: 'Период', cz: 'Období' },
+  'export.fromDate': { en: 'From Date', ru: 'С даты', cz: 'Od data' },
+  'export.toDate': { en: 'To Date', ru: 'По дату', cz: 'Do data' },
+  'export.personalReport': { en: 'Personal Report', ru: 'Персональный отчет', cz: 'Osobní report' },
+  'export.selectData': { en: 'Select Data', ru: 'Выберите данные', cz: 'Vyberte data' },
+  'export.allData': { en: 'All Data', ru: 'Все данные', cz: 'Všechna data' },
+  'export.filteredData': { en: 'Filtered Data', ru: 'Отфильтрованные данные', cz: 'Filtrovaná data' },
+  'export.selectedRows': { en: 'Selected Rows', ru: 'Выбранные строки', cz: 'Vybrané řádky' },
   
   // Specialist types - Beauty
   'specialistType.massage': { en: 'Massage Therapist', ru: 'Массажист', cz: 'Masér' },
