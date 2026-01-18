@@ -366,6 +366,72 @@ export type TranslationKey =
   | 'salary.mark_paid_error'
   | 'salary.view_details'
   | 'salary.calculated_by'
+  | 'salary.adjustments'
+  | 'salary.adjustments_total'
+  | 'salary.total_with_adjustments'
+  | 'salary.paid_amount'
+  | 'salary.remaining'
+  | 'salary.payment_status'
+  | 'salary.status.unpaid'
+  | 'salary.status.partial'
+  | 'salary.status.paid'
+  | 'salary.status.completed'
+  | 'salary.status.pending'
+  | 'salary.status.failed'
+  | 'salary.addAdjustment'
+  | 'salary.adjustmentType'
+  | 'salary.amount'
+  | 'salary.description'
+  | 'salary.bonus'
+  | 'salary.penalty'
+  | 'salary.overtime'
+  | 'salary.allowance'
+  | 'salary.deduction'
+  | 'salary.willBeAdded'
+  | 'salary.willBeDeducted'
+  | 'salary.adjustmentDescription'
+  | 'salary.invalidAmount'
+  | 'salary.payments'
+  | 'salary.recordPayment'
+  | 'salary.paymentDate'
+  | 'salary.paymentMethod'
+  | 'salary.paymentMethod.cash'
+  | 'salary.paymentMethod.card'
+  | 'salary.paymentMethod.transfer'
+  | 'salary.paymentMethod.other'
+  | 'salary.transfer'
+  | 'salary.remainingAmount'
+  | 'salary.exceedsRemaining'
+  | 'salary.paymentNotes'
+  | 'salary.completed'
+  | 'salary.pending'
+  | 'salary.failed'
+  | 'salary.deleteAdjustmentConfirm'
+  | 'salary.noAdjustments'
+  | 'salary.noPayments'
+  | 'salary.tabs.current'
+  | 'salary.tabs.adjustments'
+  | 'salary.tabs.payments'
+  | 'salary.tabs.history'
+  | 'salary.tabs.details'
+  | 'salary.tabs.export'
+  | 'salary.currentCalculation'
+  | 'salary.currentSalary'
+  | 'salary.viewSalaryDetails'
+  | 'salary.breakdown'
+  | 'salary.bonuses'
+  | 'salary.totalVisits'
+  | 'salary.totalRevenue'
+  | 'salary.periodStart'
+  | 'salary.periodEnd'
+  | 'salary.calculatedAt'
+  | 'salary.noUnpaidSalary'
+  | 'salary.noHistory'
+  | 'salary.export'
+  | 'salary.exportDescription'
+  | 'salary.mySalaryReport'
+  | 'salary.personalReport'
+  | 'salary.deleteAdjustment'
   // Nav
   | 'nav.business'
   | 'nav.employees'
@@ -1048,6 +1114,67 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.mark_paid_error': { en: 'Failed to mark salary as paid', ru: 'Не удалось отметить зарплату как выплаченную', cz: 'Nepodařilo se označit plat jako vyplacený' },
   'salary.view_details': { en: 'View Details', ru: 'Просмотреть детали', cz: 'Zobrazit detaily' },
   'salary.calculated_by': { en: 'Calculated by', ru: 'Рассчитано', cz: 'Vypočítáno' },
+  'salary.adjustments': { en: 'Adjustments', ru: 'Начисления/удержания', cz: 'Příplatky/odpočty' },
+  'salary.adjustments_total': { en: 'Adjustments Total', ru: 'Итого начислений', cz: 'Celkem příplatků' },
+  'salary.total_with_adjustments': { en: 'Total with Adjustments', ru: 'Итого с начислениями', cz: 'Celkem s příplatky' },
+  'salary.paid_amount': { en: 'Paid Amount', ru: 'Выплачено', cz: 'Vyplaceno' },
+  'salary.remaining': { en: 'Remaining', ru: 'Остаток', cz: 'Zbývá' },
+  'salary.payment_status': { en: 'Payment Status', ru: 'Статус выплаты', cz: 'Status platby' },
+  'salary.status.unpaid': { en: 'Unpaid', ru: 'Не выплачено', cz: 'Neplaceno' },
+  'salary.status.partial': { en: 'Partially Paid', ru: 'Частично выплачено', cz: 'Částečně zaplaceno' },
+  'salary.status.paid': { en: 'Paid', ru: 'Выплачено', cz: 'Zaplaceno' },
+  'salary.status.completed': { en: 'Completed', ru: 'Завершено', cz: 'Dokončeno' },
+  'salary.status.pending': { en: 'Pending', ru: 'Ожидается', cz: 'Čeká se' },
+  'salary.status.failed': { en: 'Failed', ru: 'Не удалось', cz: 'Selhalo' },
+  'salary.addAdjustment': { en: 'Add Adjustment', ru: 'Добавить начисление/удержание', cz: 'Přidat příplatek/odpočet' },
+  'salary.adjustmentType': { en: 'Type', ru: 'Тип', cz: 'Typ' },
+  'salary.bonus': { en: 'Bonus', ru: 'Бонус', cz: 'Bonus' },
+  'salary.penalty': { en: 'Penalty', ru: 'Штраф', cz: 'Pokuta' },
+  'salary.overtime': { en: 'Overtime', ru: 'Переработка', cz: 'Přesčasy' },
+  'salary.allowance': { en: 'Allowance', ru: 'Надбавка', cz: 'Příplatek' },
+  'salary.deduction': { en: 'Deduction', ru: 'Удержание', cz: 'Odpočet' },
+  'salary.willBeAdded': { en: 'Will be added to salary', ru: 'Будет добавлено к зарплате', cz: 'Bude přidáno k platu' },
+  'salary.willBeDeducted': { en: 'Will be deducted from salary', ru: 'Будет вычтено из зарплаты', cz: 'Bude odečteno z platu' },
+  'salary.adjustmentDescription': { en: 'Adjustment description', ru: 'Описание начисления/удержания', cz: 'Popis příplatku/odpočtu' },
+  'salary.invalidAmount': { en: 'Invalid amount', ru: 'Неверная сумма', cz: 'Neplatná částka' },
+  'salary.payments': { en: 'Payments', ru: 'Выплаты', cz: 'Platby' },
+  'salary.recordPayment': { en: 'Record Payment', ru: 'Зарегистрировать выплату', cz: 'Zaznamenat platbu' },
+  'salary.paymentDate': { en: 'Payment Date', ru: 'Дата выплаты', cz: 'Datum platby' },
+  'salary.paymentMethod': { en: 'Payment Method', ru: 'Способ оплаты', cz: 'Způsob platby' },
+  'salary.paymentMethod.cash': { en: 'Cash', ru: 'Наличные', cz: 'Hotovost' },
+  'salary.paymentMethod.card': { en: 'Card', ru: 'Карта', cz: 'Karta' },
+  'salary.paymentMethod.transfer': { en: 'Transfer', ru: 'Перевод', cz: 'Převod' },
+  'salary.paymentMethod.other': { en: 'Other', ru: 'Другое', cz: 'Jiné' },
+  'salary.transfer': { en: 'Transfer', ru: 'Перевод', cz: 'Převod' },
+  'salary.remainingAmount': { en: 'Remaining Amount', ru: 'Остаток к выплате', cz: 'Zbývající částka' },
+  'salary.exceedsRemaining': { en: 'Amount exceeds remaining amount', ru: 'Сумма превышает остаток', cz: 'Částka překračuje zbývající částku' },
+  'salary.paymentNotes': { en: 'Payment notes', ru: 'Дополнительная информация о выплате', cz: 'Poznámky k platbě' },
+  'salary.deleteAdjustmentConfirm': { en: 'Delete this adjustment?', ru: 'Удалить начисление?', cz: 'Smazat tento příplatek?' },
+  'salary.noAdjustments': { en: 'No adjustments', ru: 'Нет начислений/удержаний', cz: 'Žádné příplatky/odpočty' },
+  'salary.noPayments': { en: 'No payments', ru: 'Нет выплат', cz: 'Žádné platby' },
+  'salary.tabs.current': { en: 'Current', ru: 'Текущая', cz: 'Aktuální' },
+  'salary.tabs.adjustments': { en: 'Adjustments', ru: 'Начисления', cz: 'Příplatky' },
+  'salary.tabs.payments': { en: 'Payments', ru: 'Выплаты', cz: 'Platby' },
+  'salary.tabs.history': { en: 'History', ru: 'История', cz: 'Historie' },
+  'salary.tabs.details': { en: 'Details', ru: 'Детализация', cz: 'Detaily' },
+  'salary.tabs.export': { en: 'Export', ru: 'Экспорт', cz: 'Export' },
+  'salary.currentCalculation': { en: 'Current Calculation', ru: 'Текущий расчет', cz: 'Aktuální výpočet' },
+  'salary.currentSalary': { en: 'Current Salary', ru: 'Текущая зарплата', cz: 'Aktuální plat' },
+  'salary.viewSalaryDetails': { en: 'View salary details', ru: 'Просмотр начислений и выплат', cz: 'Zobrazit detaily platu' },
+  'salary.breakdown': { en: 'Breakdown', ru: 'Детализация', cz: 'Rozpis' },
+  'salary.bonuses': { en: 'Bonuses', ru: 'Бонусы', cz: 'Bonusy' },
+  'salary.totalVisits': { en: 'Total Visits', ru: 'Всего визитов', cz: 'Celkem návštěv' },
+  'salary.totalRevenue': { en: 'Total Revenue', ru: 'Общий доход', cz: 'Celkový příjem' },
+  'salary.periodStart': { en: 'Period Start', ru: 'Начало периода', cz: 'Začátek období' },
+  'salary.periodEnd': { en: 'Period End', ru: 'Конец периода', cz: 'Konec období' },
+  'salary.calculatedAt': { en: 'Calculated at', ru: 'Рассчитано', cz: 'Vypočítáno' },
+  'salary.noUnpaidSalary': { en: 'No unpaid salary', ru: 'Нет невыплаченной зарплаты', cz: 'Žádný nevyplacený plat' },
+  'salary.noHistory': { en: 'No history', ru: 'Нет истории зарплат', cz: 'Žádná historie' },
+  'salary.export': { en: 'Export', ru: 'Экспорт отчета', cz: 'Export reportu' },
+  'salary.exportDescription': { en: 'Export detailed salary report', ru: 'Экспортируйте детализированный отчет о зарплате', cz: 'Exportujte podrobný report o platu' },
+  'salary.mySalaryReport': { en: 'My Salary Report', ru: 'Отчет по зарплате', cz: 'Report o platu' },
+  'salary.personalReport': { en: 'Personal Report', ru: 'Персональный отчет', cz: 'Osobní report' },
+  'salary.deleteAdjustment': { en: 'Delete Adjustment', ru: 'Удалить начисление', cz: 'Smazat příplatek' },
   
   // Nav
   'nav.business': { en: 'Business', ru: 'Бизнес', cz: 'Podnikání' },
