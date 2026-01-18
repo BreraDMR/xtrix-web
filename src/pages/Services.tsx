@@ -4,10 +4,17 @@ import api from '../api/client'
 import ServiceForm from '../components/ServiceForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
+import TableSortHeader from '../components/TableSortHeader'
+import TablePagination from '../components/TablePagination'
+import ExportButton from '../components/ExportButton'
 import { useTranslation } from '../hooks/useTranslation'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
+import { sortData, SortConfig } from '../utils/table'
 
 export default function Services() {
   const { t } = useTranslation()
+  const currency = useBusinessCurrency()
 
 interface Service {
   id: number
@@ -21,6 +28,9 @@ interface Service {
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const [sortConfig, setSortConfig] = useState<SortConfig<Service>>({ key: null, direction: null })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
   const queryClient = useQueryClient()
 
   const { data: services, isLoading } = useQuery<Service[]>({
@@ -35,7 +45,7 @@ interface Service {
   const filteredServices = useMemo(() => {
     if (!services) return []
     
-    return services.filter((service) => {
+    let filtered = services.filter((service) => {
       const matchesSearch =
         searchQuery === '' ||
         service.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -47,7 +57,39 @@ interface Service {
       
       return matchesSearch && matchesActive
     })
-  }, [services, searchQuery, activeFilter])
+    
+    // Apply sorting
+    if (sortConfig.key && sortConfig.direction) {
+      filtered = sortData(filtered, sortConfig)
+    }
+    
+    return filtered
+  }, [services, searchQuery, activeFilter, sortConfig])
+
+  // Pagination
+  const { paginatedData, totalPages, totalItems } = useMemo(() => {
+    const startIndex = (currentPage - 1) * perPage
+    const endIndex = startIndex + perPage
+    return {
+      paginatedData: filteredServices.slice(startIndex, endIndex),
+      totalPages: Math.ceil(filteredServices.length / perPage),
+      totalItems: filteredServices.length,
+    }
+  }, [filteredServices, currentPage, perPage])
+
+  const handleSort = (key: keyof Service) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        if (prev.direction === 'asc') {
+          return { key, direction: 'desc' }
+        } else if (prev.direction === 'desc') {
+          return { key: null, direction: null }
+        }
+      }
+      return { key, direction: 'asc' }
+    })
+    setCurrentPage(1)
+  }
 
   const handleSuccess = () => {
     setShowForm(false)
@@ -87,14 +129,38 @@ interface Service {
 
       {!showForm && (
         <div className="mb-6 space-y-4">
-          <SearchBar
-            placeholder={t('services.searchPlaceholder')}
-            onSearch={setSearchQuery}
-          />
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex-1 w-full sm:max-w-md">
+              <SearchBar
+                placeholder={t('services.searchPlaceholder')}
+                onSearch={setSearchQuery}
+              />
+            </div>
+            {filteredServices.length > 0 && (
+              <ExportButton
+                data={filteredServices.map(s => ({
+                  ...s,
+                  price: formatCurrency(s.price, currency),
+                  is_active: s.is_active ? t('services.active') : t('services.inactive'),
+                  duration_minutes: `${s.duration_minutes} ${t('services.min')}`,
+                }))}
+                columns={[
+                  { key: 'name', label: t('services.name') },
+                  { key: 'duration_minutes', label: t('services.duration') },
+                  { key: 'price', label: t('services.price') },
+                  { key: 'is_active', label: t('services.status') },
+                ]}
+                filename={`services-${new Date().toISOString().split('T')[0]}.csv`}
+              />
+            )}
+          </div>
           <div className="flex gap-4">
             <select
               value={activeFilter || ''}
-              onChange={(e) => setActiveFilter(e.target.value || null)}
+              onChange={(e) => {
+                setActiveFilter(e.target.value || null)
+                setCurrentPage(1)
+              }}
               className="px-4 py-2 border rounded-md"
             >
               <option value="">{t('services.allServices')}</option>
@@ -106,6 +172,7 @@ interface Service {
                 onClick={() => {
                   setSearchQuery('')
                   setActiveFilter(null)
+                  setCurrentPage(1)
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
               >
@@ -129,34 +196,47 @@ interface Service {
         </div>
       ) : (
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('services.name')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('services.duration')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('services.price')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                {t('services.status')}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredServices.length === 0 ? (
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  {searchQuery || activeFilter
-                    ? t('services.noServicesMatch')
-                    : t('services.noServicesFound')}
-                </td>
+                <TableSortHeader
+                  columnKey="name"
+                  label={t('services.name')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                />
+                <TableSortHeader
+                  columnKey="duration_minutes"
+                  label={t('services.duration')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                />
+                <TableSortHeader
+                  columnKey="price"
+                  label={t('services.price')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                />
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  {t('services.status')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  {t('common.actions')}
+                </th>
               </tr>
-            ) : (
-              filteredServices.map((service) => (
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                    {searchQuery || activeFilter
+                      ? t('services.noServicesMatch')
+                      : t('services.noServicesFound')}
+                  </td>
+                </tr>
+              ) : (
+                paginatedData.map((service) => (
               <tr key={service.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {service.name}
@@ -165,7 +245,7 @@ interface Service {
                   {service.duration_minutes} {t('services.min')}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {service.price.toFixed(2)}
+                  {formatCurrency(service.price, currency)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
@@ -191,6 +271,17 @@ interface Service {
             )}
           </tbody>
         </table>
+        </div>
+        {totalPages > 1 && (
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            perPage={perPage}
+            onPageChange={setCurrentPage}
+            onPerPageChange={setPerPage}
+          />
+        )}
       </div>
       )}
     </div>

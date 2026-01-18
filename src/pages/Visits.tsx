@@ -8,10 +8,14 @@ import api from '../api/client'
 import VisitForm from '../components/VisitForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
+import TableSortHeader from '../components/TableSortHeader'
+import TablePagination from '../components/TablePagination'
+import ExportButton from '../components/ExportButton'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
+import { sortData, SortConfig } from '../utils/table'
 
 export default function Visits() {
   const { t } = useTranslation()
@@ -45,6 +49,9 @@ interface Visit {
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
   const [dateFrom, setDateFrom] = useState<string>('')
   const [dateTo, setDateTo] = useState<string>('')
+  const [sortConfig, setSortConfig] = useState<SortConfig<Visit>>({ key: null, direction: null })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
   const queryClient = useQueryClient()
 
   const { data: visits, isLoading } = useQuery<Visit[]>({
@@ -59,7 +66,7 @@ interface Visit {
   const filteredVisits = useMemo(() => {
     if (!visits) return []
     
-    return visits.filter((visit) => {
+    let filtered = visits.filter((visit) => {
       const matchesSearch =
         searchQuery === '' ||
         visit.service_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -81,7 +88,39 @@ interface Visit {
       
       return matchesSearch && matchesStatus && matchesDate
     })
-  }, [visits, searchQuery, statusFilter, dateFrom, dateTo])
+    
+    // Apply sorting
+    if (sortConfig.key && sortConfig.direction) {
+      filtered = sortData(filtered, sortConfig)
+    }
+    
+    return filtered
+  }, [visits, searchQuery, statusFilter, dateFrom, dateTo, sortConfig])
+
+  // Pagination
+  const { paginatedData, totalPages, totalItems } = useMemo(() => {
+    const startIndex = (currentPage - 1) * perPage
+    const endIndex = startIndex + perPage
+    return {
+      paginatedData: filteredVisits.slice(startIndex, endIndex),
+      totalPages: Math.ceil(filteredVisits.length / perPage),
+      totalItems: filteredVisits.length,
+    }
+  }, [filteredVisits, currentPage, perPage])
+
+  const handleSort = (key: keyof Visit) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        if (prev.direction === 'asc') {
+          return { key, direction: 'desc' }
+        } else if (prev.direction === 'desc') {
+          return { key: null, direction: null }
+        }
+      }
+      return { key, direction: 'asc' }
+    })
+    setCurrentPage(1)
+  }
 
   const handleSuccess = () => {
     setShowForm(false)
@@ -124,14 +163,39 @@ interface Visit {
 
       {!showForm && (
         <div className="mb-6 space-y-4">
-          <SearchBar
-            placeholder={t('visits.searchPlaceholder')}
-            onSearch={setSearchQuery}
-          />
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex-1 w-full sm:max-w-md">
+              <SearchBar
+                placeholder={t('visits.searchPlaceholder')}
+                onSearch={setSearchQuery}
+              />
+            </div>
+            {filteredVisits.length > 0 && (
+              <ExportButton
+                data={filteredVisits.map(v => ({
+                  ...v,
+                  date_start: format(new Date(v.date_start), 'PP', { locale: dateLocale }),
+                  status: getStatusTranslation(v.status),
+                  price: v.price ? formatCurrency(v.price, currency) : '-',
+                }))}
+                columns={[
+                  { key: 'date_start', label: t('visits.date') },
+                  { key: 'service_name', label: t('visits.service') },
+                  { key: 'client_name', label: t('visits.client') },
+                  { key: 'status', label: t('visits.status') },
+                  { key: 'price', label: t('services.price') },
+                ]}
+                filename={`visits-${new Date().toISOString().split('T')[0]}.csv`}
+              />
+            )}
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <select
               value={statusFilter || ''}
-              onChange={(e) => setStatusFilter(e.target.value || null)}
+              onChange={(e) => {
+                setStatusFilter(e.target.value || null)
+                setCurrentPage(1)
+              }}
               className="px-4 py-2 border rounded-md"
             >
               <option value="">{t('visits.allStatuses')}</option>
@@ -145,7 +209,10 @@ interface Visit {
               <input
                 type="date"
                 value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
+                onChange={(e) => {
+                  setDateFrom(e.target.value)
+                  setCurrentPage(1)
+                }}
                 className="px-4 py-2 border rounded-md w-full pt-3"
               />
             </div>
@@ -154,7 +221,10 @@ interface Visit {
               <input
                 type="date"
                 value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
+                onChange={(e) => {
+                  setDateTo(e.target.value)
+                  setCurrentPage(1)
+                }}
                 className="px-4 py-2 border rounded-md w-full pt-3"
               />
             </div>
@@ -165,6 +235,7 @@ interface Visit {
                   setStatusFilter(null)
                   setDateFrom('')
                   setDateTo('')
+                  setCurrentPage(1)
                 }}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md"
               >
@@ -192,25 +263,37 @@ interface Visit {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  {t('visits.date')}
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  {t('visits.service')}
-                </th>
+                <TableSortHeader
+                  columnKey="date_start"
+                  label={t('visits.date')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                  className="px-2 sm:px-6"
+                />
+                <TableSortHeader
+                  columnKey="service_name"
+                  label={t('visits.service')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                  className="px-2 sm:px-6"
+                />
                 <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">
                   {t('visits.status')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">
-                  {t('services.price')}
-                </th>
+                <TableSortHeader
+                  columnKey="price"
+                  label={t('services.price')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                  className="px-2 sm:px-6 hidden md:table-cell"
+                />
                 <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   {t('common.actions')}
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredVisits.length === 0 ? (
+              {paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-gray-500">
                     {searchQuery || statusFilter || dateFrom || dateTo
@@ -219,7 +302,7 @@ interface Visit {
                   </td>
                 </tr>
               ) : (
-                filteredVisits.map((visit) => (
+                paginatedData.map((visit) => (
                 <tr key={visit.id} className="hover:bg-gray-50">
                   <td className="px-2 sm:px-6 py-4 text-sm text-gray-900">
                     <div className="flex flex-col">
@@ -271,6 +354,16 @@ interface Visit {
             </tbody>
           </table>
         </div>
+        {totalPages > 1 && (
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            perPage={perPage}
+            onPageChange={setCurrentPage}
+            onPerPageChange={setPerPage}
+          />
+        )}
       </div>
       )}
     </div>

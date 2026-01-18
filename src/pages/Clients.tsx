@@ -4,9 +4,13 @@ import api from '../api/client'
 import ClientForm from '../components/ClientForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
+import TableSortHeader from '../components/TableSortHeader'
+import TablePagination from '../components/TablePagination'
+import ExportButton from '../components/ExportButton'
 import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
+import { sortData, SortConfig } from '../utils/table'
 
 interface Client {
   id: number
@@ -72,6 +76,9 @@ export default function Clients() {
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
   const [genderFilter, setGenderFilter] = useState<string | null>(null)
+  const [sortConfig, setSortConfig] = useState<SortConfig<Client>>({ key: null, direction: null })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
   const queryClient = useQueryClient()
 
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -86,7 +93,7 @@ export default function Clients() {
   const filteredClients = useMemo(() => {
     if (!clients) return []
     
-    return clients.filter((client) => {
+    let filtered = clients.filter((client) => {
       const matchesSearch =
         searchQuery === '' ||
         client.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -97,12 +104,46 @@ export default function Clients() {
       
       return matchesSearch && matchesGender
     })
-  }, [clients, searchQuery, genderFilter])
+    
+    // Apply sorting
+    if (sortConfig.key && sortConfig.direction) {
+      filtered = sortData(filtered, sortConfig)
+    }
+    
+    return filtered
+  }, [clients, searchQuery, genderFilter, sortConfig])
+
+  // Pagination
+  const { paginatedData, totalPages, totalItems } = useMemo(() => {
+    const startIndex = (currentPage - 1) * perPage
+    const endIndex = startIndex + perPage
+    return {
+      paginatedData: filteredClients.slice(startIndex, endIndex),
+      totalPages: Math.ceil(filteredClients.length / perPage),
+      totalItems: filteredClients.length,
+    }
+  }, [filteredClients, currentPage, perPage])
+
+  const handleSort = (key: keyof Client) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        // Cycle through: asc -> desc -> null
+        if (prev.direction === 'asc') {
+          return { key, direction: 'desc' }
+        } else if (prev.direction === 'desc') {
+          return { key: null, direction: null }
+        }
+      }
+      return { key, direction: 'asc' }
+    })
+    setCurrentPage(1) // Reset to first page when sorting
+  }
 
   const handleSuccess = () => {
     setShowForm(false)
     setEditingId(undefined)
     queryClient.invalidateQueries({ queryKey: ['clients'] })
+    queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }
 
   const handleEdit = (id: number) => {
@@ -137,32 +178,51 @@ export default function Clients() {
 
       {!showForm && (
         <div className="mb-6 space-y-4">
-          <SearchBar
-            placeholder={t('clients.searchPlaceholder')}
-            onSearch={setSearchQuery}
-          />
-          <div className="flex gap-4">
-            <select
-              value={genderFilter || ''}
-              onChange={(e) => setGenderFilter(e.target.value || null)}
-              className="px-4 py-2 border rounded-md"
-            >
-              <option value="">{t('clients.allGenders')}</option>
-              <option value="male">{t('clients.male')}</option>
-              <option value="female">{t('clients.female')}</option>
-              <option value="other">{t('clients.other')}</option>
-            </select>
-            {(searchQuery || genderFilter) && (
-              <button
-                onClick={() => {
-                  setSearchQuery('')
-                  setGenderFilter(null)
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex-1 w-full sm:max-w-md">
+              <SearchBar
+                placeholder={t('clients.searchPlaceholder')}
+                onSearch={setSearchQuery}
+              />
+            </div>
+            <div className="flex gap-4 items-center">
+              <select
+                value={genderFilter || ''}
+                onChange={(e) => {
+                  setGenderFilter(e.target.value || null)
+                  setCurrentPage(1)
                 }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 border rounded-md"
               >
-                {t('clients.clearFilters')}
-              </button>
-            )}
+                <option value="">{t('clients.allGenders')}</option>
+                <option value="male">{t('clients.male')}</option>
+                <option value="female">{t('clients.female')}</option>
+                <option value="other">{t('clients.other')}</option>
+              </select>
+              {filteredClients.length > 0 && (
+                <ExportButton
+                  data={filteredClients}
+                  columns={[
+                    { key: 'full_name', label: t('clients.name') },
+                    { key: 'contact_phone', label: t('clients.phone') },
+                    { key: 'contact_email', label: t('clients.email') },
+                  ]}
+                  filename={`clients-${new Date().toISOString().split('T')[0]}.csv`}
+                />
+              )}
+              {(searchQuery || genderFilter) && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('')
+                    setGenderFilter(null)
+                    setCurrentPage(1)
+                  }}
+                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  {t('clients.clearFilters')}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -184,15 +244,27 @@ export default function Clients() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  {t('clients.name')}
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">
-                  {t('clients.phone')}
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">
-                  {t('clients.email')}
-                </th>
+                <TableSortHeader
+                  columnKey="full_name"
+                  label={t('clients.name')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                  className="px-2 sm:px-6"
+                />
+                <TableSortHeader
+                  columnKey="contact_phone"
+                  label={t('clients.phone')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                  className="px-2 sm:px-6 hidden sm:table-cell"
+                />
+                <TableSortHeader
+                  columnKey="contact_email"
+                  label={t('clients.email')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                  className="px-2 sm:px-6 hidden md:table-cell"
+                />
                 <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">
                   {t('loyalty.points')}
                 </th>
@@ -202,14 +274,14 @@ export default function Clients() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredClients.length === 0 ? (
+              {paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-gray-500">
                     {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
                   </td>
                 </tr>
               ) : (
-                filteredClients.map((client) => (
+                paginatedData.map((client) => (
                 <tr key={client.id} className="hover:bg-gray-50">
                   <td className="px-2 sm:px-6 py-4 text-sm font-medium text-gray-900">
                     <div className="flex flex-col">
@@ -242,6 +314,16 @@ export default function Clients() {
             </tbody>
           </table>
         </div>
+        {totalPages > 1 && (
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            perPage={perPage}
+            onPageChange={setCurrentPage}
+            onPerPageChange={setPerPage}
+          />
+        )}
       </div>
       )}
     </div>

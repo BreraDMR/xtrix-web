@@ -111,7 +111,7 @@ export default function Layout() {
 
       {/* Left Sidebar */}
       <aside
-        className={`w-64 bg-white text-gray-900 flex flex-col fixed h-screen z-50 transition-transform duration-300 ease-in-out border-r border-gray-200 ${
+        className={`w-64 bg-white text-gray-900 flex flex-col fixed h-screen z-50 transition-transform duration-300 ease-in-out border-r border-gray-200 overflow-hidden ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
@@ -134,7 +134,7 @@ export default function Layout() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-4">
+        <nav className="flex-1 overflow-y-auto py-4 overscroll-contain">
           {/* PRIMARY */}
           {primaryItems.length > 0 && (
             <>

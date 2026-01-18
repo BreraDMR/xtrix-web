@@ -10,6 +10,8 @@ export type TranslationKey =
   | 'common.loading'
   | 'common.error'
   | 'common.success'
+  | 'common.export'
+  | 'common.noData'
   // Specialist types
   | 'specialistType.massage'
   | 'specialistType.cosmetologist'
@@ -131,6 +133,12 @@ export type TranslationKey =
   | 'dashboard.newClients'
   | 'dashboard.averageSpending'
   | 'dashboard.quickStatus'
+  | 'dashboard.noVisits'
+  | 'dashboard.noVisitsDescription'
+  | 'dashboard.noClients'
+  | 'dashboard.noClientsDescription'
+  | 'dashboard.noData'
+  | 'dashboard.noProfitData'
   // Clients
   | 'clients.title'
   | 'clients.addClient'
@@ -589,6 +597,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.loading': { en: 'Loading...', ru: 'Загрузка...', cz: 'Načítání...' },
   'common.error': { en: 'Error', ru: 'Ошибка', cz: 'Chyba' },
   'common.success': { en: 'Success', ru: 'Успешно', cz: 'Úspěch' },
+  'common.export': { en: 'Export', ru: 'Экспорт', cz: 'Export' },
+  'common.noData': { en: 'No data available', ru: 'Нет данных', cz: 'Žádná data' },
   
   // Specialist types - Beauty
   'specialistType.massage': { en: 'Massage Therapist', ru: 'Массажист', cz: 'Masér' },
@@ -722,6 +732,12 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'dashboard.newClients': { en: 'New Clients', ru: 'Новые клиенты', cz: 'Noví klienti' },
   'dashboard.averageSpending': { en: 'Average Spending', ru: 'Средние траты', cz: 'Průměrné výdaje' },
   'dashboard.quickStatus': { en: 'Quick Status', ru: 'Быстрый статус', cz: 'Rychlý status' },
+  'dashboard.noVisits': { en: 'No visits yet', ru: 'Пока нет визитов', cz: 'Zatím žádné návštěvy' },
+  'dashboard.noVisitsDescription': { en: 'Create your first visit to see statistics here', ru: 'Создайте первый визит, чтобы увидеть статистику', cz: 'Vytvořte první návštěvu, abyste zde viděli statistiky' },
+  'dashboard.noClients': { en: 'No clients yet', ru: 'Пока нет клиентов', cz: 'Zatím žádní klienti' },
+  'dashboard.noClientsDescription': { en: 'Add your first client to see statistics here', ru: 'Добавьте первого клиента, чтобы увидеть статистику', cz: 'Přidejte svého prvního klienta, abyste zde viděli statistiky' },
+  'dashboard.noData': { en: 'No data available', ru: 'Нет данных', cz: 'Žádná data' },
+  'dashboard.noProfitData': { en: 'No profit data available for this month', ru: 'Нет данных о прибыли за этот месяц', cz: 'Žádná data o zisku za tento měsíc' },
   
   // Clients
   'clients.title': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },

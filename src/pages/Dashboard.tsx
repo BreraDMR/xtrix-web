@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
+import EmptyState from '../components/EmptyState'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
+import { HiOutlineChartBar, HiOutlineUsers, HiOutlineCalendar } from 'react-icons/hi'
 
 export default function Dashboard() {
   const { t } = useTranslation()
@@ -86,7 +88,15 @@ export default function Dashboard() {
             <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.monthlyProfit')}</h3>
           </div>
           {isLoadingProfit ? (
-            <LoadingSpinner size="md" />
+            <div className="flex items-center justify-center py-4">
+              <LoadingSpinner size="md" />
+            </div>
+          ) : profitData === null || profitData === undefined ? (
+            <EmptyState
+              icon={<HiOutlineChartBar className="w-8 h-8" />}
+              title={t('dashboard.noData')}
+              description={t('dashboard.noProfitData')}
+            />
           ) : (
             <p className={`text-3xl font-bold ${(profitData?.profit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatCurrency(profitData?.profit, currency)}
@@ -101,7 +111,11 @@ export default function Dashboard() {
             <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.monthlyRevenue')}</h3>
           </div>
           {isLoadingProfit ? (
-            <LoadingSpinner size="md" />
+            <div className="flex items-center justify-center py-4">
+              <LoadingSpinner size="md" />
+            </div>
+          ) : profitData === null || profitData === undefined ? (
+            <p className="text-3xl font-bold text-green-600">{formatCurrency(0, currency)}</p>
           ) : (
             <p className="text-3xl font-bold text-green-600">
               {formatCurrency(profitData?.revenue, currency)}
@@ -116,7 +130,11 @@ export default function Dashboard() {
             <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.monthlyExpenses')}</h3>
           </div>
           {isLoadingProfit ? (
-            <LoadingSpinner size="md" />
+            <div className="flex items-center justify-center py-4">
+              <LoadingSpinner size="md" />
+            </div>
+          ) : profitData === null || profitData === undefined ? (
+            <p className="text-3xl font-bold text-red-600">{formatCurrency(0, currency)}</p>
           ) : (
             <p className="text-3xl font-bold text-red-600">
               {formatCurrency(profitData?.expenses, currency)}
@@ -132,7 +150,15 @@ export default function Dashboard() {
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.reservations')}</h3>
           {isLoadingVisitStats ? (
-            <LoadingSpinner size="md" />
+            <div className="flex items-center justify-center py-8">
+              <LoadingSpinner size="md" />
+            </div>
+          ) : (visitStats?.total_visits || 0) === 0 ? (
+            <EmptyState
+              icon={<HiOutlineCalendar className="w-12 h-12" />}
+              title={t('dashboard.noVisits')}
+              description={t('dashboard.noVisitsDescription')}
+            />
           ) : (
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -198,7 +224,15 @@ export default function Dashboard() {
             <span className="text-xs text-gray-500">Today</span>
           </div>
           {isLoadingClientStats ? (
-            <LoadingSpinner size="md" />
+            <div className="flex items-center justify-center py-8">
+              <LoadingSpinner size="md" />
+            </div>
+          ) : (clientStats?.total_clients || 0) === 0 ? (
+            <EmptyState
+              icon={<HiOutlineUsers className="w-12 h-12" />}
+              title={t('dashboard.noClients')}
+              description={t('dashboard.noClientsDescription')}
+            />
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -210,7 +244,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">{t('dashboard.newClients')}</span>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
-                  {clientStats?.new_clients || clientStats?.total_clients || 0}
+                  {clientStats?.new_clients ?? 0}
                 </span>
               </div>
               <div className="flex items-center justify-between">

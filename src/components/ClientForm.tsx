@@ -4,6 +4,9 @@ import api from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
 import LoadingSpinner from './LoadingSpinner'
+import FormField from './FormField'
+import FormError from './FormError'
+import { validateEmail, validatePhone, validateRequired, extractApiErrors } from '../utils/validation'
 
 interface ClientFormProps {
   clientId?: number
@@ -30,6 +33,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
   const { t } = useTranslation()
   const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState<ClientData>({
     full_name: '',
   })
@@ -69,22 +73,54 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {}
+    
+    // Validate required fields
+    const fullNameError = validateRequired(formData.full_name, 'Full Name')
+    if (fullNameError) {
+      newErrors.full_name = fullNameError
+    }
+    
+    // Validate email if provided
+    if (formData.contact_email) {
+      const emailError = validateEmail(formData.contact_email)
+      if (emailError) {
+        newErrors.contact_email = emailError
+      }
+    }
+    
+    // Validate phone if provided
+    if (formData.contact_phone) {
+      const phoneError = validatePhone(formData.contact_phone)
+      if (phoneError) {
+        newErrors.contact_phone = phoneError
+      }
+    }
     
     // Validate healthcare requirements
     if (isHealthcareSpecialist && !clientId) {
       if (!formData.allergies || !formData.allergies.trim()) {
-        alert(t('clientForm.healthcareRequiredDescription'))
-        return
+        newErrors.allergies = t('clientForm.healthcareRequiredDescription')
       }
       if (!formData.chronic_diseases || !formData.chronic_diseases.trim()) {
-        alert(t('clientForm.healthcareRequiredDescription'))
-        return
+        newErrors.chronic_diseases = t('clientForm.healthcareRequiredDescription')
       }
     }
     
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+    
     setLoading(true)
+    setErrors({})
 
     try {
       // Подготавливаем данные для ClientCreate (только базовые поля клиента)
@@ -117,11 +153,16 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       onSuccess()
     } catch (error: any) {
       console.error('Error saving client:', error)
-      const errorMessage = error.response?.data?.error?.detail?.validation_errors?.[0]?.message 
-        || error.response?.data?.error?.message
-        || error.response?.data?.detail
-        || 'Failed to save client'
-      alert(errorMessage)
+      const apiErrors = extractApiErrors(error)
+      
+      if (Object.keys(apiErrors).length > 0) {
+        setErrors(apiErrors)
+      } else {
+        const errorMessage = error.response?.data?.error?.message
+          || error.response?.data?.detail
+          || 'Failed to save client'
+        setErrors({ _general: errorMessage })
+      }
     } finally {
       setLoading(false)
     }
@@ -129,61 +170,108 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium mb-1">Full Name *</label>
+      {errors._general && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <FormError message={errors._general} />
+        </div>
+      )}
+      
+      <FormField
+        label="Full Name"
+        required
+        error={errors.full_name}
+      >
         <input
           type="text"
           value={formData.full_name}
-          onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-          required
-          className="w-full px-3 py-2 border rounded-md"
+          onChange={(e) => {
+            setFormData({ ...formData, full_name: e.target.value })
+            if (errors.full_name) {
+              setErrors({ ...errors, full_name: '' })
+            }
+          }}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+            errors.full_name ? 'border-red-500' : 'border-gray-300'
+          }`}
         />
-      </div>
+      </FormField>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Date of Birth</label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField label="Date of Birth" error={errors.birth_date}>
           <input
             type="date"
-            value={formData.birth_date || ''}  // Исправлено: было date_of_birth
-            onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}  // Исправлено: было date_of_birth
-            className="w-full px-3 py-2 border rounded-md"
+            value={formData.birth_date || ''}
+            onChange={(e) => {
+              setFormData({ ...formData, birth_date: e.target.value })
+              if (errors.birth_date) {
+                setErrors({ ...errors, birth_date: '' })
+              }
+            }}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+              errors.birth_date ? 'border-red-500' : 'border-gray-300'
+            }`}
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Gender</label>
+        </FormField>
+        <FormField label="Gender" error={errors.gender}>
           <select
             value={formData.gender || ''}
-            onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-            className="w-full px-3 py-2 border rounded-md"
+            onChange={(e) => {
+              setFormData({ ...formData, gender: e.target.value })
+              if (errors.gender) {
+                setErrors({ ...errors, gender: '' })
+              }
+            }}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+              errors.gender ? 'border-red-500' : 'border-gray-300'
+            }`}
           >
             <option value="">Select...</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
-        </div>
+        </FormField>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Phone</label>
+      <FormField
+        label="Phone"
+        error={errors.contact_phone}
+        hint="Enter phone number in international format (e.g., +420 123 456 789)"
+      >
         <input
           type="tel"
           value={formData.contact_phone || ''}
-          onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-          className="w-full px-3 py-2 border rounded-md"
+          onChange={(e) => {
+            setFormData({ ...formData, contact_phone: e.target.value })
+            if (errors.contact_phone) {
+              setErrors({ ...errors, contact_phone: '' })
+            }
+          }}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+            errors.contact_phone ? 'border-red-500' : 'border-gray-300'
+          }`}
         />
-      </div>
+      </FormField>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Email</label>
+      <FormField
+        label="Email"
+        error={errors.contact_email}
+        hint="Enter a valid email address"
+      >
         <input
           type="email"
           value={formData.contact_email || ''}
-          onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-          className="w-full px-3 py-2 border rounded-md"
+          onChange={(e) => {
+            setFormData({ ...formData, contact_email: e.target.value })
+            if (errors.contact_email) {
+              setErrors({ ...errors, contact_email: '' })
+            }
+          }}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+            errors.contact_email ? 'border-red-500' : 'border-gray-300'
+          }`}
         />
-      </div>
+      </FormField>
 
       {isHealthcareSpecialist && !clientId && (
         <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -196,33 +284,47 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
         </div>
       )}
 
-      <div>
-        <label className="block text-sm font-medium mb-1">
-          {t('clientForm.allergies')} {isHealthcareSpecialist && !clientId && '*'}
-        </label>
+      <FormField
+        label={t('clientForm.allergies')}
+        required={isHealthcareSpecialist && !clientId}
+        error={errors.allergies}
+      >
         <textarea
           value={formData.allergies || ''}
-          onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
+          onChange={(e) => {
+            setFormData({ ...formData, allergies: e.target.value })
+            if (errors.allergies) {
+              setErrors({ ...errors, allergies: '' })
+            }
+          }}
           rows={2}
-          required={isHealthcareSpecialist && !clientId}
-          className="w-full px-3 py-2 border rounded-md"
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+            errors.allergies ? 'border-red-500' : 'border-gray-300'
+          }`}
           placeholder={isHealthcareSpecialist ? t('clientForm.allergies') : ''}
         />
-      </div>
+      </FormField>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">
-          {t('clientForm.chronicDiseases')} {isHealthcareSpecialist && !clientId && '*'}
-        </label>
+      <FormField
+        label={t('clientForm.chronicDiseases')}
+        required={isHealthcareSpecialist && !clientId}
+        error={errors.chronic_diseases}
+      >
         <textarea
           value={formData.chronic_diseases || ''}
-          onChange={(e) => setFormData({ ...formData, chronic_diseases: e.target.value })}
+          onChange={(e) => {
+            setFormData({ ...formData, chronic_diseases: e.target.value })
+            if (errors.chronic_diseases) {
+              setErrors({ ...errors, chronic_diseases: '' })
+            }
+          }}
           rows={2}
-          required={isHealthcareSpecialist && !clientId}
-          className="w-full px-3 py-2 border rounded-md"
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+            errors.chronic_diseases ? 'border-red-500' : 'border-gray-300'
+          }`}
           placeholder={isHealthcareSpecialist ? t('clientForm.chronicDiseases') : ''}
         />
-      </div>
+      </FormField>
 
       <div>
         <label className="flex items-center">

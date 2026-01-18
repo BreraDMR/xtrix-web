@@ -4,10 +4,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import EmployeeForm from '../components/EmployeeForm'
+import TableSortHeader from '../components/TableSortHeader'
+import TablePagination from '../components/TablePagination'
+import ExportButton from '../components/ExportButton'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
+import { sortData, SortConfig } from '../utils/table'
 
 interface Employee {
   id: number
@@ -45,6 +49,9 @@ export default function Employees() {
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeOnly, setActiveOnly] = useState(true)
+  const [sortConfig, setSortConfig] = useState<SortConfig<Employee>>({ key: null, direction: null })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [perPage, setPerPage] = useState(20)
 
   const { data: employees, isLoading } = useQuery<Employee[]>({
     queryKey: ['employees', activeOnly],
@@ -71,7 +78,7 @@ export default function Employees() {
   const filteredEmployees = useMemo(() => {
     if (!employees) return []
 
-    return employees.filter((emp) => {
+    let filtered = employees.filter((emp) => {
       const employeeName = emp.employee_user?.full_name || ''
       const matchesSearch =
         searchQuery === '' ||
@@ -81,7 +88,48 @@ export default function Employees() {
 
       return matchesSearch
     })
-  }, [employees, searchQuery])
+    
+    // Apply sorting - create sortable fields
+    if (sortConfig.key && sortConfig.direction) {
+      filtered = sortData(filtered.map(emp => ({
+        ...emp,
+        // Create sortable fields from nested objects
+        employee_name: emp.employee_user?.full_name || '',
+        email: emp.employee_user?.email || '',
+      })), sortConfig as SortConfig<any>).map((emp: any) => {
+        // Remove temporary fields
+        const { employee_name, email, ...rest } = emp
+        return rest
+      })
+    }
+    
+    return filtered
+  }, [employees, searchQuery, sortConfig])
+
+  // Pagination
+  const { paginatedData, totalPages, totalItems } = useMemo(() => {
+    const startIndex = (currentPage - 1) * perPage
+    const endIndex = startIndex + perPage
+    return {
+      paginatedData: filteredEmployees.slice(startIndex, endIndex),
+      totalPages: Math.ceil(filteredEmployees.length / perPage),
+      totalItems: filteredEmployees.length,
+    }
+  }, [filteredEmployees, currentPage, perPage])
+
+  const handleSort = (key: keyof Employee | 'employee_name' | 'email') => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        if (prev.direction === 'asc') {
+          return { key: key as keyof Employee, direction: 'desc' }
+        } else if (prev.direction === 'desc') {
+          return { key: null, direction: null }
+        }
+      }
+      return { key: key as keyof Employee, direction: 'asc' }
+    })
+    setCurrentPage(1)
+  }
 
   const canManageEmployees = user?.role === 'admin' || user?.role === 'business_owner'
 
@@ -119,62 +167,109 @@ export default function Employees() {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex gap-4 items-center">
-        <input
-          type="text"
-          placeholder={t('employees.search_placeholder')}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        <label className="flex items-center gap-2 cursor-pointer">
+      <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex-1 w-full sm:max-w-md">
           <input
-            type="checkbox"
-            checked={activeOnly}
-            onChange={(e) => setActiveOnly(e.target.checked)}
-            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+            type="text"
+            placeholder={t('employees.search_placeholder')}
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setCurrentPage(1)
+            }}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <span className="text-gray-700">{t('employees.active_only')}</span>
-        </label>
+        </div>
+        <div className="flex gap-4 items-center">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={activeOnly}
+              onChange={(e) => {
+                setActiveOnly(e.target.checked)
+                setCurrentPage(1)
+              }}
+              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+            />
+            <span className="text-gray-700">{t('employees.active_only')}</span>
+          </label>
+          {filteredEmployees.length > 0 && (
+            <ExportButton
+              data={filteredEmployees.map(emp => ({
+                employee: emp.employee_user?.full_name || t('employees.unknown'),
+                email: emp.employee_user?.email || '-',
+                phone: emp.employee_user?.phone || '-',
+                position: emp.position || '-',
+                commission: emp.commission_percentage ? `${emp.commission_percentage}%` : '-',
+                base_salary: emp.base_salary ? formatCurrency(emp.base_salary, currency) : '-',
+                status: emp.is_active ? t('employees.active') : t('employees.inactive'),
+                hired_at: emp.hired_at ? new Date(emp.hired_at).toLocaleDateString() : '-',
+              }))}
+              columns={[
+                { key: 'employee', label: t('employees.employee') },
+                { key: 'email', label: 'Email' },
+                { key: 'position', label: t('employees.position') },
+                { key: 'commission', label: t('employees.commission') },
+                { key: 'base_salary', label: t('employees.base_salary') },
+                { key: 'status', label: t('employees.status') },
+                { key: 'hired_at', label: t('employees.hired_at') },
+              ]}
+              filename={`employees-${new Date().toISOString().split('T')[0]}.csv`}
+            />
+          )}
+        </div>
       </div>
 
       {/* Employees List */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('employees.employee')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('employees.position')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('employees.commission')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('employees.base_salary')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('employees.status')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('employees.hired_at')}
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('employees.actions')}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredEmployees.length === 0 ? (
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                  {t('employees.no_employees')}
-                </td>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('employees.employee')}
+                </th>
+                <TableSortHeader
+                  columnKey="position"
+                  label={t('employees.position')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                />
+                <TableSortHeader
+                  columnKey="commission_percentage"
+                  label={t('employees.commission')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                />
+                <TableSortHeader
+                  columnKey="base_salary"
+                  label={t('employees.base_salary')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                />
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('employees.status')}
+                </th>
+                <TableSortHeader
+                  columnKey="hired_at"
+                  label={t('employees.hired_at')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                />
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t('employees.actions')}
+                </th>
               </tr>
-            ) : (
-              filteredEmployees.map((employee) => (
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                    {t('employees.no_employees')}
+                  </td>
+                </tr>
+              ) : (
+                paginatedData.map((employee) => (
                 <tr key={employee.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
@@ -259,6 +354,17 @@ export default function Employees() {
             )}
           </tbody>
         </table>
+        </div>
+        {totalPages > 1 && (
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            perPage={perPage}
+            onPageChange={setCurrentPage}
+            onPerPageChange={setPerPage}
+          />
+        )}
       </div>
 
       {/* Employee Form Modal */}
