@@ -70,6 +70,10 @@ export default function EmployeeSalary() {
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [selectedSalaryId, setSelectedSalaryId] = useState<number | null>(null)
+  const [showCalculateForm, setShowCalculateForm] = useState(false)
+  const [periodStart, setPeriodStart] = useState<string>('')
+  const [periodEnd, setPeriodEnd] = useState<string>('')
+  const [calculateNotes, setCalculateNotes] = useState<string>('')
 
   const canManageSalaries = user?.role === 'admin' || user?.role === 'business_owner'
 
@@ -109,6 +113,40 @@ export default function EmployeeSalary() {
     enabled: !!employeeId && canManageSalaries,
   })
 
+  // Загружаем детали конкретной зарплаты (для работы с adjustments/payments из истории)
+  const { data: selectedSalary, refetch: refetchSelectedSalary } = useQuery<SalaryCalculation>({
+    queryKey: ['employee-salary-detail', employeeId, selectedSalaryId],
+    queryFn: async () => {
+      if (!employeeId || !selectedSalaryId) throw new Error('IDs required')
+      const { data } = await api.get(`/employees/${employeeId}/salary/${selectedSalaryId}`)
+      return data
+    },
+    enabled: !!employeeId && !!selectedSalaryId && canManageSalaries,
+  })
+
+  // Мутация для расчета зарплаты
+  const calculateSalaryMutation = useMutation({
+    mutationFn: async (data: { period_start: string; period_end: string; notes?: string }) => {
+      const { data: result } = await api.post(
+        `/employees/${employeeId}/salary/calculate`,
+        {
+          period_start: new Date(data.period_start + 'T00:00:00').toISOString(),
+          period_end: new Date(data.period_end + 'T23:59:59').toISOString(),
+          notes: data.notes || undefined,
+        }
+      )
+      return result
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-salary-current', employeeId] })
+      queryClient.invalidateQueries({ queryKey: ['employee-salary-history', employeeId] })
+      setShowCalculateForm(false)
+      setPeriodStart('')
+      setPeriodEnd('')
+      setCalculateNotes('')
+    },
+  })
+
   const deleteAdjustmentMutation = useMutation({
     mutationFn: async (adjustmentId: number) => {
       await api.delete(`/employees/${employeeId}/salary/${selectedSalaryId || currentSalary?.id}/adjustments/${adjustmentId}`)
@@ -116,6 +154,9 @@ export default function EmployeeSalary() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['employee-salary-current', employeeId] })
       queryClient.invalidateQueries({ queryKey: ['employee-salary-history', employeeId] })
+      if (selectedSalaryId) {
+        refetchSelectedSalary()
+      }
     },
   })
 
@@ -182,7 +223,7 @@ export default function EmployeeSalary() {
 
   const remainingAmount = currentSalary
     ? currentSalary.total_with_adjustments - currentSalary.paid_amount
-    : 0
+    : (selectedSalary ? selectedSalary.total_with_adjustments - selectedSalary.paid_amount : 0)
 
   return (
     <div className="p-6 animate-fade-in">
@@ -355,33 +396,150 @@ export default function EmployeeSalary() {
               </div>
             </div>
           ) : (
-            <div className="bg-gray-50 rounded-lg p-6">
-              <p className="text-gray-600">{t('salary.noUnpaidSalary') || 'Нет невыплаченной зарплаты'}</p>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="text-center py-8">
+                <p className="text-gray-600 mb-4">{t('salary.noUnpaidSalary') || 'Нет невыплаченной зарплаты'}</p>
+                {!showCalculateForm ? (
+                  <button
+                    onClick={() => setShowCalculateForm(true)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                  >
+                    {t('salary.calculate_salary') || 'Рассчитать зарплату'}
+                  </button>
+                ) : (
+                  <div className="max-w-md mx-auto mt-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('salary.periodStart') || 'Начало периода'}
+                      </label>
+                      <input
+                        type="date"
+                        value={periodStart}
+                        onChange={(e) => setPeriodStart(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('salary.periodEnd') || 'Конец периода'}
+                      </label>
+                      <input
+                        type="date"
+                        value={periodEnd}
+                        onChange={(e) => setPeriodEnd(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {t('salary.notes') || 'Заметки'}
+                      </label>
+                      <textarea
+                        value={calculateNotes}
+                        onChange={(e) => setCalculateNotes(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        rows={3}
+                      />
+                    </div>
+                    <div className="flex gap-3 justify-end">
+                      <button
+                        onClick={() => {
+                          setShowCalculateForm(false)
+                          setPeriodStart('')
+                          setPeriodEnd('')
+                          setCalculateNotes('')
+                        }}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                      >
+                        {t('common.cancel')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!periodStart || !periodEnd) {
+                            alert(t('salary.fillPeriod') || 'Заполните период')
+                            return
+                          }
+                          calculateSalaryMutation.mutate({
+                            period_start: periodStart,
+                            period_end: periodEnd,
+                            notes: calculateNotes,
+                          })
+                        }}
+                        disabled={calculateSalaryMutation.isPending}
+                        className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
+                      >
+                        {calculateSalaryMutation.isPending
+                          ? t('common.loading') || 'Расчет...'
+                          : t('salary.calculate_salary') || 'Рассчитать'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </>
       )}
 
       {/* Adjustments Tab */}
-      {activeTab === 'adjustments' && currentSalary && (
+      {activeTab === 'adjustments' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">{t('salary.adjustments') || 'Начисления/удержания'}</h2>
-            <button
-              onClick={() => {
-                setSelectedSalaryId(currentSalary.id)
-                setShowAdjustmentModal(true)
-              }}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
-            >
-              <HiPlus className="w-4 h-4" />
-              {t('salary.addAdjustment') || 'Добавить'}
-            </button>
+            {/* Выбор зарплаты, если нет текущей */}
+            {!currentSalary && salaryHistory && salaryHistory.length > 0 && (
+              <div className="flex gap-2 items-center">
+                <select
+                  value={selectedSalaryId || ''}
+                  onChange={(e) => {
+                    const id = e.target.value ? parseInt(e.target.value, 10) : null
+                    setSelectedSalaryId(id)
+                  }}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <option value="">{t('salary.selectSalary') || 'Выберите зарплату из истории'}</option>
+                  {salaryHistory.map((sal) => (
+                    <option key={sal.id} value={sal.id}>
+                      {new Date(sal.period_start).toLocaleDateString()} - {new Date(sal.period_end).toLocaleDateString()} 
+                      {' '}({formatCurrency(sal.total_with_adjustments, currency)})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {(currentSalary || selectedSalary) && (
+              <button
+                onClick={() => {
+                  const salaryId = currentSalary?.id || selectedSalary?.id
+                  if (salaryId) {
+                    setSelectedSalaryId(salaryId)
+                    setShowAdjustmentModal(true)
+                  }
+                }}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
+              >
+                <HiPlus className="w-4 h-4" />
+                {t('salary.addAdjustment') || 'Добавить'}
+              </button>
+            )}
           </div>
 
-          {currentSalary.adjustments && currentSalary.adjustments.length > 0 ? (
+          {(() => {
+            const salaryToShow = currentSalary || selectedSalary
+            if (!salaryToShow) {
+              return (
+                <div className="text-center py-8 text-gray-500">
+                  {!currentSalary && (!salaryHistory || salaryHistory.length === 0)
+                    ? t('salary.noUnpaidSalary') || 'Нет зарплаты. Сначала рассчитайте зарплату на вкладке "Текущая"'
+                    : t('salary.selectSalary') || 'Выберите зарплату из истории для просмотра начислений'}
+                </div>
+              )
+            }
+            return salaryToShow.adjustments && salaryToShow.adjustments.length > 0 ? (
             <div className="space-y-3">
-              {currentSalary.adjustments.map((adj) => (
+              {salaryToShow.adjustments!.map((adj) => (
                 <div
                   key={adj.id}
                   className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
@@ -421,32 +579,73 @@ export default function EmployeeSalary() {
             <div className="text-center py-8 text-gray-500">
               {t('salary.noAdjustments') || 'Нет начислений/удержаний'}
             </div>
-          )}
+          )
+          })()}
         </div>
       )}
 
       {/* Payments Tab */}
-      {activeTab === 'payments' && currentSalary && (
+      {activeTab === 'payments' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">{t('salary.payments') || 'Выплаты'}</h2>
-            {remainingAmount > 0 && (
-              <button
-                onClick={() => {
-                  setSelectedSalaryId(currentSalary.id)
-                  setShowPaymentModal(true)
-                }}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
-              >
-                <HiPlus className="w-4 h-4" />
-                {t('salary.recordPayment') || 'Зарегистрировать выплату'}
-              </button>
+            {/* Выбор зарплаты, если нет текущей */}
+            {!currentSalary && salaryHistory && salaryHistory.length > 0 && (
+              <div className="flex gap-2 items-center">
+                <select
+                  value={selectedSalaryId || ''}
+                  onChange={(e) => {
+                    const id = e.target.value ? parseInt(e.target.value, 10) : null
+                    setSelectedSalaryId(id)
+                  }}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <option value="">{t('salary.selectSalary') || 'Выберите зарплату из истории'}</option>
+                  {salaryHistory.map((sal) => (
+                    <option key={sal.id} value={sal.id}>
+                      {new Date(sal.period_start).toLocaleDateString()} - {new Date(sal.period_end).toLocaleDateString()} 
+                      {' '}({formatCurrency(sal.total_with_adjustments, currency)})
+                    </option>
+                  ))}
+                </select>
+              </div>
             )}
+            {(() => {
+              const salaryToShow = currentSalary || selectedSalary
+              if (!salaryToShow) return null
+              const remAmount = salaryToShow.total_with_adjustments - salaryToShow.paid_amount
+              if (remAmount > 0) {
+                return (
+                  <button
+                    onClick={() => {
+                      setSelectedSalaryId(salaryToShow.id)
+                      setShowPaymentModal(true)
+                    }}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+                  >
+                    <HiPlus className="w-4 h-4" />
+                    {t('salary.recordPayment') || 'Зарегистрировать выплату'}
+                  </button>
+                )
+              }
+              return null
+            })()}
           </div>
 
-          {currentSalary.payments && currentSalary.payments.length > 0 ? (
+          {(() => {
+            const salaryToShow = currentSalary || selectedSalary
+            if (!salaryToShow) {
+              return (
+                <div className="text-center py-8 text-gray-500">
+                  {!currentSalary && (!salaryHistory || salaryHistory.length === 0)
+                    ? t('salary.noUnpaidSalary') || 'Нет зарплаты. Сначала рассчитайте зарплату на вкладке "Текущая"'
+                    : t('salary.selectSalary') || 'Выберите зарплату из истории для просмотра выплат'}
+                </div>
+              )
+            }
+            return salaryToShow.payments && salaryToShow.payments.length > 0 ? (
             <div className="space-y-3">
-              {currentSalary.payments.map((payment) => (
+              {salaryToShow.payments.map((payment) => (
                 <div
                   key={payment.id}
                   className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
@@ -476,7 +675,8 @@ export default function EmployeeSalary() {
             <div className="text-center py-8 text-gray-500">
               {t('salary.noPayments') || 'Нет выплат'}
             </div>
-          )}
+          )
+          })()}
         </div>
       )}
 
@@ -559,25 +759,33 @@ export default function EmployeeSalary() {
           isOpen={showAdjustmentModal}
           onClose={() => {
             setShowAdjustmentModal(false)
-            setSelectedSalaryId(null)
+            if (!currentSalary) {
+              setSelectedSalaryId(null)
+            }
           }}
           employeeId={employeeId!}
           salaryId={selectedSalaryId}
         />
       )}
 
-      {showPaymentModal && selectedSalaryId && (
-        <SalaryPaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => {
-            setShowPaymentModal(false)
-            setSelectedSalaryId(null)
-          }}
-          employeeId={employeeId!}
-          salaryId={selectedSalaryId}
-          remainingAmount={remainingAmount}
-        />
-      )}
+      {showPaymentModal && selectedSalaryId && (() => {
+        const salaryForPayment = currentSalary || selectedSalary
+        const remAmount = salaryForPayment ? salaryForPayment.total_with_adjustments - salaryForPayment.paid_amount : 0
+        return (
+          <SalaryPaymentModal
+            isOpen={showPaymentModal}
+            onClose={() => {
+              setShowPaymentModal(false)
+              if (!currentSalary) {
+                setSelectedSalaryId(null)
+              }
+            }}
+            employeeId={employeeId!}
+            salaryId={selectedSalaryId}
+            remainingAmount={remAmount}
+          />
+        )
+      })()}
     </div>
   )
 }

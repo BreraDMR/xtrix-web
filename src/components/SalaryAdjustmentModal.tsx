@@ -32,9 +32,9 @@ export default function SalaryAdjustmentModal({
       return result
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`employee-salary-current`, employeeId] })
-      queryClient.invalidateQueries({ queryKey: [`employee-salary-history`, employeeId] })
-      queryClient.invalidateQueries({ queryKey: [`employee-salary-${salaryId}`, employeeId] })
+      queryClient.invalidateQueries({ queryKey: ['employee-salary-current', employeeId] })
+      queryClient.invalidateQueries({ queryKey: ['employee-salary-history', employeeId] })
+      queryClient.invalidateQueries({ queryKey: ['employee-salary-detail', employeeId, salaryId] })
       handleClose()
     },
   })

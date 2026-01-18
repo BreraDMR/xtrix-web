@@ -433,6 +433,8 @@ export type TranslationKey =
   | 'salary.personalReport'
   | 'salary.deleteAdjustment'
   | 'salary.mySalary'
+  | 'salary.fillPeriod'
+  | 'salary.selectSalary'
   | 'common.saving'
   | 'common.view'
   // Nav
@@ -1185,6 +1187,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.personalReport': { en: 'Personal Report', ru: 'Персональный отчет', cz: 'Osobní report' },
   'salary.deleteAdjustment': { en: 'Delete Adjustment', ru: 'Удалить начисление', cz: 'Smazat příplatek' },
   'salary.mySalary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
+  'salary.fillPeriod': { en: 'Please fill in the period', ru: 'Заполните период', cz: 'Vyplňte období' },
+  'salary.selectSalary': { en: 'Select salary from history', ru: 'Выберите зарплату из истории', cz: 'Vyberte plat z historie' },
   
   // Nav
   'nav.business': { en: 'Business', ru: 'Бизнес', cz: 'Podnikání' },
