@@ -63,7 +63,6 @@ const EXPORT_FORMATS = [
 const THEMES = [
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
-  { value: 'system', label: 'System' },
 ]
 
 export default function Settings() {
@@ -164,16 +163,10 @@ export default function Settings() {
   const applyTheme = (theme: string) => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark')
-    } else if (theme === 'light') {
-      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'dark')
     } else {
-      // system
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      if (prefersDark) {
-        document.documentElement.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-      }
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
     }
   }
 
@@ -181,8 +174,20 @@ export default function Settings() {
   useEffect(() => {
     if (preferences?.theme) {
       applyTheme(preferences.theme)
+    } else {
+      // Если нет настроек, проверяем localStorage или применяем светлую тему по умолчанию
+      const savedTheme = localStorage.getItem('theme') || 'light'
+      applyTheme(savedTheme)
     }
   }, [preferences?.theme])
+
+  // Применяем тему при первой загрузке приложения (если нет preferences)
+  useEffect(() => {
+    if (!preferences) {
+      const savedTheme = localStorage.getItem('theme') || 'light'
+      applyTheme(savedTheme)
+    }
+  }, [preferences])
 
   if (isLoadingBusiness || isLoadingPreferences) {
     return (
@@ -267,7 +272,7 @@ export default function Settings() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.theme')}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.theme_description')}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {THEMES.map((theme) => (
                 <button
                   key={theme.value}

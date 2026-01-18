@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App.tsx'
@@ -12,6 +12,19 @@ const queryClient = new QueryClient({
     },
   },
 })
+
+// Применяем тему при первой загрузке
+const applyInitialTheme = () => {
+  const savedTheme = localStorage.getItem('theme') || 'light'
+  if (savedTheme === 'dark') {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+}
+
+// Применяем тему синхронно перед рендером
+applyInitialTheme()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

@@ -100,7 +100,7 @@ export default function Layout() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
@@ -111,21 +111,21 @@ export default function Layout() {
 
       {/* Left Sidebar */}
       <aside
-        className={`w-64 bg-white text-gray-900 flex flex-col fixed h-screen z-50 transition-transform duration-300 ease-in-out border-r border-gray-200 overflow-hidden ${
+        className={`w-64 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex flex-col fixed h-screen z-50 transition-transform duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700 overflow-hidden ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
         {/* Logo */}
-        <div className="flex-shrink-0 p-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
-            <div className="w-10 h-10 bg-purple-600 rounded flex items-center justify-center">
+            <div className="w-10 h-10 bg-purple-600 dark:bg-purple-500 rounded flex items-center justify-center">
               <span className="text-xl font-bold text-white">X</span>
             </div>
           </div>
           {/* Close button for mobile */}
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="lg:hidden text-gray-600 hover:text-gray-900 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="lg:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             aria-label="Close menu"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,7 +146,7 @@ export default function Layout() {
           {/* PRIMARY */}
           {primaryItems.length > 0 && (
             <>
-              <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider sticky top-0 bg-white z-10">{t('nav.primary')}</div>
+              <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider sticky top-0 bg-white dark:bg-gray-800 z-10">{t('nav.primary')}</div>
               {primaryItems.map((item) => {
                 const Icon = getIcon(item.path)
                 return (
@@ -156,8 +156,8 @@ export default function Layout() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 touch-manipulation ${
                       location.pathname === item.path
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600'
                     }`}
                   >
                     {Icon && <Icon className="w-5 h-5 mr-3 flex-shrink-0" />}
@@ -171,7 +171,7 @@ export default function Layout() {
           {/* MANAGE */}
           {manageItems.length > 0 && (
             <>
-              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider sticky top-0 bg-white z-10">{t('nav.manage')}</div>
+              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider sticky top-0 bg-white dark:bg-gray-800 z-10">{t('nav.manage')}</div>
               {manageItems.map((item) => {
                 const Icon = getIcon(item.path)
                 return (
@@ -181,8 +181,8 @@ export default function Layout() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 touch-manipulation ${
                       location.pathname === item.path
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600'
                     }`}
                   >
                     {Icon && <Icon className="w-5 h-5 mr-3 flex-shrink-0" />}
@@ -196,7 +196,7 @@ export default function Layout() {
           {/* SYSTEM */}
           {systemItems.length > 0 && (
             <>
-              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider sticky top-0 bg-white z-10">{t('nav.system')}</div>
+              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider sticky top-0 bg-white dark:bg-gray-800 z-10">{t('nav.system')}</div>
               {systemItems.map((item) => {
                 const Icon = getIcon(item.path)
                 return (
@@ -206,8 +206,8 @@ export default function Layout() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 touch-manipulation ${
                       location.pathname === item.path
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600'
                     }`}
                   >
                     {Icon && <Icon className="w-5 h-5 mr-3 flex-shrink-0" />}
@@ -224,13 +224,13 @@ export default function Layout() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 lg:ml-64 flex flex-col w-full lg:w-auto">
+      <div className="flex-1 lg:ml-64 flex flex-col w-full lg:w-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 h-16 flex items-center justify-between px-4 sm:px-6">
           {/* Mobile menu button */}
           <button
             onClick={toggleMobileMenu}
-            className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+            className="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -239,15 +239,15 @@ export default function Layout() {
 
           <div className="flex-1"></div>
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-gray-100 rounded-full">
-              <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+            <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">
+              <div className="w-8 h-8 bg-primary-600 dark:bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                 {user?.full_name?.charAt(0).toUpperCase() || 'U'}
               </div>
-              <span className="hidden sm:inline text-sm font-medium text-gray-700">{user?.full_name || 'User'}</span>
+              <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-200">{user?.full_name || 'User'}</span>
             </div>
             <button
               onClick={handleLogout}
-              className="px-2 sm:px-4 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all font-medium"
+              className="px-2 sm:px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all font-medium"
             >
               {t('nav.logout')}
             </button>
