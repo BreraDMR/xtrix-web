@@ -59,6 +59,34 @@ export type TranslationKey =
   | 'export.allData'
   | 'export.filteredData'
   | 'export.selectedRows'
+  // Import
+  | 'import.title'
+  | 'import.selectFile'
+  | 'import.fileFormat'
+  | 'import.preview'
+  | 'import.selectOtherFile'
+  | 'import.totalRows'
+  | 'import.validRows'
+  | 'import.errors'
+  | 'import.validationErrors'
+  | 'import.status'
+  | 'import.error'
+  | 'import.ready'
+  | 'import.result'
+  | 'import.successCount'
+  | 'import.skippedCount'
+  | 'import.import'
+  | 'import.importing'
+  | 'import.nameRequired'
+  | 'import.invalidEmail'
+  | 'import.invalidPhone'
+  | 'import.duplicateInFile'
+  | 'import.duplicateExists'
+  | 'import.emptyFile'
+  | 'import.nameColumnNotFound'
+  | 'import.parseError'
+  | 'import.importWithErrors'
+  | 'import.importError'
   // Specialist types
   | 'specialistType.massage'
   | 'specialistType.cosmetologist'
@@ -694,6 +722,35 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'export.allData': { en: 'All Data', ru: 'Все данные', cz: 'Všechna data' },
   'export.filteredData': { en: 'Filtered Data', ru: 'Отфильтрованные данные', cz: 'Filtrovaná data' },
   'export.selectedRows': { en: 'Selected Rows', ru: 'Выбранные строки', cz: 'Vybrané řádky' },
+  
+  // Import
+  'import.title': { en: 'Import Clients from Excel', ru: 'Импорт клиентов из Excel', cz: 'Import klientů z Excelu' },
+  'import.selectFile': { en: 'Select Excel file (.xlsx, .xls)', ru: 'Выберите Excel файл (.xlsx, .xls)', cz: 'Vyberte Excel soubor (.xlsx, .xls)' },
+  'import.fileFormat': { en: 'File must contain columns: Name (required), Phone, Email', ru: 'Файл должен содержать колонки: Имя (обязательно), Телефон, Email', cz: 'Soubor musí obsahovat sloupce: Jméno (povinné), Telefon, Email' },
+  'import.preview': { en: 'Preview', ru: 'Предварительный просмотр', cz: 'Náhled' },
+  'import.selectOtherFile': { en: 'Select another file', ru: 'Выбрать другой файл', cz: 'Vybrat jiný soubor' },
+  'import.totalRows': { en: 'Total rows', ru: 'Всего строк', cz: 'Celkem řádků' },
+  'import.validRows': { en: 'Valid rows', ru: 'Корректных', cz: 'Platné' },
+  'import.errors': { en: 'Errors', ru: 'Ошибок', cz: 'Chyby' },
+  'import.validationErrors': { en: 'Validation errors:', ru: 'Ошибки валидации:', cz: 'Chyby validace:' },
+  'import.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'import.error': { en: 'Error', ru: 'Ошибка', cz: 'Chyba' },
+  'import.ready': { en: 'Ready', ru: 'Готов', cz: 'Připraveno' },
+  'import.result': { en: 'Import result:', ru: 'Результат импорта:', cz: 'Výsledek importu:' },
+  'import.successCount': { en: 'Successfully added', ru: 'Успешно добавлено', cz: 'Úspěšně přidáno' },
+  'import.skippedCount': { en: 'Skipped', ru: 'Пропущено', cz: 'Přeskočeno' },
+  'import.import': { en: 'Import', ru: 'Импортировать', cz: 'Importovat' },
+  'import.importing': { en: 'Importing...', ru: 'Импорт...', cz: 'Importování...' },
+  'import.nameRequired': { en: 'Name is required', ru: 'Имя обязательно', cz: 'Jméno je povinné' },
+  'import.invalidEmail': { en: 'Invalid email format', ru: 'Неверный формат email', cz: 'Neplatný formát emailu' },
+  'import.invalidPhone': { en: 'Invalid phone format', ru: 'Неверный формат телефона', cz: 'Neplatný formát telefonu' },
+  'import.duplicateInFile': { en: 'Duplicate in file', ru: 'Дубликат в файле', cz: 'Duplicitní v souboru' },
+  'import.duplicateExists': { en: 'Client with this phone/email already exists', ru: 'Клиент с таким телефоном/email уже существует', cz: 'Klient s tímto telefonem/emailem již existuje' },
+  'import.emptyFile': { en: 'File is empty', ru: 'Файл пустой', cz: 'Soubor je prázdný' },
+  'import.nameColumnNotFound': { en: 'Name column not found', ru: 'Колонка с именем не найдена', cz: 'Sloupec s názvem nenalezen' },
+  'import.parseError': { en: 'Error reading file', ru: 'Ошибка при чтении файла', cz: 'Chyba při čtení souboru' },
+  'import.importWithErrors': { en: 'There are validation errors. Continue with import?', ru: 'Есть ошибки валидации. Продолжить импорт?', cz: 'Existují chyby validace. Pokračovat s importem?' },
+  'import.importError': { en: 'Import error', ru: 'Ошибка импорта', cz: 'Chyba importu' },
   
   // Specialist types - Beauty
   'specialistType.massage': { en: 'Massage Therapist', ru: 'Массажист', cz: 'Masér' },

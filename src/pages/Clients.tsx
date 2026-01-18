@@ -8,7 +8,8 @@ import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
 import ExportButton from '../components/ExportButton'
 import ClientPersonalReportModal from '../components/ClientPersonalReportModal'
-import { HiPrinter } from 'react-icons/hi'
+import ImportClientsModal from '../components/ImportClientsModal'
+import { HiPrinter, HiUpload } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -82,6 +83,7 @@ export default function Clients() {
   const [currentPage, setCurrentPage] = useState(1)
   const [perPage, setPerPage] = useState(20)
   const [clientReportId, setClientReportId] = useState<number | null>(null)
+  const [showImportModal, setShowImportModal] = useState(false)
   const queryClient = useQueryClient()
 
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -167,15 +169,24 @@ export default function Clients() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">{t('clients.title')}</h1>
         {!showForm && (
-          <button
-            onClick={() => {
-              setEditingId(undefined)
-              setShowForm(true)
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
-          >
-            {t('clients.addClient')}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center gap-2"
+            >
+              <HiUpload className="w-4 h-4" />
+              {t('import.title') || 'Импорт'}
+            </button>
+            <button
+              onClick={() => {
+                setEditingId(undefined)
+                setShowForm(true)
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            >
+              {t('clients.addClient')}
+            </button>
+          </div>
         )}
       </div>
 
@@ -245,6 +256,14 @@ export default function Clients() {
           isOpen={!!clientReportId}
           onClose={() => setClientReportId(null)}
           clientId={clientReportId}
+        />
+      )}
+
+      {/* Import Clients Modal */}
+      {showImportModal && (
+        <ImportClientsModal
+          isOpen={showImportModal}
+          onClose={() => setShowImportModal(false)}
         />
       )}
 

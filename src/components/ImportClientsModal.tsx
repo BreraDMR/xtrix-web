@@ -1,0 +1,555 @@
+import { useState, useRef } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { HiX, HiUpload, HiCheckCircle, HiXCircle, HiExclamationCircle } from 'react-icons/hi'
+import { useTranslation } from '../hooks/useTranslation'
+import api from '../api/client'
+import * as XLSX from 'xlsx'
+
+interface ImportClientsModalProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+interface ParsedClient {
+  full_name: string
+  contact_phone?: string
+  contact_email?: string
+  row: number
+}
+
+interface ValidationError {
+  row: number
+  field: string
+  message: string
+}
+
+interface ImportResult {
+  success: number
+  skipped: number
+  errors: Array<{ row: number; message: string }>
+}
+
+export default function ImportClientsModal({ isOpen, onClose }: ImportClientsModalProps) {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [file, setFile] = useState<File | null>(null)
+  const [parsedData, setParsedData] = useState<ParsedClient[]>([])
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
+  const [isImporting, setIsImporting] = useState(false)
+  const [importResult, setImportResult] = useState<ImportResult | null>(null)
+  const [existingClients, setExistingClients] = useState<Set<string>>(new Set())
+
+  // Fetch existing clients to check for duplicates
+  const loadExistingClients = async () => {
+    try {
+      const { data } = await api.get('/clients/')
+      const clients = Array.isArray(data) ? data : data?.items || []
+      const phoneEmailSet = new Set<string>()
+      clients.forEach((client: any) => {
+        if (client.contact_phone) {
+          phoneEmailSet.add(`phone:${client.contact_phone}`)
+        }
+        if (client.contact_email) {
+          phoneEmailSet.add(`email:${client.contact_email}`)
+        }
+      })
+      setExistingClients(phoneEmailSet)
+    } catch (error) {
+      console.error('Error loading existing clients:', error)
+    }
+  }
+
+  const validateEmail = (email: string): boolean => {
+    if (!email) return true // Email не обязателен
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email.trim())
+  }
+
+  const validatePhone = (phone: string): boolean => {
+    if (!phone) return true // Телефон не обязателен
+    const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+    return phoneRegex.test(phone.trim())
+  }
+
+  const normalizePhone = (phone: string): string => {
+    return phone.trim().replace(/[\s\-\(\)]/g, '')
+  }
+
+  const normalizeEmail = (email: string): string => {
+    return email.trim().toLowerCase()
+  }
+
+  const validateData = (data: ParsedClient[]): ValidationError[] => {
+    const errors: ValidationError[] = []
+    const seenPhones = new Map<number, string>()
+    const seenEmails = new Map<number, string>()
+
+    data.forEach((client, index) => {
+      const row = client.row
+
+      // Проверка обязательного поля - имя
+      if (!client.full_name || !client.full_name.trim()) {
+        errors.push({
+          row,
+          field: 'full_name',
+          message: t('import.nameRequired') || 'Имя обязательно',
+        })
+      }
+
+      // Проверка формата email
+      if (client.contact_email && !validateEmail(client.contact_email)) {
+        errors.push({
+          row,
+          field: 'contact_email',
+          message: t('import.invalidEmail') || 'Неверный формат email',
+        })
+      }
+
+      // Проверка формата телефона
+      if (client.contact_phone && !validatePhone(client.contact_phone)) {
+        errors.push({
+          row,
+          field: 'contact_phone',
+          message: t('import.invalidPhone') || 'Неверный формат телефона',
+        })
+      }
+
+      // Проверка дубликатов в файле
+      if (client.contact_phone) {
+        const normalized = normalizePhone(client.contact_phone)
+        const existing = seenPhones.get(index)
+        if (existing) {
+          errors.push({
+            row,
+            field: 'contact_phone',
+            message: t('import.duplicateInFile') || 'Дубликат телефона в файле',
+          })
+        } else {
+          seenPhones.set(index, normalized)
+        }
+      }
+
+      if (client.contact_email) {
+        const normalized = normalizeEmail(client.contact_email)
+        const existing = seenEmails.get(index)
+        if (existing) {
+          errors.push({
+            row,
+            field: 'contact_email',
+            message: t('import.duplicateInFile') || 'Дубликат email в файле',
+          })
+        } else {
+          seenEmails.set(index, normalized)
+        }
+      }
+
+      // Проверка дубликатов с существующими клиентами
+      if (client.contact_phone) {
+        const normalized = normalizePhone(client.contact_phone)
+        if (existingClients.has(`phone:${normalized}`)) {
+          errors.push({
+            row,
+            field: 'contact_phone',
+            message: t('import.duplicateExists') || 'Клиент с таким телефоном уже существует',
+          })
+        }
+      }
+
+      if (client.contact_email) {
+        const normalized = normalizeEmail(client.contact_email)
+        if (existingClients.has(`email:${normalized}`)) {
+          errors.push({
+            row,
+            field: 'contact_email',
+            message: t('import.duplicateExists') || 'Клиент с таким email уже существует',
+          })
+        }
+      }
+    })
+
+    return errors
+  }
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0]
+    if (!selectedFile) return
+
+    setFile(selectedFile)
+    setParsedData([])
+    setValidationErrors([])
+    setImportResult(null)
+
+    try {
+      const arrayBuffer = await selectedFile.arrayBuffer()
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' })
+      const firstSheetName = workbook.SheetNames[0]
+      const worksheet = workbook.Sheets[firstSheetName]
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as any[][]
+
+      if (jsonData.length === 0) {
+        alert(t('import.emptyFile') || 'Файл пустой')
+        return
+      }
+
+      // Определяем заголовки (первая строка)
+      const headers = jsonData[0].map((h: any) => String(h).toLowerCase().trim())
+      const nameColIndex = headers.findIndex((h: string) =>
+        ['имя', 'name', 'фио', 'full name', 'full_name'].includes(h)
+      )
+      const phoneColIndex = headers.findIndex((h: string) =>
+        ['телефон', 'phone', 'тел', 'contact_phone', 'contact phone'].includes(h)
+      )
+      const emailColIndex = headers.findIndex((h: string) =>
+        ['email', 'e-mail', 'почта', 'contact_email', 'contact email'].includes(h)
+      )
+
+      if (nameColIndex === -1) {
+        alert(t('import.nameColumnNotFound') || 'Колонка с именем не найдена')
+        return
+      }
+
+      // Парсим данные (начиная со второй строки)
+      const parsed: ParsedClient[] = []
+      for (let i = 1; i < jsonData.length; i++) {
+        const row = jsonData[i]
+        const fullName = row[nameColIndex] ? String(row[nameColIndex]).trim() : ''
+        const phone = row[phoneColIndex] ? String(row[phoneColIndex]).trim() : ''
+        const email = row[emailColIndex] ? String(row[emailColIndex]).trim() : ''
+
+        // Пропускаем пустые строки
+        if (!fullName && !phone && !email) continue
+
+        parsed.push({
+          full_name: fullName,
+          contact_phone: phone || undefined,
+          contact_email: email || undefined,
+          row: i + 1, // Номер строки в Excel (1-based, + заголовок)
+        })
+      }
+
+      setParsedData(parsed)
+
+      // Загружаем существующих клиентов и валидируем
+      await loadExistingClients()
+      const errors = validateData(parsed)
+      setValidationErrors(errors)
+    } catch (error) {
+      console.error('Error parsing file:', error)
+      alert(t('import.parseError') || 'Ошибка при чтении файла')
+    }
+  }
+
+  const handleImport = async () => {
+    if (parsedData.length === 0) return
+    if (validationErrors.length > 0) {
+      if (!confirm(t('import.importWithErrors') || 'Есть ошибки валидации. Продолжить импорт?')) {
+        return
+      }
+    }
+
+    setIsImporting(true)
+    setImportResult(null)
+
+    const result: ImportResult = {
+      success: 0,
+      skipped: 0,
+      errors: [],
+    }
+
+    // Исключаем строки с ошибками валидации
+    const validRows = new Set(
+      parsedData
+        .filter((_, index) => {
+          return !validationErrors.some((err) => err.row === parsedData[index].row)
+        })
+        .map((_, index) => parsedData[index].row)
+    )
+
+    for (const client of parsedData) {
+      // Пропускаем строки с ошибками
+      if (!validRows.has(client.row)) {
+        result.skipped++
+        continue
+      }
+
+      try {
+        await api.post('/clients/', {
+          full_name: client.full_name.trim(),
+          contact_phone: client.contact_phone?.trim() || undefined,
+          contact_email: client.contact_email?.trim() || undefined,
+        })
+        result.success++
+      } catch (error: any) {
+        result.skipped++
+        result.errors.push({
+          row: client.row,
+          message:
+            error.response?.data?.detail || error.message || t('import.importError') || 'Ошибка импорта',
+        })
+      }
+    }
+
+    setImportResult(result)
+    setIsImporting(false)
+
+    // Обновляем список клиентов
+    queryClient.invalidateQueries({ queryKey: ['clients'] })
+    queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
+  }
+
+  const handleReset = () => {
+    setFile(null)
+    setParsedData([])
+    setValidationErrors([])
+    setImportResult(null)
+    setExistingClients(new Set())
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  if (!isOpen) return null
+
+  const validRows = parsedData.filter(
+    (_, index) => !validationErrors.some((err) => err.row === parsedData[index].row)
+  ).length
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {t('import.title') || 'Импорт клиентов из Excel'}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            disabled={isImporting}
+          >
+            <HiX className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* File Upload */}
+          {!file && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t('import.selectFile') || 'Выберите Excel файл (.xlsx, .xls)'}
+              </label>
+              <div className="flex items-center gap-4">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".xlsx,.xls"
+                  onChange={handleFileSelect}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                />
+              </div>
+              <p className="mt-2 text-sm text-gray-500">
+                {t('import.fileFormat') ||
+                  'Файл должен содержать колонки: Имя (обязательно), Телефон, Email'}
+              </p>
+            </div>
+          )}
+
+          {/* Preview */}
+          {file && parsedData.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {t('import.preview') || 'Предварительный просмотр'}
+                </h3>
+                <button
+                  onClick={handleReset}
+                  className="text-sm text-gray-600 hover:text-gray-800"
+                  disabled={isImporting}
+                >
+                  {t('import.selectOtherFile') || 'Выбрать другой файл'}
+                </button>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <div className="text-sm text-blue-700">{t('import.totalRows') || 'Всего строк'}</div>
+                  <div className="text-2xl font-bold text-blue-900">{parsedData.length}</div>
+                </div>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <div className="text-sm text-green-700">
+                    {t('import.validRows') || 'Корректных'}
+                  </div>
+                  <div className="text-2xl font-bold text-green-900">{validRows}</div>
+                </div>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <div className="text-sm text-red-700">
+                    {t('import.errors') || 'Ошибок'}
+                  </div>
+                  <div className="text-2xl font-bold text-red-900">{validationErrors.length}</div>
+                </div>
+              </div>
+
+              {/* Validation Errors */}
+              {validationErrors.length > 0 && (
+                <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <h4 className="font-medium text-red-900 mb-2">
+                    {t('import.validationErrors') || 'Ошибки валидации:'}
+                  </h4>
+                  <div className="max-h-40 overflow-y-auto space-y-1">
+                    {validationErrors.slice(0, 10).map((error, idx) => (
+                      <div key={idx} className="text-sm text-red-700">
+                        Строка {error.row}: {error.message}
+                      </div>
+                    ))}
+                    {validationErrors.length > 10 && (
+                      <div className="text-sm text-red-600">
+                        ... и еще {validationErrors.length - 10} ошибок
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Data Table */}
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <div className="overflow-x-auto max-h-96">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50 sticky top-0">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          #
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {t('clients.name')}
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {t('clients.phone')}
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {t('clients.email')}
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {t('import.status') || 'Статус'}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {parsedData.slice(0, 20).map((client, idx) => {
+                        const hasError = validationErrors.some((err) => err.row === client.row)
+                        return (
+                          <tr
+                            key={idx}
+                            className={hasError ? 'bg-red-50' : 'bg-green-50'}
+                          >
+                            <td className="px-4 py-2 text-sm text-gray-900">{client.row}</td>
+                            <td className="px-4 py-2 text-sm text-gray-900">{client.full_name}</td>
+                            <td className="px-4 py-2 text-sm text-gray-500">
+                              {client.contact_phone || '-'}
+                            </td>
+                            <td className="px-4 py-2 text-sm text-gray-500">
+                              {client.contact_email || '-'}
+                            </td>
+                            <td className="px-4 py-2 text-sm">
+                              {hasError ? (
+                                <span className="text-red-600 flex items-center gap-1">
+                                  <HiXCircle className="w-4 h-4" />
+                                  {t('import.error') || 'Ошибка'}
+                                </span>
+                              ) : (
+                                <span className="text-green-600 flex items-center gap-1">
+                                  <HiCheckCircle className="w-4 h-4" />
+                                  {t('import.ready') || 'Готов'}
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      })}
+                      {parsedData.length > 20 && (
+                        <tr>
+                          <td colSpan={5} className="px-4 py-2 text-sm text-gray-500 text-center">
+                            ... и еще {parsedData.length - 20} строк
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Import Result */}
+          {importResult && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="font-medium text-blue-900 mb-3">
+                {t('import.result') || 'Результат импорта:'}
+              </h3>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-green-700">
+                  <HiCheckCircle className="w-5 h-5" />
+                  <span>
+                    {t('import.successCount') || 'Успешно добавлено'}: {importResult.success}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-yellow-700">
+                  <HiExclamationCircle className="w-5 h-5" />
+                  <span>
+                    {t('import.skippedCount') || 'Пропущено'}: {importResult.skipped}
+                  </span>
+                </div>
+                {importResult.errors.length > 0 && (
+                  <div className="mt-3">
+                    <div className="font-medium text-red-700 mb-2">
+                      {t('import.errors') || 'Ошибки'}:
+                    </div>
+                    <div className="max-h-32 overflow-y-auto space-y-1">
+                      {importResult.errors.slice(0, 10).map((error, idx) => (
+                        <div key={idx} className="text-sm text-red-600">
+                          Строка {error.row}: {error.message}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+          <button
+            onClick={onClose}
+            disabled={isImporting}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {t('common.cancel')}
+          </button>
+          {parsedData.length > 0 && !importResult && (
+            <button
+              onClick={handleImport}
+              disabled={isImporting || validRows === 0}
+              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            >
+              {isImporting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  {t('import.importing') || 'Импорт...'}
+                </>
+              ) : (
+                <>
+                  <HiUpload className="w-4 h-4" />
+                  {t('import.import') || 'Импортировать'} ({validRows})
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
