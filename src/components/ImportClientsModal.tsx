@@ -213,11 +213,11 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
       const parsed: ParsedClient[] = []
       for (let i = 1; i < jsonData.length; i++) {
         const row = jsonData[i]
-        const fullName = row[nameColIndex] ? String(row[nameColIndex]).trim() : ''
-        const phone = row[phoneColIndex] ? String(row[phoneColIndex]).trim() : ''
-        const email = row[emailColIndex] ? String(row[emailColIndex]).trim() : ''
+        const fullName = nameColIndex >= 0 && row[nameColIndex] ? String(row[nameColIndex]).trim() : ''
+        const phone = phoneColIndex >= 0 && row[phoneColIndex] ? String(row[phoneColIndex]).trim() : ''
+        const email = emailColIndex >= 0 && row[emailColIndex] ? String(row[emailColIndex]).trim() : ''
 
-        // Пропускаем пустые строки
+        // Пропускаем пустые строки (если нет даже имени)
         if (!fullName && !phone && !email) continue
 
         parsed.push({
@@ -351,7 +351,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
               </div>
               <p className="mt-2 text-sm text-gray-500">
                 {t('import.fileFormat') ||
-                  'Файл должен содержать колонки: Имя (обязательно), Телефон, Email'}
+                  'Файл должен содержать колонку: Имя (обязательно). Колонки Телефон и Email опциональны.'}
               </p>
             </div>
           )}
