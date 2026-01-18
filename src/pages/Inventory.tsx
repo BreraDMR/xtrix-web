@@ -6,6 +6,7 @@ import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
+import ExportButton from '../components/ExportButton'
 
 interface Product {
   id: number
@@ -184,23 +185,49 @@ export default function Inventory() {
       )}
 
       {/* Фильтры и поиск */}
-      <div className="flex gap-4 items-center">
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
         <input
           type="text"
           placeholder={t('inventory.search_placeholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={lowStockOnly}
-            onChange={(e) => setLowStockOnly(e.target.checked)}
-            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-          />
-          <span>{t('inventory.low_stock_only')}</span>
-        </label>
+        <div className="flex gap-4 items-center">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={lowStockOnly}
+              onChange={(e) => setLowStockOnly(e.target.checked)}
+              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+            />
+            <span>{t('inventory.low_stock_only')}</span>
+          </label>
+          {products.length > 0 && (
+            <ExportButton
+              data={products}
+              columns={[
+                { key: 'name', label: t('inventory.name') },
+                { key: 'description', label: 'Description' },
+                { key: 'category', label: t('inventory.category') },
+                { key: 'quantity', label: t('inventory.quantity'), format: (val, row) => `${val} ${row?.unit || ''}` },
+                { key: 'min_quantity', label: t('inventory.min_quantity'), format: (val, row) => `${val} ${row?.unit || ''}` },
+                { key: 'price_per_unit', label: t('inventory.price'), format: (val) => val ? formatCurrency(val, currency) : '-' },
+                { key: 'barcode', label: 'Barcode' },
+                { key: 'supplier', label: 'Supplier' },
+                { key: 'is_active', label: 'Status', format: (val) => val ? 'Active' : 'Inactive' },
+              ]}
+              filename={`inventory-${new Date().toISOString().split('T')[0]}`}
+              title={t('export.inventoryReport')}
+              reportTypes={[
+                t('export.stockRemaining'),
+                t('export.movements'),
+                t('export.writeoffs'),
+              ]}
+              dataType={(searchTerm || lowStockOnly) ? 'filtered' : 'all'}
+            />
+          )}
+        </div>
       </div>
 
       {/* Таблица товаров */}

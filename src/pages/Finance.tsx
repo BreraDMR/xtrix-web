@@ -7,6 +7,7 @@ import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
+import ExportButton from '../components/ExportButton'
 
 interface Expense {
   id: number
@@ -184,12 +185,48 @@ export default function Finance() {
       {/* Виджет платежей */}
       {!isLoadingPayments && paymentStats && (
         <div className="mb-6">
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100" id="payment-chart">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">{t('finance.payments_volume')}</h3>
-              <button className="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600">
-                ×
-              </button>
+              <ExportButton
+                data={[
+                  {
+                    'Payment Method': 'Card',
+                    'Total': formatCurrency(paymentStats.card_payments?.total || 0, currency),
+                    'Count': paymentStats.card_payments?.count || 0,
+                    'Percentage': `${Math.round(paymentStats.card_payments?.percentage || 0)}%`,
+                  },
+                  {
+                    'Payment Method': 'Cash',
+                    'Total': formatCurrency(paymentStats.cash_payments?.total || 0, currency),
+                    'Count': paymentStats.cash_payments?.count || 0,
+                    'Percentage': `${Math.round(paymentStats.cash_payments?.percentage || 0)}%`,
+                  },
+                  {
+                    'Payment Method': 'Other',
+                    'Total': formatCurrency(paymentStats.other_payments?.total || 0, currency),
+                    'Count': paymentStats.other_payments?.count || 0,
+                    'Percentage': `${Math.round(paymentStats.other_payments?.percentage || 0)}%`,
+                  },
+                  {
+                    'Payment Method': 'Total',
+                    'Total': formatCurrency(paymentStats.total_payments || 0, currency),
+                    'Count': paymentStats.total_count || 0,
+                    'Percentage': '100%',
+                  },
+                ]}
+                columns={[
+                  { key: 'Payment Method', label: 'Payment Method' },
+                  { key: 'Total', label: 'Total' },
+                  { key: 'Count', label: 'Count' },
+                  { key: 'Percentage', label: 'Percentage' },
+                ]}
+                filename={`payments-statistics-${new Date().toISOString().split('T')[0]}`}
+                title={t('export.payments')}
+                reportTypes={[t('export.payments')]}
+                includeCharts={true}
+                chartSelectors={['#payment-chart']}
+              />
             </div>
             <div className="flex items-center gap-8">
               <div className="flex-shrink-0">
@@ -329,8 +366,25 @@ export default function Finance() {
 
       {/* Список расходов */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-900">{t('finance.expenses_list')}</h2>
+          {expenses.length > 0 && (
+            <ExportButton
+              data={expenses}
+              columns={[
+                { key: 'expense_date', label: t('finance.date'), format: (val) => new Date(val).toLocaleDateString() },
+                { key: 'category', label: t('finance.category'), format: (val) => val?.name || '-' },
+                { key: 'description', label: t('finance.description') },
+                { key: 'amount', label: t('finance.amount'), format: (val, row) => `${val.toFixed(2)} ${row?.currency || ''}` },
+                { key: 'payment_method', label: t('finance.payment_method') },
+              ]}
+              filename={`expenses-${new Date().toISOString().split('T')[0]}`}
+              title={t('export.expensesReport')}
+              reportTypes={[t('export.expensesReport')]}
+              dataType={(dateFrom || dateTo || selectedCategory) ? 'filtered' : 'all'}
+              includeCharts={false}
+            />
+          )}
         </div>
         {isLoadingExpenses ? (
           <div className="p-8 text-center">
