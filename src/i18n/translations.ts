@@ -432,6 +432,9 @@ export type TranslationKey =
   | 'salary.mySalaryReport'
   | 'salary.personalReport'
   | 'salary.deleteAdjustment'
+  | 'salary.mySalary'
+  | 'common.saving'
+  | 'common.view'
   // Nav
   | 'nav.business'
   | 'nav.employees'
@@ -741,6 +744,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.export': { en: 'Export', ru: 'Экспорт', cz: 'Export' },
   'common.noData': { en: 'No data available', ru: 'Нет данных', cz: 'Žádná data' },
   'common.print': { en: 'Print', ru: 'Печать', cz: 'Tisk' },
+  'common.saving': { en: 'Saving...', ru: 'Сохранение...', cz: 'Ukládání...' },
+  'common.view': { en: 'View', ru: 'Просмотр', cz: 'Zobrazit' },
   
   // Export
   'export.title': { en: 'Export Data', ru: 'Экспорт данных', cz: 'Export dat' },
@@ -1128,6 +1133,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.status.failed': { en: 'Failed', ru: 'Не удалось', cz: 'Selhalo' },
   'salary.addAdjustment': { en: 'Add Adjustment', ru: 'Добавить начисление/удержание', cz: 'Přidat příplatek/odpočet' },
   'salary.adjustmentType': { en: 'Type', ru: 'Тип', cz: 'Typ' },
+  'salary.amount': { en: 'Amount', ru: 'Сумма', cz: 'Částka' },
+  'salary.description': { en: 'Description', ru: 'Описание', cz: 'Popis' },
   'salary.bonus': { en: 'Bonus', ru: 'Бонус', cz: 'Bonus' },
   'salary.penalty': { en: 'Penalty', ru: 'Штраф', cz: 'Pokuta' },
   'salary.overtime': { en: 'Overtime', ru: 'Переработка', cz: 'Přesčasy' },
@@ -1137,6 +1144,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.willBeDeducted': { en: 'Will be deducted from salary', ru: 'Будет вычтено из зарплаты', cz: 'Bude odečteno z platu' },
   'salary.adjustmentDescription': { en: 'Adjustment description', ru: 'Описание начисления/удержания', cz: 'Popis příplatku/odpočtu' },
   'salary.invalidAmount': { en: 'Invalid amount', ru: 'Неверная сумма', cz: 'Neplatná částka' },
+  'salary.pending': { en: 'Pending', ru: 'Ожидается', cz: 'Čeká se' },
+  'salary.failed': { en: 'Failed', ru: 'Не удалось', cz: 'Selhalo' },
   'salary.payments': { en: 'Payments', ru: 'Выплаты', cz: 'Platby' },
   'salary.recordPayment': { en: 'Record Payment', ru: 'Зарегистрировать выплату', cz: 'Zaznamenat platbu' },
   'salary.paymentDate': { en: 'Payment Date', ru: 'Дата выплаты', cz: 'Datum platby' },
@@ -1175,6 +1184,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.mySalaryReport': { en: 'My Salary Report', ru: 'Отчет по зарплате', cz: 'Report o platu' },
   'salary.personalReport': { en: 'Personal Report', ru: 'Персональный отчет', cz: 'Osobní report' },
   'salary.deleteAdjustment': { en: 'Delete Adjustment', ru: 'Удалить начисление', cz: 'Smazat příplatek' },
+  'salary.mySalary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
   
   // Nav
   'nav.business': { en: 'Business', ru: 'Бизнес', cz: 'Podnikání' },

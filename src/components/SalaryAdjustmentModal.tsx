@@ -162,7 +162,7 @@ export default function SalaryAdjustmentModal({
               }`}
             >
               {createMutation.isPending
-                ? t('common.saving') || 'Сохранение...'
+                ? (t('common.saving' as any) || 'Сохранение...')
                 : t('common.save')}
             </button>
           </div>

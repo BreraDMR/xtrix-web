@@ -148,9 +148,9 @@ export default function MySalary() {
   return (
     <div className="p-6 animate-fade-in">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">
-          {t('salary.mySalary') || 'Моя зарплата'}
-        </h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {t('salary.my_salary') || 'Моя зарплата'}
+          </h1>
         <p className="text-gray-600 mt-1">
           {t('salary.viewSalaryDetails') || 'Просмотр начислений и выплат'}
         </p>
@@ -159,19 +159,22 @@ export default function MySalary() {
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
-          {['current', 'details', 'history', 'export'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`${
-                activeTab === tab
-                  ? 'border-purple-500 text-purple-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-            >
-              {t(`salary.tabs.${tab}`) || tab}
-            </button>
-          ))}
+          {['current', 'details', 'history', 'export'].map((tab) => {
+            const tabKey = `salary.tabs.${tab}` as any;
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab as any)}
+                className={`${
+                  activeTab === tab
+                    ? 'border-purple-500 text-purple-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                {t(tabKey as any) || tab}
+              </button>
+            );
+          })}
         </nav>
       </div>
 
