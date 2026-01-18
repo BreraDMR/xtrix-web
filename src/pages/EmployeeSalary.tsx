@@ -733,7 +733,7 @@ export default function EmployeeSalary() {
                         <button
                           onClick={() => {
                             setSelectedSalaryId(salary.id)
-                            navigate(`/employees/${employeeId}/salary/${salary.id}`)
+                            setActiveTab('current') // Переключаемся на вкладку с деталями
                           }}
                           className="text-blue-600 hover:text-blue-900"
                         >
@@ -759,6 +759,10 @@ export default function EmployeeSalary() {
           isOpen={showAdjustmentModal}
           onClose={() => {
             setShowAdjustmentModal(false)
+            // Обновляем данные после закрытия
+            if (selectedSalaryId && !currentSalary) {
+              refetchSelectedSalary()
+            }
             if (!currentSalary) {
               setSelectedSalaryId(null)
             }
@@ -776,6 +780,10 @@ export default function EmployeeSalary() {
             isOpen={showPaymentModal}
             onClose={() => {
               setShowPaymentModal(false)
+              // Обновляем данные после закрытия
+              if (selectedSalaryId && !currentSalary) {
+                refetchSelectedSalary()
+              }
               if (!currentSalary) {
                 setSelectedSalaryId(null)
               }

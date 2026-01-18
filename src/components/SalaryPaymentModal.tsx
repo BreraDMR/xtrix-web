@@ -50,6 +50,7 @@ export default function SalaryPaymentModal({
       queryClient.invalidateQueries({ queryKey: ['employee-salary-current', employeeId] })
       queryClient.invalidateQueries({ queryKey: ['employee-salary-history', employeeId] })
       queryClient.invalidateQueries({ queryKey: ['employee-salary-detail', employeeId, salaryId] })
+      queryClient.invalidateQueries({ queryKey: ['expenses'] }) // Обновляем расходы при создании выплаты
       handleClose()
     },
   })
