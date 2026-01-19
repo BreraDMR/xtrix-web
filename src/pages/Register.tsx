@@ -60,15 +60,30 @@ export default function Register() {
         return
       }
 
-      // Создаем пользователя
-      const { data: userData } = await api.post('/users/', {
+      // Подготавливаем данные, убирая пустые строки
+      const userDataPayload: any = {
         full_name: formData.full_name,
-        email: formData.email || undefined,
-        phone: formData.phone || undefined,
         password: formData.password,
         role: formData.role,
-        specialist_type: formData.role === 'specialist' && formData.specialist_type ? formData.specialist_type : undefined,
-      })
+      }
+      
+      // Добавляем email только если он не пустой
+      if (formData.email && formData.email.trim()) {
+        userDataPayload.email = formData.email.trim()
+      }
+      
+      // Добавляем phone только если он не пустой
+      if (formData.phone && formData.phone.trim()) {
+        userDataPayload.phone = formData.phone.trim()
+      }
+      
+      // Добавляем specialist_type только если роль specialist
+      if (formData.role === 'specialist' && formData.specialist_type) {
+        userDataPayload.specialist_type = formData.specialist_type
+      }
+
+      // Создаем пользователя
+      const { data: userData } = await api.post('/users/', userDataPayload)
 
       logger.log('[Register] User created successfully')
 
@@ -116,10 +131,39 @@ export default function Register() {
       }, 100)
     } catch (err: any) {
       console.error('Registration error:', err)
-      const errorMessage = err.response?.data?.detail || 
-                          err.response?.data?.error?.message ||
-                          err.message || 
-                          'Registration failed'
+      
+      // Извлекаем детальную информацию об ошибке валидации
+      let errorMessage = 'Registration failed'
+      
+      if (err.response?.data) {
+        const data = err.response.data
+        
+        // Если есть validation_errors, показываем первую ошибку
+        if (data.error?.detail?.validation_errors && Array.isArray(data.error.detail.validation_errors) && data.error.detail.validation_errors.length > 0) {
+          const firstError = data.error.detail.validation_errors[0]
+          errorMessage = `${firstError.field}: ${firstError.message}`
+          if (firstError.hint) {
+            errorMessage += ` (${firstError.hint})`
+          }
+        }
+        // Стандартный формат FastAPI validation errors
+        else if (data.detail && Array.isArray(data.detail) && data.detail.length > 0) {
+          const firstError = data.detail[0]
+          const field = Array.isArray(firstError.loc) ? firstError.loc[firstError.loc.length - 1] : 'field'
+          errorMessage = `${field}: ${firstError.msg || 'Validation error'}`
+        }
+        // Общая ошибка
+        else if (data.error?.message) {
+          errorMessage = data.error.message
+        }
+        else if (typeof data.detail === 'string') {
+          errorMessage = data.detail
+        }
+      }
+      else if (err.message) {
+        errorMessage = err.message
+      }
+      
       setError(errorMessage)
     } finally {
       setLoading(false)
