@@ -44,6 +44,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<any[]>([])
   const [services, setServices] = useState<any[]>([])
+  const [availableSpecialists, setAvailableSpecialists] = useState<any[]>([])
   const [clientSearchQuery, setClientSearchQuery] = useState('')
   const [selectedClient, setSelectedClient] = useState<ClientSearchResult | null>(null)
   const [searchingClient, setSearchingClient] = useState(false)
@@ -211,6 +212,18 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         date_start: data.date_start ? new Date(data.date_start).toISOString().slice(0, 16) : '',
         date_end: data.date_end ? new Date(data.date_end).toISOString().slice(0, 16) : '',
       })
+      
+      // Если есть service_id, загружаем доступных специалистов
+      if (data.service_id) {
+        try {
+          const { data: serviceDetails } = await api.get(`/services/${data.service_id}`)
+          if (serviceDetails.specialists && serviceDetails.specialists.length > 0) {
+            setAvailableSpecialists(serviceDetails.specialists)
+          }
+        } catch (error) {
+          console.error('Failed to load service specialists:', error)
+        }
+      }
     } catch (error) {
       console.error('Failed to load visit:', error)
     }
@@ -253,7 +266,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   }
 
   // Обработчик изменения услуги - автоматически заполняет цену, название и дату окончания
-  const handleServiceChange = (serviceId: string) => {
+  const handleServiceChange = async (serviceId: string) => {
     const selectedServiceId = serviceId ? parseInt(serviceId) : undefined
     const selectedService = services.find(s => s.id === selectedServiceId)
     
@@ -262,6 +275,35 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
 
     if (selectedService) {
+      // Загружаем доступных специалистов для выбранной услуги
+      try {
+        const { data: serviceDetails } = await api.get(`/services/${selectedServiceId}`)
+        if (serviceDetails.specialists && serviceDetails.specialists.length > 0) {
+          setAvailableSpecialists(serviceDetails.specialists)
+          // Если текущий специалист не в списке доступных, устанавливаем первого доступного
+          if (!serviceDetails.specialists.find((s: any) => s.id === formData.specialist_id)) {
+            updates.specialist_id = serviceDetails.specialists[0].id
+          }
+        } else {
+          // Fallback: если нет списка специалистов, используем specialist_id услуги
+          setAvailableSpecialists([{
+            id: selectedService.specialist_id,
+            full_name: selectedService.specialist?.full_name || '',
+            email: selectedService.specialist?.email || '',
+          }])
+          updates.specialist_id = selectedService.specialist_id
+        }
+      } catch (error) {
+        console.error('Failed to load service specialists:', error)
+        // Fallback к основному специалисту услуги
+        setAvailableSpecialists([{
+          id: selectedService.specialist_id,
+          full_name: selectedService.specialist?.full_name || '',
+          email: selectedService.specialist?.email || '',
+        }])
+        updates.specialist_id = selectedService.specialist_id
+      }
+
       // Автоматически заполняем цену, если она не указана или равна 0
       if (selectedService.price && (!formData.price || formData.price === 0)) {
         updates.price = selectedService.price
@@ -281,6 +323,9 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         }
       }
     } else {
+      // Если услуга не выбрана, очищаем список специалистов
+      setAvailableSpecialists([])
+      
       // Если услуга не выбрана, очищаем автоматически заполненные поля
       if (!formData.service_name || formData.service_name === services.find(s => s.id === formData.service_id)?.name) {
         updates.service_name = undefined
@@ -490,6 +535,24 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           ))}
         </select>
       </div>
+
+      {formData.service_id && availableSpecialists.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium mb-1">{t('visits.specialist') || 'Specialist'} *</label>
+          <select
+            value={formData.specialist_id}
+            onChange={(e) => setFormData({ ...formData, specialist_id: parseInt(e.target.value) })}
+            required
+            className="w-full px-3 py-2 border rounded-md"
+          >
+            {availableSpecialists.map((spec) => (
+              <option key={spec.id} value={spec.id}>
+                {spec.full_name} {spec.email ? `(${spec.email})` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.serviceName')}</label>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
 import LoadingSpinner from './LoadingSpinner'
+import { useAuthStore } from '../store/authStore'
 
 interface ServiceFormProps {
   serviceId?: number
@@ -15,28 +16,79 @@ interface ServiceData {
   description?: string
   is_active: boolean
   specialist_id: number
+  specialist_ids?: number[]
+}
+
+interface Specialist {
+  id: number
+  full_name: string
+  email: string
+  phone?: string
 }
 
 export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceFormProps) {
+  const { user: currentUser } = useAuthStore()
   const [loading, setLoading] = useState(false)
+  const [availableSpecialists, setAvailableSpecialists] = useState<Specialist[]>([])
+  const [loadingSpecialists, setLoadingSpecialists] = useState(false)
   const [formData, setFormData] = useState<ServiceData>({
     name: '',
     duration_minutes: 60,
     price: 0,
     is_active: true,
-    specialist_id: 1, // Will be set from auth
+    specialist_id: currentUser?.id || 1,
+    specialist_ids: [],
   })
 
   useEffect(() => {
+    loadAvailableSpecialists()
     if (serviceId) {
       loadService()
+    } else if (currentUser?.id) {
+      setFormData(prev => ({ ...prev, specialist_id: currentUser.id, specialist_ids: [currentUser.id] }))
     }
-  }, [serviceId])
+  }, [serviceId, currentUser])
+
+  const loadAvailableSpecialists = async () => {
+    setLoadingSpecialists(true)
+    try {
+      // Получаем список сотрудников (employees и specialists)
+      const { data: employeesData } = await api.get('/employees/', { params: { is_active: true } })
+      const employees = Array.isArray(employeesData) ? employeesData : []
+      
+      // Получаем список всех специалистов
+      const { data: usersData } = await api.get('/users/', { params: { role: 'specialist' } })
+      const allUsers = Array.isArray(usersData) 
+        ? usersData 
+        : (usersData?.items || usersData?.data || [])
+      
+      // Объединяем сотрудников и специалистов
+      const employeeUserIds = new Set(employees.map((emp: any) => emp.employee_user_id))
+      const allSpecialists = allUsers.filter((u: any) => 
+        u.role === 'specialist' || employeeUserIds.has(u.id)
+      )
+      
+      setAvailableSpecialists(allSpecialists.map((u: any) => ({
+        id: u.id,
+        full_name: u.full_name || u.employee_user?.full_name || '',
+        email: u.email || u.employee_user?.email || '',
+        phone: u.phone || u.employee_user?.phone,
+      })))
+    } catch (error) {
+      console.error('Failed to load specialists:', error)
+      setAvailableSpecialists([])
+    } finally {
+      setLoadingSpecialists(false)
+    }
+  }
 
   const loadService = async () => {
     try {
       const { data } = await api.get(`/services/${serviceId}`)
-      setFormData(data)
+      setFormData({
+        ...data,
+        specialist_ids: data.specialist_ids || [data.specialist_id],
+      })
     } catch (error) {
       console.error('Failed to load service:', error)
     }
@@ -47,10 +99,16 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     setLoading(true)
 
     try {
+      const payload: any = {
+        ...formData,
+        // Отправляем список специалистов, исключая основного (он уже в specialist_id)
+        specialist_ids: (formData.specialist_ids || []).filter(id => id !== formData.specialist_id),
+      }
+      
       if (serviceId) {
-        await api.put(`/services/${serviceId}`, formData)
+        await api.put(`/services/${serviceId}`, payload)
       } else {
-        await api.post('/services', formData)
+        await api.post('/services', payload)
       }
       onSuccess()
     } catch (error: any) {
@@ -102,6 +160,83 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
             className="w-full px-3 py-2 border rounded-md"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Primary Specialist *</label>
+        {loadingSpecialists ? (
+          <div className="text-sm text-gray-500">Loading specialists...</div>
+        ) : (
+          <select
+            value={formData.specialist_id}
+            onChange={(e) => {
+              const newId = parseInt(e.target.value)
+              const specialistIds = formData.specialist_ids || []
+              setFormData({
+                ...formData,
+                specialist_id: newId,
+                // Если основной специалист не в списке, добавляем его
+                specialist_ids: specialistIds.includes(newId) ? specialistIds : [...specialistIds, newId],
+              })
+            }}
+            required
+            className="w-full px-3 py-2 border rounded-md"
+          >
+            {availableSpecialists.map((spec) => (
+              <option key={spec.id} value={spec.id}>
+                {spec.full_name} ({spec.email})
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Additional Specialists (Optional)</label>
+        <p className="text-xs text-gray-500 mb-2">Select all specialists who can provide this service</p>
+        {loadingSpecialists ? (
+          <div className="text-sm text-gray-500">Loading specialists...</div>
+        ) : (
+          <div className="max-h-40 overflow-y-auto border rounded-md p-2 space-y-2">
+            {availableSpecialists.map((spec) => {
+              const isSelected = (formData.specialist_ids || []).includes(spec.id)
+              const isPrimary = spec.id === formData.specialist_id
+              return (
+                <label key={spec.id} className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isSelected || isPrimary}
+                    disabled={isPrimary}
+                    onChange={(e) => {
+                      const currentIds = formData.specialist_ids || []
+                      if (e.target.checked) {
+                        if (!currentIds.includes(spec.id)) {
+                          setFormData({
+                            ...formData,
+                            specialist_ids: [...currentIds, spec.id],
+                          })
+                        }
+                      } else {
+                        // Нельзя убрать основного специалиста
+                        if (!isPrimary) {
+                          setFormData({
+                            ...formData,
+                            specialist_ids: currentIds.filter(id => id !== spec.id),
+                          })
+                        }
+                      }
+                    }}
+                    className="mr-2"
+                  />
+                  <span className={isPrimary ? 'font-medium text-gray-700' : 'text-gray-600'}>
+                    {spec.full_name} ({spec.email})
+                    {isPrimary && <span className="text-xs text-gray-500 ml-1">(Primary)</span>}
+                  </span>
+                </label>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       <div>
