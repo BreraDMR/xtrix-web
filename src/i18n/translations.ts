@@ -261,6 +261,7 @@ export type TranslationKey =
   | 'visits.noVisitsFound'
   | 'visits.date'
   | 'visits.service'
+  | 'visits.specialist'
   | 'visits.status'
   | 'visits.client'
   | 'visits.serviceName'
@@ -1019,6 +1020,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.noVisitsFound': { en: 'No visits found', ru: 'Визиты не найдены', cz: 'Návštěvy nenalezeny' },
   'visits.date': { en: 'Date', ru: 'Дата', cz: 'Datum' },
   'visits.service': { en: 'Service', ru: 'Услуга', cz: 'Služba' },
+  'visits.specialist': { en: 'Specialist', ru: 'Специалист', cz: 'Specialista' },
   'visits.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
   'visits.client': { en: 'Client', ru: 'Клиент', cz: 'Klient' },
   'visits.clientList': { en: 'Client List', ru: 'Список клиентов', cz: 'Seznam klientů' },

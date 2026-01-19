@@ -56,6 +56,7 @@ export default function MySalary() {
   const { user } = useAuthStore()
   const currency = useBusinessCurrency()
   const [activeTab, setActiveTab] = useState<'current' | 'details' | 'history' | 'export'>('current')
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState<string>('')
 
   const { data: currentSalary, isLoading: isLoadingCurrent } = useQuery<SalaryCalculation>({
     queryKey: ['my-salary-current'],
