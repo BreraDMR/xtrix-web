@@ -450,7 +450,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">
-            {t('employees.base_salary')} ({t('common.currency')})
+            {t('employees.base_salary')}
           </label>
           <input
             type="number"
