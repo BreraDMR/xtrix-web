@@ -9,7 +9,8 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import SalaryAdjustmentModal from '../components/SalaryAdjustmentModal'
 import SalaryPaymentModal from '../components/SalaryPaymentModal'
-import { HiPlus, HiTrash, HiCheckCircle, HiXCircle, HiExclamationCircle } from 'react-icons/hi'
+import EditEmployeeSalaryModal from '../components/EditEmployeeSalaryModal'
+import { HiPlus, HiTrash, HiCheckCircle, HiXCircle, HiExclamationCircle, HiPencil } from 'react-icons/hi'
 
 interface SalaryAdjustment {
   id: number
@@ -69,6 +70,7 @@ export default function EmployeeSalary() {
   const [activeTab, setActiveTab] = useState<'current' | 'adjustments' | 'payments' | 'history'>('current')
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [showEditSalaryModal, setShowEditSalaryModal] = useState(false)
   const [selectedSalaryId, setSelectedSalaryId] = useState<number | null>(null)
   const [showCalculateForm, setShowCalculateForm] = useState(false)
   const [periodStart, setPeriodStart] = useState<string>('')
@@ -229,19 +231,38 @@ export default function EmployeeSalary() {
     <div className="p-6 animate-fade-in">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             {t('employees.salary')}: {employee?.employee_user?.full_name || 'Employee'}
           </h1>
           {employee?.position && (
-            <p className="text-gray-600 mt-1">{employee.position}</p>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">{employee.position}</p>
+          )}
+          {employee && (
+            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <span>{t('employees.base_salary')}: {formatCurrency(employee.base_salary || 0, currency)}</span>
+              {' | '}
+              <span>{t('employees.commission')}: {employee.commission_percentage || 0}%</span>
+            </div>
           )}
         </div>
-        <button
-          onClick={() => navigate('/employees')}
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-        >
-          {t('common.cancel')}
-        </button>
+        <div className="flex gap-2">
+          {employee && (
+            <button
+              onClick={() => setShowEditSalaryModal(true)}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
+              title={t('employees.edit_salary') || 'Редактировать зарплату'}
+            >
+              <HiPencil className="w-4 h-4" />
+              {t('employees.edit_salary') || 'Редактировать ЗП'}
+            </button>
+          )}
+          <button
+            onClick={() => navigate('/employees')}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+          >
+            {t('common.cancel')}
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -794,6 +815,16 @@ export default function EmployeeSalary() {
           />
         )
       })()}
+
+      {showEditSalaryModal && employee && (
+        <EditEmployeeSalaryModal
+          isOpen={showEditSalaryModal}
+          onClose={() => setShowEditSalaryModal(false)}
+          employeeId={employee.id}
+          currentBaseSalary={employee.base_salary || 0}
+          currentCommissionPercentage={employee.commission_percentage || 0}
+        />
+      )}
     </div>
   )
 }

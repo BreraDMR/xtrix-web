@@ -332,6 +332,11 @@ export type TranslationKey =
   | 'employees.permission_edit_clients'
   | 'employees.permission_view_financials'
   | 'employees.permission_manage_services'
+  | 'employees.edit_salary'
+  | 'employees.search_user'
+  | 'employees.no_users_found'
+  | 'employees.commission_invalid_range'
+  | 'employees.base_salary_invalid'
   // Salary
   | 'salary.my_salary'
   | 'salary.current_unpaid'
@@ -399,6 +404,7 @@ export type TranslationKey =
   | 'salary.paymentMethod.card'
   | 'salary.paymentMethod.transfer'
   | 'salary.paymentMethod.other'
+  | 'salary.allMethods'
   | 'salary.transfer'
   | 'salary.remainingAmount'
   | 'salary.exceedsRemaining'
@@ -1086,6 +1092,11 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'employees.permission_edit_clients': { en: 'Can edit clients', ru: 'Может редактировать клиентов', cz: 'Může upravovat klienty' },
   'employees.permission_view_financials': { en: 'Can view financial information', ru: 'Может просматривать финансовую информацию', cz: 'Může zobrazovat finanční informace' },
   'employees.permission_manage_services': { en: 'Can manage services', ru: 'Может управлять услугами', cz: 'Může spravovat služby' },
+  'employees.edit_salary': { en: 'Edit Salary', ru: 'Редактировать зарплату', cz: 'Upravit plat' },
+  'employees.search_user': { en: 'Search by name, email or phone...', ru: 'Поиск по имени, email или телефону...', cz: 'Vyhledat podle jména, emailu nebo telefonu...' },
+  'employees.no_users_found': { en: 'No users found', ru: 'Пользователи не найдены', cz: 'Uživatelé nenalezeni' },
+  'employees.commission_invalid_range': { en: 'Commission must be between 0 and 100%', ru: 'Комиссия должна быть от 0 до 100%', cz: 'Provize musí být mezi 0 a 100%' },
+  'employees.base_salary_invalid': { en: 'Base salary cannot be negative', ru: 'Базовая зарплата не может быть отрицательной', cz: 'Základní plat nemůže být záporný' },
   
   // Salary
   'salary.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
@@ -1156,6 +1167,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.paymentMethod.card': { en: 'Card', ru: 'Карта', cz: 'Karta' },
   'salary.paymentMethod.transfer': { en: 'Transfer', ru: 'Перевод', cz: 'Převod' },
   'salary.paymentMethod.other': { en: 'Other', ru: 'Другое', cz: 'Jiné' },
+  'salary.allMethods': { en: 'All Methods', ru: 'Все методы', cz: 'Všechny metody' },
   'salary.transfer': { en: 'Transfer', ru: 'Перевод', cz: 'Převod' },
   'salary.remainingAmount': { en: 'Remaining Amount', ru: 'Остаток к выплате', cz: 'Zbývající částka' },
   'salary.exceedsRemaining': { en: 'Amount exceeds remaining amount', ru: 'Сумма превышает остаток', cz: 'Částka překračuje zbývající částku' },

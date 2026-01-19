@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
+import { HiSearch, HiX } from 'react-icons/hi'
 
 interface EmployeeFormProps {
   employeeId?: number
@@ -26,7 +27,8 @@ interface EmployeeData {
 interface User {
   id: number
   full_name: string
-  email: string
+  email?: string
+  phone?: string
   role: string
 }
 
@@ -44,6 +46,8 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
   const [availableUsers, setAvailableUsers] = useState<User[]>([])
   const [loadingUsers, setLoadingUsers] = useState(false)
   const [createNewUser, setCreateNewUser] = useState(false)
+  const [userSearchQuery, setUserSearchQuery] = useState('')
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null)
   const [passwordCopied, setPasswordCopied] = useState(false)
   const [newUserData, setNewUserData] = useState<NewUserData>({
@@ -95,14 +99,33 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         u.id !== currentUser?.id && !employedUserIds.has(u.id)
       )
       setAvailableUsers(available)
+      setFilteredUsers(available)
     } catch (error) {
       console.error('Failed to load users:', error)
       // Fallback: если endpoint не работает, оставляем пустой список
       setAvailableUsers([])
+      setFilteredUsers([])
     } finally {
       setLoadingUsers(false)
     }
   }
+
+  // Фильтрация пользователей по поисковому запросу
+  useEffect(() => {
+    if (!userSearchQuery.trim()) {
+      setFilteredUsers(availableUsers)
+      return
+    }
+
+    const query = userSearchQuery.toLowerCase().trim()
+    const filtered = availableUsers.filter((u) => {
+      const name = (u.full_name || '').toLowerCase()
+      const email = (u.email || '').toLowerCase()
+      const phone = (u.phone || '').toLowerCase()
+      return name.includes(query) || email.includes(query) || phone.includes(query)
+    })
+    setFilteredUsers(filtered)
+  }, [userSearchQuery, availableUsers])
 
   const loadEmployee = async () => {
     if (!employeeId) return
@@ -332,30 +355,65 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       ) : (
         // Форма для выбора существующего пользователя
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
             {t('employees.select_user')} *
           </label>
+          
+          {/* Поиск по имени, email или телефону */}
+          <div className="mb-2 relative">
+            <div className="relative">
+              <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                value={userSearchQuery}
+                onChange={(e) => setUserSearchQuery(e.target.value)}
+                placeholder={t('employees.search_user') || 'Поиск по имени, email или телефону...'}
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+              />
+              {userSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setUserSearchQuery('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  title="Очистить"
+                >
+                  <HiX className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+            {userSearchQuery && (
+              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {filteredUsers.length === 0 
+                  ? t('employees.no_users_found') || 'Специалисты не найдены'
+                  : `${filteredUsers.length} ${filteredUsers.length === 1 ? 'специалист найден' : 'специалистов найдено'}`
+                }
+              </div>
+            )}
+          </div>
+
           {loadingUsers ? (
             <div className="text-sm text-gray-500">{t('common.loading')}...</div>
           ) : (
-            <select
-              value={formData.employee_user_id}
-              onChange={(e) =>
-                setFormData({ ...formData, employee_user_id: parseInt(e.target.value) })
-              }
-              required
-              disabled={!!employeeId} // Нельзя менять пользователя при редактировании
-              className="w-full px-3 py-2 border rounded-md disabled:bg-gray-100"
-            >
-              <option value={0}>{t('employees.select_user_placeholder')}</option>
-              {availableUsers.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.full_name} ({u.email})
-                </option>
-              ))}
-            </select>
+            <>
+              <select
+                value={formData.employee_user_id}
+                onChange={(e) =>
+                  setFormData({ ...formData, employee_user_id: parseInt(e.target.value) })
+                }
+                required
+                disabled={!!employeeId} // Нельзя менять пользователя при редактировании
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm disabled:bg-gray-100 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <option value={0}>{t('employees.select_user_placeholder')}</option>
+                {filteredUsers.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.full_name} {u.email ? `(${u.email})` : ''} {u.phone ? `- ${u.phone}` : ''}
+                  </option>
+                ))}
+              </select>
+            </>
           )}
-          {availableUsers.length === 0 && !loadingUsers && (
+          {availableUsers.length === 0 && !loadingUsers && !userSearchQuery && (
             <p className="text-sm text-gray-500 mt-1">
               {t('employees.no_available_users')}
             </p>

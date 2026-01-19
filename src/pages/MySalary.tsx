@@ -63,7 +63,7 @@ export default function MySalary() {
       const { data } = await api.get('/employees/me/salary/current')
       return data
     },
-    enabled: user?.role === 'employee',
+    enabled: user?.role === 'employee' || user?.role === 'specialist',
     retry: false,
   })
 
@@ -75,14 +75,14 @@ export default function MySalary() {
       })
       return Array.isArray(data) ? data : []
     },
-    enabled: user?.role === 'employee',
+    enabled: user?.role === 'employee' || user?.role === 'specialist',
   })
 
-  if (user?.role !== 'employee') {
+  if (user?.role !== 'employee' && user?.role !== 'specialist') {
     return (
       <div className="p-6">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-yellow-800">{t('salary.access_denied') || 'Доступ запрещен'}</p>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 dark:bg-yellow-900/20 dark:border-yellow-800">
+          <p className="text-yellow-800 dark:text-yellow-200">{t('salary.access_denied') || 'Доступ запрещен'}</p>
         </div>
       </div>
     )
@@ -329,38 +329,77 @@ export default function MySalary() {
           </div>
 
           {/* Payments */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">{t('salary.payments') || 'История выплат'}</h2>
+          <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold dark:text-white">{t('salary.payments') || 'История выплат'}</h2>
+              <div className="flex gap-2">
+                <select
+                  value={paymentMethodFilter}
+                  onChange={(e) => setPaymentMethodFilter(e.target.value)}
+                  className="px-3 py-1 text-sm border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                  <option value="">{t('salary.allMethods') || 'Все методы'}</option>
+                  <option value="cash">{t('salary.paymentMethod.cash') || 'Наличные'}</option>
+                  <option value="card">{t('salary.paymentMethod.card') || 'Карта'}</option>
+                  <option value="transfer">{t('salary.paymentMethod.transfer') || 'Перевод'}</option>
+                  <option value="other">{t('salary.paymentMethod.other') || 'Другое'}</option>
+                </select>
+              </div>
+            </div>
             {currentSalary.payments && currentSalary.payments.length > 0 ? (
               <div className="space-y-3">
-                {currentSalary.payments.map((payment) => (
+                {currentSalary.payments
+                  .filter((p) => !paymentMethodFilter || p.payment_method === paymentMethodFilter)
+                  .map((payment) => (
                   <div
                     key={payment.id}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg dark:border-gray-700"
                   >
                     <div className="flex-1">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 flex-wrap">
                         {getPaymentStatusIcon(payment.status)}
-                        <span className="font-semibold">{formatCurrency(payment.amount, currency)}</span>
-                        <span className="text-sm text-gray-600">
-                          {new Date(payment.payment_date).toLocaleDateString()}
+                        <span className="font-semibold text-lg dark:text-white">
+                          {formatCurrency(payment.amount, currency)}
                         </span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {new Date(payment.payment_date).toLocaleDateString('ru-RU', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          payment.payment_method === 'cash' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                          payment.payment_method === 'card' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                          payment.payment_method === 'transfer' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' :
+                          'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                        }`}>
                           {t(`salary.paymentMethod.${payment.payment_method}`) || payment.payment_method}
                         </span>
                       </div>
                       {payment.notes && (
-                        <p className="text-sm text-gray-600 mt-1">{payment.notes}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{payment.notes}</p>
                       )}
-                      <p className="text-xs text-gray-500 mt-1">
-                        {t('salary.status')}: {t(`salary.status.${payment.status}`) || payment.status}
-                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {t('salary.status')}:
+                        </span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          payment.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                          payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                          'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                        }`}>
+                          {t(`salary.status.${payment.status}`) || payment.status}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 {t('salary.noPayments') || 'Нет выплат'}
               </div>
             )}
