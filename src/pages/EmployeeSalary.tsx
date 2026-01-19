@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
@@ -91,7 +91,7 @@ export default function EmployeeSalary() {
   })
 
   // Загружаем текущую невыплаченную зарплату
-  const { data: currentSalary, isLoading: isLoadingCurrent } = useQuery<SalaryCalculation>({
+  const { data: currentSalary, isLoading: isLoadingCurrent, refetch: refetchCurrentSalary } = useQuery<SalaryCalculation>({
     queryKey: ['employee-salary-current', employeeId],
     queryFn: async () => {
       if (!employeeId) throw new Error('Employee ID is required')
@@ -103,7 +103,7 @@ export default function EmployeeSalary() {
   })
 
   // Загружаем историю зарплат
-  const { data: salaryHistory, isLoading: isLoadingHistory } = useQuery<SalaryCalculation[]>({
+  const { data: salaryHistory, isLoading: isLoadingHistory, refetch: refetchHistory } = useQuery<SalaryCalculation[]>({
     queryKey: ['employee-salary-history', employeeId],
     queryFn: async () => {
       if (!employeeId) throw new Error('Employee ID is required')
@@ -114,6 +114,14 @@ export default function EmployeeSalary() {
     },
     enabled: !!employeeId && canManageSalaries,
   })
+
+  // Если текущая зарплата полностью выплачена, загружаем её из истории для отображения выплат
+  useEffect(() => {
+    if (currentSalary && currentSalary.payment_status === 'paid' && !selectedSalaryId && activeTab === 'payments') {
+      // Автоматически выбираем полностью выплаченную зарплату для отображения выплат
+      setSelectedSalaryId(currentSalary.id)
+    }
+  }, [currentSalary, activeTab, selectedSalaryId])
 
   // Загружаем детали конкретной зарплаты (для работы с adjustments/payments из истории)
   const { data: selectedSalary, refetch: refetchSelectedSalary } = useQuery<SalaryCalculation>({
@@ -607,11 +615,11 @@ export default function EmployeeSalary() {
 
       {/* Payments Tab */}
       {activeTab === 'payments' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">{t('salary.payments') || 'Выплаты'}</h2>
-            {/* Выбор зарплаты, если нет текущей */}
-            {!currentSalary && salaryHistory && salaryHistory.length > 0 && (
+            <h2 className="text-xl font-semibold dark:text-white">{t('salary.payments') || 'Выплаты'}</h2>
+            {/* Выбор зарплаты, если нет текущей или если текущая полностью выплачена */}
+            {(!currentSalary || (currentSalary && currentSalary.payment_status === 'paid')) && salaryHistory && salaryHistory.length > 0 && (
               <div className="flex gap-2 items-center">
                 <select
                   value={selectedSalaryId || ''}
@@ -619,7 +627,7 @@ export default function EmployeeSalary() {
                     const id = e.target.value ? parseInt(e.target.value, 10) : null
                     setSelectedSalaryId(id)
                   }}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
                   <option value="">{t('salary.selectSalary') || 'Выберите зарплату из истории'}</option>
                   {salaryHistory.map((sal) => (
@@ -654,10 +662,15 @@ export default function EmployeeSalary() {
           </div>
 
           {(() => {
-            const salaryToShow = currentSalary || selectedSalary
+            // Если текущая зарплата полностью выплачена, используем её для отображения выплат
+            let salaryToShow = currentSalary || selectedSalary
+            if (currentSalary && currentSalary.payment_status === 'paid' && !selectedSalaryId) {
+              salaryToShow = currentSalary
+            }
+            
             if (!salaryToShow) {
               return (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   {!currentSalary && (!salaryHistory || salaryHistory.length === 0)
                     ? t('salary.noUnpaidSalary') || 'Нет зарплаты. Сначала рассчитайте зарплату на вкладке "Текущая"'
                     : t('salary.selectSalary') || 'Выберите зарплату из истории для просмотра выплат'}
@@ -669,31 +682,51 @@ export default function EmployeeSalary() {
               {salaryToShow.payments.map((payment) => (
                 <div
                   key={payment.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg dark:border-gray-700"
                 >
                   <div className="flex-1">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-wrap">
                       {getPaymentStatusIcon(payment.status)}
-                      <span className="font-semibold">{formatCurrency(payment.amount, currency)}</span>
-                      <span className="text-sm text-gray-600">
-                        {new Date(payment.payment_date).toLocaleDateString()}
+                      <span className="font-semibold text-lg dark:text-white">{formatCurrency(payment.amount, currency)}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {new Date(payment.payment_date).toLocaleDateString('ru-RU', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        payment.payment_method === 'cash' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                        payment.payment_method === 'card' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                        payment.payment_method === 'transfer' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' :
+                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                      }`}>
                         {t(`salary.paymentMethod.${payment.payment_method}`) || payment.payment_method}
                       </span>
                     </div>
                     {payment.notes && (
-                      <p className="text-sm text-gray-600 mt-1">{payment.notes}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{payment.notes}</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      {t('salary.status')}: {t(`salary.status.${payment.status}`) || payment.status}
-                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {t('salary.status')}:
+                      </span>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        payment.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                        payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                      }`}>
+                        {t(`salary.status.${payment.status}`) || payment.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               {t('salary.noPayments') || 'Нет выплат'}
             </div>
           )
@@ -802,11 +835,20 @@ export default function EmployeeSalary() {
             onClose={() => {
               setShowPaymentModal(false)
               // Обновляем данные после закрытия
-              if (selectedSalaryId && !currentSalary) {
+              queryClient.invalidateQueries({ queryKey: ['employee-salary-current', employeeId] })
+              queryClient.invalidateQueries({ queryKey: ['employee-salary-detail', employeeId, selectedSalaryId] })
+              queryClient.invalidateQueries({ queryKey: ['employee-salary-history', employeeId] })
+              // Перезагружаем все данные
+              refetchHistory()
+              if (currentSalary) {
+                refetchCurrentSalary()
+              }
+              if (selectedSalaryId) {
                 refetchSelectedSalary()
               }
-              if (!currentSalary) {
-                setSelectedSalaryId(null)
+              // Если зарплата была полностью выплачена, переключаемся на вкладку выплат
+              if (currentSalary && currentSalary.payment_status === 'paid') {
+                setActiveTab('payments')
               }
             }}
             employeeId={employeeId!}

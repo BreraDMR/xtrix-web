@@ -93,7 +93,8 @@ export default function Layout() {
     ...(user?.role === 'admin' || user?.role === 'business_owner' || (user?.role === 'specialist' && !user?.employer_id)
       ? [{ path: '/subscription', label: t('nav.subscription') }]
       : []),
-    ...(user?.role === 'employee'
+    // Показываем ссылку на зарплату для employee и specialist (MySalary сам проверит доступ)
+    ...((user?.role === 'employee' || user?.role === 'specialist')
       ? [{ path: '/my-salary', label: t('nav.my_salary') }]
       : []),
     { path: '/settings', label: t('nav.settings') },
