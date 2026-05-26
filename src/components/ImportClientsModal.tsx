@@ -40,7 +40,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
   const [importResult, setImportResult] = useState<ImportResult | null>(null)
   const [existingClients, setExistingClients] = useState<Set<string>>(new Set())
 
-  // Fetch existing clients to check for duplicates
   const loadExistingClients = async () => {
     try {
       const { data } = await api.get('/clients/')
@@ -61,13 +60,13 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
   }
 
   const validateEmail = (email: string): boolean => {
-    if (!email) return true // Email не обязателен
+    if (!email) return true
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email.trim())
   }
 
   const validatePhone = (phone: string): boolean => {
-    if (!phone) return true // Телефон не обязателен
+    if (!phone) return true
     const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
     return phoneRegex.test(phone.trim())
   }
@@ -88,7 +87,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
     data.forEach((client, index) => {
       const row = client.row
 
-      // Проверка обязательного поля - имя
       if (!client.full_name || !client.full_name.trim()) {
         errors.push({
           row,
@@ -97,7 +95,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         })
       }
 
-      // Проверка формата email
       if (client.contact_email && !validateEmail(client.contact_email)) {
         errors.push({
           row,
@@ -106,7 +103,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         })
       }
 
-      // Проверка формата телефона
       if (client.contact_phone && !validatePhone(client.contact_phone)) {
         errors.push({
           row,
@@ -115,7 +111,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         })
       }
 
-      // Проверка дубликатов в файле
       if (client.contact_phone) {
         const normalized = normalizePhone(client.contact_phone)
         const existing = seenPhones.get(index)
@@ -144,7 +139,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         }
       }
 
-      // Проверка дубликатов с существующими клиентами
       if (client.contact_phone) {
         const normalized = normalizePhone(client.contact_phone)
         if (existingClients.has(`phone:${normalized}`)) {
@@ -192,7 +186,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         return
       }
 
-      // Определяем заголовки (первая строка)
       const headers = jsonData[0].map((h: any) => String(h).toLowerCase().trim())
       const nameColIndex = headers.findIndex((h: string) =>
         ['имя', 'name', 'фио', 'full name', 'full_name'].includes(h)
@@ -209,7 +202,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         return
       }
 
-      // Парсим данные (начиная со второй строки)
       const parsed: ParsedClient[] = []
       for (let i = 1; i < jsonData.length; i++) {
         const row = jsonData[i]
@@ -217,20 +209,18 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         const phone = phoneColIndex >= 0 && row[phoneColIndex] ? String(row[phoneColIndex]).trim() : ''
         const email = emailColIndex >= 0 && row[emailColIndex] ? String(row[emailColIndex]).trim() : ''
 
-        // Пропускаем пустые строки (если нет даже имени)
         if (!fullName && !phone && !email) continue
 
         parsed.push({
           full_name: fullName,
           contact_phone: phone || undefined,
           contact_email: email || undefined,
-          row: i + 1, // Номер строки в Excel (1-based, + заголовок)
+          row: i + 1,
         })
       }
 
       setParsedData(parsed)
 
-      // Загружаем существующих клиентов и валидируем
       await loadExistingClients()
       const errors = validateData(parsed)
       setValidationErrors(errors)
@@ -257,7 +247,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
       errors: [],
     }
 
-    // Исключаем строки с ошибками валидации
     const validRows = new Set(
       parsedData
         .filter((_, index) => {
@@ -267,7 +256,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
     )
 
     for (const client of parsedData) {
-      // Пропускаем строки с ошибками
       if (!validRows.has(client.row)) {
         result.skipped++
         continue
@@ -293,7 +281,6 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
     setImportResult(result)
     setIsImporting(false)
 
-    // Обновляем список клиентов
     queryClient.invalidateQueries({ queryKey: ['clients'] })
     queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }
@@ -318,7 +305,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
             {t('import.title') || 'Импорт клиентов из Excel'}
@@ -332,9 +319,9 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
           </button>
         </div>
 
-        {/* Content */}
+        {}
         <div className="p-6 space-y-6">
-          {/* File Upload */}
+          {}
           {!file && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -356,7 +343,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
             </div>
           )}
 
-          {/* Preview */}
+          {}
           {file && parsedData.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -372,7 +359,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                 </button>
               </div>
 
-              {/* Stats */}
+              {}
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <div className="text-sm text-blue-700">{t('import.totalRows') || 'Всего строк'}</div>
@@ -392,7 +379,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                 </div>
               </div>
 
-              {/* Validation Errors */}
+              {}
               {validationErrors.length > 0 && (
                 <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
                   <h4 className="font-medium text-red-900 mb-2">
@@ -413,7 +400,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                 </div>
               )}
 
-              {/* Data Table */}
+              {}
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <div className="overflow-x-auto max-h-96">
                   <table className="min-w-full divide-y divide-gray-200">
@@ -482,7 +469,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
             </div>
           )}
 
-          {/* Import Result */}
+          {}
           {importResult && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h3 className="font-medium text-blue-900 mb-3">
@@ -520,7 +507,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
           )}
         </div>
 
-        {/* Footer */}
+        {}
         <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
           <button
             onClick={onClose}

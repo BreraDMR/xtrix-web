@@ -157,7 +157,7 @@ export default function MySalary() {
         </p>
       </div>
 
-      {/* Tabs */}
+      {}
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
           {['current', 'details', 'history', 'export'].map((tab) => {
@@ -179,12 +179,12 @@ export default function MySalary() {
         </nav>
       </div>
 
-      {/* Current Salary Tab */}
+      {}
       {activeTab === 'current' && (
         <>
           {currentSalary ? (
             <div className="space-y-6">
-              {/* Summary Card */}
+              {}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4">{t('salary.currentSalary') || 'Текущая зарплата'}</h2>
                 
@@ -212,7 +212,7 @@ export default function MySalary() {
                   </div>
                 </div>
 
-                {/* Salary Breakdown */}
+                {}
                 <div className="border-t border-gray-200 pt-4">
                   <h3 className="font-semibold text-gray-900 mb-3">{t('salary.breakdown') || 'Детализация'}</h3>
                   <div className="space-y-2">
@@ -262,7 +262,7 @@ export default function MySalary() {
                   </div>
                 </div>
 
-                {/* Status */}
+                {}
                 <div className="mt-6 pt-4 border-t border-gray-200">
                   <div className="flex items-center justify-between">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentSalary.payment_status)}`}>
@@ -289,10 +289,10 @@ export default function MySalary() {
         </>
       )}
 
-      {/* Details Tab */}
+      {}
       {activeTab === 'details' && currentSalary && (
         <div className="space-y-6">
-          {/* Adjustments */}
+          {}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-4">{t('salary.adjustments') || 'Бонусы и штрафы'}</h2>
             {currentSalary.adjustments && currentSalary.adjustments.length > 0 ? (
@@ -329,7 +329,7 @@ export default function MySalary() {
             )}
           </div>
 
-          {/* Payments */}
+          {}
           <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold dark:text-white">{t('salary.payments') || 'История выплат'}</h2>
@@ -408,7 +408,7 @@ export default function MySalary() {
         </div>
       )}
 
-      {/* History Tab */}
+      {}
       {activeTab === 'history' && (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           {isLoadingHistory ? (
@@ -467,7 +467,7 @@ export default function MySalary() {
         </div>
       )}
 
-      {/* Export Tab */}
+      {}
       {activeTab === 'export' && currentSalary && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">{t('salary.export') || 'Экспорт отчета'}</h2>
@@ -477,7 +477,6 @@ export default function MySalary() {
           <div className="flex gap-3">
             <button
               onClick={() => {
-                // TODO: Implement export functionality
                 alert(t('common.export') || 'Экспорт')
               }}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
@@ -486,7 +485,6 @@ export default function MySalary() {
             </button>
             <button
               onClick={() => {
-                // TODO: Implement export functionality
                 alert(t('common.export') || 'Экспорт')
               }}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"

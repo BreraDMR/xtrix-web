@@ -18,7 +18,6 @@ export default function LoyaltyAnalytics() {
     return new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
   })
 
-  // Statistics
   const { data: statistics, isLoading: isLoadingStats } = useQuery({
     queryKey: ['loyalty-statistics', dateFrom, dateTo],
     queryFn: async () => {
@@ -30,7 +29,6 @@ export default function LoyaltyAnalytics() {
     },
   })
 
-  // Level Distribution
   const { data: levelDistribution, isLoading: isLoadingLevelDist } = useQuery({
     queryKey: ['loyalty-level-distribution'],
     queryFn: async () => {
@@ -39,7 +37,6 @@ export default function LoyaltyAnalytics() {
     },
   })
 
-  // Top Clients
   const { data: topClients, isLoading: isLoadingTopClients } = useQuery({
     queryKey: ['loyalty-top-clients'],
     queryFn: async () => {
@@ -48,7 +45,6 @@ export default function LoyaltyAnalytics() {
     },
   })
 
-  // Promotion Effectiveness
   const { data: promotions, isLoading: isLoadingPromotions } = useQuery({
     queryKey: ['loyalty-promotion-effectiveness', dateFrom, dateTo],
     queryFn: async () => {
@@ -62,7 +58,7 @@ export default function LoyaltyAnalytics() {
 
   return (
     <div className="space-y-6">
-      {/* Date Filters */}
+      {}
       <div className="bg-white p-4 rounded-lg shadow-md">
         <div className="flex gap-4 items-end">
           <div>
@@ -86,7 +82,7 @@ export default function LoyaltyAnalytics() {
         </div>
       </div>
 
-      {/* Statistics */}
+      {}
       {isLoadingStats ? (
         <LoadingSpinner />
       ) : statistics ? (
@@ -110,7 +106,7 @@ export default function LoyaltyAnalytics() {
         </div>
       ) : null}
 
-      {/* Level Distribution */}
+      {}
       {isLoadingLevelDist ? (
         <LoadingSpinner />
       ) : levelDistribution?.distribution && levelDistribution.distribution.length > 0 ? (
@@ -135,7 +131,7 @@ export default function LoyaltyAnalytics() {
         </div>
       ) : null}
 
-      {/* Top Clients */}
+      {}
       {isLoadingTopClients ? (
         <LoadingSpinner />
       ) : topClients?.clients && topClients.clients.length > 0 ? (
@@ -170,7 +166,7 @@ export default function LoyaltyAnalytics() {
         </div>
       ) : null}
 
-      {/* Promotion Effectiveness */}
+      {}
       {isLoadingPromotions ? (
         <LoadingSpinner />
       ) : promotions?.promotions && promotions.promotions.length > 0 ? (

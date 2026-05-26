@@ -22,7 +22,6 @@ import Settings from './pages/Settings'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  // Сначала проверяем синхронно при рендере
   const initialToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
   const [isAuthenticated, setIsAuthenticated] = React.useState(!!initialToken)
   
@@ -32,11 +31,9 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
       return
     }
     
-    // Проверяем токен из localStorage
     const token = localStorage.getItem('auth_token')
     const hasToken = !!token
     
-    // Подробное логирование
     const logMsg = `[PrivateRoute] Auth check: ${hasToken ? 'AUTHENTICATED' : 'NOT AUTHENTICATED'}, token length: ${token?.length || 0}`
     console.log(logMsg)
     try {
@@ -54,7 +51,6 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     
     setIsAuthenticated(true)
     
-    // Синхронизируем store с localStorage
     const storeToken = useAuthStore.getState().token
     if (!storeToken || storeToken !== token) {
       console.log('[PrivateRoute] Syncing store with localStorage')
@@ -71,7 +67,6 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     }
   }, [])
   
-  // Если не авторизован, сразу редиректим
   if (!isAuthenticated) {
     console.log('[PrivateRoute] Not authenticated, rendering Navigate')
     return <Navigate to="/login" replace />

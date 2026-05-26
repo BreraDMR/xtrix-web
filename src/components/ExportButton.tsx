@@ -38,7 +38,6 @@ export default function ExportButton<T extends Record<string, any>>({
   const { t } = useTranslation()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Determine which data to export
   const exportData = dataType === 'selected' && selectedRows ? selectedRows : data
 
   return (

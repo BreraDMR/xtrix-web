@@ -8,18 +8,15 @@ export function useTranslation() {
     const translation = translations[key]?.[locale]
     if (translation) return translation
     
-    // Fallback to English
     const enTranslation = translations[key]?.en
     if (enTranslation) return enTranslation
     
-    // Fallback to provided fallback or key
     return fallback || key
   }
 
   return { t, locale }
 }
 
-// Map API specialist type values to translation keys
 const SPECIALIST_TYPE_MAP: Record<string, TranslationKey> = {
   'massage': 'specialistType.massage',
   'cosmetologist': 'specialistType.cosmetologist',
@@ -52,13 +49,11 @@ const SPECIALIST_TYPE_MAP: Record<string, TranslationKey> = {
   'oncologist': 'specialistType.oncologist',
 }
 
-// Helper function to get translated specialist type
 export function getTranslatedSpecialistType(type: string, locale: 'en' | 'ru' | 'cz' = 'en'): string {
   const key = SPECIALIST_TYPE_MAP[type]
   if (key) {
     return translations[key]?.[locale] || translations[key]?.en || type
   }
-  // Fallback: capitalize and replace underscores
   return type.split('_').map(word => 
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ')

@@ -46,7 +46,6 @@ export default function ExportModal<T extends Record<string, any>>({
   const [isExporting, setIsExporting] = useState(false)
   const [includeChartsOption, setIncludeChartsOption] = useState(includeCharts)
 
-  // Load saved preferences
   useEffect(() => {
     if (isOpen) {
       const prefs = getExportPreferences()
@@ -61,7 +60,6 @@ export default function ExportModal<T extends Record<string, any>>({
     onExportStart?.()
 
     try {
-      // Prepare export options
       const options: ExportOptions<T> = {
         data,
         columns: columns.map((col) => ({
@@ -77,13 +75,10 @@ export default function ExportModal<T extends Record<string, any>>({
         chartSelectors: includeChartsOption ? chartSelectors : undefined,
       }
 
-      // Save preferences
       saveExportPreferences({ format: selectedFormat })
 
-      // Export data
       await exportData(options)
 
-      // Export charts separately if needed (for Excel/CSV)
       if (includeChartsOption && chartSelectors.length > 0 && selectedFormat !== 'pdf') {
         for (const selector of chartSelectors) {
           await exportChartToImage(selector, `${filename}-chart-${Date.now()}`, 'png')
@@ -106,7 +101,7 @@ export default function ExportModal<T extends Record<string, any>>({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
             {t('export.title') || 'Export Data'}
@@ -120,9 +115,9 @@ export default function ExportModal<T extends Record<string, any>>({
           </button>
         </div>
 
-        {/* Content */}
+        {}
         <div className="p-6 space-y-6">
-          {/* Report Type Selection */}
+          {}
           {reportTypes && reportTypes.length > 1 && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -143,7 +138,7 @@ export default function ExportModal<T extends Record<string, any>>({
             </div>
           )}
 
-          {/* Format Selection */}
+          {}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('export.format') || 'Format'}
@@ -200,7 +195,7 @@ export default function ExportModal<T extends Record<string, any>>({
             </div>
           </div>
 
-          {/* Charts Option */}
+          {}
           {chartSelectors.length > 0 && (
             <div className="flex items-center">
               <input
@@ -217,14 +212,14 @@ export default function ExportModal<T extends Record<string, any>>({
             </div>
           )}
 
-          {/* Info */}
+          {}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
             <div className="font-medium mb-1">{t('export.itemsCount') || 'Items to export'}:</div>
             <div>{data.length} {t('export.items') || 'items'}</div>
           </div>
         </div>
 
-        {/* Footer */}
+        {}
         <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
           <button
             onClick={onClose}

@@ -89,15 +89,12 @@ export default function Employees() {
       return matchesSearch
     })
     
-    // Apply sorting - create sortable fields
     if (sortConfig.key && sortConfig.direction) {
       filtered = sortData(filtered.map(emp => ({
         ...emp,
-        // Create sortable fields from nested objects
         employee_name: emp.employee_user?.full_name || '',
         email: emp.employee_user?.email || '',
       })), sortConfig as SortConfig<any>).map((emp: any) => {
-        // Remove temporary fields
         const { employee_name, email, ...rest } = emp
         return rest
       })
@@ -106,7 +103,6 @@ export default function Employees() {
     return filtered
   }, [employees, searchQuery, sortConfig])
 
-  // Pagination
   const { paginatedData, totalPages, totalItems } = useMemo(() => {
     const startIndex = (currentPage - 1) * perPage
     const endIndex = startIndex + perPage
@@ -166,7 +162,7 @@ export default function Employees() {
         </button>
       </div>
 
-      {/* Filters */}
+      {}
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex-1 w-full sm:max-w-md">
           <input
@@ -214,7 +210,7 @@ export default function Employees() {
         </div>
       </div>
 
-      {/* Employees List */}
+      {}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -334,7 +330,6 @@ export default function Employees() {
                       )}
                       <button
                         onClick={() => {
-                          // Navigate to salary page for this employee
                           navigate(`/employees/${employee.id}/salary`)
                         }}
                         className="text-green-600 hover:text-green-900"
@@ -361,7 +356,7 @@ export default function Employees() {
         )}
       </div>
 
-      {/* Employee Form Modal */}
+      {}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">

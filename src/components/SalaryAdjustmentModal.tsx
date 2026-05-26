@@ -54,7 +54,6 @@ export default function SalaryAdjustmentModal({
       return
     }
 
-    // Для penalty и deduction делаем отрицательное значение
     const finalAmount = (type === 'penalty' || type === 'deduction') ? -Math.abs(numAmount) : Math.abs(numAmount)
 
     createMutation.mutate({

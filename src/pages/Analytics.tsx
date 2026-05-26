@@ -36,7 +36,6 @@ export default function Analytics() {
     { id: 'benchmarks', label: t('analytics.benchmarks') },
   ]
 
-  // Retention metrics
   const { data: retentionData, isLoading: isLoadingRetention } = useQuery({
     queryKey: ['retention-metrics', dateFrom, dateTo],
     queryFn: async () => {
@@ -49,7 +48,6 @@ export default function Analytics() {
     enabled: activeTab === 'retention',
   })
 
-  // Cohorts
   const { data: cohortsData, isLoading: isLoadingCohorts } = useQuery({
     queryKey: ['cohorts', dateFrom, dateTo],
     queryFn: async () => {
@@ -62,7 +60,6 @@ export default function Analytics() {
     enabled: activeTab === 'cohorts',
   })
 
-  // Trends
   const { data: trendsData, isLoading: isLoadingTrends } = useQuery({
     queryKey: ['trends', trendMetric, trendComparison],
     queryFn: async () => {
@@ -77,7 +74,6 @@ export default function Analytics() {
     enabled: activeTab === 'trends',
   })
 
-  // Forecast
   const { data: forecastData, isLoading: isLoadingForecast } = useQuery({
     queryKey: ['forecast', forecastType, forecastPeriods],
     queryFn: async () => {
@@ -92,7 +88,6 @@ export default function Analytics() {
     enabled: activeTab === 'forecast',
   })
 
-  // Services & Specialists
   const { data: servicesData, isLoading: isLoadingServices } = useQuery({
     queryKey: ['services-specialists', dateFrom, dateTo],
     queryFn: async () => {
@@ -105,7 +100,6 @@ export default function Analytics() {
     enabled: activeTab === 'services',
   })
 
-  // Insights
   const { data: insightsData, isLoading: isLoadingInsights } = useQuery({
     queryKey: ['insights'],
     queryFn: async () => {
@@ -115,7 +109,6 @@ export default function Analytics() {
     enabled: activeTab === 'insights',
   })
 
-  // Benchmarks
   const { data: benchmarksData, isLoading: isLoadingBenchmarks } = useQuery({
     queryKey: ['benchmarks'],
     queryFn: async () => {
@@ -132,7 +125,7 @@ export default function Analytics() {
         <p className="text-sm sm:text-base text-gray-600">{t('analytics.subtitle')}</p>
       </div>
 
-      {/* Tabs */}
+      {}
       <div className="bg-white rounded-lg shadow-md mb-6 overflow-x-auto">
         <div className="flex border-b border-gray-200">
           {tabs.map((tab) => (
@@ -151,7 +144,7 @@ export default function Analytics() {
         </div>
       </div>
 
-      {/* Date filters (for tabs that need them) */}
+      {}
       {(activeTab === 'retention' || activeTab === 'cohorts' || activeTab === 'services') && (
         <div className="bg-white p-4 rounded-lg shadow-md mb-6">
           <div className="flex gap-4 items-end">
@@ -177,7 +170,7 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Retention Tab */}
+      {}
       {activeTab === 'retention' && (
         <div className="space-y-6">
           {isLoadingRetention ? (
@@ -223,7 +216,7 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Cohorts Tab */}
+      {}
       {activeTab === 'cohorts' && (
         <div className="space-y-6">
           {isLoadingCohorts ? (
@@ -263,7 +256,7 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Trends Tab */}
+      {}
       {activeTab === 'trends' && (
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-lg shadow-md">
@@ -333,7 +326,7 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Forecast Tab */}
+      {}
       {activeTab === 'forecast' && (
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-lg shadow-md">
@@ -402,14 +395,14 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Services & Specialists Tab */}
+      {}
       {activeTab === 'services' && (
         <div className="space-y-6">
           {isLoadingServices ? (
             <LoadingSpinner />
           ) : servicesData ? (
             <>
-              {/* Services */}
+              {}
               <div className="bg-white rounded-lg shadow-md overflow-x-auto">
                 <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200">{t('analytics.services_specialists')} - Services</h3>
                 <table className="min-w-full divide-y divide-gray-200">
@@ -440,7 +433,7 @@ export default function Analytics() {
                 </table>
               </div>
 
-              {/* Specialists */}
+              {}
               <div className="bg-white rounded-lg shadow-md overflow-x-auto">
                 <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200">{t('analytics.services_specialists')} - Specialists</h3>
                 <table className="min-w-full divide-y divide-gray-200">
@@ -475,7 +468,7 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Insights Tab */}
+      {}
       {activeTab === 'insights' && (
         <div className="space-y-4">
           {isLoadingInsights ? (
@@ -523,7 +516,7 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* Benchmarks Tab */}
+      {}
       {activeTab === 'benchmarks' && (
         <div className="space-y-6">
           {isLoadingBenchmarks ? (

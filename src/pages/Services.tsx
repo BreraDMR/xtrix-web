@@ -37,7 +37,6 @@ interface Service {
     queryKey: ['services'],
     queryFn: async () => {
       const { data } = await api.get('/services/')
-      // API returns paginated response, extract items array
       return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
   })
@@ -58,7 +57,6 @@ interface Service {
       return matchesSearch && matchesActive
     })
     
-    // Apply sorting
     if (sortConfig.key && sortConfig.direction) {
       filtered = sortData(filtered, sortConfig)
     }
@@ -66,7 +64,6 @@ interface Service {
     return filtered
   }, [services, searchQuery, activeFilter, sortConfig])
 
-  // Pagination
   const { paginatedData, totalPages, totalItems } = useMemo(() => {
     const startIndex = (currentPage - 1) * perPage
     const endIndex = startIndex + perPage

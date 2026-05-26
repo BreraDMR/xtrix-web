@@ -79,7 +79,6 @@ export default function EmployeeSalary() {
 
   const canManageSalaries = user?.role === 'admin' || user?.role === 'business_owner'
 
-  // Загружаем информацию о сотруднике
   const { data: employee, isLoading: isLoadingEmployee } = useQuery({
     queryKey: ['employee', employeeId],
     queryFn: async () => {
@@ -90,7 +89,6 @@ export default function EmployeeSalary() {
     enabled: !!employeeId && canManageSalaries,
   })
 
-  // Загружаем текущую невыплаченную зарплату
   const { data: currentSalary, isLoading: isLoadingCurrent, refetch: refetchCurrentSalary } = useQuery<SalaryCalculation>({
     queryKey: ['employee-salary-current', employeeId],
     queryFn: async () => {
@@ -102,7 +100,6 @@ export default function EmployeeSalary() {
     retry: false,
   })
 
-  // Загружаем историю зарплат
   const { data: salaryHistory, isLoading: isLoadingHistory, refetch: refetchHistory } = useQuery<SalaryCalculation[]>({
     queryKey: ['employee-salary-history', employeeId],
     queryFn: async () => {
@@ -115,15 +112,12 @@ export default function EmployeeSalary() {
     enabled: !!employeeId && canManageSalaries,
   })
 
-  // Если текущая зарплата полностью выплачена, загружаем её из истории для отображения выплат
   useEffect(() => {
     if (currentSalary && currentSalary.payment_status === 'paid' && !selectedSalaryId && activeTab === 'payments') {
-      // Автоматически выбираем полностью выплаченную зарплату для отображения выплат
       setSelectedSalaryId(currentSalary.id)
     }
   }, [currentSalary, activeTab, selectedSalaryId])
 
-  // Загружаем детали конкретной зарплаты (для работы с adjustments/payments из истории)
   const { data: selectedSalary, refetch: refetchSelectedSalary } = useQuery<SalaryCalculation>({
     queryKey: ['employee-salary-detail', employeeId, selectedSalaryId],
     queryFn: async () => {
@@ -134,7 +128,6 @@ export default function EmployeeSalary() {
     enabled: !!employeeId && !!selectedSalaryId && canManageSalaries,
   })
 
-  // Мутация для расчета зарплаты
   const calculateSalaryMutation = useMutation({
     mutationFn: async (data: { period_start: string; period_end: string; notes?: string }) => {
       const { data: result } = await api.post(
@@ -273,7 +266,7 @@ export default function EmployeeSalary() {
         </div>
       </div>
 
-      {/* Tabs */}
+      {}
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
           {['current', 'adjustments', 'payments', 'history'].map((tab) => {
@@ -295,12 +288,12 @@ export default function EmployeeSalary() {
         </nav>
       </div>
 
-      {/* Current Salary Tab */}
+      {}
       {activeTab === 'current' && (
         <>
           {currentSalary ? (
             <div className="space-y-6">
-              {/* Summary Card */}
+              {}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4">{t('salary.currentCalculation') || 'Текущий расчет'}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
@@ -327,7 +320,7 @@ export default function EmployeeSalary() {
                   </div>
                 </div>
 
-                {/* Salary Breakdown */}
+                {}
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <h3 className="font-semibold text-gray-900 mb-3">{t('salary.breakdown') || 'Детализация'}</h3>
                   <div className="space-y-2">
@@ -379,7 +372,7 @@ export default function EmployeeSalary() {
                   </div>
                 </div>
 
-                {/* Status Badge */}
+                {}
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <div className="flex items-center justify-between">
                     <div>
@@ -512,12 +505,12 @@ export default function EmployeeSalary() {
         </>
       )}
 
-      {/* Adjustments Tab */}
+      {}
       {activeTab === 'adjustments' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">{t('salary.adjustments') || 'Начисления/удержания'}</h2>
-            {/* Выбор зарплаты, если нет текущей */}
+            {}
             {!currentSalary && salaryHistory && salaryHistory.length > 0 && (
               <div className="flex gap-2 items-center">
                 <select
@@ -613,12 +606,12 @@ export default function EmployeeSalary() {
         </div>
       )}
 
-      {/* Payments Tab */}
+      {}
       {activeTab === 'payments' && (
         <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold dark:text-white">{t('salary.payments') || 'Выплаты'}</h2>
-            {/* Выбор зарплаты, если нет текущей или если текущая полностью выплачена */}
+            {}
             {(!currentSalary || (currentSalary && currentSalary.payment_status === 'paid')) && salaryHistory && salaryHistory.length > 0 && (
               <div className="flex gap-2 items-center">
                 <select
@@ -662,7 +655,6 @@ export default function EmployeeSalary() {
           </div>
 
           {(() => {
-            // Если текущая зарплата полностью выплачена, используем её для отображения выплат
             let salaryToShow = currentSalary || selectedSalary
             if (currentSalary && currentSalary.payment_status === 'paid' && !selectedSalaryId) {
               salaryToShow = currentSalary
@@ -734,7 +726,7 @@ export default function EmployeeSalary() {
         </div>
       )}
 
-      {/* History Tab */}
+      {}
       {activeTab === 'history' && (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           {isLoadingHistory ? (
@@ -787,7 +779,7 @@ export default function EmployeeSalary() {
                         <button
                           onClick={() => {
                             setSelectedSalaryId(salary.id)
-                            setActiveTab('current') // Переключаемся на вкладку с деталями
+                            setActiveTab('current')
                           }}
                           className="text-blue-600 hover:text-blue-900"
                         >
@@ -807,13 +799,12 @@ export default function EmployeeSalary() {
         </div>
       )}
 
-      {/* Modals */}
+      {}
       {showAdjustmentModal && selectedSalaryId && (
         <SalaryAdjustmentModal
           isOpen={showAdjustmentModal}
           onClose={() => {
             setShowAdjustmentModal(false)
-            // Обновляем данные после закрытия
             if (selectedSalaryId && !currentSalary) {
               refetchSelectedSalary()
             }
@@ -834,11 +825,9 @@ export default function EmployeeSalary() {
             isOpen={showPaymentModal}
             onClose={() => {
               setShowPaymentModal(false)
-              // Обновляем данные после закрытия
               queryClient.invalidateQueries({ queryKey: ['employee-salary-current', employeeId] })
               queryClient.invalidateQueries({ queryKey: ['employee-salary-detail', employeeId, selectedSalaryId] })
               queryClient.invalidateQueries({ queryKey: ['employee-salary-history', employeeId] })
-              // Перезагружаем все данные
               refetchHistory()
               if (currentSalary) {
                 refetchCurrentSalary()
@@ -846,7 +835,6 @@ export default function EmployeeSalary() {
               if (selectedSalaryId) {
                 refetchSelectedSalary()
               }
-              // Если зарплата была полностью выплачена, переключаемся на вкладку выплат
               if (currentSalary && currentSalary.payment_status === 'paid') {
                 setActiveTab('payments')
               }

@@ -48,7 +48,6 @@ export default function Subscription() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Получаем текущую подписку
   const { data: subscription, isLoading: subscriptionLoading } = useQuery<Subscription>({
     queryKey: ['subscription'],
     queryFn: async () => {
@@ -58,7 +57,6 @@ export default function Subscription() {
     enabled: user?.role === 'admin' || user?.role === 'specialist',
   })
 
-  // Получаем статус trial
   const { data: trialStatus } = useQuery<TrialStatus>({
     queryKey: ['trial-status'],
     queryFn: async () => {
@@ -67,14 +65,12 @@ export default function Subscription() {
     },
   })
 
-  // Получаем список планов
   const { data: plans, isLoading: plansLoading } = useQuery<SubscriptionPlan[]>({
     queryKey: ['subscription-plans'],
     queryFn: async () => {
       try {
         const { data } = await api.get('/subscriptions/plans?active_only=true')
         console.log('[Subscription] Plans received from API:', data)
-        // Фильтруем trial планы из списка (они создаются автоматически)
         const filtered = data.filter((plan: SubscriptionPlan) => !plan.is_trial)
         console.log('[Subscription] Plans after filtering trial:', filtered)
         return filtered
@@ -85,8 +81,6 @@ export default function Subscription() {
     },
   })
 
-  // Фильтруем планы в зависимости от роли
-  // Если планов нет или фильтрация не дает результатов, показываем все планы (кроме trial)
   const availablePlans = React.useMemo<SubscriptionPlan[]>(() => {
     console.log('[Subscription] Filtering plans. User role:', user?.role, 'Plans:', plans)
     if (!plans || plans.length === 0) {
@@ -94,7 +88,6 @@ export default function Subscription() {
       return []
     }
     
-    // Сначала фильтруем trial планы
     const nonTrialPlans = plans.filter((plan) => !plan.is_trial)
     console.log('[Subscription] Non-trial plans:', nonTrialPlans)
     
@@ -103,7 +96,6 @@ export default function Subscription() {
       return []
     }
     
-    // Для админа: показываем планы для админов или все планы с ценой >= 50€
     if (user?.role === 'admin') {
       const adminPlans = nonTrialPlans.filter((plan) => {
         const code = plan.code?.toLowerCase() || ''
@@ -116,17 +108,14 @@ export default function Subscription() {
       
       console.log('[Subscription] Admin plans found:', adminPlans)
       
-      // Если нашлись специфичные планы, возвращаем их, иначе все планы с ценой >= 30€
       if (adminPlans.length > 0) {
         return adminPlans
       }
-      // Fallback: показываем все планы с ценой >= 30€ (admin планы обычно дороже)
       const fallback = nonTrialPlans.filter((plan) => plan.price >= 30)
       console.log('[Subscription] Using fallback (price >= 30):', fallback)
       return fallback
     }
     
-    // Для специалиста: показываем Solo планы или все планы с ценой < 50€
     if (user?.role === 'specialist') {
       const soloPlans = nonTrialPlans.filter((plan) => {
         const code = plan.code?.toLowerCase() || ''
@@ -134,15 +123,12 @@ export default function Subscription() {
                (plan.price < 50 && !code.includes('admin'))
       })
       
-      // Если нашлись специфичные планы, возвращаем их, иначе все планы с ценой < 50€
       if (soloPlans.length > 0) {
         return soloPlans
       }
-      // Fallback: показываем все планы с ценой < 50€
       return nonTrialPlans.filter((plan) => plan.price < 50)
     }
     
-    // Для других ролей - пустой список
     console.log('[Subscription] User role not admin or specialist')
     return []
   }, [plans, user?.role])
@@ -151,23 +137,19 @@ export default function Subscription() {
     setLoading(true)
     setError('')
     try {
-      // Пробуем создать Stripe Checkout сессию
       try {
         const { data: checkoutData } = await api.post('/subscriptions/checkout/create-session', null, {
           params: { plan_id: planId },
         })
         
         if (checkoutData.url) {
-          // Редиректим на Stripe Checkout
           window.location.href = checkoutData.url
           return
         }
       } catch (checkoutError: any) {
-        // Если Stripe не настроен, создаем подписку напрямую (для тестирования)
         console.warn('Stripe Checkout not available, creating subscription directly:', checkoutError)
       }
       
-      // Fallback: создаем подписку напрямую (без оплаты)
       await api.post('/subscriptions/', {
         user_id: user?.id,
         plan_id: planId,
@@ -218,7 +200,6 @@ export default function Subscription() {
     }
   }
 
-  // Получаем историю транзакций
   const { data: transactions } = useQuery<any[]>({
     queryKey: ['subscription-transactions', subscription?.id],
     queryFn: async () => {
@@ -229,7 +210,6 @@ export default function Subscription() {
     enabled: !!subscription,
   })
 
-  // Получаем историю подписок
   const { data: subscriptionHistory } = useQuery<Subscription[]>({
     queryKey: ['subscription-history'],
     queryFn: async () => {
@@ -247,7 +227,6 @@ export default function Subscription() {
     )
   }
 
-  // Проверяем, нужна ли подписка для этой роли
   if (user?.role !== 'admin' && user?.role !== 'specialist') {
     return (
       <div className="p-6">
@@ -260,8 +239,6 @@ export default function Subscription() {
     )
   }
 
-  // Проверяем, является ли пользователь сотрудником
-  // Если да, то он использует подписку админа
   const isEmployee = user?.role === 'specialist' && user?.employer_id
 
   const formatDate = (dateString: string | null) => {
@@ -291,7 +268,7 @@ export default function Subscription() {
         </div>
       )}
 
-      {/* Текущая подписка */}
+      {}
       {subscription && (
         <div className="mb-8 bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-start mb-4">
@@ -370,7 +347,7 @@ export default function Subscription() {
             )}
           </div>
 
-          {/* История транзакций */}
+          {}
           {transactions && transactions.length > 0 && (
             <div className="mt-6 pt-6 border-t border-gray-200">
               <h3 className="text-lg font-semibold mb-3">
@@ -411,7 +388,7 @@ export default function Subscription() {
         </div>
       )}
 
-      {/* Trial статус */}
+      {}
       {trialStatus && trialStatus.is_trial && (
         <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p className="text-yellow-800 font-medium mb-2">
@@ -425,7 +402,7 @@ export default function Subscription() {
         </div>
       )}
 
-      {/* Список доступных планов */}
+      {}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">
           {t('subscription.availablePlans')}
@@ -515,7 +492,7 @@ export default function Subscription() {
         </div>
       )}
 
-      {/* История подписок */}
+      {}
       {subscriptionHistory && subscriptionHistory.length > 1 && (
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">

@@ -59,7 +59,6 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     setSelectedSlot(null)
     setEditingVisitId(undefined)
     onRefresh()
-    // Инвалидируем кеш статистики для Dashboard виджетов
     queryClient.invalidateQueries({ queryKey: ['visits-statistics'] })
     queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }
@@ -87,7 +86,6 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     )
   }
 
-  // Calculate total events for current month
   const totalEventsThisMonth = useMemo(() => {
     const currentMonth = selectedDate.getMonth()
     const currentYear = selectedDate.getFullYear()
@@ -126,7 +124,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
       </div>
 
       <div className="space-y-4">
-        {/* Selected Day Card */}
+        {}
         <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
           <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('calendar.selectedDay')}</h3>
           <p className="text-lg font-bold text-gray-900 mb-2">
@@ -172,7 +170,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           )}
         </div>
 
-        {/* Insights Card */}
+        {}
         <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('calendar.insights')}</h3>
           <p className="text-xs text-gray-500 mb-3">{t('calendar.insightsTitle')}</p>
@@ -211,14 +209,5 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
 
 

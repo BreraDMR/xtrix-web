@@ -5,13 +5,11 @@ type Locale = 'en' | 'ru' | 'cz'
 const getInitialLocale = (): Locale => {
   if (typeof window === 'undefined') return 'en'
   
-  // Check localStorage first
   const saved = localStorage.getItem('app_locale')
   if (saved && (saved === 'en' || saved === 'ru' || saved === 'cz')) {
     return saved as Locale
   }
   
-  // Check browser language
   const browserLang = navigator.language.split('-')[0].toLowerCase()
   if (browserLang === 'ru') return 'ru'
   if (browserLang === 'cs') return 'cz'

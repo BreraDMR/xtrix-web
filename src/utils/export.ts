@@ -1,6 +1,4 @@
-/**
- * Export utilities for PDF, Excel, and Print
- */
+
 
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -26,16 +24,13 @@ export interface ExportOptions<T> {
   chartSelectors?: string[]
 }
 
-/**
- * Export to PDF
- */
+
 export async function exportToPDF<T extends Record<string, any>>(
   options: ExportOptions<T>
 ): Promise<void> {
   const { data, columns, filename, title } = options
   const doc = new jsPDF()
 
-  // Add title if provided
   if (title) {
     doc.setFontSize(18)
     doc.text(title, 14, 22)
@@ -43,7 +38,6 @@ export async function exportToPDF<T extends Record<string, any>>(
     doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30)
   }
 
-  // Prepare table data
   const tableData = data.map((row) =>
     columns.map((col) => {
       const key = col.key as string
@@ -55,7 +49,6 @@ export async function exportToPDF<T extends Record<string, any>>(
   const headers = columns.map((col) => col.label)
   const colWidths = columns.map((col) => col.width || 40)
 
-  // Add table
   autoTable(doc, {
     head: [headers],
     body: tableData,
@@ -68,7 +61,6 @@ export async function exportToPDF<T extends Record<string, any>>(
     }, {} as Record<number, { cellWidth: number }>),
   })
 
-  // Add charts if requested
   if (options.includeCharts && options.chartSelectors) {
     let currentY = (doc as any).lastAutoTable.finalY + 20
 
@@ -84,7 +76,6 @@ export async function exportToPDF<T extends Record<string, any>>(
           const imgWidth = 180
           const imgHeight = (canvas.height * imgWidth) / canvas.width
 
-          // Check if we need a new page
           if (currentY + imgHeight > 280) {
             doc.addPage()
             currentY = 20
@@ -102,21 +93,16 @@ export async function exportToPDF<T extends Record<string, any>>(
   doc.save(filename.endsWith('.pdf') ? filename : `${filename}.pdf`)
 }
 
-/**
- * Export to Excel
- */
+
 export function exportToExcel<T extends Record<string, any>>(
   options: ExportOptions<T>
 ): void {
   const { data, columns, filename } = options
 
-  // Prepare worksheet data
   const worksheetData: any[][] = []
 
-  // Add headers
   worksheetData.push(columns.map((col) => col.label))
 
-  // Add data rows
   data.forEach((row) => {
     worksheetData.push(
       columns.map((col) => {
@@ -127,22 +113,17 @@ export function exportToExcel<T extends Record<string, any>>(
     )
   })
 
-  // Create workbook and worksheet
   const wb = XLSX.utils.book_new()
   const ws = XLSX.utils.aoa_to_sheet(worksheetData)
 
-  // Set column widths
   ws['!cols'] = columns.map((col) => ({ wch: col.width || 15 }))
 
   XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
 
-  // Save file
   XLSX.writeFile(wb, filename.endsWith('.xlsx') ? filename : `${filename}.xlsx`)
 }
 
-/**
- * Export chart/image to PNG/JPG
- */
+
 export async function exportChartToImage(
   selector: string,
   filename: string,
@@ -171,9 +152,7 @@ export async function exportChartToImage(
   }
 }
 
-/**
- * Print page or element
- */
+
 export function printElement(selector?: string): void {
   const element = selector ? document.querySelector(selector) : document.body
 
@@ -213,9 +192,7 @@ export function printElement(selector?: string): void {
   }, 250)
 }
 
-/**
- * Universal export function
- */
+
 export async function exportData<T extends Record<string, any>>(
   options: ExportOptions<T>
 ): Promise<void> {
@@ -227,7 +204,6 @@ export async function exportData<T extends Record<string, any>>(
       exportToExcel(options)
       break
     case 'csv':
-      // Use existing CSV export
       const { exportTableToCSV } = await import('./table')
       exportTableToCSV(
         options.data,
@@ -247,9 +223,7 @@ export async function exportData<T extends Record<string, any>>(
   }
 }
 
-/**
- * Get saved export preferences
- */
+
 export function getExportPreferences(): Partial<ExportOptions<any>> {
   try {
     const saved = localStorage.getItem('export_preferences')
@@ -259,13 +233,10 @@ export function getExportPreferences(): Partial<ExportOptions<any>> {
   }
 }
 
-/**
- * Save export preferences
- */
+
 export function saveExportPreferences(preferences: Partial<ExportOptions<any>>): void {
   try {
     localStorage.setItem('export_preferences', JSON.stringify(preferences))
   } catch {
-    // Ignore errors
   }
 }

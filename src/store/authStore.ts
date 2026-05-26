@@ -24,10 +24,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       localStorage.setItem('auth_user', JSON.stringify(user))
       console.log('[AuthStore] Saved to localStorage')
     }
-    // Синхронно обновляем состояние
     set({ token, user })
     
-    // Проверяем, что обновление произошло
     const updatedState = get()
     console.log('[AuthStore] State updated:', { 
       hasToken: !!updatedState.token,

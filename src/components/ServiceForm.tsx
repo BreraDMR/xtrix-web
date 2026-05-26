@@ -52,17 +52,14 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
   const loadAvailableSpecialists = async () => {
     setLoadingSpecialists(true)
     try {
-      // Получаем список сотрудников (employees и specialists)
       const { data: employeesData } = await api.get('/employees/', { params: { is_active: true } })
       const employees = Array.isArray(employeesData) ? employeesData : []
       
-      // Получаем список всех специалистов
       const { data: usersData } = await api.get('/users/', { params: { role: 'specialist' } })
       const allUsers = Array.isArray(usersData) 
         ? usersData 
         : (usersData?.items || usersData?.data || [])
       
-      // Объединяем сотрудников и специалистов
       const employeeUserIds = new Set(employees.map((emp: any) => emp.employee_user_id))
       const allSpecialists = allUsers.filter((u: any) => 
         u.role === 'specialist' || employeeUserIds.has(u.id)
@@ -101,7 +98,6 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     try {
       const payload: any = {
         ...formData,
-        // Отправляем список специалистов, исключая основного (он уже в specialist_id)
         specialist_ids: (formData.specialist_ids || []).filter(id => id !== formData.specialist_id),
       }
       
@@ -175,7 +171,6 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
               setFormData({
                 ...formData,
                 specialist_id: newId,
-                // Если основной специалист не в списке, добавляем его
                 specialist_ids: specialistIds.includes(newId) ? specialistIds : [...specialistIds, newId],
               })
             }}
@@ -217,7 +212,6 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
                           })
                         }
                       } else {
-                        // Нельзя убрать основного специалиста
                         if (!isPrimary) {
                           setFormData({
                             ...formData,

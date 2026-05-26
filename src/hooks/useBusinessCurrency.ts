@@ -3,10 +3,7 @@ import api from '../api/client'
 import { Currency } from '../utils/currency'
 import { useAuthStore } from '../store/authStore'
 
-/**
- * Хук для получения валюты бизнеса
- * @returns валюта бизнеса (по умолчанию EUR)
- */
+
 export function useBusinessCurrency(): Currency {
   const { user } = useAuthStore()
   
@@ -25,7 +22,7 @@ export function useBusinessCurrency(): Currency {
     },
     enabled: !!user,
     retry: false,
-    staleTime: 5 * 60 * 1000, // 5 минут
+    staleTime: 5 * 60 * 1000,
   })
   
   return (business?.currency as Currency) || 'EUR'

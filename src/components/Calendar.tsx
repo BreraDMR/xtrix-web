@@ -53,7 +53,6 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
     setSelectedSlot(null)
     setEditingVisitId(undefined)
     onRefresh()
-    // Инвалидируем кеш статистики для Dashboard виджетов
     queryClient.invalidateQueries({ queryKey: ['visits-statistics'] })
     queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }
@@ -71,7 +70,6 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
     const lastDay = new Date(year, month + 1, 0)
     const days: Date[] = []
     
-    // Add days from previous month to fill first week
     const startDay = firstDay.getDay()
     for (let i = startDay - 1; i >= 0; i--) {
       const date = new Date(firstDay)
@@ -79,12 +77,10 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
       days.push(date)
     }
     
-    // Add days of current month
     for (let i = 1; i <= lastDay.getDate(); i++) {
       days.push(new Date(year, month, i))
     }
     
-    // Add days from next month to fill last week
     const remaining = 42 - days.length
     for (let i = 1; i <= remaining; i++) {
       const date = new Date(lastDay)
@@ -97,12 +93,11 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
 
   const days = getDaysInMonth()
   
-  // Week days based on locale
   const weekDays = useMemo(() => {
     if (!dateLocale) return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const days = []
     for (let i = 0; i < 7; i++) {
-      const date = new Date(2024, 0, i + 1) // January 2024, days 1-7
+      const date = new Date(2024, 0, i + 1)
       days.push(format(date, 'EEE', { locale: dateLocale }))
     }
     return days

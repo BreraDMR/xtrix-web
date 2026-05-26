@@ -37,7 +37,6 @@ export default function Finance() {
   const queryClient = useQueryClient()
   const currency = useBusinessCurrency()
   
-  // Фильтры периода
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
@@ -50,7 +49,6 @@ export default function Finance() {
   const [showAddExpense, setShowAddExpense] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
 
-  // Получаем отчет о прибыли
   const { data: profitReport, isLoading: isLoadingProfit } = useQuery({
     queryKey: ['profit-report', dateFrom, dateTo],
     queryFn: async () => {
@@ -64,7 +62,6 @@ export default function Finance() {
     },
   })
 
-  // Получаем список расходов
   const { data: expensesResponse, isLoading: isLoadingExpenses } = useQuery({
     queryKey: ['expenses', dateFrom, dateTo, selectedCategory],
     queryFn: async () => {
@@ -78,7 +75,6 @@ export default function Finance() {
     },
   })
 
-  // Получаем категории
   const { data: categories } = useQuery({
     queryKey: ['expense-categories'],
     queryFn: async () => {
@@ -87,7 +83,6 @@ export default function Finance() {
     },
   })
 
-  // Получаем статистику платежей
   const { data: paymentStats, isLoading: isLoadingPayments } = useQuery({
     queryKey: ['payment-statistics', dateFrom, dateTo],
     queryFn: async () => {
@@ -115,7 +110,6 @@ export default function Finance() {
 
   const expenses: Expense[] = expensesResponse?.items || []
 
-  // Удаление расхода
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       await api.delete(`/expenses/${id}`)
@@ -143,7 +137,7 @@ export default function Finance() {
         )}
       </div>
 
-      {/* Фильтры периода */}
+      {}
       <div className="bg-white p-4 rounded-lg shadow-md mb-6">
         <div className="flex gap-4 items-end">
           <div>
@@ -182,7 +176,7 @@ export default function Finance() {
         </div>
       </div>
 
-      {/* Виджет платежей */}
+      {}
       {!isLoadingPayments && paymentStats && (
         <div className="mb-6">
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100" id="payment-chart">
@@ -315,7 +309,7 @@ export default function Finance() {
         </div>
       )}
 
-      {/* Статистика */}
+      {}
       {isLoadingProfit ? (
         <LoadingSpinner />
       ) : profitReport ? (
@@ -343,7 +337,7 @@ export default function Finance() {
         </div>
       ) : null}
 
-      {/* Расходы по категориям */}
+      {}
       {profitReport?.expenses_by_category && profitReport.expenses_by_category.length > 0 && (
         <div className="bg-white p-6 rounded-xl shadow-md mb-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">{t('finance.expenses_by_category')}</h2>
@@ -364,7 +358,7 @@ export default function Finance() {
         </div>
       )}
 
-      {/* Список расходов */}
+      {}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-900">{t('finance.expenses_list')}</h2>
@@ -457,7 +451,7 @@ export default function Finance() {
         )}
       </div>
 
-      {/* Форма добавления расхода */}
+      {}
       {showAddExpense && (
         <ExpenseForm
           categories={categories || []}
@@ -473,7 +467,6 @@ export default function Finance() {
   )
 }
 
-// Компонент формы добавления расхода
 function ExpenseForm({
   categories,
   onCancel,
@@ -497,7 +490,6 @@ function ExpenseForm({
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  // Получаем бизнес пользователя
   const { data: userBusiness } = useQuery({
     queryKey: ['user-business'],
     queryFn: async () => {
@@ -515,7 +507,6 @@ function ExpenseForm({
     retry: false,
   })
 
-  // Создание расхода
   const createMutation = useMutation({
     mutationFn: async (expense: any) => {
       let businessId = user?.business_id
@@ -545,7 +536,6 @@ function ExpenseForm({
     e.preventDefault()
     e.stopPropagation()
 
-    // Валидация
     const newErrors: Record<string, string> = {}
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
       newErrors.amount = t('finance.amount_required')

@@ -151,7 +151,7 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
         </table>
       </div>
       
-      {/* Pagination */}
+      {}
       {pages > 1 && (
         <div className="mt-4 flex justify-between items-center">
           <button
@@ -183,7 +183,6 @@ export default function Loyalty() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<TabType>('program')
 
-  // Получаем бизнес пользователя для получения business_id
   const { data: userBusiness } = useQuery({
     queryKey: ['user-business'],
     queryFn: async () => {
@@ -211,7 +210,6 @@ export default function Loyalty() {
     { id: 'analytics', label: t('analytics.title') },
   ]
 
-  // Fetch program
   const { data: program, isLoading: isLoadingProgram } = useQuery({
     queryKey: ['loyalty-program'],
     queryFn: async () => {
@@ -228,7 +226,6 @@ export default function Loyalty() {
     enabled: activeTab === 'program',
   })
 
-  // Fetch levels
   const { data: levels = [], isLoading: isLoadingLevels } = useQuery({
     queryKey: ['loyalty-levels'],
     queryFn: async () => {
@@ -238,7 +235,6 @@ export default function Loyalty() {
     enabled: activeTab === 'levels' && !!program,
   })
 
-  // Fetch promotions
   const { data: promotions = [], isLoading: isLoadingPromotions } = useQuery({
     queryKey: ['loyalty-promotions'],
     queryFn: async () => {
@@ -248,7 +244,6 @@ export default function Loyalty() {
     enabled: activeTab === 'promotions' && !!program,
   })
 
-  // Create/Update program mutation
   const programMutation = useMutation({
     mutationFn: async (programData: Partial<LoyaltyProgram>) => {
       if (program) {
@@ -264,7 +259,6 @@ export default function Loyalty() {
     },
   })
 
-  // Delete program mutation
   const deleteProgramMutation = useMutation({
     mutationFn: async () => {
       await api.delete('/loyalty/program')
@@ -274,7 +268,6 @@ export default function Loyalty() {
     },
   })
 
-  // Create level mutation
   const createLevelMutation = useMutation({
     mutationFn: async (levelData: Partial<LoyaltyLevel>) => {
       const { data } = await api.post('/loyalty/levels', levelData)
@@ -285,7 +278,6 @@ export default function Loyalty() {
     },
   })
 
-  // Update level mutation
   const updateLevelMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<LoyaltyLevel> }) => {
       const { data: result } = await api.put(`/loyalty/levels/${id}`, data)
@@ -296,7 +288,6 @@ export default function Loyalty() {
     },
   })
 
-  // Delete level mutation
   const deleteLevelMutation = useMutation({
     mutationFn: async (id: number) => {
       await api.delete(`/loyalty/levels/${id}`)
@@ -306,7 +297,6 @@ export default function Loyalty() {
     },
   })
 
-  // Create promotion mutation - used when promotion form is implemented
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const createPromotionMutation = useMutation({
     mutationFn: async (promotionData: Partial<LoyaltyPromotion>) => {
@@ -318,7 +308,6 @@ export default function Loyalty() {
     },
   })
 
-  // Update promotion mutation - used when promotion form is implemented
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updatePromotionMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<LoyaltyPromotion> }) => {
@@ -330,7 +319,6 @@ export default function Loyalty() {
     },
   })
 
-  // Delete promotion mutation
   const deletePromotionMutation = useMutation({
     mutationFn: async (id: number) => {
       await api.delete(`/loyalty/promotions/${id}`)
@@ -350,7 +338,6 @@ export default function Loyalty() {
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null)
   const [transactionType, setTransactionType] = useState<string | null>(null)
   
-  // Инициализируем promotionType при открытии формы
   useEffect(() => {
     if (showPromotionForm) {
       if (editingPromotion) {
@@ -365,7 +352,6 @@ export default function Loyalty() {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     
-    // Получаем business_id из текущего пользователя или из API
     let businessId = user?.business_id
     if (!businessId && userBusiness?.id) {
       businessId = userBusiness.id
@@ -432,7 +418,7 @@ export default function Loyalty() {
         <p className="text-sm sm:text-base text-gray-600">{t('loyalty.subtitle')}</p>
       </div>
 
-      {/* Tabs */}
+      {}
       <div className="bg-white rounded-lg shadow-md mb-6 overflow-x-auto">
         <div className="flex border-b border-gray-200">
           {tabs.map((tab) => (
@@ -451,7 +437,7 @@ export default function Loyalty() {
         </div>
       </div>
 
-      {/* Program Settings Tab */}
+      {}
       {activeTab === 'program' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           {isLoadingProgram ? (
@@ -552,7 +538,7 @@ export default function Loyalty() {
             </div>
           )}
 
-          {/* Program Form Modal */}
+          {}
           {showProgramForm && isAdmin && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowProgramForm(false)}>
               <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -691,7 +677,7 @@ export default function Loyalty() {
         </div>
       )}
 
-      {/* Levels Tab */}
+      {}
       {activeTab === 'levels' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           {!program ? (
@@ -765,7 +751,7 @@ export default function Loyalty() {
             </div>
           )}
 
-          {/* Level Form Modal */}
+          {}
           {showLevelForm && isAdmin && program && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowLevelForm(false)}>
               <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -897,7 +883,7 @@ export default function Loyalty() {
         </div>
       )}
 
-      {/* Promotions Tab */}
+      {}
       {activeTab === 'promotions' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           {!program ? (
@@ -969,7 +955,7 @@ export default function Loyalty() {
             </div>
           )}
 
-          {/* Promotion Form Modal */}
+          {}
           {showPromotionForm && isAdmin && program && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowPromotionForm(false)}>
               <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -991,7 +977,6 @@ export default function Loyalty() {
                       is_active: formData.get('is_active') === 'on',
                     }
                     
-                    // Add type-specific fields
                     const selectedPromotionType = promotionData.promotion_type
                     if (selectedPromotionType === 'double_points') {
                       promotionData.points_multiplier = formData.get('points_multiplier') ? parseFloat(formData.get('points_multiplier') as string) : 2.0
@@ -1195,7 +1180,7 @@ export default function Loyalty() {
         </div>
       )}
 
-      {/* Transactions Tab */}
+      {}
       {activeTab === 'transactions' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('loyalty.transactions')}</h2>
@@ -1204,7 +1189,7 @@ export default function Loyalty() {
             <p className="text-gray-600">{t('loyalty.no_program')}</p>
           ) : (
             <>
-              {/* Filters */}
+              {}
               <div className="mb-6 flex gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Client ID</label>
@@ -1232,7 +1217,7 @@ export default function Loyalty() {
                 </div>
               </div>
 
-              {/* Transactions List */}
+              {}
               {selectedClientId ? (
                 <TransactionsList clientId={selectedClientId} transactionType={transactionType} />
               ) : (
@@ -1243,7 +1228,7 @@ export default function Loyalty() {
         </div>
       )}
 
-      {/* Analytics Tab */}
+      {}
       {activeTab === 'analytics' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <LoyaltyAnalytics />

@@ -90,7 +90,6 @@ export default function Clients() {
     queryKey: ['clients'],
     queryFn: async () => {
       const { data } = await api.get('/clients/')
-      // API returns paginated response, extract items array
       return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
   })
@@ -110,7 +109,6 @@ export default function Clients() {
       return matchesSearch && matchesGender
     })
     
-    // Apply sorting
     if (sortConfig.key && sortConfig.direction) {
       filtered = sortData(filtered, sortConfig)
     }
@@ -118,7 +116,6 @@ export default function Clients() {
     return filtered
   }, [clients, searchQuery, genderFilter, sortConfig])
 
-  // Pagination
   const { paginatedData, totalPages, totalItems } = useMemo(() => {
     const startIndex = (currentPage - 1) * perPage
     const endIndex = startIndex + perPage
@@ -132,7 +129,6 @@ export default function Clients() {
   const handleSort = (key: keyof Client) => {
     setSortConfig((prev) => {
       if (prev.key === key) {
-        // Cycle through: asc -> desc -> null
         if (prev.direction === 'asc') {
           return { key, direction: 'desc' }
         } else if (prev.direction === 'desc') {
@@ -141,7 +137,7 @@ export default function Clients() {
       }
       return { key, direction: 'asc' }
     })
-    setCurrentPage(1) // Reset to first page when sorting
+    setCurrentPage(1)
   }
 
   const handleSuccess = () => {
@@ -250,7 +246,7 @@ export default function Clients() {
         </div>
       )}
 
-      {/* Client Personal Report Modal */}
+      {}
       {clientReportId && (
         <ClientPersonalReportModal
           isOpen={!!clientReportId}
@@ -259,7 +255,7 @@ export default function Clients() {
         />
       )}
 
-      {/* Import Clients Modal */}
+      {}
       {showImportModal && (
         <ImportClientsModal
           isOpen={showImportModal}

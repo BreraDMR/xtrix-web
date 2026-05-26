@@ -1,5 +1,4 @@
 export type TranslationKey =
-  // Common
   | 'common.save'
   | 'common.cancel'
   | 'common.delete'
@@ -13,7 +12,6 @@ export type TranslationKey =
   | 'common.export'
   | 'common.noData'
   | 'common.print'
-  // Export
   | 'export.title'
   | 'export.format'
   | 'export.reportType'
@@ -59,7 +57,6 @@ export type TranslationKey =
   | 'export.allData'
   | 'export.filteredData'
   | 'export.selectedRows'
-  // Import
   | 'import.title'
   | 'import.selectFile'
   | 'import.fileFormat'
@@ -87,7 +84,6 @@ export type TranslationKey =
   | 'import.parseError'
   | 'import.importWithErrors'
   | 'import.importError'
-  // Specialist types
   | 'specialistType.massage'
   | 'specialistType.cosmetologist'
   | 'specialistType.barber'
@@ -117,18 +113,15 @@ export type TranslationKey =
   | 'specialistType.pediatrician'
   | 'specialistType.surgeon'
   | 'specialistType.oncologist'
-  // Categories
   | 'category.beauty'
   | 'category.wellness'
   | 'category.healthcare'
-  // Business types
   | 'businessType.individual'
   | 'businessType.salon'
   | 'businessType.clinic'
   | 'businessType.hospital'
   | 'businessType.barbershop'
   | 'businessType.rehabCenter'
-  // Registration
   | 'register.title'
   | 'register.fullName'
   | 'register.email'
@@ -142,12 +135,10 @@ export type TranslationKey =
   | 'register.alreadyHaveAccount'
   | 'register.signIn'
   | 'register.specialistTypeRequired'
-  // Client form
   | 'clientForm.allergies'
   | 'clientForm.chronicDiseases'
   | 'clientForm.healthcareRequired'
   | 'clientForm.healthcareRequiredDescription'
-  // Specialist profile
   | 'specialistProfile.title'
   | 'specialistProfile.notFound'
   | 'specialistProfile.verificationPending'
@@ -173,7 +164,6 @@ export type TranslationKey =
   | 'specialistProfile.descriptionPlaceholder'
   | 'specialistProfile.languages'
   | 'specialistProfile.languagesPlaceholder'
-  // Navigation
   | 'nav.dashboard'
   | 'nav.clients'
   | 'nav.visits'
@@ -182,7 +172,6 @@ export type TranslationKey =
   | 'nav.profile'
   | 'nav.logout'
   | 'nav.inventory'
-  // Login
   | 'login.title'
   | 'login.subtitle'
   | 'login.email'
@@ -192,7 +181,6 @@ export type TranslationKey =
   | 'login.dontHaveAccount'
   | 'login.signUp'
   | 'login.failed'
-  // Dashboard
   | 'dashboard.title'
   | 'dashboard.subtitle'
   | 'dashboard.monthlyRevenue'
@@ -214,7 +202,6 @@ export type TranslationKey =
   | 'dashboard.noClientsDescription'
   | 'dashboard.noData'
   | 'dashboard.noProfitData'
-  // Clients
   | 'clients.title'
   | 'clients.addClient'
   | 'clients.searchPlaceholder'
@@ -228,7 +215,6 @@ export type TranslationKey =
   | 'clients.name'
   | 'clients.phone'
   | 'clients.email'
-  // Services
   | 'services.title'
   | 'services.addService'
   | 'services.searchPlaceholder'
@@ -245,7 +231,6 @@ export type TranslationKey =
   | 'services.active'
   | 'services.inactive'
   | 'services.min'
-  // Visits
   | 'visits.title'
   | 'visits.newVisit'
   | 'visits.searchPlaceholder'
@@ -282,7 +267,6 @@ export type TranslationKey =
   | 'visits.clientFromOtherBusiness'
   | 'visits.addToMyBusiness'
   | 'visits.basicMedicalInfo'
-  // Calendar
   | 'calendar.title'
   | 'calendar.simpleViewDescription'
   | 'calendar.advancedViewDescription'
@@ -301,7 +285,6 @@ export type TranslationKey =
   | 'calendar.insights'
   | 'calendar.insightsTitle'
   | 'calendar.searchEvents'
-  // Employees
   | 'employees.title'
   | 'employees.add_employee'
   | 'employees.search_placeholder'
@@ -338,7 +321,6 @@ export type TranslationKey =
   | 'employees.no_users_found'
   | 'employees.commission_invalid_range'
   | 'employees.base_salary_invalid'
-  // Salary
   | 'salary.my_salary'
   | 'salary.current_unpaid'
   | 'salary.unpaid'
@@ -444,7 +426,6 @@ export type TranslationKey =
   | 'salary.selectSalary'
   | 'common.saving'
   | 'common.view'
-  // Nav
   | 'nav.business'
   | 'nav.employees'
   | 'nav.my_salary'
@@ -457,7 +438,6 @@ export type TranslationKey =
   | 'nav.primary'
   | 'nav.manage'
   | 'nav.system'
-  // Settings
   | 'settings.title'
   | 'settings.subtitle'
   | 'settings.language'
@@ -494,7 +474,6 @@ export type TranslationKey =
   | 'settings.seconds'
   | 'settings.export_format'
   | 'settings.export_format_description'
-  // Finance
   | 'finance.title'
   | 'finance.subtitle'
   | 'finance.revenue'
@@ -529,7 +508,6 @@ export type TranslationKey =
   | 'finance.completed'
   | 'finance.total'
   | 'finance.payment_other'
-  // Subscription
   | 'subscription.title'
   | 'subscription.notRequired'
   | 'subscription.employeeMessage'
@@ -565,7 +543,6 @@ export type TranslationKey =
   | 'subscription.failed_cancel'
   | 'subscription.failed_reactivate'
   | 'subscription.active_label'
-  // Inventory
   | 'inventory.title'
   | 'inventory.add_product'
   | 'inventory.edit_product'
@@ -590,7 +567,6 @@ export type TranslationKey =
   | 'inventory.low_stock_only'
   | 'inventory.search_placeholder'
   | 'inventory.no_products'
-  // Analytics
   | 'analytics.title'
   | 'analytics.subtitle'
   | 'analytics.retention'
@@ -658,7 +634,6 @@ export type TranslationKey =
   | 'analytics.comparison_yoy'
   | 'analytics.forecast_revenue'
   | 'analytics.forecast_visits'
-  // Loyalty
   | 'loyalty.title'
   | 'loyalty.subtitle'
   | 'loyalty.program_settings'
@@ -730,7 +705,6 @@ export type TranslationKey =
   | 'loyalty.no_transactions'
   | 'loyalty.service_ids'
   | 'loyalty.service_ids_placeholder'
-  // Common
   | 'common.currency'
   | 'common.close'
   | 'common.days'
@@ -739,7 +713,6 @@ export type TranslationKey =
   | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
-  // Common
   'common.save': { en: 'Save', ru: 'Сохранить', cz: 'Uložit' },
   'common.cancel': { en: 'Cancel', ru: 'Отмена', cz: 'Zrušit' },
   'common.delete': { en: 'Delete', ru: 'Удалить', cz: 'Smazat' },
@@ -756,7 +729,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.saving': { en: 'Saving...', ru: 'Сохранение...', cz: 'Ukládání...' },
   'common.view': { en: 'View', ru: 'Просмотр', cz: 'Zobrazit' },
   
-  // Export
   'export.title': { en: 'Export Data', ru: 'Экспорт данных', cz: 'Export dat' },
   'export.format': { en: 'Format', ru: 'Формат', cz: 'Formát' },
   'export.reportType': { en: 'Report Type', ru: 'Тип отчета', cz: 'Typ reportu' },
@@ -803,7 +775,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'export.filteredData': { en: 'Filtered Data', ru: 'Отфильтрованные данные', cz: 'Filtrovaná data' },
   'export.selectedRows': { en: 'Selected Rows', ru: 'Выбранные строки', cz: 'Vybrané řádky' },
   
-  // Import
   'import.title': { en: 'Import Clients from Excel', ru: 'Импорт клиентов из Excel', cz: 'Import klientů z Excelu' },
   'import.selectFile': { en: 'Select Excel file (.xlsx, .xls)', ru: 'Выберите Excel файл (.xlsx, .xls)', cz: 'Vyberte Excel soubor (.xlsx, .xls)' },
   'import.fileFormat': { en: 'File must contain columns: Name (required), Phone, Email', ru: 'Файл должен содержать колонки: Имя (обязательно), Телефон, Email', cz: 'Soubor musí obsahovat sloupce: Jméno (povinné), Telefon, Email' },
@@ -832,7 +803,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'import.importWithErrors': { en: 'There are validation errors. Continue with import?', ru: 'Есть ошибки валидации. Продолжить импорт?', cz: 'Existují chyby validace. Pokračovat s importem?' },
   'import.importError': { en: 'Import error', ru: 'Ошибка импорта', cz: 'Chyba importu' },
   
-  // Specialist types - Beauty
   'specialistType.massage': { en: 'Massage Therapist', ru: 'Массажист', cz: 'Masér' },
   'specialistType.cosmetologist': { en: 'Cosmetologist', ru: 'Косметолог', cz: 'Kosmetička' },
   'specialistType.barber': { en: 'Barber', ru: 'Барбер', cz: 'Holič' },
@@ -842,7 +812,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'specialistType.lashTechnician': { en: 'Lash & Brow Technician', ru: 'Мастер по ресницам и бровям', cz: 'Technička řas a obočí' },
   'specialistType.makeupArtist': { en: 'Makeup Artist', ru: 'Визажист', cz: 'Vizážistka' },
   
-  // Specialist types - Wellness
   'specialistType.physiotherapist': { en: 'Physiotherapist', ru: 'Физиотерапевт', cz: 'Fyzioterapeut' },
   'specialistType.nutritionist': { en: 'Nutritionist', ru: 'Нутрициолог', cz: 'Výživový poradce' },
   'specialistType.aromatherapist': { en: 'Aromatherapist', ru: 'Ароматерапевт', cz: 'Aromaterapeut' },
@@ -851,7 +820,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'specialistType.psychologist': { en: 'Psychologist', ru: 'Психолог', cz: 'Psycholog' },
   'specialistType.psychotherapist': { en: 'Psychotherapist', ru: 'Психотерапевт', cz: 'Psychoterapeut' },
   
-  // Specialist types - Healthcare
   'specialistType.therapist': { en: 'Therapist', ru: 'Терапевт', cz: 'Terapeut' },
   'specialistType.dentist': { en: 'Dentist', ru: 'Стоматолог', cz: 'Zubař' },
   'specialistType.dermatologist': { en: 'Dermatologist', ru: 'Дерматолог', cz: 'Dermatolog' },
@@ -867,12 +835,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'specialistType.surgeon': { en: 'Surgeon', ru: 'Хирург', cz: 'Chirurg' },
   'specialistType.oncologist': { en: 'Oncologist', ru: 'Онколог', cz: 'Onkolog' },
   
-  // Categories
   'category.beauty': { en: 'Beauty', ru: 'Красота', cz: 'Krása' },
   'category.wellness': { en: 'Wellness', ru: 'Велнес', cz: 'Wellness' },
   'category.healthcare': { en: 'Healthcare', ru: 'Здравоохранение', cz: 'Zdravotní péče' },
   
-  // Business types
   'businessType.individual': { en: 'Individual Specialist', ru: 'Индивидуальный специалист', cz: 'Individuální specialista' },
   'businessType.salon': { en: 'Beauty Salon', ru: 'Салон красоты', cz: 'Kosmetický salón' },
   'businessType.clinic': { en: 'Clinic', ru: 'Клиника', cz: 'Klinika' },
@@ -880,7 +846,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'businessType.barbershop': { en: 'Barbershop', ru: 'Барбершоп', cz: 'Holičství' },
   'businessType.rehabCenter': { en: 'Rehabilitation Center', ru: 'Реабилитационный центр', cz: 'Rehabilitační centrum' },
   
-  // Registration
   'register.title': { en: 'Create your account', ru: 'Создайте свой аккаунт', cz: 'Vytvořte si účet' },
   'register.fullName': { en: 'Full Name', ru: 'Полное имя', cz: 'Celé jméno' },
   'register.email': { en: 'Email', ru: 'Email', cz: 'Email' },
@@ -895,13 +860,11 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'register.signIn': { en: 'Sign in', ru: 'Войти', cz: 'Přihlásit se' },
   'register.specialistTypeRequired': { en: 'Please select your specialist type', ru: 'Пожалуйста, выберите тип специалиста', cz: 'Vyberte prosím typ specialisty' },
   
-  // Client form
   'clientForm.allergies': { en: 'Allergies', ru: 'Аллергии', cz: 'Alergie' },
   'clientForm.chronicDiseases': { en: 'Chronic Diseases', ru: 'Хронические заболевания', cz: 'Chronická onemocnění' },
   'clientForm.healthcareRequired': { en: 'Required for Healthcare Specialists', ru: 'Обязательно для медицинских специалистов', cz: 'Povinné pro zdravotnické specialisty' },
   'clientForm.healthcareRequiredDescription': { en: 'For healthcare specialists, allergies and chronic diseases are required fields.', ru: 'Для медицинских специалистов поля аллергии и хронических заболеваний являются обязательными.', cz: 'Pro zdravotnické specialisty jsou pole alergie a chronická onemocnění povinná.' },
   
-  // Specialist profile
   'specialistProfile.title': { en: 'My Specialist Profile', ru: 'Мой профиль специалиста', cz: 'Můj profil specialisty' },
   'specialistProfile.notFound': { en: 'Specialist profile not found. Please create your profile.', ru: 'Профиль специалиста не найден. Пожалуйста, создайте профиль.', cz: 'Profil specialisty nebyl nalezen. Vytvořte prosím profil.' },
   'specialistProfile.verificationPending': { en: 'Your profile is pending verification.', ru: 'Ваш профиль ожидает верификации.', cz: 'Váš profil čeká na ověření.' },
@@ -928,7 +891,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'specialistProfile.languages': { en: 'Languages', ru: 'Языки', cz: 'Jazyky' },
   'specialistProfile.languagesPlaceholder': { en: 'e.g., English, Russian, Czech', ru: 'например, Английский, Русский, Чешский', cz: 'např. Angličtina, Ruština, Čeština' },
   
-  // Navigation
   'nav.dashboard': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },
   'nav.clients': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },
   'nav.visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
@@ -937,7 +899,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.profile': { en: 'Profile', ru: 'Профиль', cz: 'Profil' },
   'nav.logout': { en: 'Logout', ru: 'Выйти', cz: 'Odhlásit se' },
   
-  // Login
   'login.title': { en: 'Sign in to your account', ru: 'Войдите в свой аккаунт', cz: 'Přihlaste se ke svému účtu' },
   'login.subtitle': { en: 'Sign in to your account', ru: 'Войдите в свой аккаунт', cz: 'Přihlaste se ke svému účtu' },
   'login.email': { en: 'Email', ru: 'Email', cz: 'Email' },
@@ -948,7 +909,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'login.signUp': { en: 'Sign up', ru: 'Зарегистрироваться', cz: 'Registrovat se' },
   'login.failed': { en: 'Login failed', ru: 'Ошибка входа', cz: 'Přihlášení se nezdařilo' },
   
-  // Dashboard
   'dashboard.title': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },
   'dashboard.subtitle': { en: 'Overview of your business', ru: 'Обзор вашего бизнеса', cz: 'Přehled vašeho podnikání' },
   'dashboard.monthlyRevenue': { en: 'Monthly Revenue', ru: 'Месячный доход', cz: 'Měsíční příjem' },
@@ -971,7 +931,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'dashboard.noData': { en: 'No data available', ru: 'Нет данных', cz: 'Žádná data' },
   'dashboard.noProfitData': { en: 'No profit data available for this month', ru: 'Нет данных о прибыли за этот месяц', cz: 'Žádná data o zisku za tento měsíc' },
   
-  // Clients
   'clients.title': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },
   'clients.addClient': { en: 'Add Client', ru: 'Добавить клиента', cz: 'Přidat klienta' },
   'clients.searchPlaceholder': { en: 'Search by name, phone, or email...', ru: 'Поиск по имени, телефону или email...', cz: 'Hledat podle jména, telefonu nebo emailu...' },
@@ -986,7 +945,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'clients.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
   'clients.email': { en: 'Email', ru: 'Email', cz: 'Email' },
   
-  // Services
   'services.title': { en: 'Services', ru: 'Услуги', cz: 'Služby' },
   'services.addService': { en: 'Add Service', ru: 'Добавить услугу', cz: 'Přidat službu' },
   'services.searchPlaceholder': { en: 'Search by service name...', ru: 'Поиск по названию услуги...', cz: 'Hledat podle názvu služby...' },
@@ -1004,7 +962,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'services.inactive': { en: 'Inactive', ru: 'Неактивна', cz: 'Neaktivní' },
   'services.min': { en: 'min', ru: 'мин', cz: 'min' },
   
-  // Visits
   'visits.title': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
   'visits.newVisit': { en: 'New Visit', ru: 'Новый визит', cz: 'Nová návštěva' },
   'visits.searchPlaceholder': { en: 'Search by service or client name...', ru: 'Поиск по услуге или клиенту...', cz: 'Hledat podle služby nebo klienta...' },
@@ -1042,7 +999,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.selectPaymentMethod': { en: 'Select payment method', ru: 'Выберите способ оплаты', cz: 'Vyberte způsob platby' },
   'visits.paymentOther': { en: 'Other', ru: 'Другое', cz: 'Jiné' },
   
-  // Calendar
   'calendar.title': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },
   'calendar.simpleViewDescription': { en: 'Click on a date to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на дату, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na datum pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },
   'calendar.advancedViewDescription': { en: 'Click on a time slot to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на временной слот, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na časový slot pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },
@@ -1062,7 +1018,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.insightsTitle': { en: 'This month breakdown', ru: 'Разбивка этого месяца', cz: 'Rozpis tohoto měsíce' },
   'calendar.searchEvents': { en: 'Search events...', ru: 'Поиск событий...', cz: 'Hledat události...' },
   
-  // Employees
   'employees.title': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'employees.add_employee': { en: 'Add Employee', ru: 'Добавить сотрудника', cz: 'Přidat zaměstnance' },
   'employees.search_placeholder': { en: 'Search employees...', ru: 'Поиск сотрудников...', cz: 'Hledat zaměstnance...' },
@@ -1100,7 +1055,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'employees.commission_invalid_range': { en: 'Commission must be between 0 and 100%', ru: 'Комиссия должна быть от 0 до 100%', cz: 'Provize musí být mezi 0 a 100%' },
   'employees.base_salary_invalid': { en: 'Base salary cannot be negative', ru: 'Базовая зарплата не может быть отрицательной', cz: 'Základní plat nemůže být záporný' },
   
-  // Salary
   'salary.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
   'salary.current_unpaid': { en: 'Current Unpaid Salary', ru: 'Текущая невыплаченная зарплата', cz: 'Aktuální nevyplacený plat' },
   'salary.unpaid': { en: 'Unpaid', ru: 'Не выплачено', cz: 'Neplaceno' },
@@ -1204,7 +1158,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.fillPeriod': { en: 'Please fill in the period', ru: 'Заполните период', cz: 'Vyplňte období' },
   'salary.selectSalary': { en: 'Select salary from history', ru: 'Выберите зарплату из истории', cz: 'Vyberte plat z historie' },
   
-  // Nav
   'nav.business': { en: 'Business', ru: 'Бизнес', cz: 'Podnikání' },
   'nav.employees': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'nav.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
@@ -1218,7 +1171,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.manage': { en: 'MANAGE', ru: 'УПРАВЛЕНИЕ', cz: 'SPRÁVA' },
   'nav.system': { en: 'SYSTEM', ru: 'СИСТЕМА', cz: 'SYSTÉM' },
   
-  // Settings
   'settings.title': { en: 'Settings', ru: 'Настройки', cz: 'Nastavení' },
   'settings.subtitle': { en: 'Manage your account preferences', ru: 'Управляйте настройками аккаунта', cz: 'Spravujte nastavení účtu' },
   'settings.language': { en: 'Language', ru: 'Язык', cz: 'Jazyk' },
@@ -1256,7 +1208,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'settings.export_format': { en: 'Export Format', ru: 'Формат экспорта', cz: 'Formát exportu' },
   'settings.export_format_description': { en: 'Default format for exporting data', ru: 'Формат по умолчанию для экспорта данных', cz: 'Výchozí formát pro export dat' },
   
-  // Inventory
   'inventory.title': { en: 'Inventory Management', ru: 'Управление складом', cz: 'Správa skladu' },
   'inventory.add_product': { en: 'Add Product', ru: 'Добавить товар', cz: 'Přidat produkt' },
   'inventory.edit_product': { en: 'Edit Product', ru: 'Редактировать товар', cz: 'Upravit produkt' },
@@ -1282,7 +1233,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'inventory.search_placeholder': { en: 'Search products...', ru: 'Поиск товаров...', cz: 'Hledat produkty...' },
   'inventory.no_products': { en: 'No products found', ru: 'Товары не найдены', cz: 'Produkty nenalezeny' },
   
-  // Analytics
   'analytics.title': { en: 'Analytics', ru: 'Аналитика', cz: 'Analytika' },
   'analytics.subtitle': { en: 'Advanced analytics and insights for your business', ru: 'Расширенная аналитика и инсайты для вашего бизнеса', cz: 'Pokročilá analytika a poznatky pro váš podnik' },
   'analytics.retention': { en: 'Retention', ru: 'Удержание', cz: 'Retence' },
@@ -1351,7 +1301,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'analytics.forecast_revenue': { en: 'Revenue', ru: 'Выручка', cz: 'Příjem' },
   'analytics.forecast_visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
   
-  // Finance
   'finance.title': { en: 'Financial Reports', ru: 'Финансовая отчетность', cz: 'Finanční zprávy' },
   'finance.subtitle': { en: 'Revenue, expenses, and profit analysis', ru: 'Анализ доходов, расходов и прибыли', cz: 'Analýza příjmů, výdajů a zisku' },
   'finance.revenue': { en: 'Revenue', ru: 'Доходы', cz: 'Příjmy' },
@@ -1386,7 +1335,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'finance.completed': { en: 'completed', ru: 'завершено', cz: 'dokončeno' },
   'finance.total': { en: 'Total', ru: 'Итого', cz: 'Celkem' },
   
-  // Subscription
   'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },
   'subscription.notRequired': { en: 'Subscription is not required for your role', ru: 'Подписка не требуется для вашей роли', cz: 'Předplatné není vyžadováno pro vaši roli' },
   'subscription.employeeMessage': { en: 'You are using the subscription provided by your administrator. No payment required.', ru: 'Вы используете подписку, предоставленную вашим администратором. Оплата не требуется.', cz: 'Používáte předplatné poskytnuté vaším správcem. Platba není vyžadována.' },
@@ -1423,7 +1371,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'subscription.failed_reactivate': { en: 'Failed to reactivate subscription', ru: 'Не удалось возобновить подписку', cz: 'Nepodařilo se obnovit předplatné' },
   'subscription.active_label': { en: 'Active', ru: 'Активен', cz: 'Aktivní' },
   
-  // Loyalty
   'loyalty.title': { en: 'Loyalty Program', ru: 'Программа лояльности', cz: 'Věrnostní program' },
   'loyalty.subtitle': { en: 'Manage loyalty program, levels, and promotions', ru: 'Управление программой лояльности, уровнями и акциями', cz: 'Správa věrnostního programu, úrovní a akcí' },
   'loyalty.program_settings': { en: 'Program Settings', ru: 'Настройки программы', cz: 'Nastavení programu' },
@@ -1496,7 +1443,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'loyalty.service_ids': { en: 'Service IDs (comma-separated)', ru: 'ID услуг (через запятую)', cz: 'ID služeb (oddělené čárkou)' },
   'loyalty.service_ids_placeholder': { en: 'e.g., 1, 2, 3 (leave empty for all services)', ru: 'например, 1, 2, 3 (оставьте пустым для всех услуг)', cz: 'např. 1, 2, 3 (ponechte prázdné pro všechny služby)' },
   
-  // Common
   'common.currency': { en: 'CZK', ru: 'CZK', cz: 'CZK' },
   'common.close': { en: 'Close', ru: 'Закрыть', cz: 'Zavřít' },
   'common.days': { en: 'days', ru: 'дней', cz: 'dny' },

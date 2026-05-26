@@ -26,7 +26,6 @@ interface UserPreferences {
   updated_at: string
 }
 
-// Common timezones
 const TIMEZONES = [
   { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
   { value: 'Europe/Prague', label: 'Europe/Prague (CET/CEST)' },
@@ -72,7 +71,6 @@ export default function Settings() {
   const queryClient = useQueryClient()
   const currentCurrency = useBusinessCurrency()
 
-  // Получаем бизнес для обновления валюты
   const { data: business, isLoading: isLoadingBusiness } = useQuery({
     queryKey: ['user-business'],
     queryFn: async () => {
@@ -90,7 +88,6 @@ export default function Settings() {
     retry: false,
   })
 
-  // Получаем настройки пользователя
   const { data: preferences, isLoading: isLoadingPreferences } = useQuery<UserPreferences>({
     queryKey: ['user-preferences'],
     queryFn: async () => {
@@ -99,7 +96,6 @@ export default function Settings() {
         return data
       } catch (error: any) {
         if (error?.response?.status === 404) {
-          // Создаем настройки по умолчанию
           return null
         }
         throw error
@@ -109,7 +105,6 @@ export default function Settings() {
     retry: false,
   })
 
-  // Мутация для обновления валюты бизнеса
   const updateCurrencyMutation = useMutation({
     mutationFn: async (currency: Currency) => {
       if (!business?.id) {
@@ -125,7 +120,6 @@ export default function Settings() {
     },
   })
 
-  // Мутация для обновления настроек пользователя
   const updatePreferencesMutation = useMutation({
     mutationFn: async (updates: Partial<UserPreferences>) => {
       const { data } = await api.put('/user-preferences/me', updates)
@@ -133,7 +127,6 @@ export default function Settings() {
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['user-preferences'] })
-      // Применяем тему сразу
       if (variables.theme !== undefined) {
         applyTheme(variables.theme)
       }
@@ -170,18 +163,15 @@ export default function Settings() {
     }
   }
 
-  // Применяем тему при загрузке
   useEffect(() => {
     if (preferences?.theme) {
       applyTheme(preferences.theme)
     } else {
-      // Если нет настроек, проверяем localStorage или применяем светлую тему по умолчанию
       const savedTheme = localStorage.getItem('theme') || 'light'
       applyTheme(savedTheme)
     }
   }, [preferences?.theme])
 
-  // Применяем тему при первой загрузке приложения (если нет preferences)
   useEffect(() => {
     if (!preferences) {
       const savedTheme = localStorage.getItem('theme') || 'light'
@@ -205,7 +195,7 @@ export default function Settings() {
       </div>
 
       <div className="space-y-6">
-        {/* Language Settings */}
+        {}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.language')}</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.language_description')}</p>
@@ -227,7 +217,7 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* Currency Settings */}
+        {}
         {business && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.currency')}</h2>
@@ -267,7 +257,7 @@ export default function Settings() {
           </div>
         )}
 
-        {/* Theme Settings */}
+        {}
         {preferences && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.theme')}</h2>
@@ -291,7 +281,7 @@ export default function Settings() {
           </div>
         )}
 
-        {/* Timezone Settings */}
+        {}
         {preferences && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.timezone')}</h2>
@@ -311,7 +301,7 @@ export default function Settings() {
           </div>
         )}
 
-        {/* Date/Time Format Settings */}
+        {}
         {preferences && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.date_time_format')}</h2>
@@ -350,7 +340,7 @@ export default function Settings() {
           </div>
         )}
 
-        {/* Notifications Settings */}
+        {}
         {preferences && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.notifications')}</h2>
@@ -397,7 +387,7 @@ export default function Settings() {
           </div>
         )}
 
-        {/* Auto-save Settings */}
+        {}
         {preferences && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.auto_save')}</h2>
@@ -441,7 +431,7 @@ export default function Settings() {
           </div>
         )}
 
-        {/* Export Format Settings */}
+        {}
         {preferences && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.export_format')}</h2>

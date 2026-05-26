@@ -129,7 +129,7 @@ export default function SpecialistProfile() {
       )}
 
       <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
-        {/* Basic Information */}
+        {}
         <div>
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.basicInfo')}</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -165,7 +165,7 @@ export default function SpecialistProfile() {
           </div>
         </div>
 
-        {/* Specialization */}
+        {}
         <div>
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.specialization')}</h2>
           {isEditing ? (
@@ -181,7 +181,7 @@ export default function SpecialistProfile() {
           )}
         </div>
 
-        {/* Experience */}
+        {}
         <div>
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.experience')}</h2>
           <div className="grid grid-cols-3 gap-4">
@@ -244,7 +244,7 @@ export default function SpecialistProfile() {
           </div>
         </div>
 
-        {/* Business Information */}
+        {}
         <div>
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.businessInfo')}</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -307,7 +307,7 @@ export default function SpecialistProfile() {
           </div>
         </div>
 
-        {/* Additional Information */}
+        {}
         <div>
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.additionalInfo')}</h2>
           <div className="grid grid-cols-2 gap-4">

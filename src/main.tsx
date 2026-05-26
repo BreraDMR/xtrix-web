@@ -13,7 +13,6 @@ const queryClient = new QueryClient({
   },
 })
 
-// Применяем тему при первой загрузке
 const applyInitialTheme = () => {
   const savedTheme = localStorage.getItem('theme') || 'light'
   if (savedTheme === 'dark') {
@@ -23,7 +22,6 @@ const applyInitialTheme = () => {
   }
 }
 
-// Применяем тему синхронно перед рендером
 applyInitialTheme()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -33,14 +31,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </React.StrictMode>,
 )
-
-
-
-
-
-
-
-
-
 
 

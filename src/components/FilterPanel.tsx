@@ -98,12 +98,3 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
 }
 
 
-
-
-
-
-
-
-
-
-

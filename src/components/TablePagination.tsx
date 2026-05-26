@@ -28,7 +28,6 @@ export default function TablePagination({
     if (onPerPageChange) {
       onPerPageChange(newPerPage)
     }
-    // Reset to first page when changing per page
     onPageChange(1)
   }
 

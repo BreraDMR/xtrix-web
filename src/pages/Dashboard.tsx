@@ -13,7 +13,6 @@ export default function Dashboard() {
   const { t } = useTranslation()
   const currency = useBusinessCurrency()
   
-  // Получаем прибыль за текущий месяц (доходы - расходы)
   const { data: profitData, isLoading: isLoadingProfit } = useQuery({
     queryKey: ['profit-current-month'],
     queryFn: async () => {
@@ -22,7 +21,6 @@ export default function Dashboard() {
         throw new Error('Not authenticated')
       }
       
-      // Endpoint автоматически использует текущий месяц
       const { data } = await api.get('/expenses/reports/profit')
       return data
     },
@@ -30,7 +28,6 @@ export default function Dashboard() {
     enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
   })
 
-  // Получаем статистику визитов
   const { data: visitStats, isLoading: isLoadingVisitStats } = useQuery({
     queryKey: ['visits-statistics'],
     queryFn: async () => {
@@ -38,7 +35,6 @@ export default function Dashboard() {
         const { data } = await api.get('/analytics/visits/statistics')
         return data
       } catch (error: any) {
-        // Возвращаем дефолтные значения при ошибке
         return {
           total_visits: 0,
           visits_by_status: {
@@ -54,7 +50,6 @@ export default function Dashboard() {
     enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
   })
 
-  // Получаем статистику клиентов
   const { data: clientStats, isLoading: isLoadingClientStats } = useQuery({
     queryKey: ['clients-statistics'],
     queryFn: async () => {
@@ -62,7 +57,6 @@ export default function Dashboard() {
         const { data } = await api.get('/analytics/clients/statistics')
         return data
       } catch (error: any) {
-        // Возвращаем дефолтные значения при ошибке
         return {
           total_clients: 0,
           new_clients: 0,
@@ -82,7 +76,7 @@ export default function Dashboard() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {/* Прибыль */}
+        {}
         <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.monthlyProfit')}</h3>
@@ -105,7 +99,7 @@ export default function Dashboard() {
           <p className="text-sm text-gray-500 mt-2">{t('dashboard.thisMonth')}</p>
         </div>
 
-        {/* Доходы */}
+        {}
         <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.monthlyRevenue')}</h3>
@@ -124,7 +118,7 @@ export default function Dashboard() {
           <p className="text-sm text-gray-500 mt-2">{t('dashboard.thisMonth')}</p>
         </div>
 
-        {/* Расходы */}
+        {}
         <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.monthlyExpenses')}</h3>
@@ -144,9 +138,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Widgets - Reservations and Quick Status */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Reservations Widget with Donut Chart */}
+        {}
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.reservations')}</h3>
           {isLoadingVisitStats ? (
@@ -217,7 +211,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Quick Status Widget with Purple Pills */}
+        {}
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.quickStatus')}</h3>
@@ -258,10 +252,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Charts */}
+      {}
       {profitData && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Donut Chart - Revenue vs Expenses */}
+          {}
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.monthlyRevenue')} vs {t('dashboard.monthlyExpenses')}</h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -287,7 +281,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Profit Margin Bar */}
+          {}
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.profitMargin')}</h3>
             <div className="flex items-center gap-4">

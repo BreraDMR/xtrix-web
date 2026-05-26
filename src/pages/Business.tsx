@@ -23,7 +23,6 @@ export default function Business() {
   const [editingId, setEditingId] = useState<number | undefined>()
   const queryClient = useQueryClient()
 
-  // Получаем бизнес текущего пользователя
   const { data: business, isLoading } = useQuery<Business>({
     queryKey: ['business', 'me'],
     queryFn: async () => {
@@ -31,7 +30,6 @@ export default function Business() {
         const { data } = await api.get('/businesses/me')
         return data
       } catch (error: any) {
-        // Если бизнес не найден (404), возвращаем null
         if (error.response?.status === 404) {
           return null
         }
@@ -45,7 +43,6 @@ export default function Business() {
     setShowForm(false)
     setEditingId(undefined)
     queryClient.invalidateQueries({ queryKey: ['business'] })
-    // Обновляем данные пользователя, чтобы получить обновленный business_id
     queryClient.invalidateQueries({ queryKey: ['user', 'me'] })
   }
 

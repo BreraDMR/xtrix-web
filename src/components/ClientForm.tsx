@@ -16,7 +16,7 @@ interface ClientFormProps {
 
 interface ClientData {
   full_name: string
-  birth_date?: string  // Исправлено: было date_of_birth
+  birth_date?: string
   gender?: string
   allergies?: string
   chronic_diseases?: string
@@ -26,7 +26,7 @@ interface ClientData {
   personal_notes?: string
   location_lat?: number
   location_lon?: number
-  owner_id?: number  // Исправлено: сделано опциональным
+  owner_id?: number
 }
 
 export default function ClientForm({ clientId, onSuccess, onCancel }: ClientFormProps) {
@@ -38,7 +38,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
     full_name: '',
   })
 
-  // Get specialist profile to check if healthcare specialist
   const { data: specialistProfile } = useQuery({
     queryKey: ['specialist-profile'],
     queryFn: async () => {
@@ -65,7 +64,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       const { data } = await api.get(`/clients/${clientId}`)
       setFormData({
         ...data,
-        birth_date: data.birth_date?.split('T')[0] || '',  // Исправлено: было date_of_birth
+        birth_date: data.birth_date?.split('T')[0] || '',
         pregnancy: data.pregnancy || false,
       })
     } catch (error) {
@@ -76,13 +75,11 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
     
-    // Validate required fields
     const fullNameError = validateRequired(formData.full_name, 'Full Name')
     if (fullNameError) {
       newErrors.full_name = fullNameError
     }
     
-    // Validate email if provided
     if (formData.contact_email) {
       const emailError = validateEmail(formData.contact_email)
       if (emailError) {
@@ -90,7 +87,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       }
     }
     
-    // Validate phone if provided
     if (formData.contact_phone) {
       const phoneError = validatePhone(formData.contact_phone)
       if (phoneError) {
@@ -98,7 +94,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       }
     }
     
-    // Validate healthcare requirements
     if (isHealthcareSpecialist && !clientId) {
       if (!formData.allergies || !formData.allergies.trim()) {
         newErrors.allergies = t('clientForm.healthcareRequiredDescription')
@@ -123,7 +118,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
     setErrors({})
 
     try {
-      // Подготавливаем данные для ClientCreate (только базовые поля клиента)
       const clientData: any = {
         full_name: formData.full_name,
         birth_date: formData.birth_date || undefined,
@@ -134,7 +128,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
         location_lon: formData.location_lon || undefined,
       }
       
-      // Убираем undefined значения
       Object.keys(clientData).forEach(key => {
         if (clientData[key] === undefined || clientData[key] === '') {
           delete clientData[key]
@@ -147,8 +140,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
         await api.post('/clients', clientData)
       }
       
-      // Медицинские данные будут сохранены отдельно через будущий endpoint
-      // Пока просто создаем клиента с базовыми данными
       
       onSuccess()
     } catch (error: any) {

@@ -54,7 +54,6 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
     setLoading(true)
 
     try {
-      // Убираем пустые значения
       const businessData: any = { ...formData }
       Object.keys(businessData).forEach(key => {
         if (businessData[key] === '' || businessData[key] === undefined) {

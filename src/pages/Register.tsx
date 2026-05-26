@@ -23,7 +23,6 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
   const { setAuth } = useAuthStore()
 
-  // Если уже залогинен, перенаправляем на главную
   useEffect(() => {
     const localToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
     if (localToken) {
@@ -37,7 +36,6 @@ export default function Register() {
     setError('')
     setLoading(true)
 
-    // Валидация
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
       setLoading(false)
@@ -53,41 +51,34 @@ export default function Register() {
     try {
       logger.log('[Register] Attempting registration', { email: formData.email, phone: formData.phone })
       
-      // Валидация: если роль specialist, то specialist_type обязателен
       if (formData.role === 'specialist' && !formData.specialist_type) {
         setError(t('register.specialistTypeRequired'))
         setLoading(false)
         return
       }
 
-      // Подготавливаем данные, убирая пустые строки
       const userDataPayload: any = {
         full_name: formData.full_name,
         password: formData.password,
         role: formData.role,
       }
       
-      // Добавляем email только если он не пустой
       if (formData.email && formData.email.trim()) {
         userDataPayload.email = formData.email.trim()
       }
       
-      // Добавляем phone только если он не пустой
       if (formData.phone && formData.phone.trim()) {
         userDataPayload.phone = formData.phone.trim()
       }
       
-      // Добавляем specialist_type только если роль specialist
       if (formData.role === 'specialist' && formData.specialist_type) {
         userDataPayload.specialist_type = formData.specialist_type
       }
 
-      // Создаем пользователя
       const { data: userData } = await api.post('/users/', userDataPayload)
 
       logger.log('[Register] User created successfully')
 
-      // После успешной регистрации сразу логиним пользователя
       const { data: loginData } = await api.post('/users/login', {
         email: formData.email || undefined,
         phone: formData.phone || undefined,
@@ -98,7 +89,6 @@ export default function Register() {
         throw new Error('No access token received')
       }
 
-      // Сохраняем токен
       if (typeof window !== 'undefined') {
         localStorage.setItem('auth_token', loginData.access_token)
         logger.log('[Register] Token saved to localStorage')
@@ -107,7 +97,6 @@ export default function Register() {
       setAuth(loginData.access_token, { id: 0, full_name: formData.full_name, role: formData.role })
       logger.log('[Register] Token saved to store')
 
-      // Получаем информацию о пользователе
       try {
         const userRes = await api.get('/users/me')
         if (typeof window !== 'undefined') {
@@ -125,20 +114,17 @@ export default function Register() {
 
       logger.log('[Register] Registration successful, redirecting to home...')
 
-      // Редиректим на главную
       setTimeout(() => {
         window.location.href = '/'
       }, 100)
     } catch (err: any) {
       console.error('Registration error:', err)
       
-      // Извлекаем детальную информацию об ошибке валидации
       let errorMessage = 'Registration failed'
       
       if (err.response?.data) {
         const data = err.response.data
         
-        // Если есть validation_errors, показываем первую ошибку
         if (data.error?.detail?.validation_errors && Array.isArray(data.error.detail.validation_errors) && data.error.detail.validation_errors.length > 0) {
           const firstError = data.error.detail.validation_errors[0]
           errorMessage = `${firstError.field}: ${firstError.message}`
@@ -146,13 +132,11 @@ export default function Register() {
             errorMessage += ` (${firstError.hint})`
           }
         }
-        // Стандартный формат FastAPI validation errors
         else if (data.detail && Array.isArray(data.detail) && data.detail.length > 0) {
           const firstError = data.detail[0]
           const field = Array.isArray(firstError.loc) ? firstError.loc[firstError.loc.length - 1] : 'field'
           errorMessage = `${field}: ${firstError.msg || 'Validation error'}`
         }
-        // Общая ошибка
         else if (data.error?.message) {
           errorMessage = data.error.message
         }
@@ -336,8 +320,5 @@ export default function Register() {
     </div>
   )
 }
-
-
-
 
 

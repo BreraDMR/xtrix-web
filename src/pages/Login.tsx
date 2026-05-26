@@ -15,16 +15,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const { setAuth } = useAuthStore()
   
-  // Если уже залогинен, перенаправляем на главную
   useEffect(() => {
-    // Проверяем только localStorage, так как store может не успеть обновиться
     const localToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
     if (localToken) {
       logger.log('[Login] Already authenticated, redirecting to home')
-      // Используем window.location для надежности
       window.location.href = '/'
     }
-  }, []) // Убираем зависимость от token, чтобы избежать лишних редиректов
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,31 +36,25 @@ export default function Login() {
         throw new Error('No access token received')
       }
       
-      // Сохраняем токен в localStorage СНАЧАЛА
       if (typeof window !== 'undefined') {
         localStorage.setItem('auth_token', data.access_token)
         logger.log('[Login] Token saved to localStorage')
       }
       
-      // Сохраняем токен в store
       setAuth(data.access_token, { id: 0, full_name: '', role: '' })
       logger.log('[Login] Token saved to store')
       
-      // Небольшая задержка, чтобы токен успел сохраниться и обновиться в состоянии
       await new Promise(resolve => setTimeout(resolve, 200))
       
-      // Fetch user info с новым токеном
       try {
         const userRes = await api.get('/users/me')
         console.log('[Login] User info fetched:', userRes.data)
-        // Обновляем с полной информацией о пользователе
         if (typeof window !== 'undefined') {
           localStorage.setItem('auth_user', JSON.stringify(userRes.data))
         }
         setAuth(data.access_token, userRes.data)
       } catch (err: any) {
         console.warn('[Login] Could not fetch user info:', err)
-        // Fallback: используем email как имя
         const fallbackUser = { id: 0, full_name: email, role: 'admin' }
         if (typeof window !== 'undefined') {
           localStorage.setItem('auth_user', JSON.stringify(fallbackUser))
@@ -71,11 +62,8 @@ export default function Login() {
         setAuth(data.access_token, fallbackUser)
       }
       
-      // Успешный логин - сразу редиректим
       logger.log('[Login] Login successful, redirecting to home...')
       
-      // Используем небольшую задержку, чтобы дать время на сохранение в localStorage
-      // Затем делаем полную перезагрузку страницы для гарантии
       setTimeout(() => {
         window.location.href = '/'
       }, 100)

@@ -30,7 +30,6 @@ export default function ClientPersonalReportModal({
   )
   const [showExportModal, setShowExportModal] = useState(false)
 
-  // Fetch client data
   const { data: client, isLoading: isLoadingClient } = useQuery({
     queryKey: ['client', clientId],
     queryFn: async () => {
@@ -40,7 +39,6 @@ export default function ClientPersonalReportModal({
     enabled: isOpen && clientId > 0,
   })
 
-  // Fetch client visits
   const { data: visits, isLoading: isLoadingVisits } = useQuery({
     queryKey: ['client-visits', clientId, dateFrom, dateTo],
     queryFn: async () => {
@@ -54,7 +52,6 @@ export default function ClientPersonalReportModal({
     enabled: isOpen && clientId > 0 && (selectedReportType === 'visits' || selectedReportType === 'finance'),
   })
 
-  // Fetch loyalty balance
   const { data: loyaltyBalance } = useQuery({
     queryKey: ['client-loyalty-balance', clientId],
     queryFn: async () => {
@@ -70,7 +67,6 @@ export default function ClientPersonalReportModal({
 
   useEffect(() => {
     if (isOpen) {
-      // Load saved preferences
       const prefs = localStorage.getItem(`client-report-preferences-${clientId}`)
       if (prefs) {
         try {
@@ -79,7 +75,6 @@ export default function ClientPersonalReportModal({
           if (parsed.dateFrom) setDateFrom(parsed.dateFrom)
           if (parsed.dateTo) setDateTo(parsed.dateTo)
         } catch {
-          // Ignore errors
         }
       }
     }
@@ -140,7 +135,6 @@ export default function ClientPersonalReportModal({
   }
 
   const handleExport = () => {
-    // Save preferences
     localStorage.setItem(
       `client-report-preferences-${clientId}`,
       JSON.stringify({
@@ -161,7 +155,7 @@ export default function ClientPersonalReportModal({
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          {/* Header */}
+          {}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900">
               {t('export.personalReport')} - {client?.full_name || ''}
@@ -174,9 +168,9 @@ export default function ClientPersonalReportModal({
             </button>
           </div>
 
-          {/* Content */}
+          {}
           <div className="p-6 space-y-6">
-            {/* Report Type Selection */}
+            {}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t('export.selectReportType')}
@@ -193,7 +187,7 @@ export default function ClientPersonalReportModal({
               </select>
             </div>
 
-            {/* Date Range (for visits and finance) */}
+            {}
             {(selectedReportType === 'visits' || selectedReportType === 'finance') && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -221,7 +215,7 @@ export default function ClientPersonalReportModal({
               </div>
             )}
 
-            {/* Preview */}
+            {}
             {isLoadingClient || isLoadingVisits ? (
               <div className="flex justify-center py-8">
                 <LoadingSpinner />
@@ -271,7 +265,7 @@ export default function ClientPersonalReportModal({
             )}
           </div>
 
-          {/* Footer */}
+          {}
           <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
             <button
               onClick={onClose}
@@ -291,7 +285,7 @@ export default function ClientPersonalReportModal({
         </div>
       </div>
 
-      {/* Export Modal */}
+      {}
       {showExportModal && (
         <ExportModal
           isOpen={showExportModal}

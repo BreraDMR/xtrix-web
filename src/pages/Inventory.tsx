@@ -37,7 +37,6 @@ export default function Inventory() {
   const [addQuantityProduct, setAddQuantityProduct] = useState<Product | null>(null)
   const [addQuantityValue, setAddQuantityValue] = useState('')
 
-  // Получаем список товаров
   const { data: productsResponse, isLoading } = useQuery({
     queryKey: ['products', searchTerm, lowStockOnly],
     queryFn: async () => {
@@ -52,7 +51,6 @@ export default function Inventory() {
   const products: Product[] = productsResponse?.items || []
   const lowStockProducts = products.filter(p => p.quantity <= p.min_quantity)
   
-  // Получаем бизнес пользователя для получения business_id
   const { data: userBusiness } = useQuery({
     queryKey: ['user-business'],
     queryFn: async () => {
@@ -62,7 +60,6 @@ export default function Inventory() {
         return data
       } catch (error: any) {
         console.error('Error fetching user business:', error)
-        // Если бизнес не найден, возвращаем null, но не выбрасываем ошибку
         if (error?.response?.status === 404) {
           return null
         }
@@ -73,13 +70,10 @@ export default function Inventory() {
     retry: false,
   })
 
-  // Создание товара
   const createMutation = useMutation({
     mutationFn: async (product: Partial<Product>) => {
-      // Получаем business_id из текущего пользователя или из API
       let businessId = user?.business_id
       
-      // Если business_id нет у пользователя, пробуем получить из API
       if (!businessId && userBusiness?.id) {
         businessId = userBusiness.id
         console.log('Using business_id from API:', businessId)
@@ -114,7 +108,6 @@ export default function Inventory() {
     },
   })
 
-  // Обновление товара
   const updateMutation = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Product> & { id: number }) => {
       const { data } = await api.put(`/products/${id}`, updates)
@@ -126,7 +119,6 @@ export default function Inventory() {
     },
   })
 
-  // Удаление товара
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       await api.delete(`/products/${id}`)
@@ -136,7 +128,6 @@ export default function Inventory() {
     },
   })
 
-  // Добавление количества
   const addQuantityMutation = useMutation({
     mutationFn: async ({ id, quantity }: { id: number; quantity: number }) => {
       const { data } = await api.post(`/products/${id}/add-quantity?quantity=${quantity}`)
@@ -167,7 +158,7 @@ export default function Inventory() {
         )}
       </div>
 
-      {/* Предупреждение о низком остатке */}
+      {}
       {lowStockProducts.length > 0 && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <div className="flex items-center">
@@ -184,7 +175,7 @@ export default function Inventory() {
         </div>
       )}
 
-      {/* Фильтры и поиск */}
+      {}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
         <input
           type="text"
@@ -230,7 +221,7 @@ export default function Inventory() {
         </div>
       </div>
 
-      {/* Таблица товаров */}
+      {}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -338,7 +329,7 @@ export default function Inventory() {
         </div>
       </div>
 
-      {/* Форма добавления товара */}
+      {}
       {showAddForm && (
         <ProductForm
           product={undefined}
@@ -351,7 +342,7 @@ export default function Inventory() {
         />
       )}
 
-      {/* Форма редактирования товара */}
+      {}
       {showEditForm && (
         <ProductForm
           product={showEditForm}
@@ -361,7 +352,7 @@ export default function Inventory() {
         />
       )}
 
-      {/* Диалог добавления количества */}
+      {}
       {addQuantityProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
@@ -406,7 +397,6 @@ export default function Inventory() {
   )
 }
 
-// Компонент формы товара
 function ProductForm({
   product,
   onSubmit,
@@ -439,7 +429,6 @@ function ProductForm({
     
     console.log('Form submit triggered, formData:', formData)
     
-    // Валидация обязательных полей
     if (!formData.name || !formData.name.trim()) {
       alert(t('inventory.name') + ' обязательное поле')
       return

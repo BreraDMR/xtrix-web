@@ -1,6 +1,4 @@
-/**
- * Validation utilities for form fields
- */
+
 
 export interface ValidationError {
   field: string
@@ -20,7 +18,6 @@ export function validateEmail(email: string): string | null {
 
 export function validatePhone(phone: string): string | null {
   if (!phone) return null
-  // Allow international format: +, digits, spaces, dashes, parentheses
   const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,}$/
   if (!phoneRegex.test(phone)) {
     return 'Invalid phone number format'
@@ -76,7 +73,6 @@ export function validateDate(date: string): string | null {
   if (isNaN(dateObj.getTime())) {
     return 'Invalid date format'
   }
-  // Check if date is not in the future (for birth dates, etc.)
   if (dateObj > new Date()) {
     return 'Date cannot be in the future'
   }
@@ -93,9 +89,7 @@ export function validateDateRange(startDate: string, endDate: string): string | 
   return null
 }
 
-/**
- * Combine multiple validators
- */
+
 export function combineValidators(...validators: Validator[]): Validator {
   return (value: any) => {
     for (const validator of validators) {
@@ -106,9 +100,7 @@ export function combineValidators(...validators: Validator[]): Validator {
   }
 }
 
-/**
- * Extract validation errors from API response
- */
+
 export function extractApiErrors(error: any): Record<string, string> {
   const errors: Record<string, string> = {}
   
@@ -118,7 +110,6 @@ export function extractApiErrors(error: any): Record<string, string> {
   
   const data = error.response.data
   
-  // FastAPI validation errors format
   if (data.detail && Array.isArray(data.detail)) {
     data.detail.forEach((item: any) => {
       if (item.loc && item.loc.length > 0) {
@@ -128,7 +119,6 @@ export function extractApiErrors(error: any): Record<string, string> {
     })
   }
   
-  // Custom validation errors format
   if (data.error?.detail?.validation_errors) {
     data.error.detail.validation_errors.forEach((item: any) => {
       if (item.field && item.message) {
@@ -137,7 +127,6 @@ export function extractApiErrors(error: any): Record<string, string> {
     })
   }
   
-  // General error message
   if (data.error?.message && !Object.keys(errors).length) {
     errors._general = data.error.message
   }

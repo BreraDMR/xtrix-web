@@ -58,7 +58,6 @@ interface Visit {
     queryKey: ['visits'],
     queryFn: async () => {
       const { data } = await api.get('/visits/')
-      // API returns paginated response, extract items array
       return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
   })
@@ -89,7 +88,6 @@ interface Visit {
       return matchesSearch && matchesStatus && matchesDate
     })
     
-    // Apply sorting
     if (sortConfig.key && sortConfig.direction) {
       filtered = sortData(filtered, sortConfig)
     }
@@ -97,7 +95,6 @@ interface Visit {
     return filtered
   }, [visits, searchQuery, statusFilter, dateFrom, dateTo, sortConfig])
 
-  // Pagination
   const { paginatedData, totalPages, totalItems } = useMemo(() => {
     const startIndex = (currentPage - 1) * perPage
     const endIndex = startIndex + perPage
@@ -126,7 +123,6 @@ interface Visit {
     setShowForm(false)
     setEditingId(undefined)
     queryClient.invalidateQueries({ queryKey: ['visits'] })
-    // Инвалидируем кеш статистики для Dashboard виджетов
     queryClient.invalidateQueries({ queryKey: ['visits-statistics'] })
     queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }

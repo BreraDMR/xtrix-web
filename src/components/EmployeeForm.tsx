@@ -81,20 +81,17 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
   const loadAvailableUsers = async () => {
     setLoadingUsers(true)
     try {
-      // Получаем список всех специалистов (role='specialist')
       const { data: usersData } = await api.get('/users/', { params: { role: 'specialist' } })
       const allUsers = Array.isArray(usersData) 
         ? usersData 
         : (usersData?.items || usersData?.data || [])
       
-      // Получаем список всех активных сотрудников, чтобы исключить их
       const { data: employeesData } = await api.get('/employees/', { params: { is_active: true } })
       const activeEmployees = Array.isArray(employeesData) 
         ? employeesData 
         : (employeesData?.items || employeesData?.data || [])
       const employedUserIds = new Set(activeEmployees.map((emp: any) => emp.employee_user_id))
       
-      // Фильтруем: исключаем текущего пользователя и пользователей, которые уже являются активными сотрудниками
       const available = allUsers.filter((u: User) => 
         u.id !== currentUser?.id && !employedUserIds.has(u.id)
       )
@@ -102,7 +99,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       setFilteredUsers(available)
     } catch (error) {
       console.error('Failed to load users:', error)
-      // Fallback: если endpoint не работает, оставляем пустой список
       setAvailableUsers([])
       setFilteredUsers([])
     } finally {
@@ -110,7 +106,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
     }
   }
 
-  // Фильтрация пользователей по поисковому запросу
   useEffect(() => {
     if (!userSearchQuery.trim()) {
       setFilteredUsers(availableUsers)
@@ -152,7 +147,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Если создаем нового пользователя
     if (createNewUser && !employeeId) {
       if (!newUserData.full_name.trim()) {
         alert('Full name is required')
@@ -166,16 +160,14 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       setLoading(true)
       try {
         const payload = {
-          // Данные нового пользователя
           full_name: newUserData.full_name,
           phone: newUserData.phone || undefined,
           email: newUserData.email || undefined,
-          role: 'specialist',  // Всегда создаем как specialist
+          role: 'specialist',
           specialist_type: newUserData.specialist_type 
             ? newUserData.specialist_type 
             : undefined,
           
-          // Данные сотрудника
           position: formData.position || undefined,
           commission_percentage: formData.commission_percentage || undefined,
           base_salary: formData.base_salary || undefined,
@@ -185,11 +177,8 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
         const response = await api.post('/employees/create-with-user', payload)
         
-        // Показываем сгенерированный пароль в форме (не закрываем форму, чтобы можно было скопировать)
         setGeneratedPassword(response.data.generated_password)
         
-        // НЕ вызываем onSuccess() сразу - оставляем форму открытой, чтобы пользователь мог скопировать пароль
-        // Пользователь может закрыть форму вручную после копирования пароля
       } catch (error: any) {
         console.error('Failed to create employee with user:', error)
         let errorMessage = error.response?.data?.detail || error.message || t('common.error')
@@ -200,7 +189,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       return
     }
 
-    // Существующая логика для выбранного пользователя
     if (formData.employee_user_id === 0) {
       alert(t('employees.select_user_required'))
       return
@@ -210,7 +198,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
     try {
       const payload = {
         ...formData,
-        // Убираем undefined значения
         commission_percentage: formData.commission_percentage || null,
         base_salary: formData.base_salary || null,
       }
@@ -218,12 +205,8 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       if (employeeId) {
         await api.put(`/employees/${employeeId}`, payload)
       } else {
-        // Для создания отправляем business_owner_id в теле запроса
-        // Для business_owner и admin используем их ID (бэкенд обработает это правильно)
         const createPayload = {
           ...payload,
-          // Отправляем ID пользователя для business_owner и admin
-          // Бэкенд автоматически использует правильный business_owner_id
           business_owner_id: (currentUser?.role === 'business_owner' || currentUser?.role === 'admin') 
             ? currentUser.id 
             : undefined,
@@ -235,7 +218,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       console.error('Failed to save employee:', error)
       let errorMessage = error.response?.data?.detail || error.message || t('common.error')
       
-      // Улучшаем сообщение об ошибке для случая, когда пользователь уже является сотрудником
       if (errorMessage.includes('already employed')) {
         errorMessage = 'This user is already employed by another business. Please select a different user or contact support to transfer the employee.'
       }
@@ -267,7 +249,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
               onChange={(e) => {
                 setCreateNewUser(e.target.checked)
                 if (!e.target.checked) {
-                  // Сбрасываем данные нового пользователя при отключении
                   setNewUserData({
                     full_name: '',
                     phone: '',
@@ -289,7 +270,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       )}
 
       {createNewUser && !employeeId ? (
-        // Форма для создания нового пользователя
         <div className="space-y-4 border-t pt-4">
           <h3 className="text-lg font-medium">New Employee Information</h3>
           
@@ -353,13 +333,12 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
           </div>
         </div>
       ) : (
-        // Форма для выбора существующего пользователя
         <div>
           <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
             {t('employees.select_user')} *
           </label>
           
-          {/* Поиск по имени, email или телефону */}
+          {}
           <div className="mb-2 relative">
             <div className="relative">
               <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -401,7 +380,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                   setFormData({ ...formData, employee_user_id: parseInt(e.target.value) })
                 }
                 required
-                disabled={!!employeeId} // Нельзя менять пользователя при редактировании
+                disabled={!!employeeId}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm disabled:bg-gray-100 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               >
                 <option value={0}>{t('employees.select_user_placeholder')}</option>
@@ -441,7 +420,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                   setPasswordCopied(true)
                   setTimeout(() => setPasswordCopied(false), 2000)
                 } catch (err) {
-                  // Fallback for older browsers
                   const input = document.createElement('input')
                   input.value = generatedPassword
                   document.body.appendChild(input)

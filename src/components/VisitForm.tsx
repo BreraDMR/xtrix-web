@@ -66,7 +66,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [pointsToUse, setPointsToUse] = useState<number>(0)
   const [cashbackToUse, setCashbackToUse] = useState<number>(0)
   
-  // Загружаем баланс клиента для списания баллов
   const currentClientId = formData.client_id || selectedClient?.id
   const { data: clientBalance } = useQuery({
     queryKey: ['client-loyalty-balance', currentClientId],
@@ -94,7 +93,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }, [visitId])
   
-  // Сбрасываем баллы при смене клиента
   useEffect(() => {
     setPointsToUse(0)
     setCashbackToUse(0)
@@ -103,7 +101,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const loadClients = async () => {
     try {
       const { data } = await api.get('/clients/')
-      // API returns paginated response, extract items array
       const items = Array.isArray(data) ? data : (data?.items || data?.data || [])
       setClients(items)
     } catch (error) {
@@ -111,7 +108,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
-  // Поиск клиента глобально
   const searchClient = async (query: string) => {
     if (!query || query.length < 2) {
       setSelectedClient(null)
@@ -120,7 +116,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
     setSearchingClient(true)
     try {
-      // Проверяем формат - телефон, email или имя
       const phoneRegex = /^[\+]?[0-9\s\-\(\)]+$/
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       
@@ -136,12 +131,10 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
       const { data } = await api.get('/clients/search', { params: searchParams })
       
-      // Если найден один клиент, показываем результат
       if (data && data.id) {
         setSelectedClient(data)
         setFormData({ ...formData, client_id: data.id })
         
-        // Автоматически создаем связь, если клиент не связан с бизнесом
         if (!data.is_linked_to_my_business) {
           linkClientToBusiness()
         }
@@ -159,7 +152,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
-  // Создание связи клиента с бизнесом
   const linkClientToBusiness = async () => {
     if (!selectedClient) return
     
@@ -172,14 +164,12 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       
       await api.get('/clients/search', { params: searchParams })
       
-      // Обновляем статус связи
       setSelectedClient({ ...selectedClient, is_linked_to_my_business: true })
     } catch (error) {
       console.error('Failed to link client to business:', error)
     }
   }
 
-  // Debounce для поиска
   useEffect(() => {
     if (!clientSearchQuery) {
       setSelectedClient(null)
@@ -196,7 +186,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const loadServices = async () => {
     try {
       const { data } = await api.get('/services/')
-      // API returns paginated response, extract items array
       const items = Array.isArray(data) ? data : (data?.items || data?.data || [])
       setServices(items)
     } catch (error) {
@@ -213,7 +202,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         date_end: data.date_end ? new Date(data.date_end).toISOString().slice(0, 16) : '',
       })
       
-      // Если есть service_id, загружаем доступных специалистов
       if (data.service_id) {
         try {
           const { data: serviceDetails } = await api.get(`/services/${data.service_id}`)
@@ -229,29 +217,21 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
-  // Вычисляет date_end на основе date_start и duration_minutes
   const calculateDateEnd = (dateStart: string, durationMinutes: number | null | undefined): string | undefined => {
     if (!dateStart || !durationMinutes) return undefined
     
     try {
-      // datetime-local формат: "YYYY-MM-DDTHH:mm" (без timezone)
-      // Парсим строку и создаем Date объект, интерпретируя как локальное время
-      // Чтобы избежать проблем с UTC, парсим компоненты вручную
       const [datePart, timePart] = dateStart.split('T')
       if (!datePart || !timePart) return undefined
       
       const [year, month, day] = datePart.split('-').map(Number)
       const [hours, minutes] = timePart.split(':').map(Number)
       
-      // Создаем Date объект в локальном времени
       const start = new Date(year, month - 1, day, hours, minutes, 0, 0)
       if (isNaN(start.getTime())) return undefined
       
-      // Добавляем длительность в миллисекундах
       const end = new Date(start.getTime() + durationMinutes * 60 * 1000)
       
-      // Возвращаем в формате datetime-local: "YYYY-MM-DDTHH:mm"
-      // Используем локальное время
       const endYear = end.getFullYear()
       const endMonth = String(end.getMonth() + 1).padStart(2, '0')
       const endDay = String(end.getDate()).padStart(2, '0')
@@ -265,7 +245,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
-  // Обработчик изменения услуги - автоматически заполняет цену, название и дату окончания
   const handleServiceChange = async (serviceId: string) => {
     const selectedServiceId = serviceId ? parseInt(serviceId) : undefined
     const selectedService = services.find(s => s.id === selectedServiceId)
@@ -275,17 +254,14 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
 
     if (selectedService) {
-      // Загружаем доступных специалистов для выбранной услуги
       try {
         const { data: serviceDetails } = await api.get(`/services/${selectedServiceId}`)
         if (serviceDetails.specialists && serviceDetails.specialists.length > 0) {
           setAvailableSpecialists(serviceDetails.specialists)
-          // Если текущий специалист не в списке доступных, устанавливаем первого доступного
           if (!serviceDetails.specialists.find((s: any) => s.id === formData.specialist_id)) {
             updates.specialist_id = serviceDetails.specialists[0].id
           }
         } else {
-          // Fallback: если нет списка специалистов, используем specialist_id услуги
           setAvailableSpecialists([{
             id: selectedService.specialist_id,
             full_name: selectedService.specialist?.full_name || '',
@@ -295,7 +271,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         }
       } catch (error) {
         console.error('Failed to load service specialists:', error)
-        // Fallback к основному специалисту услуги
         setAvailableSpecialists([{
           id: selectedService.specialist_id,
           full_name: selectedService.specialist?.full_name || '',
@@ -304,18 +279,14 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         updates.specialist_id = selectedService.specialist_id
       }
 
-      // Автоматически заполняем цену, если она не указана или равна 0
       if (selectedService.price && (!formData.price || formData.price === 0)) {
         updates.price = selectedService.price
       }
 
-      // Автоматически заполняем название услуги, если оно не указано
       if (selectedService.name && !formData.service_name) {
         updates.service_name = selectedService.name
       }
 
-      // Всегда автоматически вычисляем date_end на основе date_start + duration_minutes
-      // Это обеспечивает точность расчета времени окончания на основе длительности услуги
       if (selectedService.duration_minutes && formData.date_start) {
         const calculatedDateEnd = calculateDateEnd(formData.date_start, selectedService.duration_minutes)
         if (calculatedDateEnd) {
@@ -323,10 +294,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         }
       }
     } else {
-      // Если услуга не выбрана, очищаем список специалистов
       setAvailableSpecialists([])
       
-      // Если услуга не выбрана, очищаем автоматически заполненные поля
       if (!formData.service_name || formData.service_name === services.find(s => s.id === formData.service_id)?.name) {
         updates.service_name = undefined
       }
@@ -338,11 +307,9 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     setFormData({ ...formData, ...updates })
   }
 
-  // Обработчик изменения даты начала - пересчитывает date_end, если выбрана услуга
   const handleDateStartChange = (dateStart: string) => {
     const updates: Partial<VisitData> = { date_start: dateStart }
 
-    // Если выбрана услуга, пересчитываем date_end
     if (formData.service_id) {
       const selectedService = services.find(s => s.id === formData.service_id)
       if (selectedService?.duration_minutes) {
@@ -376,7 +343,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         savedVisitId = data.id
       }
       
-      // Если указаны баллы для списания, списываем их
       if (currentClientId && (pointsToUse > 0 || cashbackToUse > 0)) {
         try {
           await api.post(`/loyalty/use-points/${currentClientId}`, {
@@ -387,7 +353,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         } catch (error: any) {
           console.error('Error using loyalty points:', error)
           alert(error.response?.data?.detail || 'Failed to use loyalty points')
-          // Не блокируем сохранение визита, если не удалось списать баллы
         }
       }
       
@@ -404,7 +369,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.client')} *</label>
         <div className="space-y-2">
-          {/* Переключатель между списком и поиском */}
+          {}
           <div className="flex gap-2 mb-2">
             <button
               type="button"
@@ -432,7 +397,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
           {showClientSearch ? (
             <div className="space-y-2">
-              {/* Поле поиска */}
+              {}
               <input
                 type="text"
                 value={clientSearchQuery}
@@ -449,7 +414,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                 </div>
               )}
 
-              {/* Результат поиска */}
+              {}
               {selectedClient && (
                 <div className="p-3 border rounded-md bg-gray-50">
                   <div className="flex justify-between items-start">
@@ -478,7 +443,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                     )}
                   </div>
                   
-                  {/* Базовые медданные для healthcare */}
+                  {}
                   {selectedClient.basic_medical_info && (
                     <div className="mt-2 pt-2 border-t border-gray-200">
                       <p className="text-xs font-medium text-gray-700 mb-1">
@@ -608,7 +573,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               setFormData({ 
                 ...formData, 
                 status: newStatus,
-                // Очищаем способ оплаты, если статус не completed
                 payment_method: newStatus === 'completed' ? formData.payment_method : undefined
               })
             }}
@@ -622,7 +586,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         </div>
       </div>
 
-      {/* Payment Method - показываем только для завершенных визитов */}
+      {}
       {formData.status === 'completed' && (
         <div>
           <label className="block text-sm font-medium mb-1">
@@ -642,7 +606,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         </div>
       )}
 
-      {/* Loyalty Points Section */}
+      {}
       {currentClientId && clientBalance && (
         <div className="border-t border-gray-200 pt-4 mt-4">
           <div className="mb-4">
