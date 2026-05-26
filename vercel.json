@@ -10,10 +10,14 @@
       "destination": "https://xtrix-production.up.railway.app/$1"
     },
     {
-      "handle": "filesystem"
-    },
-    {
       "source": "/(.*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": "text/html"
+        }
+      ],
       "destination": "/index.html"
     }
   ],
@@ -37,4 +41,3 @@
     }
   ]
 }
-
