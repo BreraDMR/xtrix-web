@@ -30,11 +30,19 @@ export default function Business() {
     enabled: user?.role === 'admin' || user?.role === 'business_owner',
   })
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
     setShowForm(false)
     setEditingId(undefined)
-    queryClient.invalidateQueries({ queryKey: ['business'] })
-    queryClient.invalidateQueries({ queryKey: ['user', 'me'] })
+    // a new business changes the user's business_id, and nearly every page depends on it -
+    // refresh the stored user and drop all cached answers (they were fetched without a business)
+    try {
+      const { data } = await api.get('/users/me')
+      const { token } = useAuthStore.getState()
+      if (token) useAuthStore.getState().setAuth(token, data)
+    } catch (error) {
+      console.error('Failed to refresh the user after saving the business:', error)
+    }
+    queryClient.invalidateQueries()
   }
 
   if (isLoading) {
