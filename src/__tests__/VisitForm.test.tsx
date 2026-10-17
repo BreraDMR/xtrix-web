@@ -31,7 +31,7 @@ describe('VisitForm', () => {
     await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
 
     await waitFor(() => expect(alert).toHaveBeenCalledWith('This time is already booked for the specialist'))
-    expect(api.post).toHaveBeenCalledWith('/visits', expect.objectContaining({ client_id: 3, specialist_id: 7 }))
+    expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({ client_id: 3, specialist_id: 7 }))
   })
 
   it('finds a client by name in your own list, no global search', async () => {

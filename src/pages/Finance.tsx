@@ -71,7 +71,7 @@ export default function Finance() {
       if (dateFrom) params.append('date_from', new Date(dateFrom).toISOString())
       if (dateTo) params.append('date_to', new Date(dateTo + 'T23:59:59').toISOString())
       params.append('per_page', '100')
-      const { data } = await api.get(`/expenses?${params.toString()}`)
+      const { data } = await api.get(`/expenses/?${params.toString()}`)
       return data
     },
   })
@@ -518,7 +518,7 @@ function ExpenseForm({
         throw new Error('Business ID not found')
       }
 
-      const { data } = await api.post('/expenses', {
+      const { data } = await api.post('/expenses/', {
         ...expense,
         business_id: businessId,
       })

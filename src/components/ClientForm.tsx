@@ -151,7 +151,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       if (clientId) {
         await api.put(`/clients/${clientId}`, clientData)
       } else {
-        await api.post('/clients', clientData)
+        await api.post('/clients/', clientData)
       }
       
       

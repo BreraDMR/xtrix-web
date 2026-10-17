@@ -106,7 +106,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       if (serviceId) {
         await api.put(`/services/${serviceId}`, payload)
       } else {
-        await api.post('/services', payload)
+        await api.post('/services/', payload)
       }
       onSuccess()
     } catch (error: any) {

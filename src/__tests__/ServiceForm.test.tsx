@@ -32,7 +32,7 @@ describe('ServiceForm', () => {
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalled())
     expect(api.post).toHaveBeenCalledWith(
-      '/services',
+      '/services/',
       expect.objectContaining({ name: 'Facial Treatment', duration_minutes: 90, price: 150, specialist_id: 7 })
     )
   })

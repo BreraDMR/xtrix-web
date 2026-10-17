@@ -33,7 +33,7 @@ describe('ClientForm', () => {
     await userEvent.click(screen.getByRole('button', { name: /create client/i }))
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalled())
-    expect(api.post).toHaveBeenCalledWith('/clients', expect.objectContaining({ full_name: 'John Doe', language: 'en' }))
+    expect(api.post).toHaveBeenCalledWith('/clients/', expect.objectContaining({ full_name: 'John Doe', language: 'en' }))
   })
 
   it('keeps the saved language when editing', async () => {

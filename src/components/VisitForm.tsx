@@ -333,7 +333,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         const { data } = await api.put(`/visits/${visitId}`, submitData)
         savedVisitId = data.id || visitId
       } else {
-        const { data } = await api.post('/visits', submitData)
+        const { data } = await api.post('/visits/', submitData)
         savedVisitId = data.id
       }
       

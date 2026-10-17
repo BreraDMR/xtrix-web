@@ -72,7 +72,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       if (businessId) {
         await api.put(`/businesses/${businessId}`, businessData)
       } else {
-        await api.post('/businesses', businessData)
+        await api.post('/businesses/', businessData)
       }
       onSuccess()
     } catch (error: any) {

@@ -44,7 +44,7 @@ export default function Inventory() {
       const params = new URLSearchParams()
       if (searchTerm) params.append('search', searchTerm)
       if (lowStockOnly) params.append('low_stock_only', 'true')
-      const { data } = await api.get(`/products?${params.toString()}`)
+      const { data } = await api.get(`/products/?${params.toString()}`)
       return data
     },
   })
@@ -87,7 +87,7 @@ export default function Inventory() {
       
       console.log('Creating product with data:', { ...product, business_id: businessId })
       try {
-        const { data } = await api.post('/products', {
+        const { data } = await api.post('/products/', {
           ...product,
           business_id: businessId,
         })
