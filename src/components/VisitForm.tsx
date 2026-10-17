@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
@@ -57,8 +58,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [showClientSearch, setShowClientSearch] = useState(false)
   
   const getInitialDate = (date?: Date) => {
-    if (date) return date.toISOString().slice(0, 16)
-    return new Date().toISOString().slice(0, 16)
+    if (date) return format(date, "yyyy-MM-dd'T'HH:mm")
+    return format(new Date(), "yyyy-MM-dd'T'HH:mm")
   }
   
   const [formData, setFormData] = useState<VisitData>({
@@ -193,8 +194,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       const { data } = await api.get(`/visits/${visitId}`)
       setFormData({
         ...data,
-        date_start: data.date_start ? new Date(data.date_start).toISOString().slice(0, 16) : '',
-        date_end: data.date_end ? new Date(data.date_end).toISOString().slice(0, 16) : '',
+        date_start: data.date_start ? format(new Date(data.date_start), "yyyy-MM-dd'T'HH:mm") : '',
+        date_end: data.date_end ? format(new Date(data.date_end), "yyyy-MM-dd'T'HH:mm") : '',
       })
       
       if (data.service_id) {

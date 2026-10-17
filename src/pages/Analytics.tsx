@@ -1,3 +1,4 @@
+import { format, startOfDay, endOfDay } from 'date-fns'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
@@ -14,11 +15,11 @@ export default function Analytics() {
   const [activeTab, setActiveTab] = useState<TabType>('retention')
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const now = new Date()
-    return new Date(now.getFullYear(), now.getMonth() - 3, 1).toISOString().split('T')[0]
+    return format(new Date(now.getFullYear(), now.getMonth() - 3, 1), 'yyyy-MM-dd')
   })
   const [dateTo, setDateTo] = useState<string>(() => {
     const now = new Date()
-    return new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
+    return format(new Date(now.getFullYear(), now.getMonth() + 1, 0), 'yyyy-MM-dd')
   })
   
   const [trendMetric, setTrendMetric] = useState<'revenue' | 'clients' | 'visits' | 'average_check' | 'load'>('revenue')
@@ -40,8 +41,8 @@ export default function Analytics() {
     queryKey: ['retention-metrics', dateFrom, dateTo],
     queryFn: async () => {
       const params = new URLSearchParams()
-      if (dateFrom) params.append('date_from', new Date(dateFrom).toISOString())
-      if (dateTo) params.append('date_to', new Date(dateTo + 'T23:59:59').toISOString())
+      if (dateFrom) params.append('date_from', startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString())
+      if (dateTo) params.append('date_to', endOfDay(new Date(dateTo + 'T00:00:00')).toISOString())
       const { data } = await api.get(`/analytics/retention/metrics?${params.toString()}`)
       return data
     },
@@ -52,8 +53,8 @@ export default function Analytics() {
     queryKey: ['cohorts', dateFrom, dateTo],
     queryFn: async () => {
       const params = new URLSearchParams()
-      if (dateFrom) params.append('date_from', new Date(dateFrom).toISOString())
-      if (dateTo) params.append('date_to', new Date(dateTo + 'T23:59:59').toISOString())
+      if (dateFrom) params.append('date_from', startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString())
+      if (dateTo) params.append('date_to', endOfDay(new Date(dateTo + 'T00:00:00')).toISOString())
       const { data } = await api.get(`/analytics/retention/cohorts?${params.toString()}`)
       return data
     },
@@ -92,8 +93,8 @@ export default function Analytics() {
     queryKey: ['services-specialists', dateFrom, dateTo],
     queryFn: async () => {
       const params = new URLSearchParams()
-      if (dateFrom) params.append('date_from', new Date(dateFrom).toISOString())
-      if (dateTo) params.append('date_to', new Date(dateTo + 'T23:59:59').toISOString())
+      if (dateFrom) params.append('date_from', startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString())
+      if (dateTo) params.append('date_to', endOfDay(new Date(dateTo + 'T00:00:00')).toISOString())
       const { data } = await api.get(`/analytics/services-specialists?${params.toString()}`)
       return data
     },

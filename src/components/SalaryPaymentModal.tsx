@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { HiX } from 'react-icons/hi'
@@ -26,7 +27,7 @@ export default function SalaryPaymentModal({
   const queryClient = useQueryClient()
   const [amount, setAmount] = useState<string>('')
   const [paymentDate, setPaymentDate] = useState<string>(
-    new Date().toISOString().split('T')[0]
+    format(new Date(), 'yyyy-MM-dd')
   )
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'transfer' | 'other'>('cash')
   const [status, setStatus] = useState<'completed' | 'pending' | 'failed'>('completed')
@@ -57,7 +58,7 @@ export default function SalaryPaymentModal({
 
   const handleClose = () => {
     setAmount('')
-    setPaymentDate(new Date().toISOString().split('T')[0])
+    setPaymentDate(format(new Date(), 'yyyy-MM-dd'))
     setPaymentMethod('cash')
     setStatus('completed')
     setNotes('')

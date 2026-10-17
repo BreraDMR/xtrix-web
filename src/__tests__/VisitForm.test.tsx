@@ -33,6 +33,16 @@ describe('VisitForm', () => {
     expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({ client_id: 3, specialist_id: 7 }))
   })
 
+  it('keeps the selected local time when submitting UTC', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: { id: 9 } })
+    const start = new Date(2026, 6, 10, 14, 30)
+    const { container } = renderWithProviders(<VisitForm initialDateStart={start} onSuccess={() => {}} onCancel={() => {}} />)
+    expect(container.querySelector<HTMLInputElement>('[type="datetime-local"]')!.value).toBe('2026-07-10T14:30')
+    await pickClient()
+    await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({ date_start: start.toISOString() })))
+  })
+
   it('finds a client by name in your own list, no global search', async () => {
     renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
     await screen.findByRole('option', { name: 'Jana Nováková' })
