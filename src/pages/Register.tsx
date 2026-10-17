@@ -8,16 +8,23 @@ import SpecialistTypeSelector from '../components/SpecialistTypeSelector'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
 import { logger } from '../utils/logger'
+import { useLabels } from '../i18n/labels'
+
+// The only roles the API lets you pick at signup (anything else is a 403). Admins are
+// made by hand, employees are created by their business owner.
+const SIGNUP_ROLES = ['specialist', 'business_owner'] as const
+type SignupRole = (typeof SIGNUP_ROLES)[number]
 
 export default function Register() {
   const { t } = useTranslation()
+  const labels = useLabels()
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'specialist' as 'admin' | 'specialist',
+    role: 'specialist' as SignupRole,
     specialist_type: '',
   })
   const [error, setError] = useState('')
@@ -233,7 +240,7 @@ export default function Register() {
               name="role"
               value={formData.role}
               onChange={(e) => {
-                const newRole = e.target.value as 'admin' | 'specialist'
+                const newRole = e.target.value as SignupRole
                 setFormData({ 
                   ...formData, 
                   role: newRole,
@@ -243,8 +250,9 @@ export default function Register() {
               required
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
-              <option value="specialist">Specialist</option>
-              <option value="admin">Admin</option>
+              {SIGNUP_ROLES.map((role) => (
+                <option key={role} value={role}>{labels.role(role)}</option>
+              ))}
             </select>
           </div>
 
