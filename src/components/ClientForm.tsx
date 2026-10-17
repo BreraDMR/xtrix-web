@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
 import LoadingSpinner from './LoadingSpinner'
@@ -150,9 +151,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       if (Object.keys(apiErrors).length > 0) {
         setErrors(apiErrors)
       } else {
-        const errorMessage = error.response?.data?.error?.message
-          || error.response?.data?.detail
-          || 'Failed to save client'
+        const errorMessage = apiErrorMessage(error, 'Failed to save client')
         setErrors({ _general: errorMessage })
       }
     } finally {

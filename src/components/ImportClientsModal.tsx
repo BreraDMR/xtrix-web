@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { HiX, HiUpload, HiCheckCircle, HiXCircle, HiExclamationCircle } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import * as XLSX from 'xlsx'
 
 interface ImportClientsModalProps {
@@ -273,7 +274,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         result.errors.push({
           row: client.row,
           message:
-            error.response?.data?.detail || error.message || t('import.importError') || 'Ошибка импорта',
+            apiErrorMessage(error, t('import.importError')),
         })
       }
     }

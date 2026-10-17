@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
@@ -69,10 +70,7 @@ export default function Login() {
       }, 100)
     } catch (err: any) {
       console.error('Login error:', err)
-      const errorMessage = err.response?.data?.error?.message || 
-                          err.response?.data?.detail || 
-                          err.message || 
-                          t('login.failed')
+      const errorMessage = apiErrorMessage(err, t('login.failed'))
       setError(errorMessage)
     } finally {
       setLoading(false)

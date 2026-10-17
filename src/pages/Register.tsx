@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import SpecialistTypeSelector from '../components/SpecialistTypeSelector'
 import LanguageSwitcher from '../components/LanguageSwitcher'
@@ -120,33 +121,7 @@ export default function Register() {
     } catch (err: any) {
       console.error('Registration error:', err)
       
-      let errorMessage = 'Registration failed'
-      
-      if (err.response?.data) {
-        const data = err.response.data
-        
-        if (data.error?.detail?.validation_errors && Array.isArray(data.error.detail.validation_errors) && data.error.detail.validation_errors.length > 0) {
-          const firstError = data.error.detail.validation_errors[0]
-          errorMessage = `${firstError.field}: ${firstError.message}`
-          if (firstError.hint) {
-            errorMessage += ` (${firstError.hint})`
-          }
-        }
-        else if (data.detail && Array.isArray(data.detail) && data.detail.length > 0) {
-          const firstError = data.detail[0]
-          const field = Array.isArray(firstError.loc) ? firstError.loc[firstError.loc.length - 1] : 'field'
-          errorMessage = `${field}: ${firstError.msg || 'Validation error'}`
-        }
-        else if (data.error?.message) {
-          errorMessage = data.error.message
-        }
-        else if (typeof data.detail === 'string') {
-          errorMessage = data.detail
-        }
-      }
-      else if (err.message) {
-        errorMessage = err.message
-      }
+      const errorMessage = apiErrorMessage(err, 'Registration failed')
       
       setError(errorMessage)
     } finally {

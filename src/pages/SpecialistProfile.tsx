@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation, getTranslatedSpecialistType } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
@@ -59,7 +60,7 @@ export default function SpecialistProfile() {
       queryClient.invalidateQueries({ queryKey: ['specialist-profile'] })
       setIsEditing(false)
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to update profile')
+      setError(apiErrorMessage(err, 'Failed to update profile'))
     } finally {
       setLoading(false)
     }

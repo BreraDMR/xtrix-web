@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
 
@@ -354,13 +355,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           })
         } catch (error: any) {
           console.error('Error using loyalty points:', error)
-          alert(error.response?.data?.detail || 'Failed to use loyalty points')
+          alert(apiErrorMessage(error, 'Failed to use loyalty points'))
         }
       }
       
       onSuccess()
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Failed to save visit')
+      alert(apiErrorMessage(error, 'Failed to save visit'))
     } finally {
       setLoading(false)
     }

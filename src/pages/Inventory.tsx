@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -94,7 +95,7 @@ export default function Inventory() {
         return data
       } catch (error: any) {
         console.error('Error creating product:', error)
-        const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to create product'
+        const errorMessage = apiErrorMessage(error, 'Failed to create product')
         throw new Error(errorMessage)
       }
     },

@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -527,7 +528,7 @@ function ExpenseForm({
       onSuccess()
     },
     onError: (error: any) => {
-      const errorMessage = error?.response?.data?.detail || error?.message || 'Failed to create expense'
+      const errorMessage = apiErrorMessage(error, 'Failed to create expense')
       alert(errorMessage)
     },
   })

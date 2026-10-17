@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import { HiSearch, HiX } from 'react-icons/hi'
@@ -182,7 +183,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         
       } catch (error: any) {
         console.error('Failed to create employee with user:', error)
-        const errorMessage = error.response?.data?.detail || error.message || t('common.error')
+        const errorMessage = apiErrorMessage(error, t('common.error'))
         alert(errorMessage)
       } finally {
         setLoading(false)
@@ -217,7 +218,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       onSuccess()
     } catch (error: any) {
       console.error('Failed to save employee:', error)
-      let errorMessage = error.response?.data?.detail || error.message || t('common.error')
+      let errorMessage = apiErrorMessage(error, t('common.error'))
       
       if (errorMessage.includes('already employed')) {
         errorMessage = 'This user is already employed by another business. Please select a different user or contact support to transfer the employee.'

@@ -1,3 +1,5 @@
+import { apiErrorMessage, apiValidationErrors } from '../api/errors'
+
 
 
 export interface ValidationError {
@@ -101,39 +103,11 @@ export function combineValidators(...validators: Validator[]): Validator {
 }
 
 
-export function extractApiErrors(error: any): Record<string, string> {
-  const errors: Record<string, string> = {}
-  
-  if (!error?.response?.data) {
-    return errors
+export function extractApiErrors(error: unknown): Record<string, string> {
+  const errors = apiValidationErrors(error)
+  if (!Object.keys(errors).length) {
+    const message = apiErrorMessage(error, '')
+    if (message) errors._general = message
   }
-  
-  const data = error.response.data
-  
-  if (data.detail && Array.isArray(data.detail)) {
-    data.detail.forEach((item: any) => {
-      if (item.loc && item.loc.length > 0) {
-        const field = item.loc[item.loc.length - 1]
-        errors[field] = item.msg || 'Validation error'
-      }
-    })
-  }
-  
-  if (data.error?.detail?.validation_errors) {
-    data.error.detail.validation_errors.forEach((item: any) => {
-      if (item.field && item.message) {
-        errors[item.field] = item.message
-      }
-    })
-  }
-  
-  if (data.error?.message && !Object.keys(errors).length) {
-    errors._general = data.error.message
-  }
-  
-  if (data.detail && typeof data.detail === 'string' && !Object.keys(errors).length) {
-    errors._general = data.detail
-  }
-  
   return errors
 }

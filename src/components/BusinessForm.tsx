@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 
 interface BusinessFormProps {
@@ -70,9 +71,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       onSuccess()
     } catch (error: any) {
       console.error('Error saving business:', error)
-      const errorMessage = error.response?.data?.error?.message
-        || error.response?.data?.detail
-        || 'Failed to save business'
+      const errorMessage = apiErrorMessage(error, 'Failed to save business')
       alert(errorMessage)
     } finally {
       setLoading(false)

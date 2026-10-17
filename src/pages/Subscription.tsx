@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 interface Subscription {
@@ -160,7 +161,7 @@ export default function Subscription() {
       queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
       setSelectedPlan(null)
     } catch (err: any) {
-      setError(err.response?.data?.detail || t('subscription.failed_subscribe'))
+      setError(apiErrorMessage(err, t('subscription.failed_subscribe')))
     } finally {
       setLoading(false)
     }
@@ -178,7 +179,7 @@ export default function Subscription() {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
     } catch (err: any) {
-      setError(err.response?.data?.detail || t('subscription.failed_cancel'))
+      setError(apiErrorMessage(err, t('subscription.failed_cancel')))
     } finally {
       setLoading(false)
     }
@@ -194,7 +195,7 @@ export default function Subscription() {
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
     } catch (err: any) {
-      setError(err.response?.data?.detail || t('subscription.failed_reactivate'))
+      setError(apiErrorMessage(err, t('subscription.failed_reactivate')))
     } finally {
       setLoading(false)
     }

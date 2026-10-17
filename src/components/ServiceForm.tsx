@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api/client'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
 
@@ -109,7 +110,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       }
       onSuccess()
     } catch (error: any) {
-      alert(error.response?.data?.detail || 'Failed to save service')
+      alert(apiErrorMessage(error, 'Failed to save service'))
     } finally {
       setLoading(false)
     }
