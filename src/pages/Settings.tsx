@@ -8,23 +8,10 @@ import api from '../api/client'
 import { CURRENCIES, Currency, getCurrencySymbol } from '../utils/currency'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { TranslationKey } from '../i18n/translations'
+import type { UserPreferencesUpdate } from '../api/types'
+import { PREFERENCES_KEY, usePreferences, useSetUiLanguage } from '../hooks/useUiLanguage'
+import type { Locale } from '../store/localeStore'
 
-interface UserPreferences {
-  id: number
-  user_id: number
-  timezone: string | null
-  date_format: string | null
-  time_format: string | null
-  email_notifications: boolean
-  push_notifications: boolean
-  notification_email: string | null
-  theme: string
-  auto_save_enabled: boolean
-  auto_save_interval: number
-  export_format: string | null
-  created_at: string
-  updated_at: string
-}
 
 const TIMEZONES = [
   { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
@@ -45,7 +32,6 @@ const DATE_FORMATS = [
   { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY' },
   { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY' },
   { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
-  { value: 'DD.MM.YYYY', label: 'DD.MM.YYYY' },
 ]
 
 const TIME_FORMATS = [
@@ -66,7 +52,8 @@ const THEMES = [
 
 export default function Settings() {
   const { t } = useTranslation()
-  const { locale, setLocale } = useLocaleStore()
+  const locale = useLocaleStore((state) => state.locale)
+  const setUiLanguage = useSetUiLanguage()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
   const currentCurrency = useBusinessCurrency()
@@ -88,22 +75,7 @@ export default function Settings() {
     retry: false,
   })
 
-  const { data: preferences, isLoading: isLoadingPreferences } = useQuery<UserPreferences>({
-    queryKey: ['user-preferences'],
-    queryFn: async () => {
-      try {
-        const { data } = await api.get('/user-preferences/me')
-        return data
-      } catch (error: any) {
-        if (error?.response?.status === 404) {
-          return null
-        }
-        throw error
-      }
-    },
-    enabled: !!user,
-    retry: false,
-  })
+  const { data: preferences, isLoading: isLoadingPreferences } = usePreferences(!!user)
 
   const updateCurrencyMutation = useMutation({
     mutationFn: async (currency: Currency) => {
@@ -121,26 +93,27 @@ export default function Settings() {
   })
 
   const updatePreferencesMutation = useMutation({
-    mutationFn: async (updates: Partial<UserPreferences>) => {
+    mutationFn: async (updates: UserPreferencesUpdate) => {
       const { data } = await api.put('/user-preferences/me', updates)
       return data
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['user-preferences'] })
-      if (variables.theme !== undefined) {
+      queryClient.invalidateQueries({ queryKey: PREFERENCES_KEY })
+      if (variables.theme) {
         applyTheme(variables.theme)
       }
     },
   })
 
-  const languages = [
-    { code: 'en' as const, label: 'English', native: 'English' },
-    { code: 'ru' as const, label: 'Russian', native: 'Русский' },
-    { code: 'cz' as const, label: 'Czech', native: 'Čeština' },
+  const languages: { code: Locale; label: string; native: string }[] = [
+    { code: 'en', label: 'English', native: 'English' },
+    { code: 'ru', label: 'Russian', native: 'Русский' },
+    { code: 'cz', label: 'Czech', native: 'Čeština' },
   ]
 
-  const handleLanguageChange = (langCode: 'en' | 'ru' | 'cz') => {
-    setLocale(langCode)
+  // saved to the account, not just this browser - e-mails to you use it as well
+  const handleLanguageChange = (langCode: Locale) => {
+    setUiLanguage(langCode)
   }
 
   const handleCurrencyChange = (currency: Currency) => {
@@ -149,7 +122,7 @@ export default function Settings() {
     }
   }
 
-  const handlePreferenceChange = (field: keyof UserPreferences, value: any) => {
+  const handlePreferenceChange = (field: keyof UserPreferencesUpdate, value: any) => {
     updatePreferencesMutation.mutate({ [field]: value })
   }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
+import { useSyncUiLanguage } from '../hooks/useUiLanguage'
 import { 
   HiOutlineViewGrid, 
   HiOutlineUsers, 
@@ -23,6 +24,7 @@ export default function Layout() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  useSyncUiLanguage()
 
   useEffect(() => {
     setIsMobileMenuOpen(false)

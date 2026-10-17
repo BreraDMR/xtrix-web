@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type Locale = 'en' | 'ru' | 'cz'
+export type Locale = 'en' | 'ru' | 'cz'
 
 const getInitialLocale = (): Locale => {
   if (typeof window === 'undefined') return 'en'
