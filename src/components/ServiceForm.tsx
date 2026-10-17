@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
@@ -29,6 +29,7 @@ interface Specialist {
 
 export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceFormProps) {
   const { user: currentUser } = useAuthStore()
+  const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [availableSpecialists, setAvailableSpecialists] = useState<Specialist[]>([])
   const [loadingSpecialists, setLoadingSpecialists] = useState(false)
@@ -53,6 +54,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
 
   const loadAvailableSpecialists = async () => {
     setLoadingSpecialists(true)
+    const self: Specialist[] = currentUser ? [{ id: currentUser.id, full_name: currentUser.full_name, email: '' }] : []
     try {
       const { data: employeesData } = await api.get('/employees/', { params: { is_active: true } })
       const employees = Array.isArray(employeesData) ? employeesData : []
@@ -67,15 +69,15 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
         u.role === 'specialist' || employeeUserIds.has(u.id)
       )
       
-      setAvailableSpecialists(allSpecialists.map((u: any) => ({
+      setAvailableSpecialists([...self, ...allSpecialists.filter((u: any) => u.id !== currentUser?.id).map((u: any) => ({
         id: u.id,
         full_name: u.full_name || u.employee_user?.full_name || '',
         email: u.email || u.employee_user?.email || '',
         phone: u.phone || u.employee_user?.phone,
-      })))
+      }))])
     } catch (error) {
       console.error('Failed to load specialists:', error)
-      setAvailableSpecialists([])
+      setAvailableSpecialists(self)
     } finally {
       setLoadingSpecialists(false)
     }
@@ -95,6 +97,8 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting.current) return
+    submitting.current = true
     setLoading(true)
 
     try {
@@ -112,6 +116,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     } catch (error: any) {
       alert(apiErrorMessage(error, 'Failed to save service'))
     } finally {
+      submitting.current = false
       setLoading(false)
     }
   }

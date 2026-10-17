@@ -17,6 +17,31 @@ describe('ServiceForm', () => {
     )
   })
 
+  it.each(['business_owner', 'specialist'])('includes the current %s without staff and selects them by default', async (role) => {
+    signIn({ id: 7, role })
+    vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': [] }) as any)
+    vi.mocked(api.post).mockResolvedValue({ data: {} })
+    renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+    const select = await screen.findByRole('combobox')
+    expect(select).toHaveValue('7')
+    expect(screen.getByRole('option', { name: /Test User/ })).toHaveValue('7')
+    await userEvent.type(screen.getByPlaceholderText(/facial treatment/i), 'Massage')
+    await userEvent.click(screen.getByRole('button', { name: /create service/i }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/services/', expect.objectContaining({ specialist_id: 7 })))
+  })
+
+  it('keeps the current user available when staff loading fails', async () => {
+    vi.mocked(api.get).mockRejectedValue(new Error('Offline'))
+    renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+    expect(await screen.findByRole('option', { name: /Test User/ })).toHaveValue('7')
+  })
+
+  it('does not list the current user twice', async () => {
+    renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+    await screen.findByRole('option', { name: /Test User/ })
+    expect(screen.getAllByRole('option')).toHaveLength(1)
+  })
+
   it('creates a service', async () => {
     vi.mocked(api.post).mockResolvedValue({ data: {} })
     const onSuccess = vi.fn()
