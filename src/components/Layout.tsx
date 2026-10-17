@@ -232,7 +232,7 @@ export default function Layout() {
       </aside>
 
       {}
-      <div className="flex-1 lg:ml-64 flex flex-col w-full lg:w-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <div className="min-w-0 flex-1 lg:ml-64 flex flex-col w-full lg:w-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
         {}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 h-16 flex items-center justify-between px-4 sm:px-6">
           {}
@@ -263,7 +263,7 @@ export default function Layout() {
         </header>
 
         {}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 animate-fade-in">
+        <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 animate-fade-in">
           {offline && <div role="status" className="mb-4 rounded bg-amber-100 p-3 text-amber-900">{t('common.offline')}</div>}
           <Outlet />
         </main>

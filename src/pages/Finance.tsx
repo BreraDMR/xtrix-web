@@ -114,7 +114,7 @@ export default function Finance() {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-8 flex justify-between items-center">
+      <div className="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('finance.title')}</h1>
           <p className="text-gray-600">{t('finance.subtitle')}</p>
@@ -131,31 +131,31 @@ export default function Finance() {
 
       {}
       <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-        <div className="flex gap-4 items-end">
-          <div>
+        <div className="flex flex-wrap gap-4 items-end">
+          <div className="min-w-0 w-full sm:w-auto">
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('finance.date_from')}</label>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg"
+              className="min-w-0 w-full px-4 py-2 border border-gray-300 rounded-lg"
             />
           </div>
-          <div>
+          <div className="min-w-0 w-full sm:w-auto">
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('finance.date_to')}</label>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg"
+              className="min-w-0 w-full px-4 py-2 border border-gray-300 rounded-lg"
             />
           </div>
-          <div>
+          <div className="min-w-0 w-full sm:w-auto">
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('finance.category')}</label>
             <select
               value={selectedCategory || ''}
               onChange={(e) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}
-              className="px-4 py-2 border border-gray-300 rounded-lg"
+              className="min-w-0 w-full px-4 py-2 border border-gray-300 rounded-lg"
             >
               <option value="">{t('finance.all_categories')}</option>
               {categories?.map((cat: ExpenseCategory) => (

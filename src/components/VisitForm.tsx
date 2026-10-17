@@ -532,11 +532,12 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.startDateTime')} *</label>
           <input
             type="datetime-local"
+            style={{ minWidth: 0, maxWidth: '100%' }}
             value={formData.date_start}
             onChange={(e) => handleDateStartChange(e.target.value)}
             required
@@ -547,6 +548,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           <label className="block text-sm font-medium mb-1">{t('visits.endDateTime')}</label>
           <input
             type="datetime-local"
+            style={{ minWidth: 0, maxWidth: '100%' }}
             value={formData.date_end || ''}
             onChange={(e) => setFormData({ ...formData, date_end: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
@@ -554,7 +556,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.price')}</label>
           <input
@@ -621,7 +623,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               </p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">{t('loyalty.points_to_use')}</label>
               <input

@@ -260,9 +260,9 @@ export default function Visits() {
       ) : (
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
+          <table role="table" className="responsive-card-table min-w-full divide-y divide-gray-200">
+            <thead role="rowgroup" className="bg-gray-50">
+              <tr role="row">
                 <TableSortHeader
                   columnKey="date_start"
                   label={t('visits.date')}
@@ -299,10 +299,10 @@ export default function Visits() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody role="rowgroup" className="bg-white divide-y divide-gray-200">
               {paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-2 sm:px-6 py-4 text-center text-gray-500">
+                <tr role="row">
+                  <td role="cell" colSpan={6} className="px-2 sm:px-6 py-4 text-center text-gray-500">
                     {searchQuery || statusFilter || dateFrom || dateTo
                       ? t('visits.noVisitsMatch')
                       : t('visits.noVisitsFound')}
@@ -310,33 +310,22 @@ export default function Visits() {
                 </tr>
               ) : (
                 paginatedData.map((visit) => (
-                <tr key={visit.id} className="hover:bg-gray-50">
-                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-900">
+                <tr role="row" key={visit.id} className="hover:bg-gray-50">
+                  <td role="cell" data-label={t('visits.date')} className="px-2 sm:px-6 py-4 text-sm text-gray-900">
                     <div className="flex flex-col">
                       <span className="whitespace-nowrap">{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
                       <span className="text-xs text-gray-500 sm:hidden">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
                     </div>
                   </td>
-                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-900">
+                  <td role="cell" data-label={t('visits.client')} className="px-2 sm:px-6 py-4 text-sm text-gray-900">
                     {visit.client_name || '-'}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-500">
+                  <td role="cell" data-label={t('visits.service')} className="px-2 sm:px-6 py-4 text-sm text-gray-500">
                     <div className="flex flex-col">
                       <span>{visit.service_name || '-'}</span>
-                      <span className="text-xs sm:hidden mt-1">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                          visit.status === 'completed' || visit.status === 'in_progress'
-                            ? 'bg-purple-100 text-purple-700'
-                            : visit.status === 'cancelled'
-                            ? 'bg-pink-100 text-pink-700'
-                            : 'bg-purple-100 text-purple-700'
-                        }`}>
-                          {getStatusTranslation(visit.status)}
-                        </span>
-                      </span>
                     </div>
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                  <td role="cell" data-label={t('visits.status')} className="px-2 sm:px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                       visit.status === 'completed' || visit.status === 'in_progress'
                         ? 'bg-purple-100 text-purple-700'
@@ -347,10 +336,10 @@ export default function Visits() {
                       {getStatusTranslation(visit.status)}
                     </span>
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                  <td role="cell" data-label={t('services.price')} className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {visit.price ? formatCurrency(visit.price, currency) : '-'}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td role="cell" data-label={t('common.actions')} className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
                       onClick={() => handleEdit(visit.id)}
                       className="text-blue-600 hover:text-blue-800 font-medium"

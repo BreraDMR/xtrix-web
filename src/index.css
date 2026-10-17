@@ -123,3 +123,42 @@ select option {
   background-color: #1f2937;
   color: #f9fafb;
 }
+
+@media (max-width: 767px) {
+  .responsive-card-table,
+  .responsive-card-table tbody {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .responsive-card-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .responsive-card-table tbody tr {
+    display: block;
+    padding: 1rem;
+  }
+
+  .responsive-card-table tbody td {
+    display: block;
+    padding: 0.375rem 0;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .responsive-card-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.125rem;
+    color: #6b7280;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}

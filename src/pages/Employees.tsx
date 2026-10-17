@@ -152,8 +152,8 @@ export default function Employees() {
   }
 
   return (
-    <div className="p-6 animate-fade-in">
-      <div className="mb-6 flex justify-between items-center">
+    <div className="p-0 sm:p-6 animate-fade-in">
+      <div className="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <h1 className="text-3xl font-bold text-gray-900">{t('employees.title')}</h1>
         <button
           onClick={() => {
@@ -180,7 +180,7 @@ export default function Employees() {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex flex-wrap gap-4 items-center">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -217,9 +217,9 @@ export default function Employees() {
       {}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
+          <table role="table" className="responsive-card-table min-w-full divide-y divide-gray-200">
+            <thead role="rowgroup" className="bg-gray-50">
+              <tr role="row">
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {t('employees.employee')}
                 </th>
@@ -255,17 +255,17 @@ export default function Employees() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody role="rowgroup" className="bg-white divide-y divide-gray-200">
               {paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                <tr role="row">
+                  <td role="cell" colSpan={7} className="px-6 py-4 text-center text-gray-500">
                     {t('employees.no_employees')}
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((employee) => (
-                <tr key={employee.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr role="row" key={employee.id} className="hover:bg-gray-50">
+                  <td role="cell" data-label={t('employees.employee')} className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">
                         {employee.employee_user?.full_name || t('employees.unknown')}
@@ -276,20 +276,20 @@ export default function Employees() {
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td role="cell" data-label={t('employees.position')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {employee.position || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td role="cell" data-label={t('employees.commission')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {employee.commission_percentage !== undefined
                       ? `${employee.commission_percentage}%`
                       : '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td role="cell" data-label={t('employees.base_salary')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {employee.base_salary !== undefined
                       ? formatCurrency(employee.base_salary, currency)
                       : '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td role="cell" data-label={t('employees.status')} className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         employee.is_active
@@ -300,13 +300,13 @@ export default function Employees() {
                       {employee.is_active ? t('employees.active') : t('employees.inactive')}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td role="cell" data-label={t('employees.hired_at')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {employee.hired_at
                       ? new Date(employee.hired_at).toLocaleDateString()
                       : '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end gap-2">
+                  <td role="cell" data-label={t('employees.actions')} className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex flex-wrap md:justify-end gap-2">
                       <button
                         onClick={() => {
                           setEditingId(employee.id)
