@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { apiErrorMessage, apiErrorStatus, apiValidationErrors } from '../api/errors'
+import { AxiosError } from 'axios'
 import { apiError } from '../test/render'
 
 describe('API errors', () => {
@@ -15,6 +16,15 @@ describe('API errors', () => {
     })
     expect(apiErrorMessage(err, 'fallback')).toBe('contact_email: value is not a valid email address')
     expect(apiValidationErrors(err)).toEqual({ contact_email: 'value is not a valid email address' })
+  })
+
+  it('reads a plain string error from the rate limiter', () => {
+    const response = apiError(429, 'unused').response!
+    const err = new AxiosError('Rate limit', '429', response.config, null, {
+      ...response, data: { error: 'Rate limit exceeded' },
+    })
+    expect(apiErrorMessage(err, 'fallback')).toBe('Rate limit exceeded')
+    expect(apiValidationErrors(err)).toEqual({})
   })
 
   it('falls back for anything that is not an API error', () => {

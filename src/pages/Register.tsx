@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
@@ -17,6 +17,7 @@ type SignupRole = (typeof SIGNUP_ROLES)[number]
 
 export default function Register() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const labels = useLabels()
   const [formData, setFormData] = useState({
     full_name: '',
@@ -56,6 +57,7 @@ export default function Register() {
       return
     }
 
+    let accountCreated = false
     try {
       logger.log('[Register] Attempting registration', { email: formData.email, phone: formData.phone })
       
@@ -85,6 +87,7 @@ export default function Register() {
 
       const { data: userData } = await api.post('/users/', userDataPayload)
 
+      accountCreated = true
       logger.log('[Register] User created successfully')
 
       const { data: loginData } = await api.post('/users/login', {
@@ -126,6 +129,10 @@ export default function Register() {
         window.location.href = '/'
       }, 100)
     } catch (err: any) {
+      if (accountCreated) {
+        navigate('/login', { replace: true, state: { accountCreated: true } })
+        return
+      }
       console.error('Registration error:', err)
       
       const errorMessage = apiErrorMessage(err, 'Registration failed')

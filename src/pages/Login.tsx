@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
@@ -10,6 +10,7 @@ import { logger } from '../utils/logger'
 
 export default function Login() {
   const { t } = useTranslation()
+  const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -87,6 +88,11 @@ export default function Login() {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Xtrix</h2>
           <p className="text-gray-600 dark:text-gray-300">{t('login.subtitle')}</p>
         </div>
+        {location.state?.accountCreated === true && (
+          <p role="status" className="p-3 text-sm text-green-800 bg-green-50 rounded-lg">
+            {t('register.accountCreatedSignIn')}
+          </p>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

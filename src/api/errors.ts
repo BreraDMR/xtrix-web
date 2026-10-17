@@ -9,7 +9,7 @@ interface ApiValidationError {
 }
 
 interface ApiErrorBody {
-  error?: {
+  error?: string | {
     message?: string
     status_code?: number
     detail?: { validation_errors?: ApiValidationError[] }
@@ -35,7 +35,9 @@ export function fieldName(path: string): string {
 
 export function apiValidationErrors(err: unknown): Record<string, string> {
   const errors: Record<string, string> = {}
-  for (const item of errorBody(err)?.error?.detail?.validation_errors ?? []) {
+  const error = errorBody(err)?.error
+  if (typeof error === 'string') return errors
+  for (const item of error?.detail?.validation_errors ?? []) {
     if (item.field && item.message) errors[fieldName(item.field)] = item.message
   }
   return errors
@@ -43,6 +45,7 @@ export function apiValidationErrors(err: unknown): Record<string, string> {
 
 export function apiErrorMessage(err: unknown, fallback: string): string {
   const body = errorBody(err)
+  if (typeof body?.error === 'string') return body.error
   const first = body?.error?.detail?.validation_errors?.[0]
   if (first) return `${fieldName(first.field)}: ${first.message}`
   if (body?.error?.message) return body.error.message

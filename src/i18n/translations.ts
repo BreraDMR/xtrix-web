@@ -141,6 +141,7 @@ export type TranslationKey =
   | 'register.createAccount'
   | 'register.alreadyHaveAccount'
   | 'register.signIn'
+  | 'register.accountCreatedSignIn'
   | 'register.specialistTypeRequired'
   | 'clientForm.allergies'
   | 'clientForm.chronicDiseases'
@@ -885,6 +886,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'register.createAccount': { en: 'Create Account', ru: 'Создать аккаунт', cz: 'Vytvořit účet' },
   'register.alreadyHaveAccount': { en: 'Already have an account?', ru: 'Уже есть аккаунт?', cz: 'Již máte účet?' },
   'register.signIn': { en: 'Sign in', ru: 'Войти', cz: 'Přihlásit se' },
+  'register.accountCreatedSignIn': { en: 'Your account has been created. Please sign in.', ru: 'Аккаунт создан. Войдите в систему.', cz: 'Účet byl vytvořen. Přihlaste se prosím.' },
   'register.specialistTypeRequired': { en: 'Please select your specialist type', ru: 'Пожалуйста, выберите тип специалиста', cz: 'Vyberte prosím typ specialisty' },
   
   'clientForm.allergies': { en: 'Allergies', ru: 'Аллергии', cz: 'Alergie' },
