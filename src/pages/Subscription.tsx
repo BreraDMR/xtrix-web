@@ -3,35 +3,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorMessage } from '../api/errors'
+import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { useLabels } from '../i18n/labels'
+import type { Schema } from '../api/types'
 
-interface Subscription {
-  id: number
-  user_id: number
-  plan_id: number
-  status: string
-  is_trial: boolean
-  trial_start: string | null
-  trial_end: string | null
-  current_period_end: string | null
-  created_at: string
-  cancel_at_period_end?: boolean
-  cancelled_at?: string | null
-  reactivated_at?: string | null
-}
-
-interface SubscriptionPlan {
-  id: number
-  code: string
-  name: string
-  period_days: number
-  price: number
-  currency: string
-  is_trial: boolean
-  trial_days: number | null
-  is_active?: boolean
-}
+type Subscription = Schema<'SubscriptionOut'>
+type SubscriptionPlan = Schema<'SubscriptionPlanOut'>
+type Transaction = Schema<'TransactionOut'>
 
 interface TrialStatus {
   is_trial_active: boolean
@@ -44,12 +23,12 @@ interface TrialStatus {
 export default function Subscription() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
+  const labels = useLabels()
   const queryClient = useQueryClient()
-  const [selectedPlan, setSelectedPlan] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const { data: subscription, isLoading: subscriptionLoading } = useQuery<Subscription>({
+  const { data: subscription, isLoading: subscriptionLoading } = useQuery<Subscription | null>({
     queryKey: ['subscription'],
     queryFn: async () => {
       const { data } = await api.get('/subscriptions/me')
@@ -134,34 +113,26 @@ export default function Subscription() {
     return []
   }, [plans, user?.role])
 
+  // Paying goes through Stripe Checkout only. Creating a subscription directly is
+  // admin-only on the API now (403), so there's no fallback when Stripe is down.
   const handleSubscribe = async (planId: number) => {
     setLoading(true)
     setError('')
     try {
-      try {
-        const { data: checkoutData } = await api.post('/subscriptions/checkout/create-session', null, {
-          params: { plan_id: planId },
-        })
-        
-        if (checkoutData.url) {
-          window.location.href = checkoutData.url
-          return
-        }
-      } catch (checkoutError: any) {
-        console.warn('Stripe Checkout not available, creating subscription directly:', checkoutError)
-      }
-      
-      await api.post('/subscriptions/', {
-        user_id: user?.id,
-        plan_id: planId,
-        status: 'active',
+      const { data: checkoutData } = await api.post('/subscriptions/checkout/create-session', null, {
+        params: { plan_id: planId },
       })
-      queryClient.invalidateQueries({ queryKey: ['subscription'] })
-      queryClient.invalidateQueries({ queryKey: ['trial-status'] })
-      queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
-      setSelectedPlan(null)
-    } catch (err: any) {
-      setError(apiErrorMessage(err, t('subscription.failed_subscribe')))
+      if (checkoutData?.url) {
+        window.location.href = checkoutData.url
+        return
+      }
+      setError(t('subscription.checkoutUnavailable'))
+    } catch (err) {
+      setError(
+        apiErrorStatus(err) === 503
+          ? t('subscription.checkoutUnavailable')
+          : apiErrorMessage(err, t('subscription.failed_subscribe'))
+      )
     } finally {
       setLoading(false)
     }
@@ -201,7 +172,7 @@ export default function Subscription() {
     }
   }
 
-  const { data: transactions } = useQuery<any[]>({
+  const { data: transactions } = useQuery<Transaction[]>({
     queryKey: ['subscription-transactions', subscription?.id],
     queryFn: async () => {
       if (!subscription) return []
@@ -242,12 +213,12 @@ export default function Subscription() {
 
   const isEmployee = user?.role === 'specialist' && user?.employer_id
 
-  const formatDate = (dateString: string | null) => {
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return '-'
     return new Date(dateString).toLocaleDateString()
   }
 
-  const getDaysRemaining = (endDate: string | null) => {
+  const getDaysRemaining = (endDate?: string | null) => {
     if (!endDate) return null
     const end = new Date(endDate)
     const now = new Date()
@@ -311,9 +282,7 @@ export default function Subscription() {
                     : 'text-yellow-600'
                 }`}
               >
-                {subscription.status === 'pending_cancellation'
-                  ? t('subscription.pendingCancellation')
-                  : subscription.status}
+                {labels.subscriptionStatus(subscription.status)}
               </span>
             </div>
             {subscription.cancel_at_period_end && subscription.current_period_end && (
@@ -355,7 +324,7 @@ export default function Subscription() {
                 {t('subscription.transactionHistory')}
               </h3>
               <div className="space-y-2">
-                {transactions.map((transaction: any) => (
+                {transactions.map((transaction) => (
                   <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
                     <div>
                       <div className="font-medium">{transaction.payment_method}</div>
@@ -378,7 +347,7 @@ export default function Subscription() {
                             : 'text-gray-600'
                         }`}
                       >
-                        {transaction.status}
+                        {labels.transactionStatus(transaction.status)}
                       </div>
                     </div>
                   </div>
@@ -413,9 +382,7 @@ export default function Subscription() {
             {availablePlans.map((plan) => (
               <div
                 key={plan.id}
-                className={`bg-white rounded-lg shadow-md p-6 border-2 ${
-                  selectedPlan === plan.id ? 'border-blue-600' : 'border-gray-200'
-                }`}
+                className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200"
               >
                 <h3 className="text-lg font-semibold mb-2">{plan.name}</h3>
                 <div className="mb-4">
@@ -535,7 +502,7 @@ export default function Subscription() {
                               : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {sub.status}
+                          {labels.subscriptionStatus(sub.status)}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
