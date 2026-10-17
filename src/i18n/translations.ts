@@ -119,6 +119,8 @@ export type TranslationKey =
   | 'businessType.individual'
   | 'businessType.salon'
   | 'businessType.clinic'
+  | 'businessType.medical'
+  | 'businessType.dental'
   | 'businessType.hospital'
   | 'businessType.barbershop'
   | 'businessType.rehabCenter'
@@ -129,6 +131,11 @@ export type TranslationKey =
   | 'register.password'
   | 'register.confirmPassword'
   | 'register.role'
+  | 'role.admin'
+  | 'role.businessOwner'
+  | 'role.specialist'
+  | 'role.employee'
+  | 'role.client'
   | 'register.specialistType'
   | 'register.selectSpecialistType'
   | 'register.createAccount'
@@ -528,6 +535,15 @@ export type TranslationKey =
   | 'subscription.transactionHistory'
   | 'subscription.history'
   | 'subscription.status_label'
+  | 'subscription.status.active'
+  | 'subscription.status.cancelled'
+  | 'subscription.status.expired'
+  | 'subscription.status.past_due'
+  | 'subscription.transaction.succeeded'
+  | 'subscription.transaction.pending'
+  | 'subscription.transaction.failed'
+  | 'subscription.transaction.refunded'
+  | 'subscription.checkoutUnavailable'
   | 'subscription.cancellation_date'
   | 'subscription.days_remaining'
   | 'subscription.trial_period'
@@ -842,6 +858,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'businessType.individual': { en: 'Individual Specialist', ru: 'Индивидуальный специалист', cz: 'Individuální specialista' },
   'businessType.salon': { en: 'Beauty Salon', ru: 'Салон красоты', cz: 'Kosmetický salón' },
   'businessType.clinic': { en: 'Clinic', ru: 'Клиника', cz: 'Klinika' },
+  'businessType.medical': { en: 'Medical Center', ru: 'Медицинский центр', cz: 'Zdravotní středisko' },
+  'businessType.dental': { en: 'Dental Clinic', ru: 'Стоматология', cz: 'Zubní ordinace' },
   'businessType.hospital': { en: 'Hospital', ru: 'Больница', cz: 'Nemocnice' },
   'businessType.barbershop': { en: 'Barbershop', ru: 'Барбершоп', cz: 'Holičství' },
   'businessType.rehabCenter': { en: 'Rehabilitation Center', ru: 'Реабилитационный центр', cz: 'Rehabilitační centrum' },
@@ -853,6 +871,11 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'register.password': { en: 'Password', ru: 'Пароль', cz: 'Heslo' },
   'register.confirmPassword': { en: 'Confirm Password', ru: 'Подтвердите пароль', cz: 'Potvrďte heslo' },
   'register.role': { en: 'Role', ru: 'Роль', cz: 'Role' },
+  'role.admin': { en: 'Administrator', ru: 'Администратор', cz: 'Správce' },
+  'role.businessOwner': { en: 'Business owner', ru: 'Владелец бизнеса', cz: 'Majitel podniku' },
+  'role.specialist': { en: 'Specialist', ru: 'Специалист', cz: 'Specialista' },
+  'role.employee': { en: 'Employee', ru: 'Сотрудник', cz: 'Zaměstnanec' },
+  'role.client': { en: 'Client', ru: 'Клиент', cz: 'Klient' },
   'register.specialistType': { en: 'Specialist Type', ru: 'Тип специалиста', cz: 'Typ specialisty' },
   'register.selectSpecialistType': { en: 'Select specialist type', ru: 'Выберите тип специалиста', cz: 'Vyberte typ specialisty' },
   'register.createAccount': { en: 'Create Account', ru: 'Создать аккаунт', cz: 'Vytvořit účet' },
@@ -1355,6 +1378,15 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'subscription.transactionHistory': { en: 'Transaction History', ru: 'История транзакций', cz: 'Historie transakcí' },
   'subscription.history': { en: 'Subscription History', ru: 'История подписок', cz: 'Historie předplatného' },
   'subscription.status_label': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'subscription.status.active': { en: 'Active', ru: 'Активна', cz: 'Aktivní' },
+  'subscription.status.cancelled': { en: 'Cancelled', ru: 'Отменена', cz: 'Zrušeno' },
+  'subscription.status.expired': { en: 'Expired', ru: 'Истекла', cz: 'Vypršelo' },
+  'subscription.status.past_due': { en: 'Payment overdue', ru: 'Платёж просрочен', cz: 'Platba po splatnosti' },
+  'subscription.transaction.succeeded': { en: 'Paid', ru: 'Оплачено', cz: 'Zaplaceno' },
+  'subscription.transaction.pending': { en: 'Pending', ru: 'В обработке', cz: 'Zpracovává se' },
+  'subscription.transaction.failed': { en: 'Failed', ru: 'Не прошёл', cz: 'Selhalo' },
+  'subscription.transaction.refunded': { en: 'Refunded', ru: 'Возвращён', cz: 'Vráceno' },
+  'subscription.checkoutUnavailable': { en: 'Online payment is not available right now, please try again later', ru: 'Онлайн-оплата сейчас недоступна, попробуйте позже', cz: 'Online platba teď není dostupná, zkuste to prosím později' },
   'subscription.cancellation_date': { en: 'Cancellation Date', ru: 'Дата отмены', cz: 'Datum zrušení' },
   'subscription.days_remaining': { en: 'days remaining', ru: 'дней осталось', cz: 'dní zbývá' },
   'subscription.trial_period': { en: 'Trial Period', ru: 'Пробный период', cz: 'Zkušební období' },

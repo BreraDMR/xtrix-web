@@ -29,7 +29,7 @@ const SPECIALIST_TYPE_MAP: Record<string, TranslationKey> = {
   'physiotherapist': 'specialistType.physiotherapist',
   'nutritionist': 'specialistType.nutritionist',
   'aromatherapist': 'specialistType.aromatherapist',
-  'fitness_trainer': 'specialistType.fitnessCoach',
+  'fitness_coach': 'specialistType.fitnessCoach',
   'yoga_instructor': 'specialistType.yogaInstructor',
   'psychologist': 'specialistType.psychologist',
   'psychotherapist': 'specialistType.psychotherapist',

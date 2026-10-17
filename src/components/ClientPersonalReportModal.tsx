@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { HiX, HiDownload } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
+import { useLabels } from '../i18n/labels'
 import api from '../api/client'
 import ExportModal from './ExportModal'
 import LoadingSpinner from './LoadingSpinner'
@@ -20,6 +21,7 @@ export default function ClientPersonalReportModal({
   clientId,
 }: ClientPersonalReportModalProps) {
   const { t } = useTranslation()
+  const { visitStatus } = useLabels()
   const currency = useBusinessCurrency()
   const [selectedReportType, setSelectedReportType] = useState<string>('profile')
   const [dateFrom, setDateFrom] = useState<string>(
@@ -111,7 +113,7 @@ export default function ClientPersonalReportModal({
         return (visits || []).map((visit: any) => ({
           [t('visits.date')]: new Date(visit.date_start).toLocaleDateString(),
           [t('visits.service')]: visit.service_name || '-',
-          [t('visits.status')]: visit.status || '-',
+          [t('visits.status')]: visitStatus(visit.status) || '-',
           [t('visits.price')]: visit.price ? formatCurrency(visit.price, currency) : '-',
           'Payment Method': visit.payment_method || '-',
         }))

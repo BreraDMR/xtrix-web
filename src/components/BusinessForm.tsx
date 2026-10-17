@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
+import { useLabels } from '../i18n/labels'
+import type { BusinessType } from '../api/types'
+
+// same order as the API enum
+const BUSINESS_TYPES: BusinessType[] = ['salon', 'clinic', 'medical', 'dental', 'hospital', 'individual']
 
 interface BusinessFormProps {
   businessId?: number
@@ -11,7 +16,7 @@ interface BusinessFormProps {
 
 interface BusinessData {
   name: string
-  business_type: string
+  business_type: BusinessType
   address?: string
   phone?: string
   email?: string
@@ -20,6 +25,7 @@ interface BusinessData {
 }
 
 export default function BusinessForm({ businessId, onSuccess, onCancel }: BusinessFormProps) {
+  const labels = useLabels()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<BusinessData>({
     name: '',
@@ -96,16 +102,13 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
         <label className="block text-sm font-medium mb-1">Business Type *</label>
         <select
           value={formData.business_type}
-          onChange={(e) => setFormData({ ...formData, business_type: e.target.value })}
+          onChange={(e) => setFormData({ ...formData, business_type: e.target.value as BusinessType })}
           required
           className="w-full px-3 py-2 border rounded-md"
         >
-          <option value="salon">Salon (Салон красоты)</option>
-          <option value="clinic">Clinic (Клиника)</option>
-          <option value="medical">Medical Center (Медицинский центр)</option>
-          <option value="dental">Dental (Стоматология)</option>
-          <option value="hospital">Hospital (Больница)</option>
-          <option value="individual">Individual (Частная практика)</option>
+          {BUSINESS_TYPES.map((type) => (
+            <option key={type} value={type}>{labels.businessType(type)}</option>
+          ))}
         </select>
       </div>
 

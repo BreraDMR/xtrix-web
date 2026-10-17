@@ -4,26 +4,17 @@ import api from '../api/client'
 import BusinessForm from '../components/BusinessForm'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
-
-interface Business {
-  id: number
-  name: string
-  business_type: string
-  address?: string
-  phone?: string
-  email?: string
-  description?: string
-  currency?: string
-  created_at: string
-}
+import { useLabels } from '../i18n/labels'
+import type { BusinessOut } from '../api/types'
 
 export default function Business() {
   const { user } = useAuthStore()
+  const labels = useLabels()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
   const queryClient = useQueryClient()
 
-  const { data: business, isLoading } = useQuery<Business>({
+  const { data: business, isLoading } = useQuery<BusinessOut | null>({
     queryKey: ['business', 'me'],
     queryFn: async () => {
       try {
@@ -102,7 +93,7 @@ export default function Business() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Business Type</label>
-              <p className="text-gray-900 capitalize">{business.business_type}</p>
+              <p className="text-gray-900">{labels.businessType(business.business_type)}</p>
             </div>
             {business.address && (
               <div>

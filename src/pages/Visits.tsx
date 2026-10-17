@@ -12,6 +12,7 @@ import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
 import ExportButton from '../components/ExportButton'
 import { useTranslation } from '../hooks/useTranslation'
+import { useLabels } from '../i18n/labels'
 import { useLocaleStore } from '../store/localeStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -24,15 +25,7 @@ export default function Visits() {
   
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
   
-  const getStatusTranslation = (status: string) => {
-    const statusMap: Record<string, string> = {
-      'planned': t('visits.planned'),
-      'in_progress': t('visits.inProgress'),
-      'completed': t('visits.completed'),
-      'cancelled': t('visits.cancelled'),
-    }
-    return statusMap[status] || status
-  }
+  const { visitStatus: getStatusTranslation } = useLabels()
 
 interface Visit {
   id: number
