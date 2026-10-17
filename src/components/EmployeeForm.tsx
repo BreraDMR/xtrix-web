@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
 import { useTranslation } from '../hooks/useTranslation'
-import { useAuthStore } from '../store/authStore'
-import { HiSearch, HiX } from 'react-icons/hi'
+import SpecialistTypeSelector from './SpecialistTypeSelector'
+import type { Schema } from '../api/types'
 
 interface EmployeeFormProps {
   employeeId?: number
@@ -11,44 +11,43 @@ interface EmployeeFormProps {
   onCancel: () => void
 }
 
+// the contract types permissions as a plain dict, so the keys are spelled out here
+type Permissions = {
+  can_create_visits?: boolean
+  can_edit_clients?: boolean
+  can_view_financials?: boolean
+  can_manage_services?: boolean
+  assigned_client_ids?: number[] | null
+}
+
 interface EmployeeData {
-  employee_user_id: number
   position?: string
   commission_percentage?: number
   base_salary?: number
-  permissions?: {
-    can_create_visits?: boolean
-    can_edit_clients?: boolean
-    can_view_financials?: boolean
-    can_manage_services?: boolean
-    assigned_client_ids?: number[] | null
-  }
-}
-
-interface User {
-  id: number
-  full_name: string
-  email?: string
-  phone?: string
-  role: string
+  permissions?: Permissions
 }
 
 interface NewUserData {
   full_name: string
   phone: string
   email: string
-  specialist_type?: string
+  specialist_type: string
 }
 
+const DEFAULT_PERMISSIONS: Permissions = {
+  can_create_visits: true,
+  can_edit_clients: true,
+  can_view_financials: false,
+  can_manage_services: false,
+  assigned_client_ids: null,
+}
+
+// New staff always get a fresh account (POST /employees/create-with-user). Picking an
+// existing user from "all specialists" is gone: GET /users/ only returns your own business now.
 export default function EmployeeForm({ employeeId, onSuccess, onCancel }: EmployeeFormProps) {
   const { t } = useTranslation()
-  const { user: currentUser } = useAuthStore()
   const [loading, setLoading] = useState(false)
-  const [availableUsers, setAvailableUsers] = useState<User[]>([])
-  const [loadingUsers, setLoadingUsers] = useState(false)
-  const [createNewUser, setCreateNewUser] = useState(false)
-  const [userSearchQuery, setUserSearchQuery] = useState('')
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([])
+  const [employeeName, setEmployeeName] = useState('')
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null)
   const [passwordCopied, setPasswordCopied] = useState(false)
   const [newUserData, setNewUserData] = useState<NewUserData>({
@@ -59,87 +58,29 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
   })
 
   const [formData, setFormData] = useState<EmployeeData>({
-    employee_user_id: 0,
     position: '',
     commission_percentage: undefined,
     base_salary: undefined,
-    permissions: {
-      can_create_visits: true,
-      can_edit_clients: true,
-      can_view_financials: false,
-      can_manage_services: false,
-      assigned_client_ids: null,
-    },
+    permissions: DEFAULT_PERMISSIONS,
   })
 
   useEffect(() => {
-    loadAvailableUsers()
     if (employeeId) {
       loadEmployee()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
   }, [employeeId])
 
-  const loadAvailableUsers = async () => {
-    setLoadingUsers(true)
-    try {
-      const { data: usersData } = await api.get('/users/', { params: { role: 'specialist' } })
-      const allUsers = Array.isArray(usersData) 
-        ? usersData 
-        : (usersData?.items || usersData?.data || [])
-      
-      const { data: employeesData } = await api.get('/employees/', { params: { is_active: true } })
-      const activeEmployees = Array.isArray(employeesData) 
-        ? employeesData 
-        : (employeesData?.items || employeesData?.data || [])
-      const employedUserIds = new Set(activeEmployees.map((emp: any) => emp.employee_user_id))
-      
-      const available = allUsers.filter((u: User) => 
-        u.id !== currentUser?.id && !employedUserIds.has(u.id)
-      )
-      setAvailableUsers(available)
-      setFilteredUsers(available)
-    } catch (error) {
-      console.error('Failed to load users:', error)
-      setAvailableUsers([])
-      setFilteredUsers([])
-    } finally {
-      setLoadingUsers(false)
-    }
-  }
-
-  useEffect(() => {
-    if (!userSearchQuery.trim()) {
-      setFilteredUsers(availableUsers)
-      return
-    }
-
-    const query = userSearchQuery.toLowerCase().trim()
-    const filtered = availableUsers.filter((u) => {
-      const name = (u.full_name || '').toLowerCase()
-      const email = (u.email || '').toLowerCase()
-      const phone = (u.phone || '').toLowerCase()
-      return name.includes(query) || email.includes(query) || phone.includes(query)
-    })
-    setFilteredUsers(filtered)
-  }, [userSearchQuery, availableUsers])
-
   const loadEmployee = async () => {
     if (!employeeId) return
     try {
-      const { data } = await api.get(`/employees/${employeeId}`)
+      const { data } = await api.get<Schema<'EmployeeOut'>>(`/employees/${employeeId}`)
+      setEmployeeName(String(data.employee_user?.full_name ?? ''))
       setFormData({
-        employee_user_id: data.employee_user_id,
         position: data.position || '',
-        commission_percentage: data.commission_percentage,
-        base_salary: data.base_salary,
-        permissions: data.permissions || {
-          can_create_visits: true,
-          can_edit_clients: true,
-          can_view_financials: false,
-          can_manage_services: false,
-          assigned_client_ids: null,
-        },
+        commission_percentage: data.commission_percentage ?? undefined,
+        base_salary: data.base_salary ?? undefined,
+        permissions: (data.permissions as Permissions | null) || DEFAULT_PERMISSIONS,
       })
     } catch (error) {
       console.error('Failed to load employee:', error)
@@ -148,8 +89,8 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (createNewUser && !employeeId) {
+
+    if (!employeeId) {
       if (!newUserData.full_name.trim()) {
         alert('Full name is required')
         return
@@ -161,125 +102,66 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
       setLoading(true)
       try {
-        const payload = {
-          full_name: newUserData.full_name,
-          phone: newUserData.phone || undefined,
-          email: newUserData.email || undefined,
-          role: 'specialist',
-          specialist_type: newUserData.specialist_type 
-            ? newUserData.specialist_type 
-            : undefined,
-          
+        const payload: Schema<'EmployeeCreateWithUser'> = {
+          full_name: newUserData.full_name.trim(),
+          phone: newUserData.phone.trim() || undefined,
+          email: newUserData.email.trim() || undefined,
+          specialist_type: newUserData.specialist_type || undefined,
           position: formData.position || undefined,
-          commission_percentage: formData.commission_percentage || undefined,
-          base_salary: formData.base_salary || undefined,
+          commission_percentage: formData.commission_percentage || null,
+          base_salary: formData.base_salary || null,
           permissions: formData.permissions,
-          notes: undefined,
         }
-
-        const response = await api.post('/employees/create-with-user', payload)
-        
-        setGeneratedPassword(response.data.generated_password)
-        
-      } catch (error: any) {
+        const { data } = await api.post<Schema<'EmployeeCreateResponse'>>('/employees/create-with-user', payload)
+        setGeneratedPassword(data.generated_password)
+      } catch (error) {
         console.error('Failed to create employee with user:', error)
-        const errorMessage = apiErrorMessage(error, t('common.error'))
-        alert(errorMessage)
+        alert(apiErrorMessage(error, t('common.error')))
       } finally {
         setLoading(false)
       }
       return
     }
 
-    if (formData.employee_user_id === 0) {
-      alert(t('employees.select_user_required'))
-      return
-    }
-
     setLoading(true)
     try {
-      const payload = {
-        ...formData,
+      const payload: Schema<'EmployeeUpdate'> = {
+        position: formData.position,
+        permissions: formData.permissions,
         commission_percentage: formData.commission_percentage || null,
         base_salary: formData.base_salary || null,
       }
-
-      if (employeeId) {
-        await api.put(`/employees/${employeeId}`, payload)
-      } else {
-        const createPayload = {
-          ...payload,
-          business_owner_id: (currentUser?.role === 'business_owner' || currentUser?.role === 'admin') 
-            ? currentUser.id 
-            : undefined,
-        }
-        await api.post('/employees/', createPayload)
-      }
+      await api.put(`/employees/${employeeId}`, payload)
       onSuccess()
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to save employee:', error)
-      let errorMessage = apiErrorMessage(error, t('common.error'))
-      
-      if (errorMessage.includes('already employed')) {
-        errorMessage = 'This user is already employed by another business. Please select a different user or contact support to transfer the employee.'
-      }
-      
-      alert(errorMessage)
+      alert(apiErrorMessage(error, t('common.error')))
     } finally {
       setLoading(false)
     }
   }
 
-  const updatePermission = (key: keyof NonNullable<EmployeeData['permissions']>, value: any) => {
+  const updatePermission = (key: keyof Permissions, value: boolean) => {
     setFormData({
       ...formData,
-      permissions: {
-        ...formData.permissions,
-        [key]: value,
-      } as EmployeeData['permissions'],
+      permissions: { ...formData.permissions, [key]: value },
     })
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {!employeeId && (
-        <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={createNewUser}
-              onChange={(e) => {
-                setCreateNewUser(e.target.checked)
-                if (!e.target.checked) {
-                  setNewUserData({
-                    full_name: '',
-                    phone: '',
-                    email: '',
-                    specialist_type: '',
-                  })
-                  setGeneratedPassword(null)
-                  setPasswordCopied(false)
-                }
-              }}
-              className="mr-2"
-            />
-            <span className="font-medium">Create new employee account</span>
-          </label>
-          <p className="text-sm text-gray-600 mt-1 ml-6">
+      {!employeeId ? (
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
             A password will be automatically generated and shown after creation
           </p>
-        </div>
-      )}
 
-      {createNewUser && !employeeId ? (
-        <div className="space-y-4 border-t pt-4">
-          <h3 className="text-lg font-medium">New Employee Information</h3>
-          
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Full Name *
+            <label htmlFor="employee_full_name" className="block text-sm font-medium mb-1">
+              {t('register.fullName')} *
             </label>
             <input
+              id="employee_full_name"
               type="text"
               value={newUserData.full_name}
               onChange={(e) => setNewUserData({ ...newUserData, full_name: e.target.value })}
@@ -291,10 +173,11 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Email
+              <label htmlFor="employee_email" className="block text-sm font-medium mb-1">
+                {t('register.email')}
               </label>
               <input
+                id="employee_email"
                 type="email"
                 value={newUserData.email}
                 onChange={(e) => setNewUserData({ ...newUserData, email: e.target.value })}
@@ -303,10 +186,11 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Phone
+              <label htmlFor="employee_phone" className="block text-sm font-medium mb-1">
+                {t('register.phone')}
               </label>
               <input
+                id="employee_phone"
                 type="tel"
                 value={newUserData.phone}
                 onChange={(e) => setNewUserData({ ...newUserData, phone: e.target.value })}
@@ -318,87 +202,21 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
           <p className="text-xs text-gray-500">At least one of Email or Phone is required</p>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Specialist Type
-            </label>
-            <select
+            <label className="block text-sm font-medium mb-1">{t('register.specialistType')}</label>
+            <SpecialistTypeSelector
               value={newUserData.specialist_type}
-              onChange={(e) => setNewUserData({ ...newUserData, specialist_type: e.target.value })}
-              className="w-full px-3 py-2 border rounded-md"
-            >
-              <option value="">Select type...</option>
-              <option value="beauty">Beauty</option>
-              <option value="wellness">Wellness</option>
-              <option value="healthcare">Healthcare</option>
-              <option value="other">Other</option>
-            </select>
+              onChange={(value) => setNewUserData({ ...newUserData, specialist_type: value })}
+            />
           </div>
         </div>
       ) : (
         <div>
           <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-            {t('employees.select_user')} *
+            {t('employees.employee')}
           </label>
-          
-          {}
-          <div className="mb-2 relative">
-            <div className="relative">
-              <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                value={userSearchQuery}
-                onChange={(e) => setUserSearchQuery(e.target.value)}
-                placeholder={t('employees.search_user') || 'Поиск по имени, email или телефону...'}
-                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
-              />
-              {userSearchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setUserSearchQuery('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  title="Очистить"
-                >
-                  <HiX className="w-5 h-5" />
-                </button>
-              )}
-            </div>
-            {userSearchQuery && (
-              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                {filteredUsers.length === 0 
-                  ? t('employees.no_users_found') || 'Специалисты не найдены'
-                  : `${filteredUsers.length} ${filteredUsers.length === 1 ? 'специалист найден' : 'специалистов найдено'}`
-                }
-              </div>
-            )}
-          </div>
-
-          {loadingUsers ? (
-            <div className="text-sm text-gray-500">{t('common.loading')}...</div>
-          ) : (
-            <>
-              <select
-                value={formData.employee_user_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, employee_user_id: parseInt(e.target.value) })
-                }
-                required
-                disabled={!!employeeId}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm disabled:bg-gray-100 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              >
-                <option value={0}>{t('employees.select_user_placeholder')}</option>
-                {filteredUsers.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.full_name} {u.email ? `(${u.email})` : ''} {u.phone ? `- ${u.phone}` : ''}
-                  </option>
-                ))}
-              </select>
-            </>
-          )}
-          {availableUsers.length === 0 && !loadingUsers && !userSearchQuery && (
-            <p className="text-sm text-gray-500 mt-1">
-              {t('employees.no_available_users')}
-            </p>
-          )}
+          <p className="px-3 py-2 border border-gray-200 rounded-md bg-gray-100 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            {employeeName || t('employees.unknown')}
+          </p>
         </div>
       )}
 
