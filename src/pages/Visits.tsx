@@ -17,6 +17,9 @@ import { useLocaleStore } from '../store/localeStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { sortData, SortConfig } from '../utils/table'
+import type { VisitOut, ClientOut } from '../api/types'
+
+type Visit = VisitOut & { client_name?: string }
 
 export default function Visits() {
   const { t } = useTranslation()
@@ -26,15 +29,6 @@ export default function Visits() {
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
   
   const { visitStatus: getStatusTranslation } = useLabels()
-
-interface Visit {
-  id: number
-  date_start: string
-  service_name?: string
-  status: string
-  price?: number
-  client_name?: string
-}
 
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
@@ -47,13 +41,29 @@ interface Visit {
   const [perPage, setPerPage] = useState(20)
   const queryClient = useQueryClient()
 
-  const { data: visits, isLoading } = useQuery<Visit[]>({
+  const { data: rawVisits, isLoading } = useQuery<Visit[]>({
     queryKey: ['visits'],
     queryFn: async () => {
       const { data } = await api.get('/visits/')
       return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
   })
+
+  const { data: clients } = useQuery<ClientOut[]>({
+    queryKey: ['clients'],
+    queryFn: async () => {
+      const { data } = await api.get('/clients/')
+      return Array.isArray(data) ? data : (data?.items || data?.data || [])
+    },
+  })
+
+  const visits = useMemo(() => {
+    const clientNames = new Map(clients?.map(client => [client.id, client.full_name]))
+    return rawVisits?.map(visit => ({
+      ...visit,
+      client_name: clientNames.get(visit.client_id) || visit.client_name,
+    }))
+  }, [rawVisits, clients])
 
   const filteredVisits = useMemo(() => {
     if (!visits) return []
@@ -258,6 +268,13 @@ interface Visit {
                   className="px-2 sm:px-6"
                 />
                 <TableSortHeader
+                  columnKey="client_name"
+                  label={t('visits.client')}
+                  currentSort={sortConfig}
+                  onSort={handleSort}
+                  className="px-2 sm:px-6"
+                />
+                <TableSortHeader
                   columnKey="service_name"
                   label={t('visits.service')}
                   currentSort={sortConfig}
@@ -282,7 +299,7 @@ interface Visit {
             <tbody className="bg-white divide-y divide-gray-200">
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-gray-500">
+                  <td colSpan={6} className="px-2 sm:px-6 py-4 text-center text-gray-500">
                     {searchQuery || statusFilter || dateFrom || dateTo
                       ? t('visits.noVisitsMatch')
                       : t('visits.noVisitsFound')}
@@ -296,6 +313,9 @@ interface Visit {
                       <span className="whitespace-nowrap">{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
                       <span className="text-xs text-gray-500 sm:hidden">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
                     </div>
+                  </td>
+                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-900">
+                    {visit.client_name || '-'}
                   </td>
                   <td className="px-2 sm:px-6 py-4 text-sm text-gray-500">
                     <div className="flex flex-col">
