@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
 import { useTranslation } from '../hooks/useTranslation'
@@ -46,6 +46,7 @@ const DEFAULT_PERMISSIONS: Permissions = {
 // existing user from "all specialists" is gone: GET /users/ only returns your own business now.
 export default function EmployeeForm({ employeeId, onSuccess, onCancel }: EmployeeFormProps) {
   const { t } = useTranslation()
+  const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [employeeName, setEmployeeName] = useState('')
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null)
@@ -89,6 +90,8 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting.current) return
+    if (generatedPassword) return
 
     if (!employeeId) {
       if (!newUserData.full_name.trim()) {
@@ -100,6 +103,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         return
       }
 
+      submitting.current = true
       setLoading(true)
       try {
         const payload: Schema<'EmployeeCreateWithUser'> = {
@@ -118,11 +122,13 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         console.error('Failed to create employee with user:', error)
         alert(apiErrorMessage(error, t('common.error')))
       } finally {
+        submitting.current = false
         setLoading(false)
       }
       return
     }
 
+    submitting.current = true
     setLoading(true)
     try {
       const payload: Schema<'EmployeeUpdate'> = {
@@ -137,6 +143,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       console.error('Failed to save employee:', error)
       alert(apiErrorMessage(error, t('common.error')))
     } finally {
+      submitting.current = false
       setLoading(false)
     }
   }
@@ -146,6 +153,56 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       ...formData,
       permissions: { ...formData.permissions, [key]: value },
     })
+  }
+
+  if (generatedPassword) {
+    return (
+      <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+        <h4 className="font-medium text-green-800 mb-2">Employee Created Successfully!</h4>
+        <p className="text-sm text-green-700 mb-2">Generated Password:</p>
+        <div className="flex gap-2 items-center">
+          <input
+            type="text"
+            readOnly
+            value={generatedPassword}
+            className="flex-1 bg-white p-3 rounded border border-green-300 font-mono text-lg font-bold text-center select-all cursor-text"
+            onClick={(e) => (e.target as HTMLInputElement).select()}
+          />
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(generatedPassword)
+                setPasswordCopied(true)
+                setTimeout(() => setPasswordCopied(false), 2000)
+              } catch (err) {
+                const input = document.createElement('input')
+                input.value = generatedPassword
+                document.body.appendChild(input)
+                input.select()
+                document.execCommand('copy')
+                document.body.removeChild(input)
+                setPasswordCopied(true)
+                setTimeout(() => setPasswordCopied(false), 2000)
+              }
+            }}
+            className="px-4 py-3 bg-green-600 text-white rounded hover:bg-green-700 font-medium whitespace-nowrap"
+          >
+            {passwordCopied ? '✓ Copied!' : 'Copy'}
+          </button>
+        </div>
+        <p className="text-xs text-green-600 mt-2">
+          Please save this password and provide it to the employee. They can log in using their email or phone number.
+        </p>
+        <button
+          type="button"
+          onClick={onSuccess}
+          className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
+        >
+          Close
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -217,58 +274,6 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
           <p className="px-3 py-2 border border-gray-200 rounded-md bg-gray-100 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             {employeeName || t('employees.unknown')}
           </p>
-        </div>
-      )}
-
-      {generatedPassword && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-          <h4 className="font-medium text-green-800 mb-2">Employee Created Successfully!</h4>
-          <p className="text-sm text-green-700 mb-2">Generated Password:</p>
-          <div className="flex gap-2 items-center">
-            <input
-              type="text"
-              readOnly
-              value={generatedPassword}
-              className="flex-1 bg-white p-3 rounded border border-green-300 font-mono text-lg font-bold text-center select-all cursor-text"
-              onClick={(e) => (e.target as HTMLInputElement).select()}
-            />
-            <button
-              type="button"
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(generatedPassword)
-                  setPasswordCopied(true)
-                  setTimeout(() => setPasswordCopied(false), 2000)
-                } catch (err) {
-                  const input = document.createElement('input')
-                  input.value = generatedPassword
-                  document.body.appendChild(input)
-                  input.select()
-                  document.execCommand('copy')
-                  document.body.removeChild(input)
-                  setPasswordCopied(true)
-                  setTimeout(() => setPasswordCopied(false), 2000)
-                }
-              }}
-              className="px-4 py-3 bg-green-600 text-white rounded hover:bg-green-700 font-medium whitespace-nowrap"
-            >
-              {passwordCopied ? '✓ Copied!' : 'Copy'}
-            </button>
-          </div>
-          <p className="text-xs text-green-600 mt-2">
-            Please save this password and provide it to the employee. They can log in using their email or phone number.
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setGeneratedPassword(null)
-              setPasswordCopied(false)
-              onSuccess()
-            }}
-            className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
-          >
-            Close
-          </button>
         </div>
       )}
 

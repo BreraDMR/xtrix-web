@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen, waitFor } from '@testing-library/react'
+import { screen, waitFor, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import EmployeeForm from '../components/EmployeeForm'
 import api from '../api/client'
@@ -38,6 +38,26 @@ describe('EmployeeForm', () => {
     expect(await screen.findByDisplayValue('Gen3rated!pass')).toBeInTheDocument()
     // nobody browses "all specialists" any more
     expect(vi.mocked(api.get).mock.calls.map((c) => c[0])).not.toContain('/users/')
+  })
+
+  it('shows only copy and close after creation and refreshes on close', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: { generated_password: 'Gen3rated!pass' } })
+    const onSuccess = vi.fn()
+    const onCancel = vi.fn()
+    const { container } = renderWithProviders(<EmployeeForm onSuccess={onSuccess} onCancel={onCancel} />)
+    await userEvent.type(screen.getByLabelText(/full name/i), 'Petr Novák')
+    await userEvent.type(screen.getByLabelText(/email/i), 'petr@example.com')
+    const form = container.querySelector('form')!
+    fireEvent.submit(form)
+    await screen.findByDisplayValue('Gen3rated!pass')
+    expect(screen.getAllByRole('button').map(button => button.textContent)).toEqual(['Copy', 'Close'])
+    expect(container.querySelector('form')).toBeNull()
+    fireEvent.submit(form)
+    expect(api.post).toHaveBeenCalledTimes(1)
+    expect(onSuccess).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onCancel).not.toHaveBeenCalled()
   })
 
   it('edits an employee without sending who they are', async () => {
