@@ -7,7 +7,7 @@ interface AuthState {
   logout: () => void
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   token: typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null,
   user: typeof window !== 'undefined' ? (() => {
     try {
@@ -18,22 +18,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   })() : null,
   setAuth: (token, user) => {
-    console.log('[AuthStore] Setting auth:', { hasToken: !!token, user })
     if (typeof window !== 'undefined') {
       localStorage.setItem('auth_token', token)
       localStorage.setItem('auth_user', JSON.stringify(user))
-      console.log('[AuthStore] Saved to localStorage')
     }
     set({ token, user })
-    
-    const updatedState = get()
-    console.log('[AuthStore] State updated:', { 
-      hasToken: !!updatedState.token,
-      tokenLength: updatedState.token?.length 
-    })
   },
   logout: () => {
-    console.log('[AuthStore] Logging out')
     if (typeof window !== 'undefined') {
       localStorage.removeItem('auth_token')
       localStorage.removeItem('auth_user')

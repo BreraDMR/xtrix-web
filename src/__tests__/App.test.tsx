@@ -15,5 +15,6 @@ describe('App', () => {
     )
     expect(screen.getByText('Xtrix')).toBeInTheDocument()
     expect(window.location.pathname).toBe('/login')
+    expect(localStorage.getItem('app_logs')).toBeNull()
   })
 })

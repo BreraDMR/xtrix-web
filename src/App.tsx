@@ -34,17 +34,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     const token = localStorage.getItem('auth_token')
     const hasToken = !!token
     
-    const logMsg = `[PrivateRoute] Auth check: ${hasToken ? 'AUTHENTICATED' : 'NOT AUTHENTICATED'}, token length: ${token?.length || 0}`
-    console.log(logMsg)
-    try {
-      const logs = JSON.parse(localStorage.getItem('app_logs') || '[]')
-      logs.push(`[${new Date().toISOString()}] ${logMsg}`)
-      if (logs.length > 100) logs.shift()
-      localStorage.setItem('app_logs', JSON.stringify(logs))
-    } catch {}
-    
     if (!hasToken) {
-      console.error('[PrivateRoute] No token found! Redirecting to login.')
       setIsAuthenticated(false)
       return
     }
@@ -53,7 +43,6 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     
     const storeToken = useAuthStore.getState().token
     if (!storeToken || storeToken !== token) {
-      console.log('[PrivateRoute] Syncing store with localStorage')
       const userStr = localStorage.getItem('auth_user')
       let user = null
       try {
@@ -68,11 +57,9 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   }, [])
   
   if (!isAuthenticated) {
-    console.log('[PrivateRoute] Not authenticated, rendering Navigate')
     return <Navigate to="/login" replace />
   }
   
-  console.log('[PrivateRoute] Authenticated, rendering children')
   return <>{children}</>
 }
 

@@ -48,31 +48,19 @@ export default function Subscription() {
   const { data: plans, isLoading: plansLoading } = useQuery<SubscriptionPlan[]>({
     queryKey: ['subscription-plans'],
     queryFn: async () => {
-      try {
-        const { data } = await api.get('/subscriptions/plans?active_only=true')
-        console.log('[Subscription] Plans received from API:', data)
-        const filtered = data.filter((plan: SubscriptionPlan) => !plan.is_trial)
-        console.log('[Subscription] Plans after filtering trial:', filtered)
-        return filtered
-      } catch (error) {
-        console.error('[Subscription] Error fetching plans:', error)
-        throw error
-      }
+      const { data } = await api.get('/subscriptions/plans?active_only=true')
+      return data.filter((plan: SubscriptionPlan) => !plan.is_trial)
     },
   })
 
   const availablePlans = React.useMemo<SubscriptionPlan[]>(() => {
-    console.log('[Subscription] Filtering plans. User role:', user?.role, 'Plans:', plans)
     if (!plans || plans.length === 0) {
-      console.log('[Subscription] No plans available')
       return []
     }
     
     const nonTrialPlans = plans.filter((plan) => !plan.is_trial)
-    console.log('[Subscription] Non-trial plans:', nonTrialPlans)
     
     if (nonTrialPlans.length === 0) {
-      console.log('[Subscription] No non-trial plans')
       return []
     }
     
@@ -82,17 +70,13 @@ export default function Subscription() {
         const matches = code.includes('admin') || 
                code.includes('unlimited') ||
                (plan.price >= 50 && !code.includes('solo'))
-        console.log(`[Subscription] Plan ${plan.name} (code: ${code}, price: ${plan.price}) matches admin: ${matches}`)
         return matches
       })
-      
-      console.log('[Subscription] Admin plans found:', adminPlans)
-      
+
       if (adminPlans.length > 0) {
         return adminPlans
       }
       const fallback = nonTrialPlans.filter((plan) => plan.price >= 30)
-      console.log('[Subscription] Using fallback (price >= 30):', fallback)
       return fallback
     }
     
@@ -109,7 +93,6 @@ export default function Subscription() {
       return nonTrialPlans.filter((plan) => plan.price < 50)
     }
     
-    console.log('[Subscription] User role not admin or specialist')
     return []
   }, [plans, user?.role])
 
@@ -419,27 +402,6 @@ export default function Subscription() {
             <p className="text-sm text-yellow-700">
               {t('subscription.contactAdmin') || 'Обратитесь к администратору для создания планов подписки'}
             </p>
-            {plans && plans.length > 0 && (
-              <details className="mt-4 text-left">
-                <summary className="cursor-pointer text-sm text-yellow-700 font-medium">
-                  Отладочная информация: найдено планов в базе: {plans.length}
-                </summary>
-                <div className="mt-2 text-xs text-gray-600 space-y-1">
-                  <div className="font-semibold">Все планы:</div>
-                  {plans.map((p) => (
-                    <div key={p.id} className="ml-2">
-                      • {p.name} - код: {p.code || 'нет'} - {p.price}€ - trial: {p.is_trial ? 'да' : 'нет'} - активен: {(p.is_active !== false && p.is_active !== undefined) ? 'да' : 'нет'}
-                    </div>
-                  ))}
-                  <div className="font-semibold mt-2">Отфильтровано (для роли {user?.role}): {availablePlans.length}</div>
-                  {availablePlans.map((p) => (
-                    <div key={p.id} className="ml-2 text-green-700">
-                      ✓ {p.name} - {p.price}€
-                    </div>
-                  ))}
-                </div>
-              </details>
-            )}
           </div>
         )}
       </div>

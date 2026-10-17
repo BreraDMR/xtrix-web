@@ -38,13 +38,6 @@ api.interceptors.request.use((config) => {
   }
   config.headers['Accept-Language'] = locale
   
-  if (import.meta.env.DEV) {
-    console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, { 
-      hasToken: !!token,
-      tokenSource: token ? (useAuthStore.getState().token ? 'store' : 'localStorage') : 'none'
-    })
-  }
-  
   return config
 })
 
@@ -52,29 +45,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      const storeToken = useAuthStore.getState().token
       const localStorageToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
       
-      console.error('[API] 401 Unauthorized error:', {
-        url: error.config?.url,
-        method: error.config?.method,
-        hasStoreToken: !!storeToken,
-        hasLocalStorageToken: !!localStorageToken,
-        tokenInHeaders: !!error.config?.headers?.Authorization
-      })
-      
-      try {
-        const logs = JSON.parse(localStorage.getItem('app_logs') || '[]')
-        logs.push(`[${new Date().toISOString()}] [API] 401 error on ${error.config?.method?.toUpperCase()} ${error.config?.url} - storeToken: ${!!storeToken}, localStorageToken: ${!!localStorageToken}`)
-        if (logs.length > 100) logs.shift()
-        localStorage.setItem('app_logs', JSON.stringify(logs))
-      } catch {}
-      
       if (!localStorageToken) {
-        console.log('[API] No token in localStorage, logging out')
         useAuthStore.getState().logout()
       } else {
-        console.log('[API] Token exists in localStorage, trying to sync with store')
         const userStr = localStorage.getItem('auth_user')
         let user = null
         try {

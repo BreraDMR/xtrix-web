@@ -24,6 +24,19 @@ describe('Subscription', () => {
     )
   })
 
+  it('shows the no-plans message without internal diagnostics', async () => {
+    vi.mocked(api.get).mockImplementation(routes({
+      '/subscriptions/me': null,
+      '/subscriptions/trial/status': { is_trial: false, has_access: false },
+      '/subscriptions/plans?active_only=true': [{ ...plan, code: 'admin_month', price: 100 }],
+      '/subscriptions/history': [],
+    }) as any)
+    const { container } = renderWithProviders(<Subscription />)
+    await screen.findByText(/no.*plans/i)
+    expect(container.querySelector('details')).toBeNull()
+    expect(screen.queryByText(/Отладочная информация/)).not.toBeInTheDocument()
+  })
+
   it('does not create a subscription itself when Stripe is down', async () => {
     vi.mocked(api.post).mockRejectedValue(apiError(503, 'Stripe not configured'))
     renderWithProviders(<Subscription />)
