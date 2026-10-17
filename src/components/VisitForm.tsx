@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
-import { apiErrorMessage } from '../api/errors'
+import { apiErrorMessage, apiErrorStatus } from '../api/errors'
+import type { ClientOut, Schema } from '../api/types'
+import { useAuthStore } from '../store/authStore'
 import LoadingSpinner from './LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
 
@@ -26,28 +28,26 @@ interface VisitData {
   payment_method?: string
 }
 
-interface ClientSearchResult {
-  id: number
-  full_name: string
-  contact_phone?: string
-  contact_email?: string
-  birth_date?: string
-  is_linked_to_my_business: boolean
-  basic_medical_info?: {
-    allergies?: string
-    chronic_diseases?: string
-    pregnancy?: boolean
-  }
+type ClientSearchOut = Schema<'ClientSearchOut'>
+// a pick from the search (ClientSearchOut, with the medical summary) or from our own list (ClientOut)
+type SelectedClient = Pick<ClientOut, 'id' | 'full_name' | 'contact_phone' | 'contact_email'> & {
+  basic_medical_info?: ClientSearchOut['basic_medical_info']
 }
+
+const PHONE_RE = /^[+]?[0-9\s\-()]+$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
   const { t } = useTranslation()
+  const { user: currentUser } = useAuthStore()
   const [loading, setLoading] = useState(false)
-  const [clients, setClients] = useState<any[]>([])
+  const [clients, setClients] = useState<ClientOut[]>([])
   const [services, setServices] = useState<any[]>([])
   const [availableSpecialists, setAvailableSpecialists] = useState<any[]>([])
   const [clientSearchQuery, setClientSearchQuery] = useState('')
-  const [selectedClient, setSelectedClient] = useState<ClientSearchResult | null>(null)
+  const [selectedClient, setSelectedClient] = useState<SelectedClient | null>(null)
+  const [nameMatches, setNameMatches] = useState<ClientOut[]>([])
+  const [clientNotFound, setClientNotFound] = useState(false)
   const [searchingClient, setSearchingClient] = useState(false)
   const [showClientSearch, setShowClientSearch] = useState(false)
   
@@ -58,7 +58,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   
   const [formData, setFormData] = useState<VisitData>({
     client_id: 0,
-    specialist_id: 1,
+    // without a service to pick a specialist from, the visit is yours
+    specialist_id: currentUser?.id ?? 0,
     date_start: getInitialDate(initialDateStart),
     date_end: initialDateEnd ? getInitialDate(initialDateEnd) : undefined,
     status: 'planned',
@@ -110,65 +111,51 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
+  const pickClient = (client: SelectedClient) => {
+    setSelectedClient(client)
+    setNameMatches([])
+    setClientNotFound(false)
+    setFormData((prev) => ({ ...prev, client_id: client.id }))
+  }
+
+  // The API only ever searches your own clients, and by name only together with a birth
+  // date - so phone/email go to /clients/search and names are matched in our own list.
   const searchClient = async (query: string) => {
-    if (!query || query.length < 2) {
+    const q = query.trim()
+    setClientNotFound(false)
+    setNameMatches([])
+    if (q.length < 2) {
       setSelectedClient(null)
+      return
+    }
+
+    if (!PHONE_RE.test(q) && !EMAIL_RE.test(q)) {
+      const needle = q.toLowerCase()
+      const matches = clients.filter((c) => c.full_name.toLowerCase().includes(needle)).slice(0, 5)
+      if (matches.length === 1) {
+        pickClient(matches[0])
+      } else {
+        setSelectedClient(null)
+        setNameMatches(matches)
+        setClientNotFound(matches.length === 0)
+      }
       return
     }
 
     setSearchingClient(true)
     try {
-      const phoneRegex = /^[+]?[0-9\s\-()]+$/
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      
-      const searchParams: any = {}
-      
-      if (phoneRegex.test(query.trim())) {
-        searchParams.phone = query.trim()
-      } else if (emailRegex.test(query.trim())) {
-        searchParams.email = query.trim()
-      } else {
-        searchParams.name = query.trim()
-      }
-
-      const { data } = await api.get('/clients/search', { params: searchParams })
-      
-      if (data && data.id) {
-        setSelectedClient(data)
-        setFormData({ ...formData, client_id: data.id })
-        
-        if (!data.is_linked_to_my_business) {
-          linkClientToBusiness()
-        }
-      } else {
-        setSelectedClient(null)
-      }
-    } catch (error: any) {
-      if (error.response?.status === 404) {
-        setSelectedClient(null)
+      const params = PHONE_RE.test(q) ? { phone: q } : { email: q }
+      const { data } = await api.get<ClientSearchOut>('/clients/search', { params })
+      pickClient(data)
+    } catch (error) {
+      setSelectedClient(null)
+      if (apiErrorStatus(error) === 404) {
+        setClientNotFound(true)
       } else {
         console.error('Failed to search client:', error)
       }
     } finally {
       setSearchingClient(false)
-    }
-  }
-
-  const linkClientToBusiness = async () => {
-    if (!selectedClient) return
-    
-    try {
-      const searchParams: any = {}
-      if (selectedClient.contact_phone) searchParams.phone = selectedClient.contact_phone
-      if (selectedClient.contact_email) searchParams.email = selectedClient.contact_email
-      if (selectedClient.full_name) searchParams.name = selectedClient.full_name
-      searchParams.create_link = true
-      
-      await api.get('/clients/search', { params: searchParams })
-      
-      setSelectedClient({ ...selectedClient, is_linked_to_my_business: true })
-    } catch (error) {
-      console.error('Failed to link client to business:', error)
     }
   }
 
@@ -328,6 +315,10 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!formData.client_id) {
+      alert(t('visits.selectClient'))
+      return
+    }
     setLoading(true)
 
     try {
@@ -348,11 +339,11 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       
       if (currentClientId && (pointsToUse > 0 || cashbackToUse > 0)) {
         try {
-          await api.post(`/loyalty/use-points/${currentClientId}`, {
+          await api.post('/loyalty/use-points', {
             points_to_use: pointsToUse > 0 ? pointsToUse : undefined,
             cashback_to_use: cashbackToUse > 0 ? cashbackToUse : undefined,
             visit_id: savedVisitId,
-          })
+          }, { params: { client_id: currentClientId } })
         } catch (error: any) {
           console.error('Error using loyalty points:', error)
           alert(apiErrorMessage(error, 'Failed to use loyalty points'))
@@ -417,7 +408,26 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                 </div>
               )}
 
-              {}
+              {clientNotFound && !searchingClient && (
+                <p className="text-sm text-gray-500">{t('visits.clientNotFound')}</p>
+              )}
+
+              {nameMatches.length > 0 && (
+                <div className="border rounded-md divide-y">
+                  {nameMatches.map((client) => (
+                    <button
+                      key={client.id}
+                      type="button"
+                      onClick={() => pickClient(client)}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50"
+                    >
+                      {client.full_name}
+                      {client.contact_phone && <span className="text-gray-500"> · {client.contact_phone}</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {selectedClient && (
                 <div className="p-3 border rounded-md bg-gray-50">
                   <div className="flex justify-between items-start">
@@ -430,20 +440,6 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                         <p className="text-sm text-gray-600">✉️ {selectedClient.contact_email}</p>
                       )}
                     </div>
-                    {!selectedClient.is_linked_to_my_business && (
-                      <div className="flex flex-col gap-2">
-                        <div className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
-                          {t('visits.clientFromOtherBusiness') || 'Клиент из другого бизнеса'}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => linkClientToBusiness()}
-                          className="px-3 py-1 text-xs bg-primary-600 text-white rounded hover:bg-primary-700"
-                        >
-                          {t('visits.addToMyBusiness') || 'Добавить в мой бизнес'}
-                        </button>
-                      </div>
-                    )}
                   </div>
                   
                   {}

@@ -270,6 +270,7 @@ export type TranslationKey =
   | 'visits.clientList'
   | 'visits.clientSearch'
   | 'visits.searchClientPlaceholder'
+  | 'visits.clientNotFound'
   | 'visits.searching'
   | 'visits.clientFromOtherBusiness'
   | 'visits.addToMyBusiness'
@@ -1006,6 +1007,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.clientList': { en: 'Client List', ru: 'Список клиентов', cz: 'Seznam klientů' },
   'visits.clientSearch': { en: 'Search Client', ru: 'Поиск клиента', cz: 'Vyhledat klienta' },
   'visits.searchClientPlaceholder': { en: 'Phone, email or client name...', ru: 'Телефон, email или имя клиента...', cz: 'Telefon, email nebo jméno klienta...' },
+  'visits.clientNotFound': { en: 'No such client among yours', ru: 'Среди ваших клиентов такого нет', cz: 'Mezi vašimi klienty takový není' },
   'visits.searching': { en: 'Searching...', ru: 'Поиск...', cz: 'Vyhledávání...' },
   'visits.clientFromOtherBusiness': { en: 'Client from another business', ru: 'Клиент из другого бизнеса', cz: 'Klient z jiného podniku' },
   'visits.addToMyBusiness': { en: 'Add to my business', ru: 'Добавить в мой бизнес', cz: 'Přidat do mého podniku' },
