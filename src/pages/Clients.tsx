@@ -14,15 +14,9 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { sortData, SortConfig } from '../utils/table'
+import type { ClientOut } from '../api/types'
 
-interface Client {
-  id: number
-  full_name: string
-  contact_phone?: string
-  contact_email?: string
-  date_of_birth?: string
-  gender?: string
-}
+type Client = ClientOut
 
 function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
   const { t } = useTranslation()
@@ -217,7 +211,7 @@ export default function Clients() {
                     { key: 'contact_phone', label: t('clients.phone') },
                     { key: 'contact_email', label: t('clients.email') },
                     { key: 'gender', label: 'Gender' },
-                    { key: 'date_of_birth', label: 'Date of Birth', format: (val) => val ? new Date(val).toLocaleDateString() : '-' },
+                    { key: 'birth_date', label: 'Date of Birth', format: (val) => val ? new Date(val).toLocaleDateString() : '-' },
                   ]}
                   filename={`clients-${new Date().toISOString().split('T')[0]}`}
                   title={t('export.clientReport')}

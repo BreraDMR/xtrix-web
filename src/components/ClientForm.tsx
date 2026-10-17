@@ -8,6 +8,14 @@ import LoadingSpinner from './LoadingSpinner'
 import FormField from './FormField'
 import FormError from './FormError'
 import { validateEmail, validatePhone, validateRequired, extractApiErrors } from '../utils/validation'
+import type { ClientLanguage } from '../api/types'
+
+// native names on purpose - this is the client's language, not ours
+const CLIENT_LANGUAGES: { code: ClientLanguage; label: string }[] = [
+  { code: 'cz', label: 'Čeština' },
+  { code: 'en', label: 'English' },
+  { code: 'ru', label: 'Русский' },
+]
 
 interface ClientFormProps {
   clientId?: number
@@ -28,15 +36,18 @@ interface ClientData {
   location_lat?: number
   location_lon?: number
   owner_id?: number
+  language: ClientLanguage
 }
 
 export default function ClientForm({ clientId, onSuccess, onCancel }: ClientFormProps) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const { user } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState<ClientData>({
     full_name: '',
+    // a new client most likely speaks what the salon's staff use
+    language: locale,
   })
 
   const { data: specialistProfile } = useQuery({
@@ -128,6 +139,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
         contact_email: formData.contact_email || undefined,
         location_lat: formData.location_lat || undefined,
         location_lon: formData.location_lon || undefined,
+        language: formData.language,
       }
       
       Object.keys(clientData).forEach(key => {
@@ -262,6 +274,22 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
             errors.contact_email ? 'border-red-500' : 'border-gray-300'
           }`}
         />
+      </FormField>
+
+      <FormField
+        label={t('clientForm.messageLanguage')}
+        error={errors.language}
+        hint={t('clientForm.messageLanguageHint')}
+      >
+        <select
+          value={formData.language}
+          onChange={(e) => setFormData({ ...formData, language: e.target.value as ClientLanguage })}
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 border-gray-300"
+        >
+          {CLIENT_LANGUAGES.map((lang) => (
+            <option key={lang.code} value={lang.code}>{lang.label}</option>
+          ))}
+        </select>
       </FormField>
 
       {isHealthcareSpecialist && !clientId && (

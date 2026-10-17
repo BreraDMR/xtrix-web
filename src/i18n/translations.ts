@@ -144,6 +144,8 @@ export type TranslationKey =
   | 'register.specialistTypeRequired'
   | 'clientForm.allergies'
   | 'clientForm.chronicDiseases'
+  | 'clientForm.messageLanguage'
+  | 'clientForm.messageLanguageHint'
   | 'clientForm.healthcareRequired'
   | 'clientForm.healthcareRequiredDescription'
   | 'specialistProfile.title'
@@ -886,6 +888,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   
   'clientForm.allergies': { en: 'Allergies', ru: 'Аллергии', cz: 'Alergie' },
   'clientForm.chronicDiseases': { en: 'Chronic Diseases', ru: 'Хронические заболевания', cz: 'Chronická onemocnění' },
+  'clientForm.messageLanguage': { en: 'Language of messages to the client', ru: 'Язык сообщений клиенту', cz: 'Jazyk zpráv klientovi' },
+  'clientForm.messageLanguageHint': { en: 'Reminders and greetings go out in this language. It doesn\'t depend on your interface language.', ru: 'На этом языке клиенту уходят напоминания и поздравления. От языка интерфейса не зависит.', cz: 'V tomto jazyce chodí klientovi připomínky a přání. Na jazyku rozhraní nezávisí.' },
   'clientForm.healthcareRequired': { en: 'Required for Healthcare Specialists', ru: 'Обязательно для медицинских специалистов', cz: 'Povinné pro zdravotnické specialisty' },
   'clientForm.healthcareRequiredDescription': { en: 'For healthcare specialists, allergies and chronic diseases are required fields.', ru: 'Для медицинских специалистов поля аллергии и хронических заболеваний являются обязательными.', cz: 'Pro zdravotnické specialisty jsou pole alergie a chronická onemocnění povinná.' },
   
