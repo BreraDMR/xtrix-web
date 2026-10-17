@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
@@ -42,6 +42,7 @@ interface ClientData {
 export default function ClientForm({ clientId, onSuccess, onCancel }: ClientFormProps) {
   const { t, locale } = useTranslation()
   const { user } = useAuthStore()
+  const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState<ClientData>({
@@ -122,11 +123,13 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting.current) return
     
     if (!validateForm()) {
       return
     }
     
+    submitting.current = true
     setLoading(true)
     setErrors({})
 
@@ -167,6 +170,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
         setErrors({ _general: errorMessage })
       }
     } finally {
+      submitting.current = false
       setLoading(false)
     }
   }

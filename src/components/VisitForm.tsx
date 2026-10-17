@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
@@ -40,6 +40,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
   const { t } = useTranslation()
   const { user: currentUser } = useAuthStore()
+  const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [clients, setClients] = useState<ClientOut[]>([])
   const [services, setServices] = useState<any[]>([])
@@ -315,10 +316,12 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting.current) return
     if (!formData.client_id) {
       alert(t('visits.selectClient'))
       return
     }
+    submitting.current = true
     setLoading(true)
 
     try {
@@ -354,6 +357,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     } catch (error: any) {
       alert(apiErrorMessage(error, 'Failed to save visit'))
     } finally {
+      submitting.current = false
       setLoading(false)
     }
   }
