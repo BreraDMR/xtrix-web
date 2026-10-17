@@ -8,8 +8,9 @@ cd "$(dirname "$0")/.."
 SPEC=${OPENAPI_JSON:-../api/openapi.json}
 if [ -f "$SPEC" ]; then
     echo "==> API types match $SPEC"
-    tmp=$(mktemp -t schema).d.ts
-    trap 'rm -f "$tmp"' EXIT
+    tmpdir=$(mktemp -d)
+    trap 'rm -rf "$tmpdir"' EXIT
+    tmp="$tmpdir/schema.d.ts"
     npx openapi-typescript "$SPEC" -o "$tmp" --silent >/dev/null
     if ! diff -q "$tmp" src/api/schema.d.ts >/dev/null; then
         echo "src/api/schema.d.ts is out of date with the API contract - run: npm run gen:api"
