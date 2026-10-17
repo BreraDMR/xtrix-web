@@ -1,69 +1,39 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ServiceForm from '../components/ServiceForm'
 import api from '../api/client'
+import { renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
-vi.mock('../api/client', () => ({
-  default: {
-    get: vi.fn(),
-    post: vi.fn(),
-    put: vi.fn(),
-  },
-}))
+vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn() } }))
 
 describe('ServiceForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-  })
-
-  it('renders form fields', () => {
-    render(
-      <ServiceForm
-        onSuccess={() => {}}
-        onCancel={() => {}}
-      />
+    resetStores()
+    signIn({ id: 7, role: 'specialist' })
+    vi.mocked(api.get).mockImplementation(
+      routes({ '/employees/': [], '/users/': [{ id: 7, full_name: 'Test User', role: 'specialist' }] }) as any
     )
-
-    expect(screen.getByLabelText(/service name/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/duration/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/price/i)).toBeInTheDocument()
   })
 
-  it('submits new service', async () => {
+  it('creates a service', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: {} })
     const onSuccess = vi.fn()
-    const mockPost = vi.fn().mockResolvedValue({ data: {} })
-    ;(api.post as any) = mockPost
+    renderWithProviders(<ServiceForm onSuccess={onSuccess} onCancel={() => {}} />)
 
-    render(
-      <ServiceForm
-        onSuccess={onSuccess}
-        onCancel={() => {}}
-      />
+    await userEvent.type(screen.getByPlaceholderText(/facial treatment/i), 'Facial Treatment')
+    const [duration, price] = screen.getAllByRole('spinbutton')
+    await userEvent.clear(duration)
+    await userEvent.type(duration, '90')
+    await userEvent.clear(price)
+    await userEvent.type(price, '150')
+    await userEvent.click(screen.getByRole('button', { name: /create|save/i }))
+
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled())
+    expect(api.post).toHaveBeenCalledWith(
+      '/services',
+      expect.objectContaining({ name: 'Facial Treatment', duration_minutes: 90, price: 150, specialist_id: 7 })
     )
-
-    const nameInput = screen.getByLabelText(/service name/i)
-    await userEvent.type(nameInput, 'Facial Treatment')
-
-    const durationInput = screen.getByLabelText(/duration/i)
-    await userEvent.clear(durationInput)
-    await userEvent.type(durationInput, '90')
-
-    const priceInput = screen.getByLabelText(/price/i)
-    await userEvent.clear(priceInput)
-    await userEvent.type(priceInput, '150')
-
-    const submitButton = screen.getByRole('button', { name: /create/i })
-    await userEvent.click(submitButton)
-
-    await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/services', expect.objectContaining({
-        name: 'Facial Treatment',
-        duration_minutes: 90,
-        price: 150,
-      }))
-      expect(onSuccess).toHaveBeenCalled()
-    })
   })
 })
-

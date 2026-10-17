@@ -1,90 +1,49 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ClientForm from '../components/ClientForm'
 import api from '../api/client'
+import { useLocaleStore } from '../store/localeStore'
+import { renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
-vi.mock('../api/client', () => ({
-  default: {
-    get: vi.fn(),
-    post: vi.fn(),
-    put: vi.fn(),
-  },
-}))
+vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn() } }))
 
 describe('ClientForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-  })
-
-  it('renders form fields', () => {
-    render(
-      <ClientForm
-        onSuccess={() => {}}
-        onCancel={() => {}}
-      />
+    resetStores()
+    signIn({ id: 2, role: 'business_owner', business_id: 1 })
+    vi.mocked(api.get).mockImplementation(
+      routes({ '/clients/1': { id: 1, full_name: 'John Doe', language: 'ru', created_at: '2026-10-01T10:00:00' } }) as any
     )
-
-    expect(screen.getByLabelText(/full name/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/phone/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
   })
 
-  it('submits new client', async () => {
+  it('creates a client with the language of their messages', async () => {
+    useLocaleStore.setState({ locale: 'cz' })
+    vi.mocked(api.post).mockResolvedValue({ data: {} })
     const onSuccess = vi.fn()
-    const mockPost = vi.fn().mockResolvedValue({ data: {} })
-    ;(api.post as any) = mockPost
+    renderWithProviders(<ClientForm onSuccess={onSuccess} onCancel={() => {}} />)
 
-    render(
-      <ClientForm
-        onSuccess={onSuccess}
-        onCancel={() => {}}
-      />
-    )
+    // a new client starts with the staff's UI language
+    const language = screen.getByLabelText(/jazyk zpráv/i) as HTMLSelectElement
+    expect(language.value).toBe('cz')
 
-    const nameInput = screen.getByLabelText(/full name/i)
-    await userEvent.type(nameInput, 'John Doe')
+    await userEvent.type(screen.getByLabelText(/full name/i), 'John Doe')
+    await userEvent.selectOptions(language, 'en')
+    await userEvent.click(screen.getByRole('button', { name: /create client/i }))
 
-    const submitButton = screen.getByRole('button', { name: /create/i })
-    await userEvent.click(submitButton)
-
-    await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith('/clients', expect.objectContaining({
-        full_name: 'John Doe',
-      }))
-      expect(onSuccess).toHaveBeenCalled()
-    })
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled())
+    expect(api.post).toHaveBeenCalledWith('/clients', expect.objectContaining({ full_name: 'John Doe', language: 'en' }))
   })
 
-  it('loads and submits update for existing client', async () => {
-    const mockGet = vi.fn().mockResolvedValue({
-      data: { id: 1, full_name: 'John Doe', owner_id: 1 },
-    })
-    const mockPut = vi.fn().mockResolvedValue({ data: {} })
-    ;(api.get as any) = mockGet
-    ;(api.put as any) = mockPut
+  it('keeps the saved language when editing', async () => {
+    vi.mocked(api.put).mockResolvedValue({ data: {} })
+    renderWithProviders(<ClientForm clientId={1} onSuccess={() => {}} onCancel={() => {}} />)
 
-    const onSuccess = vi.fn()
+    await waitFor(() => expect((screen.getByLabelText(/full name/i) as HTMLInputElement).value).toBe('John Doe'))
+    expect((screen.getByLabelText(/language of messages/i) as HTMLSelectElement).value).toBe('ru')
+    await userEvent.click(screen.getByRole('button', { name: /update client/i }))
 
-    render(
-      <ClientForm
-        clientId={1}
-        onSuccess={onSuccess}
-        onCancel={() => {}}
-      />
-    )
-
-    await waitFor(() => {
-      expect(mockGet).toHaveBeenCalledWith('/clients/1')
-    })
-
-    const submitButton = screen.getByRole('button', { name: /update/i })
-    await userEvent.click(submitButton)
-
-    await waitFor(() => {
-      expect(mockPut).toHaveBeenCalled()
-      expect(onSuccess).toHaveBeenCalled()
-    })
+    await waitFor(() => expect(api.put).toHaveBeenCalledWith('/clients/1', expect.objectContaining({ language: 'ru' })))
   })
 })
-

@@ -1,17 +1,19 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from '../App'
+import { resetStores } from '../test/render'
 
 describe('App', () => {
-  it('renders login page by default', () => {
+  beforeEach(resetStores)
+
+  it('sends a signed-out visitor to the login page', () => {
     render(
-      <BrowserRouter>
+      <QueryClientProvider client={new QueryClient()}>
         <App />
-      </BrowserRouter>
+      </QueryClientProvider>
     )
-    expect(screen.getByText(/Xtrix/i)).toBeInTheDocument()
+    expect(screen.getByText('Xtrix')).toBeInTheDocument()
+    expect(window.location.pathname).toBe('/login')
   })
 })
-
-
