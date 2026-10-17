@@ -115,7 +115,7 @@ export default function ClientPersonalReportModal({
           [t('visits.price')]: visit.price ? formatCurrency(visit.price, currency) : '-',
           'Payment Method': visit.payment_method || '-',
         }))
-      case 'finance':
+      case 'finance': {
         const totalSpent = (visits || [])
           .filter((v: any) => v.status === 'completed')
           .reduce((sum: number, v: any) => sum + (v.price || 0), 0)
@@ -129,6 +129,7 @@ export default function ClientPersonalReportModal({
             [t('loyalty.cashback')]: loyaltyBalance?.cashback ? formatCurrency(loyaltyBalance.cashback, currency) : '-',
           },
         ]
+      }
       default:
         return []
     }

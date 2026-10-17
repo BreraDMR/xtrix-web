@@ -47,6 +47,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     } else if (currentUser?.id) {
       setFormData(prev => ({ ...prev, specialist_id: currentUser.id, specialist_ids: [currentUser.id] }))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
   }, [serviceId, currentUser])
 
   const loadAvailableSpecialists = async () => {

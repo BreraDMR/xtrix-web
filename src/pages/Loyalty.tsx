@@ -297,7 +297,6 @@ export default function Loyalty() {
     },
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const createPromotionMutation = useMutation({
     mutationFn: async (promotionData: Partial<LoyaltyPromotion>) => {
       const { data } = await api.post('/loyalty/promotions', promotionData)
@@ -308,7 +307,6 @@ export default function Loyalty() {
     },
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updatePromotionMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<LoyaltyPromotion> }) => {
       const { data: result } = await api.put(`/loyalty/promotions/${id}`, data)

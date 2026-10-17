@@ -91,6 +91,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     if (visitId) {
       loadVisit()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
   }, [visitId])
   
   useEffect(() => {
@@ -116,10 +117,10 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
     setSearchingClient(true)
     try {
-      const phoneRegex = /^[\+]?[0-9\s\-\(\)]+$/
+      const phoneRegex = /^[+]?[0-9\s\-()]+$/
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       
-      let searchParams: any = {}
+      const searchParams: any = {}
       
       if (phoneRegex.test(query.trim())) {
         searchParams.phone = query.trim()
@@ -181,6 +182,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }, 500)
 
     return () => clearTimeout(timeoutId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
   }, [clientSearchQuery])
 
   const loadServices = async () => {

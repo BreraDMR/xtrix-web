@@ -95,6 +95,7 @@ export default function Employees() {
         employee_name: emp.employee_user?.full_name || '',
         email: emp.employee_user?.email || '',
       })), sortConfig as SortConfig<any>).map((emp: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { employee_name, email, ...rest } = emp
         return rest
       })

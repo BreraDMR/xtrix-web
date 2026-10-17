@@ -30,6 +30,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
     if (businessId) {
       loadBusiness()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
   }, [businessId])
 
   const loadBusiness = async () => {

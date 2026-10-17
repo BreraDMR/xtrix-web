@@ -76,6 +76,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
     if (employeeId) {
       loadEmployee()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
   }, [employeeId])
 
   const loadAvailableUsers = async () => {
@@ -181,7 +182,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         
       } catch (error: any) {
         console.error('Failed to create employee with user:', error)
-        let errorMessage = error.response?.data?.detail || error.message || t('common.error')
+        const errorMessage = error.response?.data?.detail || error.message || t('common.error')
         alert(errorMessage)
       } finally {
         setLoading(false)

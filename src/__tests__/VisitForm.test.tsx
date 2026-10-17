@@ -14,7 +14,7 @@ vi.mock('../api/client', () => ({
 
 describe('VisitForm', () => {
   beforeEach(() => {
-    ;(api.get as any).mockImplementation((url: string) => {
+    (api.get as any).mockImplementation((url: string) => {
       if (url === '/clients') {
         return Promise.resolve({ data: [{ id: 1, full_name: 'Test Client' }] })
       }

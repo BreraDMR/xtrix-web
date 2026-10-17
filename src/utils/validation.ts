@@ -18,7 +18,7 @@ export function validateEmail(email: string): string | null {
 
 export function validatePhone(phone: string): string | null {
   if (!phone) return null
-  const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,}$/
+  const phoneRegex = /^[+]?[0-9\s\-()]{7,}$/
   if (!phoneRegex.test(phone)) {
     return 'Invalid phone number format'
   }

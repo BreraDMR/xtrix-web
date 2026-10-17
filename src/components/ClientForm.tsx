@@ -57,6 +57,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
     if (clientId) {
       loadClient()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
   }, [clientId])
 
   const loadClient = async () => {

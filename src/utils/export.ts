@@ -203,7 +203,7 @@ export async function exportData<T extends Record<string, any>>(
     case 'excel':
       exportToExcel(options)
       break
-    case 'csv':
+    case 'csv': {
       const { exportTableToCSV } = await import('./table')
       exportTableToCSV(
         options.data,
@@ -215,6 +215,7 @@ export async function exportData<T extends Record<string, any>>(
         options.filename
       )
       break
+    }
     case 'print':
       printElement()
       break

@@ -67,12 +67,12 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
 
   const validatePhone = (phone: string): boolean => {
     if (!phone) return true
-    const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+    const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im
     return phoneRegex.test(phone.trim())
   }
 
   const normalizePhone = (phone: string): string => {
-    return phone.trim().replace(/[\s\-\(\)]/g, '')
+    return phone.trim().replace(/[\s\-()]/g, '')
   }
 
   const normalizeEmail = (email: string): string => {
