@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactElement, ReactNode, cloneElement, isValidElement, useId } from 'react'
 import FormError from './FormError'
 import { HiQuestionMarkCircle } from 'react-icons/hi'
 
@@ -19,9 +19,14 @@ export default function FormField({
   children, 
   className = '' 
 }: FormFieldProps) {
+  // tie the label to the control, so the field can be found by its label
+  const generatedId = useId()
+  const control = isValidElement(children) ? (children as ReactElement<{ id?: string }>) : null
+  const controlId = control?.props.id ?? generatedId
+
   return (
     <div className={className}>
-      <label className="block text-sm font-medium mb-1">
+      <label htmlFor={control ? controlId : undefined} className="block text-sm font-medium mb-1">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
         {hint && (
@@ -33,7 +38,7 @@ export default function FormField({
           </span>
         )}
       </label>
-      {children}
+      {control ? cloneElement(control, { id: controlId }) : children}
       {error && <FormError message={error} />}
       {hint && !error && (
         <p className="mt-1 text-xs text-gray-500">{hint}</p>
