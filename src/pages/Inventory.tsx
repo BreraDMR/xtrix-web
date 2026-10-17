@@ -314,7 +314,11 @@ export default function Inventory() {
                         {t('inventory.add_quantity')}
                       </button>
                       <button
-                        onClick={() => deleteMutation.mutate(product.id)}
+                        onClick={() => {
+                          if (window.confirm(t('inventory.confirm_delete'))) {
+                            deleteMutation.mutate(product.id)
+                          }
+                        }}
                         className="text-red-600 hover:text-red-900"
                       >
                         {t('inventory.delete')}

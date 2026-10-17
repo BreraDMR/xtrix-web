@@ -577,6 +577,7 @@ export type TranslationKey =
   | 'inventory.location'
   | 'inventory.actions'
   | 'inventory.edit'
+  | 'inventory.confirm_delete'
   | 'inventory.delete'
   | 'inventory.add_quantity'
   | 'inventory.add_quantity_to'
@@ -1252,6 +1253,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'inventory.location': { en: 'Location', ru: 'Место хранения', cz: 'Umístění' },
   'inventory.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
   'inventory.edit': { en: 'Edit', ru: 'Редактировать', cz: 'Upravit' },
+  'inventory.confirm_delete': { en: 'Are you sure you want to delete this product?', ru: 'Вы уверены, что хотите удалить этот товар?', cz: 'Opravdu chcete smazat tento produkt?' },
   'inventory.delete': { en: 'Delete', ru: 'Удалить', cz: 'Smazat' },
   'inventory.add_quantity': { en: 'Add Quantity', ru: 'Добавить количество', cz: 'Přidat množství' },
   'inventory.add_quantity_to': { en: 'Add Quantity to', ru: 'Добавить количество в', cz: 'Přidat množství do' },
