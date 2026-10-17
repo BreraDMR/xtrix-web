@@ -2,7 +2,9 @@ import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 import { useLocaleStore } from '../store/localeStore'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+// The API address comes from VITE_API_URL only. In dev it may be left out, then /api goes
+// through the Vite proxy to localhost:8000 (vite.config.ts); a production build requires it.
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,

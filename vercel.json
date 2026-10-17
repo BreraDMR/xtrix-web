@@ -6,10 +6,6 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://xtrix-production.up.railway.app/$1"
-    },
-    {
       "source": "/(.*)",
       "has": [
         {
