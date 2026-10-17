@@ -43,12 +43,9 @@ with `useLabels()` from `src/i18n/labels.ts`. Error messages come already transl
 
 ## Checks
 
-```
-npx tsc --noEmit
-npm run lint
-npx vitest run
-VITE_API_URL=http://localhost:8000 npm run build
-```
+`./scripts/check.sh` - API types vs the contract (`../api/openapi.json` or `OPENAPI_JSON`), tsc, lint,
+vitest and a build. CI runs the same against `openapi.json` from the matching xtrix-api branch, so a
+contract change in the API turns this repo red until `npm run gen:api` is run here.
 
 ## License
 
