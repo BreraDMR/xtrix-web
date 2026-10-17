@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
-import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
 import LoadingSpinner from './LoadingSpinner'
 import FormField from './FormField'
@@ -27,12 +25,8 @@ interface ClientData {
   full_name: string
   birth_date?: string
   gender?: string
-  allergies?: string
-  chronic_diseases?: string
-  pregnancy?: boolean
   contact_phone?: string
   contact_email?: string
-  personal_notes?: string
   location_lat?: number
   location_lon?: number
   owner_id?: number
@@ -41,7 +35,6 @@ interface ClientData {
 
 export default function ClientForm({ clientId, onSuccess, onCancel }: ClientFormProps) {
   const { t, locale } = useTranslation()
-  const { user } = useAuthStore()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -50,21 +43,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
     // a new client most likely speaks what the salon's staff use
     language: locale,
   })
-
-  const { data: specialistProfile } = useQuery({
-    queryKey: ['specialist-profile'],
-    queryFn: async () => {
-      try {
-        const { data } = await api.get('/specialist-profiles/me')
-        return data
-      } catch (error) {
-        return null
-      }
-    },
-    enabled: user?.role === 'specialist',
-  })
-
-  const isHealthcareSpecialist = specialistProfile?.specialist_category === 'healthcare'
 
   useEffect(() => {
     if (clientId) {
@@ -79,7 +57,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       setFormData({
         ...data,
         birth_date: data.birth_date?.split('T')[0] || '',
-        pregnancy: data.pregnancy || false,
       })
     } catch (error) {
       console.error('Failed to load client:', error)
@@ -105,15 +82,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       const phoneError = validatePhone(formData.contact_phone)
       if (phoneError) {
         newErrors.contact_phone = t('clientForm.invalidPhone')
-      }
-    }
-    
-    if (isHealthcareSpecialist && !clientId) {
-      if (!formData.allergies || !formData.allergies.trim()) {
-        newErrors.allergies = t('clientForm.healthcareRequiredDescription')
-      }
-      if (!formData.chronic_diseases || !formData.chronic_diseases.trim()) {
-        newErrors.chronic_diseases = t('clientForm.healthcareRequiredDescription')
       }
     }
     
@@ -295,82 +263,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
           ))}
         </select>
       </FormField>
-
-      {isHealthcareSpecialist && !clientId && (
-        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-yellow-800 text-sm font-medium mb-1">
-            {t('clientForm.healthcareRequired')}
-          </p>
-          <p className="text-yellow-700 text-xs">
-            {t('clientForm.healthcareRequiredDescription')}
-          </p>
-        </div>
-      )}
-
-      <FormField
-        label={t('clientForm.allergies')}
-        required={isHealthcareSpecialist && !clientId}
-        error={errors.allergies}
-      >
-        <textarea
-          value={formData.allergies || ''}
-          onChange={(e) => {
-            setFormData({ ...formData, allergies: e.target.value })
-            if (errors.allergies) {
-              setErrors({ ...errors, allergies: '' })
-            }
-          }}
-          rows={2}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-            errors.allergies ? 'border-red-500' : 'border-gray-300'
-          }`}
-          placeholder={isHealthcareSpecialist ? t('clientForm.allergies') : ''}
-        />
-      </FormField>
-
-      <FormField
-        label={t('clientForm.chronicDiseases')}
-        required={isHealthcareSpecialist && !clientId}
-        error={errors.chronic_diseases}
-      >
-        <textarea
-          value={formData.chronic_diseases || ''}
-          onChange={(e) => {
-            setFormData({ ...formData, chronic_diseases: e.target.value })
-            if (errors.chronic_diseases) {
-              setErrors({ ...errors, chronic_diseases: '' })
-            }
-          }}
-          rows={2}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-            errors.chronic_diseases ? 'border-red-500' : 'border-gray-300'
-          }`}
-          placeholder={isHealthcareSpecialist ? t('clientForm.chronicDiseases') : ''}
-        />
-      </FormField>
-
-      <div>
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={formData.pregnancy || false}
-            onChange={(e) => setFormData({ ...formData, pregnancy: e.target.checked })}
-            className="mr-2"
-          />
-          <span className="text-sm font-medium">{t('clientForm.pregnancy')}</span>
-        </label>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">{t('clientForm.personalNotes')}</label>
-        <textarea
-          value={formData.personal_notes || ''}
-          onChange={(e) => setFormData({ ...formData, personal_notes: e.target.value })}
-          rows={3}
-          className="w-full px-3 py-2 border rounded-md"
-          placeholder={t('clientForm.personalNotesPlaceholder')}
-        />
-      </div>
 
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
         <button

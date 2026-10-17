@@ -36,6 +36,16 @@ describe('ClientForm', () => {
     expect(api.post).toHaveBeenCalledWith('/clients/', expect.objectContaining({ full_name: 'John Doe', language: 'en' }))
   })
 
+  it('does not collect medical details that the API cannot save', async () => {
+    signIn({ id: 2, role: 'specialist' })
+    vi.mocked(api.post).mockResolvedValue({ data: {} })
+    renderWithProviders(<ClientForm onSuccess={() => {}} onCancel={() => {}} />)
+    expect(screen.queryByLabelText(/allergies|chronic|pregnancy|personal notes/i)).not.toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText(/full name/i), 'Jane Doe')
+    await userEvent.click(screen.getByRole('button', { name: /create client/i }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/clients/', { full_name: 'Jane Doe', language: 'en' }))
+  })
+
   it('keeps the saved language when editing', async () => {
     vi.mocked(api.put).mockResolvedValue({ data: {} })
     renderWithProviders(<ClientForm clientId={1} onSuccess={() => {}} onCancel={() => {}} />)
