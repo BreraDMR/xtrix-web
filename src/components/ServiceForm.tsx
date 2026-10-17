@@ -1,3 +1,4 @@
+import { useTranslation } from '../hooks/useTranslation'
 import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
@@ -28,6 +29,7 @@ interface Specialist {
 }
 
 export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceFormProps) {
+  const { t } = useTranslation()
   const { user: currentUser } = useAuthStore()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
@@ -114,7 +116,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       }
       onSuccess()
     } catch (error: any) {
-      alert(apiErrorMessage(error, 'Failed to save service'))
+      alert(apiErrorMessage(error, t('serviceForm.saveError')))
     } finally {
       submitting.current = false
       setLoading(false)
@@ -124,20 +126,20 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">Service Name *</label>
+        <label className="block text-sm font-medium mb-1">{t('serviceForm.name')} *</label>
         <input
           type="text"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
           className="w-full px-3 py-2 border rounded-md"
-          placeholder="e.g., Facial Treatment"
+          placeholder={t('serviceForm.placeholder')}
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Duration (minutes) *</label>
+          <label className="block text-sm font-medium mb-1">{t('serviceForm.duration')} *</label>
           <input
             type="number"
             min="1"
@@ -150,7 +152,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Price *</label>
+          <label className="block text-sm font-medium mb-1">{t('services.price')} *</label>
           <input
             type="number"
             step="0.01"
@@ -166,9 +168,9 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Primary Specialist *</label>
+        <label className="block text-sm font-medium mb-1">{t('serviceForm.primary')} *</label>
         {loadingSpecialists ? (
-          <div className="text-sm text-gray-500">Loading specialists...</div>
+          <div className="text-sm text-gray-500">{t('serviceForm.loading')}</div>
         ) : (
           <select
             value={formData.specialist_id}
@@ -194,10 +196,10 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Additional Specialists (Optional)</label>
-        <p className="text-xs text-gray-500 mb-2">Select all specialists who can provide this service</p>
+        <label className="block text-sm font-medium mb-1">{t('serviceForm.additional')}</label>
+        <p className="text-xs text-gray-500 mb-2">{t('serviceForm.hint')}</p>
         {loadingSpecialists ? (
-          <div className="text-sm text-gray-500">Loading specialists...</div>
+          <div className="text-sm text-gray-500">{t('serviceForm.loading')}</div>
         ) : (
           <div className="max-h-40 overflow-y-auto border rounded-md p-2 space-y-2">
             {availableSpecialists.map((spec) => {
@@ -231,7 +233,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
                   />
                   <span className={isPrimary ? 'font-medium text-gray-700' : 'text-gray-600'}>
                     {spec.full_name} ({spec.email})
-                    {isPrimary && <span className="text-xs text-gray-500 ml-1">(Primary)</span>}
+                    {isPrimary && <span className="text-xs text-gray-500 ml-1">{t('serviceForm.primaryBadge')}</span>}
                   </span>
                 </label>
               )
@@ -241,7 +243,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+        <label className="block text-sm font-medium mb-1">{t('business.description')}</label>
         <textarea
           value={formData.description || ''}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -258,7 +260,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
             onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
             className="mr-2"
           />
-          <span className="text-sm font-medium">Active</span>
+          <span className="text-sm font-medium">{t('services.active')}</span>
         </label>
       </div>
 
@@ -268,7 +270,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          Cancel
+          {t('common.cancel')}
         </button>
         <button
           type="submit"
@@ -278,10 +280,10 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
           {loading ? (
             <>
               <LoadingSpinner size="sm" />
-              <span>Saving...</span>
+              <span>{t('common.saving')}</span>
             </>
           ) : (
-            serviceId ? 'Update Service' : 'Create Service'
+            serviceId ? t('serviceForm.update') : t('serviceForm.create')
           )}
         </button>
       </div>

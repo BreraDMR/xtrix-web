@@ -92,7 +92,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         errors.push({
           row,
           field: 'full_name',
-          message: t('import.nameRequired') || 'Имя обязательно',
+          message: t('import.nameRequired'),
         })
       }
 
@@ -100,7 +100,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         errors.push({
           row,
           field: 'contact_email',
-          message: t('import.invalidEmail') || 'Неверный формат email',
+          message: t('import.invalidEmail'),
         })
       }
 
@@ -108,7 +108,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         errors.push({
           row,
           field: 'contact_phone',
-          message: t('import.invalidPhone') || 'Неверный формат телефона',
+          message: t('import.invalidPhone'),
         })
       }
 
@@ -119,7 +119,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
           errors.push({
             row,
             field: 'contact_phone',
-            message: t('import.duplicateInFile') || 'Дубликат телефона в файле',
+            message: t('import.duplicateInFile'),
           })
         } else {
           seenPhones.set(index, normalized)
@@ -133,7 +133,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
           errors.push({
             row,
             field: 'contact_email',
-            message: t('import.duplicateInFile') || 'Дубликат email в файле',
+            message: t('import.duplicateInFile'),
           })
         } else {
           seenEmails.set(index, normalized)
@@ -146,7 +146,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
           errors.push({
             row,
             field: 'contact_phone',
-            message: t('import.duplicateExists') || 'Клиент с таким телефоном уже существует',
+            message: t('import.duplicateExists'),
           })
         }
       }
@@ -157,7 +157,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
           errors.push({
             row,
             field: 'contact_email',
-            message: t('import.duplicateExists') || 'Клиент с таким email уже существует',
+            message: t('import.duplicateExists'),
           })
         }
       }
@@ -183,7 +183,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as any[][]
 
       if (jsonData.length === 0) {
-        alert(t('import.emptyFile') || 'Файл пустой')
+        alert(t('import.emptyFile'))
         return
       }
 
@@ -199,7 +199,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
       )
 
       if (nameColIndex === -1) {
-        alert(t('import.nameColumnNotFound') || 'Колонка с именем не найдена')
+        alert(t('import.nameColumnNotFound'))
         return
       }
 
@@ -227,14 +227,14 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
       setValidationErrors(errors)
     } catch (error) {
       console.error('Error parsing file:', error)
-      alert(t('import.parseError') || 'Ошибка при чтении файла')
+      alert(t('import.parseError'))
     }
   }
 
   const handleImport = async () => {
     if (parsedData.length === 0) return
     if (validationErrors.length > 0) {
-      if (!confirm(t('import.importWithErrors') || 'Есть ошибки валидации. Продолжить импорт?')) {
+      if (!confirm(t('import.importWithErrors'))) {
         return
       }
     }
@@ -309,9 +309,10 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         {}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            {t('import.title') || 'Импорт клиентов из Excel'}
+            {t('import.title')}
           </h2>
           <button
+            aria-label={t('common.close')}
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
             disabled={isImporting}
@@ -326,7 +327,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
           {!file && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('import.selectFile') || 'Выберите Excel файл (.xlsx, .xls)'}
+                {t('import.selectFile')}
               </label>
               <div className="flex items-center gap-4">
                 <input
@@ -338,8 +339,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                 />
               </div>
               <p className="mt-2 text-sm text-gray-500">
-                {t('import.fileFormat') ||
-                  'Файл должен содержать колонку: Имя (обязательно). Колонки Телефон и Email опциональны.'}
+                {t('import.fileFormat')}
               </p>
             </div>
           )}
@@ -349,32 +349,32 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-medium text-gray-900">
-                  {t('import.preview') || 'Предварительный просмотр'}
+                  {t('import.preview')}
                 </h3>
                 <button
                   onClick={handleReset}
                   className="text-sm text-gray-600 hover:text-gray-800"
                   disabled={isImporting}
                 >
-                  {t('import.selectOtherFile') || 'Выбрать другой файл'}
+                  {t('import.selectOtherFile')}
                 </button>
               </div>
 
               {}
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <div className="text-sm text-blue-700">{t('import.totalRows') || 'Всего строк'}</div>
+                  <div className="text-sm text-blue-700">{t('import.totalRows')}</div>
                   <div className="text-2xl font-bold text-blue-900">{parsedData.length}</div>
                 </div>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                   <div className="text-sm text-green-700">
-                    {t('import.validRows') || 'Корректных'}
+                    {t('import.validRows')}
                   </div>
                   <div className="text-2xl font-bold text-green-900">{validRows}</div>
                 </div>
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                   <div className="text-sm text-red-700">
-                    {t('import.errors') || 'Ошибок'}
+                    {t('import.errors')}
                   </div>
                   <div className="text-2xl font-bold text-red-900">{validationErrors.length}</div>
                 </div>
@@ -384,17 +384,17 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
               {validationErrors.length > 0 && (
                 <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
                   <h4 className="font-medium text-red-900 mb-2">
-                    {t('import.validationErrors') || 'Ошибки валидации:'}
+                    {t('import.validationErrors')}
                   </h4>
                   <div className="max-h-40 overflow-y-auto space-y-1">
                     {validationErrors.slice(0, 10).map((error, idx) => (
                       <div key={idx} className="text-sm text-red-700">
-                        Строка {error.row}: {error.message}
+                        {t('import.row')} {error.row}: {error.message}
                       </div>
                     ))}
                     {validationErrors.length > 10 && (
                       <div className="text-sm text-red-600">
-                        ... и еще {validationErrors.length - 10} ошибок
+                        … {validationErrors.length - 10} {t('import.moreErrors')}
                       </div>
                     )}
                   </div>
@@ -420,7 +420,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                           {t('clients.email')}
                         </th>
                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                          {t('import.status') || 'Статус'}
+                          {t('import.status')}
                         </th>
                       </tr>
                     </thead>
@@ -444,12 +444,12 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                               {hasError ? (
                                 <span className="text-red-600 flex items-center gap-1">
                                   <HiXCircle className="w-4 h-4" />
-                                  {t('import.error') || 'Ошибка'}
+                                  {t('import.error')}
                                 </span>
                               ) : (
                                 <span className="text-green-600 flex items-center gap-1">
                                   <HiCheckCircle className="w-4 h-4" />
-                                  {t('import.ready') || 'Готов'}
+                                  {t('import.ready')}
                                 </span>
                               )}
                             </td>
@@ -459,7 +459,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                       {parsedData.length > 20 && (
                         <tr>
                           <td colSpan={5} className="px-4 py-2 text-sm text-gray-500 text-center">
-                            ... и еще {parsedData.length - 20} строк
+                            … {parsedData.length - 20} {t('import.moreRows')}
                           </td>
                         </tr>
                       )}
@@ -474,30 +474,30 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
           {importResult && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h3 className="font-medium text-blue-900 mb-3">
-                {t('import.result') || 'Результат импорта:'}
+                {t('import.result')}
               </h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-green-700">
                   <HiCheckCircle className="w-5 h-5" />
                   <span>
-                    {t('import.successCount') || 'Успешно добавлено'}: {importResult.success}
+                    {t('import.successCount')}: {importResult.success}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-yellow-700">
                   <HiExclamationCircle className="w-5 h-5" />
                   <span>
-                    {t('import.skippedCount') || 'Пропущено'}: {importResult.skipped}
+                    {t('import.skippedCount')}: {importResult.skipped}
                   </span>
                 </div>
                 {importResult.errors.length > 0 && (
                   <div className="mt-3">
                     <div className="font-medium text-red-700 mb-2">
-                      {t('import.errors') || 'Ошибки'}:
+                      {t('import.errors')}:
                     </div>
                     <div className="max-h-32 overflow-y-auto space-y-1">
                       {importResult.errors.slice(0, 10).map((error, idx) => (
                         <div key={idx} className="text-sm text-red-600">
-                          Строка {error.row}: {error.message}
+                          {t('import.row')} {error.row}: {error.message}
                         </div>
                       ))}
                     </div>
@@ -511,6 +511,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         {}
         <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
           <button
+            aria-label={t('common.close')}
             onClick={onClose}
             disabled={isImporting}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -526,12 +527,12 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
               {isImporting ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {t('import.importing') || 'Импорт...'}
+                  {t('import.importing')}
                 </>
               ) : (
                 <>
                   <HiUpload className="w-4 h-4" />
-                  {t('import.import') || 'Импортировать'} ({validRows})
+                  {t('import.import')} ({validRows})
                 </>
               )}
             </button>

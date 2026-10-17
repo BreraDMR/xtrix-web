@@ -95,11 +95,11 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
     if (!employeeId) {
       if (!newUserData.full_name.trim()) {
-        alert('Full name is required')
+        alert(t('clientForm.nameRequired'))
         return
       }
       if (!newUserData.email && !newUserData.phone) {
-        alert('Email or phone number is required')
+        alert(t('register.contactRequired'))
         return
       }
 
@@ -158,8 +158,8 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
   if (generatedPassword) {
     return (
       <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-        <h4 className="font-medium text-green-800 mb-2">Employee Created Successfully!</h4>
-        <p className="text-sm text-green-700 mb-2">Generated Password:</p>
+        <h4 className="font-medium text-green-800 mb-2">{t('employeeForm.created')}</h4>
+        <p className="text-sm text-green-700 mb-2">{t('employeeForm.password')}</p>
         <div className="flex gap-2 items-center">
           <input
             type="text"
@@ -188,18 +188,18 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
             }}
             className="px-4 py-3 bg-green-600 text-white rounded hover:bg-green-700 font-medium whitespace-nowrap"
           >
-            {passwordCopied ? '✓ Copied!' : 'Copy'}
+            {passwordCopied ? t('employeeForm.copied') : t('employeeForm.copy')}
           </button>
         </div>
         <p className="text-xs text-green-600 mt-2">
-          Please save this password and provide it to the employee. They can log in using their email or phone number.
+          {t('employeeForm.passwordHint')}
         </p>
         <button
           type="button"
           onClick={onSuccess}
           className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
         >
-          Close
+          {t('common.close')}
         </button>
       </div>
     )
@@ -210,7 +210,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       {!employeeId ? (
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            A password will be automatically generated and shown after creation
+            {t('employeeForm.passwordInfo')}
           </p>
 
           <div>
@@ -224,7 +224,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
               onChange={(e) => setNewUserData({ ...newUserData, full_name: e.target.value })}
               required
               className="w-full px-3 py-2 border rounded-md"
-              placeholder="John Doe"
+              placeholder={t('register.namePlaceholder')}
             />
           </div>
 
@@ -256,7 +256,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
               />
             </div>
           </div>
-          <p className="text-xs text-gray-500">At least one of Email or Phone is required</p>
+          <p className="text-xs text-gray-500">{t('register.contactRequired')}</p>
 
           <div>
             <label className="block text-sm font-medium mb-1">{t('register.specialistType')}</label>

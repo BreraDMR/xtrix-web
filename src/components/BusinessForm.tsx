@@ -1,3 +1,4 @@
+import { useTranslation } from '../hooks/useTranslation'
 import { useState, useEffect } from 'react'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
@@ -25,6 +26,7 @@ interface BusinessData {
 }
 
 export default function BusinessForm({ businessId, onSuccess, onCancel }: BusinessFormProps) {
+  const { t } = useTranslation()
   const labels = useLabels()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<BusinessData>({
@@ -77,7 +79,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       onSuccess()
     } catch (error: any) {
       console.error('Error saving business:', error)
-      const errorMessage = apiErrorMessage(error, 'Failed to save business')
+      const errorMessage = apiErrorMessage(error, t('business.saveError'))
       alert(errorMessage)
     } finally {
       setLoading(false)
@@ -87,19 +89,19 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">Business Name *</label>
+        <label className="block text-sm font-medium mb-1">{t('business.name')} *</label>
         <input
           type="text"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
           className="w-full px-3 py-2 border rounded-md"
-          placeholder="e.g., My Beauty Salon"
+          placeholder={t('business.namePlaceholder')}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Business Type *</label>
+        <label className="block text-sm font-medium mb-1">{t('business.type')} *</label>
         <select
           value={formData.business_type}
           onChange={(e) => setFormData({ ...formData, business_type: e.target.value as BusinessType })}
@@ -113,19 +115,19 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Address</label>
+        <label className="block text-sm font-medium mb-1">{t('business.address')}</label>
         <input
           type="text"
           value={formData.address || ''}
           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
           className="w-full px-3 py-2 border rounded-md"
-          placeholder="Business address"
+          placeholder={t('business.addressPlaceholder')}
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Phone</label>
+          <label className="block text-sm font-medium mb-1">{t('clients.phone')}</label>
           <input
             type="tel"
             value={formData.phone || ''}
@@ -135,7 +137,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
+          <label className="block text-sm font-medium mb-1">{t('clients.email')}</label>
           <input
             type="email"
             value={formData.email || ''}
@@ -147,18 +149,18 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+        <label className="block text-sm font-medium mb-1">{t('business.description')}</label>
         <textarea
           value={formData.description || ''}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={3}
           className="w-full px-3 py-2 border rounded-md"
-          placeholder="Business description"
+          placeholder={t('business.descriptionPlaceholder')}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Currency</label>
+        <label className="block text-sm font-medium mb-1">{t('business.currency')}</label>
         <select
           value={formData.currency || 'EUR'}
           onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
@@ -178,7 +180,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          Cancel
+          {t('common.cancel')}
         </button>
         <button
           type="submit"
@@ -188,10 +190,10 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
           {loading ? (
             <>
               <LoadingSpinner size="sm" />
-              <span>Saving...</span>
+              <span>{t('common.saving')}</span>
             </>
           ) : (
-            businessId ? 'Update Business' : 'Create Business'
+            businessId ? t('business.update') : t('business.create')
           )}
         </button>
       </div>

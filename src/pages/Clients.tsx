@@ -168,7 +168,7 @@ export default function Clients() {
               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center gap-2"
             >
               <HiUpload className="w-4 h-4" />
-              {t('import.title') || 'Импорт'}
+              {t('import.title')}
             </button>
             <button
               onClick={() => {

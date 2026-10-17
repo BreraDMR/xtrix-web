@@ -50,7 +50,7 @@ export default function SalaryAdjustmentModal({
     e.preventDefault()
     const numAmount = parseFloat(amount)
     if (isNaN(numAmount) || numAmount === 0) {
-      alert(t('salary.invalidAmount') || 'Неверная сумма')
+      alert(t('salary.invalidAmount'))
       return
     }
 
@@ -66,11 +66,11 @@ export default function SalaryAdjustmentModal({
   if (!isOpen) return null
 
   const typeOptions = [
-    { value: 'bonus', label: t('salary.bonus') || 'Бонус', color: 'green' },
-    { value: 'penalty', label: t('salary.penalty') || 'Штраф', color: 'red' },
-    { value: 'overtime', label: t('salary.overtime') || 'Переработка', color: 'blue' },
-    { value: 'allowance', label: t('salary.allowance') || 'Надбавка', color: 'purple' },
-    { value: 'deduction', label: t('salary.deduction') || 'Удержание', color: 'orange' },
+    { value: 'bonus', label: t('salary.bonus'), color: 'green' },
+    { value: 'penalty', label: t('salary.penalty'), color: 'red' },
+    { value: 'overtime', label: t('salary.overtime'), color: 'blue' },
+    { value: 'allowance', label: t('salary.allowance'), color: 'purple' },
+    { value: 'deduction', label: t('salary.deduction'), color: 'orange' },
   ]
 
   return (
@@ -78,9 +78,10 @@ export default function SalaryAdjustmentModal({
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            {t('salary.addAdjustment') || 'Добавить начисление/удержание'}
+            {t('salary.addAdjustment')}
           </h2>
           <button
+            aria-label={t('common.close')}
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
             disabled={createMutation.isPending}
@@ -92,7 +93,7 @@ export default function SalaryAdjustmentModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('salary.adjustmentType') || 'Тип'}
+              {t('salary.adjustmentType')}
             </label>
             <select
               value={type}
@@ -110,7 +111,7 @@ export default function SalaryAdjustmentModal({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('salary.amount') || 'Сумма'}
+              {t('salary.amount')}
             </label>
             <input
               type="number"
@@ -124,21 +125,21 @@ export default function SalaryAdjustmentModal({
             />
             <p className="mt-1 text-xs text-gray-500">
               {(type === 'penalty' || type === 'deduction') 
-                ? t('salary.willBeDeducted') || 'Будет вычтено из зарплаты'
-                : t('salary.willBeAdded') || 'Будет добавлено к зарплате'}
+                ? t('salary.willBeDeducted')
+                : t('salary.willBeAdded')}
             </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('salary.description') || 'Описание'}
+              {t('salary.description')}
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               rows={3}
-              placeholder={t('salary.adjustmentDescription') || 'Описание начисления/удержания'}
+              placeholder={t('salary.adjustmentDescription')}
             />
           </div>
 
@@ -161,7 +162,7 @@ export default function SalaryAdjustmentModal({
               }`}
             >
               {createMutation.isPending
-                ? (t('common.saving' as any) || 'Сохранение...')
+                ? (t('common.saving' as any))
                 : t('common.save')}
             </button>
           </div>

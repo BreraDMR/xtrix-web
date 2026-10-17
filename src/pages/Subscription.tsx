@@ -397,10 +397,10 @@ export default function Subscription() {
         ) : (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
             <p className="text-yellow-800 mb-2">
-              {t('subscription.noPlansAvailable') || 'Нет доступных планов для вашей роли'}
+              {t('subscription.noPlansAvailable')}
             </p>
             <p className="text-sm text-yellow-700">
-              {t('subscription.contactAdmin') || 'Обратитесь к администратору для создания планов подписки'}
+              {t('subscription.contactAdmin')}
             </p>
           </div>
         )}

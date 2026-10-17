@@ -46,13 +46,13 @@ export default function Register() {
     setLoading(true)
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('register.passwordMismatch'))
       setLoading(false)
       return
     }
 
     if (!formData.email && !formData.phone) {
-      setError('Please provide either email or phone number')
+      setError(t('register.contactRequired'))
       setLoading(false)
       return
     }
@@ -135,7 +135,7 @@ export default function Register() {
       }
       console.error('Registration error:', err)
       
-      const errorMessage = apiErrorMessage(err, 'Registration failed')
+      const errorMessage = apiErrorMessage(err, t('register.failed'))
       
       setError(errorMessage)
     } finally {
@@ -166,13 +166,13 @@ export default function Register() {
               onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
               required
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder="John Doe"
+              placeholder={t('register.namePlaceholder')}
             />
           </div>
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('register.email')} {!formData.phone && '*'}
+              {t('register.email')}
             </label>
             <input
               id="email"
@@ -180,7 +180,6 @@ export default function Register() {
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required={!formData.phone}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="your@email.com"
             />
@@ -188,7 +187,7 @@ export default function Register() {
 
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-              {t('register.phone')} {!formData.email && '*'}
+              {t('register.phone')}
             </label>
             <input
               id="phone"
@@ -196,11 +195,12 @@ export default function Register() {
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              required={!formData.email}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="+1234567890"
             />
           </div>
+
+          <p className="text-xs text-gray-500">{t('register.contactRequired')}</p>
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
@@ -218,7 +218,7 @@ export default function Register() {
               placeholder="••••••••"
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Minimum 8 characters, include uppercase, lowercase, number, and special character
+              {t('register.passwordHint')}
             </p>
           </div>
 
@@ -290,7 +290,7 @@ export default function Register() {
             {loading ? (
               <>
                 <LoadingSpinner size="sm" />
-                <span>Creating account...</span>
+                <span>{t('register.creating')}</span>
               </>
             ) : (
               t('register.createAccount')

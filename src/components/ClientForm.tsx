@@ -91,20 +91,20 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
     
     const fullNameError = validateRequired(formData.full_name, 'Full Name')
     if (fullNameError) {
-      newErrors.full_name = fullNameError
+      newErrors.full_name = t('clientForm.nameRequired')
     }
     
     if (formData.contact_email) {
       const emailError = validateEmail(formData.contact_email)
       if (emailError) {
-        newErrors.contact_email = emailError
+        newErrors.contact_email = t('clientForm.invalidEmail')
       }
     }
     
     if (formData.contact_phone) {
       const phoneError = validatePhone(formData.contact_phone)
       if (phoneError) {
-        newErrors.contact_phone = phoneError
+        newErrors.contact_phone = t('clientForm.invalidPhone')
       }
     }
     
@@ -166,7 +166,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       if (Object.keys(apiErrors).length > 0) {
         setErrors(apiErrors)
       } else {
-        const errorMessage = apiErrorMessage(error, 'Failed to save client')
+        const errorMessage = apiErrorMessage(error, t('clientForm.saveError'))
         setErrors({ _general: errorMessage })
       }
     } finally {
@@ -184,7 +184,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       )}
       
       <FormField
-        label="Full Name"
+        label={t('clientForm.fullName')}
         required
         error={errors.full_name}
       >
@@ -204,7 +204,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       </FormField>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField label="Date of Birth" error={errors.birth_date}>
+        <FormField label={t('clientForm.birthDate')} error={errors.birth_date}>
           <input
             type="date"
             value={formData.birth_date || ''}
@@ -219,7 +219,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
             }`}
           />
         </FormField>
-        <FormField label="Gender" error={errors.gender}>
+        <FormField label={t('clientForm.gender')} error={errors.gender}>
           <select
             value={formData.gender || ''}
             onChange={(e) => {
@@ -232,18 +232,18 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
               errors.gender ? 'border-red-500' : 'border-gray-300'
             }`}
           >
-            <option value="">Select...</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option value="">{t('clientForm.select')}</option>
+            <option value="male">{t('clients.male')}</option>
+            <option value="female">{t('clients.female')}</option>
+            <option value="other">{t('clients.other')}</option>
           </select>
         </FormField>
       </div>
 
       <FormField
-        label="Phone"
+        label={t('clients.phone')}
         error={errors.contact_phone}
-        hint="Enter phone number in international format (e.g., +420 123 456 789)"
+        hint={t('clientForm.phoneHint')}
       >
         <input
           type="tel"
@@ -261,9 +261,9 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       </FormField>
 
       <FormField
-        label="Email"
+        label={t('clients.email')}
         error={errors.contact_email}
-        hint="Enter a valid email address"
+        hint={t('clientForm.emailHint')}
       >
         <input
           type="email"
@@ -357,18 +357,18 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
             onChange={(e) => setFormData({ ...formData, pregnancy: e.target.checked })}
             className="mr-2"
           />
-          <span className="text-sm font-medium">Pregnancy</span>
+          <span className="text-sm font-medium">{t('clientForm.pregnancy')}</span>
         </label>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Personal Notes</label>
+        <label className="block text-sm font-medium mb-1">{t('clientForm.personalNotes')}</label>
         <textarea
           value={formData.personal_notes || ''}
           onChange={(e) => setFormData({ ...formData, personal_notes: e.target.value })}
           rows={3}
           className="w-full px-3 py-2 border rounded-md"
-          placeholder="e.g., doesn't like loud sounds, prefers silence"
+          placeholder={t('clientForm.personalNotesPlaceholder')}
         />
       </div>
 
@@ -378,7 +378,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
           onClick={onCancel}
           className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
         >
-          Cancel
+          {t('common.cancel')}
         </button>
         <button
           type="submit"
@@ -388,10 +388,10 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
           {loading ? (
             <>
               <LoadingSpinner size="sm" />
-              <span>Saving...</span>
+              <span>{t('common.saving')}</span>
             </>
           ) : (
-            clientId ? 'Update Client' : 'Create Client'
+            clientId ? t('clientForm.update') : t('clientForm.create')
           )}
         </button>
       </div>

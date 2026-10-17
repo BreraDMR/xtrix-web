@@ -144,7 +144,7 @@ export default function Dashboard() {
                     <Pie
                       data={[
                         { name: t('dashboard.completedVisits'), value: visitStats?.visits_by_status?.completed || 0 },
-                        { name: 'Remaining', value: (visitStats?.total_visits || 0) - (visitStats?.visits_by_status?.completed || 0) },
+                        { name: t('dashboard.remaining'), value: (visitStats?.total_visits || 0) - (visitStats?.visits_by_status?.completed || 0) },
                       ]}
                       cx="50%"
                       cy="50%"
@@ -187,7 +187,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded bg-gray-300"></div>
-                  <span className="text-sm text-gray-600">Remaining</span>
+                  <span className="text-sm text-gray-600">{t('dashboard.remaining')}</span>
                 </div>
               </div>
             </div>
@@ -198,7 +198,7 @@ export default function Dashboard() {
         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-700">{t('dashboard.quickStatus')}</h3>
-            <span className="text-xs text-gray-500">Today</span>
+            <span className="text-xs text-gray-500">{t('dashboard.today')}</span>
           </div>
           {isLoadingClientStats ? (
             <div className="flex items-center justify-center py-8">
@@ -240,7 +240,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {}
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.monthlyRevenue')} vs {t('dashboard.monthlyExpenses')}</h3>
+            <h3 className="text-lg font-semibold text-gray-700 mb-4">{t('dashboard.monthlyRevenue')} {t('dashboard.versus')} {t('dashboard.monthlyExpenses')}</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie

@@ -28,9 +28,9 @@ describe('ClientForm', () => {
     const language = screen.getByLabelText(/jazyk zpráv/i) as HTMLSelectElement
     expect(language.value).toBe('cz')
 
-    await userEvent.type(screen.getByLabelText(/full name/i), 'John Doe')
+    await userEvent.type(screen.getByLabelText(/jméno a příjmení/i), 'John Doe')
     await userEvent.selectOptions(language, 'en')
-    await userEvent.click(screen.getByRole('button', { name: /create client/i }))
+    await userEvent.click(screen.getByRole('button', { name: /vytvořit klienta/i }))
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalled())
     expect(api.post).toHaveBeenCalledWith('/clients/', expect.objectContaining({ full_name: 'John Doe', language: 'en' }))

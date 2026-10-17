@@ -89,7 +89,7 @@ export default function ExportModal<T extends Record<string, any>>({
       onClose()
     } catch (error) {
       console.error('Export error:', error)
-      alert(t('export.error') || 'Error during export. Please try again.')
+      alert(t('export.error'))
     } finally {
       setIsExporting(false)
     }
@@ -104,7 +104,7 @@ export default function ExportModal<T extends Record<string, any>>({
         {}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            {t('export.title') || 'Export Data'}
+            {t('export.title')}
           </h2>
           <button
             onClick={onClose}
@@ -121,7 +121,7 @@ export default function ExportModal<T extends Record<string, any>>({
           {reportTypes && reportTypes.length > 1 && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('export.reportType') || 'Report Type'}
+                {t('export.reportType')}
               </label>
               <select
                 value={selectedReportType || ''}
@@ -141,7 +141,7 @@ export default function ExportModal<T extends Record<string, any>>({
           {}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('export.format') || 'Format'}
+              {t('export.format')}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -207,15 +207,15 @@ export default function ExportModal<T extends Record<string, any>>({
                 className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
               />
               <label htmlFor="includeCharts" className="ml-2 text-sm text-gray-700">
-                {t('export.includeCharts') || 'Include charts/graphs'}
+                {t('export.includeCharts')}
               </label>
             </div>
           )}
 
           {}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
-            <div className="font-medium mb-1">{t('export.itemsCount') || 'Items to export'}:</div>
-            <div>{data.length} {t('export.items') || 'items'}</div>
+            <div className="font-medium mb-1">{t('export.itemsCount')}:</div>
+            <div>{data.length} {t('export.items')}</div>
           </div>
         </div>
 
@@ -236,12 +236,12 @@ export default function ExportModal<T extends Record<string, any>>({
             {isExporting ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                {t('export.exporting') || 'Exporting...'}
+                {t('export.exporting')}
               </>
             ) : (
               <>
                 <HiDownload className="w-4 h-4" />
-                {selectedFormat === 'print' ? t('export.print') || 'Print' : t('export.export') || 'Export'}
+                {selectedFormat === 'print' ? t('export.print') : t('export.export')}
               </>
             )}
           </button>

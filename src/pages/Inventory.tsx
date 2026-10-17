@@ -83,7 +83,7 @@ export default function Inventory() {
       
       if (!businessId) {
         console.error('Business ID not found. User:', user, 'UserBusiness:', userBusiness)
-        throw new Error('Business ID not found. Please ensure you have a business assigned.')
+        throw new Error(t('inventory.businessRequired'))
       }
       
       console.log('Creating product with data:', { ...product, business_id: businessId })
@@ -96,7 +96,7 @@ export default function Inventory() {
         return data
       } catch (error: any) {
         console.error('Error creating product:', error)
-        const errorMessage = apiErrorMessage(error, 'Failed to create product')
+        const errorMessage = apiErrorMessage(error, t('inventory.createError'))
         throw new Error(errorMessage)
       }
     },
@@ -106,7 +106,7 @@ export default function Inventory() {
     },
     onError: (error: any) => {
       console.error('Mutation error:', error)
-      alert(error?.message || 'Failed to create product. Please try again.')
+      alert(error?.message || t('inventory.createError'))
     },
   })
 
@@ -420,7 +420,7 @@ function ProductForm({
   const [formData, setFormData] = useState<Partial<Product>>({
     name: product?.name || '',
     description: product?.description || '',
-    unit: product?.unit || 'шт',
+    unit: product?.unit || 'pcs',
     quantity: product?.quantity || 0,
     min_quantity: product?.min_quantity || 0,
     price_per_unit: product?.price_per_unit || undefined,
@@ -438,11 +438,11 @@ function ProductForm({
     console.log('Form submit triggered, formData:', formData)
     
     if (!formData.name || !formData.name.trim()) {
-      alert(t('inventory.name') + ' обязательное поле')
+      alert(t('inventory.name') + ': ' + t('common.required_field'))
       return
     }
     if (!formData.unit || !formData.unit.trim()) {
-      alert(t('inventory.unit') + ' обязательное поле')
+      alert(t('inventory.unit') + ': ' + t('common.required_field'))
       return
     }
     
@@ -451,7 +451,7 @@ function ProductForm({
       onSubmit(formData)
     } catch (error) {
       console.error('Error in onSubmit:', error)
-      alert('Ошибка при сохранении: ' + (error as Error).message)
+      alert(t('common.error_saving') + ': ' + (error as Error).message)
     }
   }
 
@@ -500,6 +500,7 @@ function ProductForm({
               <input
                 type="text"
                 value={formData.unit}
+                placeholder={t('inventory.defaultUnit')}
                 onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 required

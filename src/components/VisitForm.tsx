@@ -349,13 +349,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           }, { params: { client_id: currentClientId } })
         } catch (error: any) {
           console.error('Error using loyalty points:', error)
-          alert(apiErrorMessage(error, 'Failed to use loyalty points'))
+          alert(apiErrorMessage(error, t('visits.loyaltyError')))
         }
       }
       
       onSuccess()
     } catch (error: any) {
-      alert(apiErrorMessage(error, 'Failed to save visit'))
+      alert(apiErrorMessage(error, t('visits.saveError')))
     } finally {
       submitting.current = false
       setLoading(false)
@@ -378,7 +378,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              {t('visits.clientList') || 'Список клиентов'}
+              {t('visits.clientList')}
             </button>
             <button
               type="button"
@@ -389,7 +389,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              {t('visits.clientSearch') || 'Поиск клиента'}
+              {t('visits.clientSearch')}
             </button>
           </div>
 
@@ -400,7 +400,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                 type="text"
                 value={clientSearchQuery}
                 onChange={(e) => setClientSearchQuery(e.target.value)}
-                placeholder={t('visits.searchClientPlaceholder') || 'Телефон, email или имя клиента...'}
+                placeholder={t('visits.searchClientPlaceholder')}
                 className="w-full px-3 py-2 border rounded-md"
                 disabled={searchingClient}
               />
@@ -408,7 +408,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               {searchingClient && (
                 <div className="text-sm text-gray-500 flex items-center gap-2">
                   <LoadingSpinner size="sm" />
-                  {t('visits.searching') || 'Поиск...'}
+                  {t('visits.searching')}
                 </div>
               )}
 
@@ -450,20 +450,20 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                   {selectedClient.basic_medical_info && (
                     <div className="mt-2 pt-2 border-t border-gray-200">
                       <p className="text-xs font-medium text-gray-700 mb-1">
-                        {t('visits.basicMedicalInfo') || 'Базовая медицинская информация:'}
+                        {t('visits.basicMedicalInfo')}
                       </p>
                       {selectedClient.basic_medical_info.allergies && (
                         <p className="text-xs text-gray-600">
-                          <span className="font-medium">Аллергии:</span> {selectedClient.basic_medical_info.allergies}
+                          <span className="font-medium">{t('clientForm.allergies')}:</span> {selectedClient.basic_medical_info.allergies}
                         </p>
                       )}
                       {selectedClient.basic_medical_info.chronic_diseases && (
                         <p className="text-xs text-gray-600">
-                          <span className="font-medium">Хронические заболевания:</span> {selectedClient.basic_medical_info.chronic_diseases}
+                          <span className="font-medium">{t('clientForm.chronicDiseases')}:</span> {selectedClient.basic_medical_info.chronic_diseases}
                         </p>
                       )}
                       {selectedClient.basic_medical_info.pregnancy && (
-                        <p className="text-xs text-yellow-700 font-medium">⚠️ Беременность</p>
+                        <p className="text-xs text-yellow-700 font-medium">⚠️ {t('clientForm.pregnancy')}</p>
                       )}
                     </div>
                   )}
@@ -498,7 +498,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           <option value="">{t('visits.selectService')}</option>
           {services.map((service) => (
             <option key={service.id} value={service.id}>
-              {service.name} ({service.duration_minutes} min)
+              {service.name} ({service.duration_minutes} {t('services.min')})
             </option>
           ))}
         </select>
@@ -506,7 +506,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
       {formData.service_id && availableSpecialists.length > 0 && (
         <div>
-          <label className="block text-sm font-medium mb-1">{t('visits.specialist') || 'Specialist'} *</label>
+          <label className="block text-sm font-medium mb-1">{t('visits.specialist')} *</label>
           <select
             value={formData.specialist_id}
             onChange={(e) => setFormData({ ...formData, specialist_id: parseInt(e.target.value) })}
@@ -601,10 +601,10 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             required={!!formData.price}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="">{t('visits.selectPaymentMethod') || 'Выберите способ оплаты'}</option>
+            <option value="">{t('visits.selectPaymentMethod')}</option>
             <option value="card">{t('finance.payment_card')}</option>
             <option value="cash">{t('finance.payment_cash')}</option>
-            <option value="other">{t('visits.paymentOther') || 'Другое'}</option>
+            <option value="other">{t('visits.paymentOther')}</option>
           </select>
         </div>
       )}

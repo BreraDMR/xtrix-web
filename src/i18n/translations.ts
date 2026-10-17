@@ -1,4 +1,74 @@
 export type TranslationKey =
+  | 'pagination.previous'
+  | 'pagination.next'
+  | 'pagination.range'
+  | 'pagination.perPage'
+  | 'pagination.label'
+
+  | 'clientForm.fullName'
+  | 'clientForm.birthDate'
+  | 'clientForm.gender'
+  | 'clientForm.select'
+  | 'clientForm.phoneHint'
+  | 'clientForm.emailHint'
+  | 'clientForm.pregnancy'
+  | 'clientForm.personalNotes'
+  | 'clientForm.personalNotesPlaceholder'
+  | 'clientForm.create'
+  | 'clientForm.update'
+  | 'clientForm.nameRequired'
+  | 'clientForm.invalidEmail'
+  | 'clientForm.invalidPhone'
+  | 'clientForm.saveError'
+  | 'business.title'
+  | 'business.create'
+  | 'business.edit'
+  | 'business.update'
+  | 'business.name'
+  | 'business.type'
+  | 'business.address'
+  | 'business.description'
+  | 'business.currency'
+  | 'business.empty'
+  | 'business.namePlaceholder'
+  | 'business.addressPlaceholder'
+  | 'business.descriptionPlaceholder'
+  | 'business.saveError'
+  | 'serviceForm.name'
+  | 'serviceForm.duration'
+  | 'serviceForm.primary'
+  | 'serviceForm.loading'
+  | 'serviceForm.additional'
+  | 'serviceForm.hint'
+  | 'serviceForm.primaryBadge'
+  | 'serviceForm.placeholder'
+  | 'serviceForm.create'
+  | 'serviceForm.update'
+  | 'serviceForm.saveError'
+  | 'register.contactRequired'
+  | 'register.namePlaceholder'
+  | 'employeeForm.passwordInfo'
+  | 'employeeForm.created'
+  | 'employeeForm.password'
+  | 'employeeForm.passwordHint'
+  | 'employeeForm.copy'
+  | 'employeeForm.copied'
+  | 'register.passwordHint'
+  | 'register.passwordMismatch'
+  | 'register.failed'
+  | 'register.creating'
+  | 'import.row'
+  | 'import.moreErrors'
+  | 'import.moreRows'
+  | 'visits.saveError'
+  | 'visits.loyaltyError'
+  | 'dashboard.remaining'
+  | 'dashboard.today'
+  | 'dashboard.versus'
+  | 'inventory.defaultUnit'
+  | 'inventory.businessRequired'
+  | 'inventory.createError'
+
   | 'common.loadError'
   | 'common.retry'
   | 'common.offline'
@@ -738,6 +808,76 @@ export type TranslationKey =
   | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  "pagination.previous": {"en": "Previous", "ru": "Назад", "cz": "Předchozí"},
+  "pagination.next": {"en": "Next", "ru": "Далее", "cz": "Další"},
+  "pagination.range": {"en": "Showing {start}–{end} of {total} results", "ru": "Показано {start}–{end} из {total}", "cz": "Zobrazeno {start}–{end} z {total} záznamů"},
+  "pagination.perPage": {"en": "Per page:", "ru": "На странице:", "cz": "Na stránku:"},
+  "pagination.label": {"en": "Pagination", "ru": "Страницы", "cz": "Stránkování"},
+
+  "clientForm.fullName": {"en": "Full Name", "ru": "Полное имя", "cz": "Jméno a příjmení"},
+  "clientForm.birthDate": {"en": "Date of Birth", "ru": "Дата рождения", "cz": "Datum narození"},
+  "clientForm.gender": {"en": "Gender", "ru": "Пол", "cz": "Pohlaví"},
+  "clientForm.select": {"en": "Select...", "ru": "Выберите...", "cz": "Vyberte..."},
+  "clientForm.phoneHint": {"en": "Enter phone number in international format (e.g., +420 123 456 789)", "ru": "Введите телефон в международном формате (например, +420 123 456 789)", "cz": "Zadejte telefon v mezinárodním formátu (např. +420 123 456 789)"},
+  "clientForm.emailHint": {"en": "Enter a valid email address", "ru": "Введите корректный email", "cz": "Zadejte platnou e-mailovou adresu"},
+  "clientForm.pregnancy": {"en": "Pregnancy", "ru": "Беременность", "cz": "Těhotenství"},
+  "clientForm.personalNotes": {"en": "Personal Notes", "ru": "Личные заметки", "cz": "Osobní poznámky"},
+  "clientForm.personalNotesPlaceholder": {"en": "e.g., doesn't like loud sounds, prefers silence", "ru": "Например, не любит громкие звуки, предпочитает тишину", "cz": "Např. nemá rád hlasité zvuky, dává přednost tichu"},
+  "clientForm.create": {"en": "Create Client", "ru": "Создать клиента", "cz": "Vytvořit klienta"},
+  "clientForm.update": {"en": "Update Client", "ru": "Сохранить клиента", "cz": "Uložit klienta"},
+  "clientForm.nameRequired": {"en": "Full Name is required", "ru": "Укажите полное имя", "cz": "Zadejte jméno a příjmení"},
+  "clientForm.invalidEmail": {"en": "Invalid email format", "ru": "Неверный формат email", "cz": "Neplatná e-mailová adresa"},
+  "clientForm.invalidPhone": {"en": "Invalid phone number format", "ru": "Неверный формат телефона", "cz": "Neplatné telefonní číslo"},
+  "clientForm.saveError": {"en": "Failed to save client", "ru": "Не удалось сохранить клиента", "cz": "Klienta se nepodařilo uložit"},
+  "business.title": {"en": "My Business", "ru": "Мой бизнес", "cz": "Můj podnik"},
+  "business.create": {"en": "Create Business", "ru": "Создать бизнес", "cz": "Vytvořit podnik"},
+  "business.edit": {"en": "Edit Business", "ru": "Редактировать бизнес", "cz": "Upravit podnik"},
+  "business.update": {"en": "Update Business", "ru": "Сохранить бизнес", "cz": "Uložit podnik"},
+  "business.name": {"en": "Business Name", "ru": "Название бизнеса", "cz": "Název podniku"},
+  "business.type": {"en": "Business Type", "ru": "Тип бизнеса", "cz": "Typ podniku"},
+  "business.address": {"en": "Address", "ru": "Адрес", "cz": "Adresa"},
+  "business.description": {"en": "Description", "ru": "Описание", "cz": "Popis"},
+  "business.currency": {"en": "Currency", "ru": "Валюта", "cz": "Měna"},
+  "business.empty": {"en": "You don't have a business yet.", "ru": "У вас пока нет бизнеса.", "cz": "Zatím nemáte žádný podnik."},
+  "business.namePlaceholder": {"en": "e.g., My Beauty Salon", "ru": "Например, мой салон красоты", "cz": "Např. můj kosmetický salon"},
+  "business.addressPlaceholder": {"en": "Business address", "ru": "Адрес бизнеса", "cz": "Adresa podniku"},
+  "business.descriptionPlaceholder": {"en": "Business description", "ru": "Описание бизнеса", "cz": "Popis podniku"},
+  "business.saveError": {"en": "Failed to save business", "ru": "Не удалось сохранить бизнес", "cz": "Podnik se nepodařilo uložit"},
+  "serviceForm.name": {"en": "Service Name", "ru": "Название услуги", "cz": "Název služby"},
+  "serviceForm.duration": {"en": "Duration (minutes)", "ru": "Длительность (минуты)", "cz": "Délka (minuty)"},
+  "serviceForm.primary": {"en": "Primary Specialist", "ru": "Основной специалист", "cz": "Hlavní specialista"},
+  "serviceForm.loading": {"en": "Loading specialists...", "ru": "Загрузка специалистов...", "cz": "Načítání specialistů..."},
+  "serviceForm.additional": {"en": "Additional Specialists (Optional)", "ru": "Дополнительные специалисты (необязательно)", "cz": "Další specialisté (nepovinné)"},
+  "serviceForm.hint": {"en": "Select all specialists who can provide this service", "ru": "Выберите всех специалистов, которые оказывают эту услугу", "cz": "Vyberte všechny specialisty, kteří poskytují tuto službu"},
+  "serviceForm.primaryBadge": {"en": "(Primary)", "ru": "(Основной)", "cz": "(Hlavní)"},
+  "serviceForm.placeholder": {"en": "e.g., Facial Treatment", "ru": "Например, уход за лицом", "cz": "Např. ošetření pleti"},
+  "serviceForm.create": {"en": "Create Service", "ru": "Создать услугу", "cz": "Vytvořit službu"},
+  "serviceForm.update": {"en": "Update Service", "ru": "Сохранить услугу", "cz": "Uložit službu"},
+  "serviceForm.saveError": {"en": "Failed to save service", "ru": "Не удалось сохранить услугу", "cz": "Službu se nepodařilo uložit"},
+  "register.contactRequired": {"en": "At least one of Email or Phone is required", "ru": "Укажите email или телефон — достаточно одного из двух", "cz": "Zadejte e-mail nebo telefon — stačí jeden z údajů"},
+  "register.namePlaceholder": {"en": "John Doe", "ru": "Иван Иванов", "cz": "Jan Novák"},
+  "employeeForm.passwordInfo": {"en": "A password will be automatically generated and shown after creation", "ru": "Пароль будет создан автоматически и показан после создания сотрудника", "cz": "Heslo se automaticky vygeneruje a zobrazí po vytvoření zaměstnance"},
+  "employeeForm.created": {"en": "Employee Created Successfully!", "ru": "Сотрудник создан!", "cz": "Zaměstnanec byl úspěšně vytvořen!"},
+  "employeeForm.password": {"en": "Generated Password:", "ru": "Сгенерированный пароль:", "cz": "Vygenerované heslo:"},
+  "employeeForm.passwordHint": {"en": "Please save this password and provide it to the employee. They can log in using their email or phone number.", "ru": "Сохраните пароль и передайте сотруднику. Для входа он может использовать email или телефон.", "cz": "Uložte si heslo a předejte ho zaměstnanci. Přihlásit se může pomocí e-mailu nebo telefonu."},
+  "employeeForm.copy": {"en": "Copy", "ru": "Копировать", "cz": "Kopírovat"},
+  "employeeForm.copied": {"en": "✓ Copied!", "ru": "✓ Скопировано!", "cz": "✓ Zkopírováno!"},
+  "register.passwordHint": {"en": "Minimum 8 characters, include uppercase, lowercase, number, and special character", "ru": "Минимум 8 символов: заглавная и строчная буквы, цифра и специальный символ", "cz": "Alespoň 8 znaků, včetně velkého a malého písmene, číslice a speciálního znaku"},
+  "register.passwordMismatch": {"en": "Passwords do not match", "ru": "Пароли не совпадают", "cz": "Hesla se neshodují"},
+  "register.failed": {"en": "Registration failed", "ru": "Не удалось зарегистрироваться", "cz": "Registrace se nezdařila"},
+  "register.creating": {"en": "Creating account...", "ru": "Создание аккаунта...", "cz": "Vytváření účtu..."},
+  "import.row": {"en": "Row", "ru": "Строка", "cz": "Řádek"},
+  "import.moreErrors": {"en": "more errors", "ru": "ещё ошибок", "cz": "dalších chyb"},
+  "import.moreRows": {"en": "more rows", "ru": "ещё строк", "cz": "dalších řádků"},
+  "visits.saveError": {"en": "Failed to save visit", "ru": "Не удалось сохранить визит", "cz": "Návštěvu se nepodařilo uložit"},
+  "visits.loyaltyError": {"en": "Failed to use loyalty points", "ru": "Не удалось списать бонусные баллы", "cz": "Věrnostní body se nepodařilo uplatnit"},
+  "dashboard.remaining": {"en": "Remaining", "ru": "Остальные", "cz": "Ostatní"},
+  "dashboard.today": {"en": "Today", "ru": "Сегодня", "cz": "Dnes"},
+  "dashboard.versus": {"en": "vs", "ru": "и", "cz": "a"},
+  "inventory.defaultUnit": {"en": "pcs", "ru": "шт", "cz": "ks"},
+  "inventory.businessRequired": {"en": "Business ID not found. Please ensure you have a business assigned.", "ru": "Для работы со складом нужен бизнес.", "cz": "Pro správu skladu potřebujete přiřazený podnik."},
+  "inventory.createError": {"en": "Failed to create product. Please try again.", "ru": "Не удалось создать товар. Попробуйте ещё раз.", "cz": "Produkt se nepodařilo vytvořit. Zkuste to znovu."},
+
   'common.save': { en: 'Save', ru: 'Сохранить', cz: 'Uložit' },
   'common.cancel': { en: 'Cancel', ru: 'Отмена', cz: 'Zrušit' },
   'common.delete': { en: 'Delete', ru: 'Удалить', cz: 'Smazat' },
@@ -1062,7 +1202,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'employees.position': { en: 'Position', ru: 'Должность', cz: 'Pozice' },
   'employees.commission': { en: 'Commission', ru: 'Комиссия', cz: 'Provize' },
   'employees.base_salary': { en: 'Base Salary', ru: 'Базовая зарплата', cz: 'Základní plat' },
-  'employees.status': { en: 'Status', ru: 'Статус', cz: 'Status' },
+  'employees.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
   'employees.hired_at': { en: 'Hired At', ru: 'Нанят', cz: 'Najato' },
   'employees.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
   'employees.no_employees': { en: 'No employees found', ru: 'Сотрудники не найдены', cz: 'Žádní zaměstnanci nenalezeni' },
@@ -1093,7 +1233,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   
   'salary.my_salary': { en: 'My Salary', ru: 'Моя зарплата', cz: 'Můj plat' },
   'salary.current_unpaid': { en: 'Current Unpaid Salary', ru: 'Текущая невыплаченная зарплата', cz: 'Aktuální nevyplacený plat' },
-  'salary.unpaid': { en: 'Unpaid', ru: 'Не выплачено', cz: 'Neplaceno' },
+  'salary.unpaid': { en: 'Unpaid', ru: 'Не выплачено', cz: 'Nevyplaceno' },
   'salary.period': { en: 'Period', ru: 'Период', cz: 'Období' },
   'salary.total_visits': { en: 'Total Visits', ru: 'Всего визитов', cz: 'Celkem návštěv' },
   'salary.completed': { en: 'Completed', ru: 'Завершено', cz: 'Dokončeno' },
@@ -1109,7 +1249,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
   'salary.revenue': { en: 'Revenue', ru: 'Доход', cz: 'Příjem' },
   'salary.salary': { en: 'Salary', ru: 'Зарплата', cz: 'Plat' },
-  'salary.status': { en: 'Status', ru: 'Статус', cz: 'Status' },
+  'salary.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
   'salary.paid_at': { en: 'Paid At', ru: 'Выплачено', cz: 'Vyplaceno' },
   'salary.cancelled': { en: 'cancelled', ru: 'отменено', cz: 'zrušeno' },
   'salary.paid': { en: 'Paid', ru: 'Выплачено', cz: 'Vyplaceno' },
@@ -1124,19 +1264,19 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.mark_paid_error': { en: 'Failed to mark salary as paid', ru: 'Не удалось отметить зарплату как выплаченную', cz: 'Nepodařilo se označit plat jako vyplacený' },
   'salary.view_details': { en: 'View Details', ru: 'Просмотреть детали', cz: 'Zobrazit detaily' },
   'salary.calculated_by': { en: 'Calculated by', ru: 'Рассчитано', cz: 'Vypočítáno' },
-  'salary.adjustments': { en: 'Adjustments', ru: 'Начисления/удержания', cz: 'Příplatky/odpočty' },
+  'salary.adjustments': { en: 'Adjustments', ru: 'Начисления/удержания', cz: 'Příplatky a srážky' },
   'salary.adjustments_total': { en: 'Adjustments Total', ru: 'Итого начислений', cz: 'Celkem příplatků' },
   'salary.total_with_adjustments': { en: 'Total with Adjustments', ru: 'Итого с начислениями', cz: 'Celkem s příplatky' },
   'salary.paid_amount': { en: 'Paid Amount', ru: 'Выплачено', cz: 'Vyplaceno' },
   'salary.remaining': { en: 'Remaining', ru: 'Остаток', cz: 'Zbývá' },
-  'salary.payment_status': { en: 'Payment Status', ru: 'Статус выплаты', cz: 'Status platby' },
-  'salary.status.unpaid': { en: 'Unpaid', ru: 'Не выплачено', cz: 'Neplaceno' },
-  'salary.status.partial': { en: 'Partially Paid', ru: 'Частично выплачено', cz: 'Částečně zaplaceno' },
-  'salary.status.paid': { en: 'Paid', ru: 'Выплачено', cz: 'Zaplaceno' },
+  'salary.payment_status': { en: 'Payment Status', ru: 'Статус выплаты', cz: 'Stav platby' },
+  'salary.status.unpaid': { en: 'Unpaid', ru: 'Не выплачено', cz: 'Nevyplaceno' },
+  'salary.status.partial': { en: 'Partially Paid', ru: 'Частично выплачено', cz: 'Částečně vyplaceno' },
+  'salary.status.paid': { en: 'Paid', ru: 'Выплачено', cz: 'Vyplaceno' },
   'salary.status.completed': { en: 'Completed', ru: 'Завершено', cz: 'Dokončeno' },
   'salary.status.pending': { en: 'Pending', ru: 'Ожидается', cz: 'Čeká se' },
   'salary.status.failed': { en: 'Failed', ru: 'Не удалось', cz: 'Selhalo' },
-  'salary.addAdjustment': { en: 'Add Adjustment', ru: 'Добавить начисление/удержание', cz: 'Přidat příplatek/odpočet' },
+  'salary.addAdjustment': { en: 'Add Adjustment', ru: 'Добавить начисление/удержание', cz: 'Přidat příplatek / srážku' },
   'salary.adjustmentType': { en: 'Type', ru: 'Тип', cz: 'Typ' },
   'salary.amount': { en: 'Amount', ru: 'Сумма', cz: 'Částka' },
   'salary.description': { en: 'Description', ru: 'Описание', cz: 'Popis' },
@@ -1144,10 +1284,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.penalty': { en: 'Penalty', ru: 'Штраф', cz: 'Pokuta' },
   'salary.overtime': { en: 'Overtime', ru: 'Переработка', cz: 'Přesčasy' },
   'salary.allowance': { en: 'Allowance', ru: 'Надбавка', cz: 'Příplatek' },
-  'salary.deduction': { en: 'Deduction', ru: 'Удержание', cz: 'Odpočet' },
+  'salary.deduction': { en: 'Deduction', ru: 'Удержание', cz: 'Srážka' },
   'salary.willBeAdded': { en: 'Will be added to salary', ru: 'Будет добавлено к зарплате', cz: 'Bude přidáno k platu' },
   'salary.willBeDeducted': { en: 'Will be deducted from salary', ru: 'Будет вычтено из зарплаты', cz: 'Bude odečteno z platu' },
-  'salary.adjustmentDescription': { en: 'Adjustment description', ru: 'Описание начисления/удержания', cz: 'Popis příplatku/odpočtu' },
+  'salary.adjustmentDescription': { en: 'Adjustment description', ru: 'Описание начисления/удержания', cz: 'Popis příplatku nebo srážky' },
   'salary.invalidAmount': { en: 'Invalid amount', ru: 'Неверная сумма', cz: 'Neplatná částka' },
   'salary.pending': { en: 'Pending', ru: 'Ожидается', cz: 'Čeká se' },
   'salary.failed': { en: 'Failed', ru: 'Не удалось', cz: 'Selhalo' },
@@ -1159,13 +1299,13 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.paymentMethod.card': { en: 'Card', ru: 'Карта', cz: 'Karta' },
   'salary.paymentMethod.transfer': { en: 'Transfer', ru: 'Перевод', cz: 'Převod' },
   'salary.paymentMethod.other': { en: 'Other', ru: 'Другое', cz: 'Jiné' },
-  'salary.allMethods': { en: 'All Methods', ru: 'Все методы', cz: 'Všechny metody' },
+  'salary.allMethods': { en: 'All Methods', ru: 'Все методы', cz: 'Všechny způsoby platby' },
   'salary.transfer': { en: 'Transfer', ru: 'Перевод', cz: 'Převod' },
   'salary.remainingAmount': { en: 'Remaining Amount', ru: 'Остаток к выплате', cz: 'Zbývající částka' },
   'salary.exceedsRemaining': { en: 'Amount exceeds remaining amount', ru: 'Сумма превышает остаток', cz: 'Částka překračuje zbývající částku' },
   'salary.paymentNotes': { en: 'Payment notes', ru: 'Дополнительная информация о выплате', cz: 'Poznámky k platbě' },
   'salary.deleteAdjustmentConfirm': { en: 'Delete this adjustment?', ru: 'Удалить начисление?', cz: 'Smazat tento příplatek?' },
-  'salary.noAdjustments': { en: 'No adjustments', ru: 'Нет начислений/удержаний', cz: 'Žádné příplatky/odpočty' },
+  'salary.noAdjustments': { en: 'No adjustments', ru: 'Нет начислений/удержаний', cz: 'Žádné příplatky ani srážky' },
   'salary.noPayments': { en: 'No payments', ru: 'Нет выплат', cz: 'Žádné platby' },
   'salary.tabs.current': { en: 'Current', ru: 'Текущая', cz: 'Aktuální' },
   'salary.tabs.adjustments': { en: 'Adjustments', ru: 'Начисления', cz: 'Příplatky' },
@@ -1175,7 +1315,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'salary.tabs.export': { en: 'Export', ru: 'Экспорт', cz: 'Export' },
   'salary.currentCalculation': { en: 'Current Calculation', ru: 'Текущий расчет', cz: 'Aktuální výpočet' },
   'salary.currentSalary': { en: 'Current Salary', ru: 'Текущая зарплата', cz: 'Aktuální plat' },
-  'salary.viewSalaryDetails': { en: 'View salary details', ru: 'Просмотр начислений и выплат', cz: 'Zobrazit detaily platu' },
+  'salary.viewSalaryDetails': { en: 'View salary details', ru: 'Просмотр начислений и выплат', cz: 'Přehled výpočtu a výplat' },
   'salary.breakdown': { en: 'Breakdown', ru: 'Детализация', cz: 'Rozpis' },
   'salary.bonuses': { en: 'Bonuses', ru: 'Бонусы', cz: 'Bonusy' },
   'salary.totalVisits': { en: 'Total Visits', ru: 'Всего визитов', cz: 'Celkem návštěv' },
@@ -1396,7 +1536,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'subscription.status.cancelled': { en: 'Cancelled', ru: 'Отменена', cz: 'Zrušeno' },
   'subscription.status.expired': { en: 'Expired', ru: 'Истекла', cz: 'Vypršelo' },
   'subscription.status.past_due': { en: 'Payment overdue', ru: 'Платёж просрочен', cz: 'Platba po splatnosti' },
-  'subscription.transaction.succeeded': { en: 'Paid', ru: 'Оплачено', cz: 'Zaplaceno' },
+  'subscription.transaction.succeeded': { en: 'Paid', ru: 'Оплачено', cz: 'Vyplaceno' },
   'subscription.transaction.pending': { en: 'Pending', ru: 'В обработке', cz: 'Zpracovává se' },
   'subscription.transaction.failed': { en: 'Failed', ru: 'Не прошёл', cz: 'Selhalo' },
   'subscription.transaction.refunded': { en: 'Refunded', ru: 'Возвращён', cz: 'Vráceno' },

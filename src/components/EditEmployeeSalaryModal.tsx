@@ -49,12 +49,12 @@ export default function EditEmployeeSalaryModal({
     const commissionNum = parseFloat(commissionPercentage) || 0
 
     if (commissionNum < 0 || commissionNum > 100) {
-      alert(t('employees.commission_invalid_range') || 'Комиссия должна быть от 0 до 100%')
+      alert(t('employees.commission_invalid_range'))
       return
     }
 
     if (baseSalaryNum < 0) {
-      alert(t('employees.base_salary_invalid') || 'Базовая зарплата не может быть отрицательной')
+      alert(t('employees.base_salary_invalid'))
       return
     }
 
@@ -71,7 +71,7 @@ export default function EditEmployeeSalaryModal({
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 dark:bg-gray-800">
         <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {t('employees.edit_salary') || 'Редактировать зарплату'}
+            {t('employees.edit_salary')}
           </h2>
           <button
             onClick={onClose}
@@ -128,7 +128,7 @@ export default function EditEmployeeSalaryModal({
               disabled={updateMutation.isPending}
               className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
             >
-              {updateMutation.isPending ? (t('common.saving') || 'Сохранение...') : (t('common.save') || 'Сохранить')}
+              {updateMutation.isPending ? (t('common.saving')) : (t('common.save'))}
             </button>
           </div>
         </form>

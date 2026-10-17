@@ -68,12 +68,12 @@ export default function SalaryPaymentModal({
     e.preventDefault()
     const numAmount = parseFloat(amount)
     if (isNaN(numAmount) || numAmount <= 0) {
-      alert(t('salary.invalidAmount') || 'Неверная сумма')
+      alert(t('salary.invalidAmount'))
       return
     }
 
     if (numAmount > remainingAmount) {
-      alert(t('salary.exceedsRemaining') || `Сумма превышает остаток: ${formatCurrency(remainingAmount, currency)}`)
+      alert(t('salary.exceedsRemaining'))
       return
     }
 
@@ -93,9 +93,10 @@ export default function SalaryPaymentModal({
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            {t('salary.recordPayment') || 'Зарегистрировать выплату'}
+            {t('salary.recordPayment')}
           </h2>
           <button
+            aria-label={t('common.close')}
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
             disabled={createMutation.isPending}
@@ -107,14 +108,14 @@ export default function SalaryPaymentModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-sm text-blue-700">
-              {t('salary.remainingAmount') || 'Остаток к выплате'}:{' '}
+              {t('salary.remainingAmount')}:{' '}
               <span className="font-semibold">{formatCurrency(remainingAmount, currency)}</span>
             </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('salary.amount') || 'Сумма выплаты'}
+              {t('salary.amount')}
             </label>
             <input
               type="number"
@@ -131,7 +132,7 @@ export default function SalaryPaymentModal({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('salary.paymentDate') || 'Дата выплаты'}
+              {t('salary.paymentDate')}
             </label>
             <input
               type="date"
@@ -144,7 +145,7 @@ export default function SalaryPaymentModal({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('salary.paymentMethod') || 'Способ оплаты'}
+              {t('salary.paymentMethod')}
             </label>
             <select
               value={paymentMethod}
@@ -152,16 +153,16 @@ export default function SalaryPaymentModal({
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required
             >
-              <option value="cash">{t('finance.payment_cash') || 'Наличные'}</option>
-              <option value="card">{t('finance.payment_card') || 'Карта'}</option>
-              <option value="transfer">{t('salary.transfer') || 'Перевод'}</option>
-              <option value="other">{t('finance.payment_other') || 'Другое'}</option>
+              <option value="cash">{t('finance.payment_cash')}</option>
+              <option value="card">{t('finance.payment_card')}</option>
+              <option value="transfer">{t('salary.transfer')}</option>
+              <option value="other">{t('finance.payment_other')}</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('salary.status') || 'Статус'}
+              {t('salary.status')}
             </label>
             <select
               value={status}
@@ -169,22 +170,22 @@ export default function SalaryPaymentModal({
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required
             >
-              <option value="completed">{t('salary.completed') || 'Завершено'}</option>
-              <option value="pending">{t('salary.pending') || 'Ожидается'}</option>
-              <option value="failed">{t('salary.failed') || 'Не удалось'}</option>
+              <option value="completed">{t('salary.completed')}</option>
+              <option value="pending">{t('salary.pending')}</option>
+              <option value="failed">{t('salary.failed')}</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t('salary.notes') || 'Заметки'}
+              {t('salary.notes')}
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               rows={3}
-              placeholder={t('salary.paymentNotes') || 'Дополнительная информация о выплате'}
+              placeholder={t('salary.paymentNotes')}
             />
           </div>
 
@@ -203,7 +204,7 @@ export default function SalaryPaymentModal({
               className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50"
             >
               {createMutation.isPending
-                ? (t('common.saving' as any) || 'Сохранение...')
+                ? (t('common.saving' as any))
                 : t('common.save')}
             </button>
           </div>

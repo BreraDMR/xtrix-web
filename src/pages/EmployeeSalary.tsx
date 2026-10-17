@@ -233,7 +233,7 @@ export default function EmployeeSalary() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            {t('employees.salary')}: {employee?.employee_user?.full_name || 'Employee'}
+            {t('employees.salary')}: {employee?.employee_user?.full_name || t('employees.employee')}
           </h1>
           {employee?.position && (
             <p className="text-gray-600 dark:text-gray-400 mt-1">{employee.position}</p>
@@ -251,10 +251,10 @@ export default function EmployeeSalary() {
             <button
               onClick={() => setShowEditSalaryModal(true)}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
-              title={t('employees.edit_salary') || 'Редактировать зарплату'}
+              title={t('employees.edit_salary')}
             >
               <HiPencil className="w-4 h-4" />
-              {t('employees.edit_salary') || 'Редактировать ЗП'}
+              {t('employees.edit_salary')}
             </button>
           )}
           <button
@@ -281,7 +281,7 @@ export default function EmployeeSalary() {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               >
-                {t(tabKey as any) || tab}
+                {t(tabKey as any)}
               </button>
             );
           })}
@@ -295,7 +295,7 @@ export default function EmployeeSalary() {
             <div className="space-y-6">
               {}
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold mb-4">{t('salary.currentCalculation') || 'Текущий расчет'}</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('salary.currentCalculation')}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div>
                     <p className="text-sm text-gray-600">{t('salary.period')}</p>
@@ -322,10 +322,10 @@ export default function EmployeeSalary() {
 
                 {}
                 <div className="border-t border-gray-200 pt-4 mt-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">{t('salary.breakdown') || 'Детализация'}</h3>
+                  <h3 className="font-semibold text-gray-900 mb-3">{t('salary.breakdown')}</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">{t('salary.base') || 'Базовая ставка'}</span>
+                      <span className="text-gray-600">{t('salary.base')}</span>
                       <span className="font-medium">{formatCurrency(currentSalary.base_salary, currency)}</span>
                     </div>
                     <div className="flex justify-between">
@@ -339,7 +339,7 @@ export default function EmployeeSalary() {
                     {currentSalary.adjustments_total !== 0 && (
                       <>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">{t('salary.bonuses') || 'Бонусы'}</span>
+                          <span className="text-gray-600">{t('salary.bonuses')}</span>
                           <span className={`font-medium ${currentSalary.adjustments_total > 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {currentSalary.adjustments_total > 0 ? '+' : ''}
                             {formatCurrency(currentSalary.adjustments_total, currency)}
@@ -348,7 +348,7 @@ export default function EmployeeSalary() {
                       </>
                     )}
                     <div className="flex justify-between border-t border-gray-200 pt-2 mt-2">
-                      <span className="font-semibold text-gray-900">{t('salary.total') || 'Начислено'}</span>
+                      <span className="font-semibold text-gray-900">{t('salary.total')}</span>
                       <span className="font-bold text-lg">
                         {formatCurrency(currentSalary.total_with_adjustments, currency)}
                       </span>
@@ -356,13 +356,13 @@ export default function EmployeeSalary() {
                     {currentSalary.paid_amount > 0 && (
                       <>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">{t('salary.paid') || 'Выплачено'}</span>
+                          <span className="text-gray-600">{t('salary.paid')}</span>
                           <span className="font-medium text-red-600">
                             -{formatCurrency(currentSalary.paid_amount, currency)}
                           </span>
                         </div>
                         <div className="flex justify-between border-t border-gray-200 pt-2 mt-2">
-                          <span className="font-semibold text-gray-900">{t('salary.remaining') || 'Остаток'}</span>
+                          <span className="font-semibold text-gray-900">{t('salary.remaining')}</span>
                           <span className="font-bold text-lg text-green-600">
                             {formatCurrency(remainingAmount, currency)}
                           </span>
@@ -377,7 +377,7 @@ export default function EmployeeSalary() {
                   <div className="flex items-center justify-between">
                     <div>
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentSalary.payment_status)}`}>
-                        {t(`salary.status.${currentSalary.payment_status}`) || currentSalary.payment_status}
+                        {t(`salary.status.${currentSalary.payment_status}`)}
                       </span>
                     </div>
                     <div className="flex gap-2">
@@ -389,7 +389,7 @@ export default function EmployeeSalary() {
                         className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
                       >
                         <HiPlus className="w-4 h-4" />
-                        {t('salary.addAdjustment') || 'Добавить бонус/штраф'}
+                        {t('salary.addAdjustment')}
                       </button>
                       {remainingAmount > 0 && (
                         <button
@@ -400,7 +400,7 @@ export default function EmployeeSalary() {
                           className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                         >
                           <HiPlus className="w-4 h-4" />
-                          {t('salary.recordPayment') || 'Зарегистрировать выплату'}
+                          {t('salary.recordPayment')}
                         </button>
                       )}
                     </div>
@@ -420,19 +420,19 @@ export default function EmployeeSalary() {
           ) : (
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-center py-8">
-                <p className="text-gray-600 mb-4">{t('salary.noUnpaidSalary') || 'Нет невыплаченной зарплаты'}</p>
+                <p className="text-gray-600 mb-4">{t('salary.noUnpaidSalary')}</p>
                 {!showCalculateForm ? (
                   <button
                     onClick={() => setShowCalculateForm(true)}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
                   >
-                    {t('salary.calculate_salary') || 'Рассчитать зарплату'}
+                    {t('salary.calculate_salary')}
                   </button>
                 ) : (
                   <div className="max-w-md mx-auto mt-4 space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('salary.periodStart') || 'Начало периода'}
+                        {t('salary.periodStart')}
                       </label>
                       <input
                         type="date"
@@ -444,7 +444,7 @@ export default function EmployeeSalary() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('salary.periodEnd') || 'Конец периода'}
+                        {t('salary.periodEnd')}
                       </label>
                       <input
                         type="date"
@@ -456,7 +456,7 @@ export default function EmployeeSalary() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {t('salary.notes') || 'Заметки'}
+                        {t('salary.notes')}
                       </label>
                       <textarea
                         value={calculateNotes}
@@ -480,7 +480,7 @@ export default function EmployeeSalary() {
                       <button
                         onClick={() => {
                           if (!periodStart || !periodEnd) {
-                            alert(t('salary.fillPeriod') || 'Заполните период')
+                            alert(t('salary.fillPeriod'))
                             return
                           }
                           calculateSalaryMutation.mutate({
@@ -493,8 +493,8 @@ export default function EmployeeSalary() {
                         className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
                       >
                         {calculateSalaryMutation.isPending
-                          ? t('common.loading') || 'Расчет...'
-                          : t('salary.calculate_salary') || 'Рассчитать'}
+                          ? t('common.loading')
+                          : t('salary.calculate_salary')}
                       </button>
                     </div>
                   </div>
@@ -509,7 +509,7 @@ export default function EmployeeSalary() {
       {activeTab === 'adjustments' && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">{t('salary.adjustments') || 'Начисления/удержания'}</h2>
+            <h2 className="text-xl font-semibold">{t('salary.adjustments')}</h2>
             {}
             {!currentSalary && salaryHistory && salaryHistory.length > 0 && (
               <div className="flex gap-2 items-center">
@@ -521,7 +521,7 @@ export default function EmployeeSalary() {
                   }}
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
-                  <option value="">{t('salary.selectSalary') || 'Выберите зарплату из истории'}</option>
+                  <option value="">{t('salary.selectSalary')}</option>
                   {salaryHistory.map((sal) => (
                     <option key={sal.id} value={sal.id}>
                       {new Date(sal.period_start).toLocaleDateString()} - {new Date(sal.period_end).toLocaleDateString()} 
@@ -543,7 +543,7 @@ export default function EmployeeSalary() {
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
               >
                 <HiPlus className="w-4 h-4" />
-                {t('salary.addAdjustment') || 'Добавить'}
+                {t('salary.addAdjustment')}
               </button>
             )}
           </div>
@@ -554,8 +554,8 @@ export default function EmployeeSalary() {
               return (
                 <div className="text-center py-8 text-gray-500">
                   {!currentSalary && (!salaryHistory || salaryHistory.length === 0)
-                    ? t('salary.noUnpaidSalary') || 'Нет зарплаты. Сначала рассчитайте зарплату на вкладке "Текущая"'
-                    : t('salary.selectSalary') || 'Выберите зарплату из истории для просмотра начислений'}
+                    ? t('salary.noUnpaidSalary')
+                    : t('salary.selectSalary')}
                 </div>
               )
             }
@@ -569,7 +569,7 @@ export default function EmployeeSalary() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
                       <span className={`font-medium ${getAdjustmentTypeColor(adj.type)}`}>
-                        {t(`salary.${adj.type}`) || adj.type}
+                        {t(`salary.${adj.type}`)}
                       </span>
                       <span className={`font-semibold ${adj.amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {adj.amount >= 0 ? '+' : ''}
@@ -585,7 +585,7 @@ export default function EmployeeSalary() {
                   </div>
                   <button
                     onClick={() => {
-                      if (confirm(t('salary.deleteAdjustmentConfirm') || 'Удалить начисление?')) {
+                      if (confirm(t('salary.deleteAdjustmentConfirm'))) {
                         deleteAdjustmentMutation.mutate(adj.id)
                       }
                     }}
@@ -599,7 +599,7 @@ export default function EmployeeSalary() {
             </div>
           ) : (
             <div className="text-center py-8 text-gray-500">
-              {t('salary.noAdjustments') || 'Нет начислений/удержаний'}
+              {t('salary.noAdjustments')}
             </div>
           )
           })()}
@@ -610,7 +610,7 @@ export default function EmployeeSalary() {
       {activeTab === 'payments' && (
         <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold dark:text-white">{t('salary.payments') || 'Выплаты'}</h2>
+            <h2 className="text-xl font-semibold dark:text-white">{t('salary.payments')}</h2>
             {}
             {(!currentSalary || (currentSalary && currentSalary.payment_status === 'paid')) && salaryHistory && salaryHistory.length > 0 && (
               <div className="flex gap-2 items-center">
@@ -622,7 +622,7 @@ export default function EmployeeSalary() {
                   }}
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="">{t('salary.selectSalary') || 'Выберите зарплату из истории'}</option>
+                  <option value="">{t('salary.selectSalary')}</option>
                   {salaryHistory.map((sal) => (
                     <option key={sal.id} value={sal.id}>
                       {new Date(sal.period_start).toLocaleDateString()} - {new Date(sal.period_end).toLocaleDateString()} 
@@ -646,7 +646,7 @@ export default function EmployeeSalary() {
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                   >
                     <HiPlus className="w-4 h-4" />
-                    {t('salary.recordPayment') || 'Зарегистрировать выплату'}
+                    {t('salary.recordPayment')}
                   </button>
                 )
               }
@@ -664,8 +664,8 @@ export default function EmployeeSalary() {
               return (
                 <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   {!currentSalary && (!salaryHistory || salaryHistory.length === 0)
-                    ? t('salary.noUnpaidSalary') || 'Нет зарплаты. Сначала рассчитайте зарплату на вкладке "Текущая"'
-                    : t('salary.selectSalary') || 'Выберите зарплату из истории для просмотра выплат'}
+                    ? t('salary.noUnpaidSalary')
+                    : t('salary.selectSalary')}
                 </div>
               )
             }
@@ -695,7 +695,7 @@ export default function EmployeeSalary() {
                         payment.payment_method === 'transfer' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' :
                         'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
-                        {t(`salary.paymentMethod.${payment.payment_method}`) || payment.payment_method}
+                        {t(`salary.paymentMethod.${payment.payment_method}`)}
                       </span>
                     </div>
                     {payment.notes && (
@@ -710,7 +710,7 @@ export default function EmployeeSalary() {
                         payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
                         'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                       }`}>
-                        {t(`salary.status.${payment.status}`) || payment.status}
+                        {t(`salary.status.${payment.status}`)}
                       </span>
                     </div>
                   </div>
@@ -719,7 +719,7 @@ export default function EmployeeSalary() {
             </div>
           ) : (
             <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-              {t('salary.noPayments') || 'Нет выплат'}
+              {t('salary.noPayments')}
             </div>
           )
           })()}
@@ -772,7 +772,7 @@ export default function EmployeeSalary() {
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(salary.payment_status)}`}
                         >
-                          {t(`salary.status.${salary.payment_status}`) || salary.payment_status}
+                          {t(`salary.status.${salary.payment_status}`)}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -783,7 +783,7 @@ export default function EmployeeSalary() {
                           }}
                           className="text-blue-600 hover:text-blue-900"
                         >
-                          {t('common.view' as any) || 'Просмотр'}
+                          {t('common.view' as any)}
                         </button>
                       </td>
                     </tr>
@@ -793,7 +793,7 @@ export default function EmployeeSalary() {
             </div>
           ) : (
             <div className="p-8 text-center text-gray-500">
-              {t('salary.noHistory') || 'Нет истории зарплат'}
+              {t('salary.noHistory')}
             </div>
           )}
         </div>
