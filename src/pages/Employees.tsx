@@ -1,3 +1,4 @@
+import QueryError from '../components/QueryError'
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -53,7 +54,7 @@ export default function Employees() {
   const [currentPage, setCurrentPage] = useState(1)
   const [perPage, setPerPage] = useState(20)
 
-  const { data: employees, isLoading } = useQuery<Employee[]>({
+  const { data: employees, isLoading, isError, refetch } = useQuery<Employee[]>({
     queryKey: ['employees', activeOnly],
     queryFn: async () => {
       const params: any = {}
@@ -139,6 +140,8 @@ export default function Employees() {
       </div>
     )
   }
+
+  if (isError) return <QueryError retry={refetch} />
 
   if (isLoading) {
     return (

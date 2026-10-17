@@ -1,4 +1,8 @@
 export type TranslationKey =
+  | 'common.loadError'
+  | 'common.retry'
+  | 'common.offline'
+
   | 'common.save'
   | 'common.cancel'
   | 'common.delete'
@@ -1491,6 +1495,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
   'common.required_field': { en: 'is a required field', ru: 'обязательное поле', cz: 'je povinné pole' },
   'common.error_saving': { en: 'Error saving', ru: 'Ошибка при сохранении', cz: 'Chyba při ukládání' },
+  'common.loadError': { en: 'Unable to load data', ru: 'Не удалось загрузить данные', cz: 'Data se nepodařilo načíst' },
+  'common.retry': { en: 'Retry', ru: 'Повторить', cz: 'Zkusit znovu' },
+  'common.offline': { en: 'No internet connection', ru: 'Нет подключения к сети', cz: 'Bez připojení k internetu' },
 }
 
 export default translations

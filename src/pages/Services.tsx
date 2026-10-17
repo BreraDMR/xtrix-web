@@ -1,3 +1,4 @@
+import QueryError from '../components/QueryError'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
@@ -33,7 +34,7 @@ interface Service {
   const [perPage, setPerPage] = useState(20)
   const queryClient = useQueryClient()
 
-  const { data: services, isLoading } = useQuery<Service[]>({
+  const { data: services, isLoading, isError, refetch } = useQuery<Service[]>({
     queryKey: ['services'],
     queryFn: async () => {
       const { data } = await api.get('/services/')
@@ -98,6 +99,8 @@ interface Service {
     setEditingId(id)
     setShowForm(true)
   }
+
+  if (isError) return <QueryError retry={refetch} />
 
   if (isLoading) {
     return (

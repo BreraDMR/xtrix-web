@@ -1,3 +1,4 @@
+import QueryError from '../components/QueryError'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { format, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns'
@@ -41,7 +42,7 @@ export default function Visits() {
   const [perPage, setPerPage] = useState(20)
   const queryClient = useQueryClient()
 
-  const { data: rawVisits, isLoading } = useQuery<Visit[]>({
+  const { data: rawVisits, isLoading, isError, refetch } = useQuery<Visit[]>({
     queryKey: ['visits'],
     queryFn: async () => {
       const { data } = await api.get('/visits/')
@@ -134,6 +135,8 @@ export default function Visits() {
     setEditingId(id)
     setShowForm(true)
   }
+
+  if (isError) return <QueryError retry={refetch} />
 
   if (isLoading) {
     return (

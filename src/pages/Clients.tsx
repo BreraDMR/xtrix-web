@@ -1,3 +1,4 @@
+import QueryError from '../components/QueryError'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
@@ -80,7 +81,7 @@ export default function Clients() {
   const [showImportModal, setShowImportModal] = useState(false)
   const queryClient = useQueryClient()
 
-  const { data: clients, isLoading } = useQuery<Client[]>({
+  const { data: clients, isLoading, isError, refetch } = useQuery<Client[]>({
     queryKey: ['clients'],
     queryFn: async () => {
       const { data } = await api.get('/clients/')
@@ -145,6 +146,8 @@ export default function Clients() {
     setEditingId(id)
     setShowForm(true)
   }
+
+  if (isError) return <QueryError retry={refetch} />
 
   if (isLoading) {
     return (

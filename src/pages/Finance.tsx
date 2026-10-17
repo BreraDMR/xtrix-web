@@ -1,3 +1,4 @@
+import QueryError from '../components/QueryError'
 import { useState, FormEvent } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
@@ -50,7 +51,7 @@ export default function Finance() {
   const [showAddExpense, setShowAddExpense] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
 
-  const { data: profitReport, isLoading: isLoadingProfit } = useQuery({
+  const { data: profitReport, isLoading: isLoadingProfit, isError: queryError0, refetch: retryQuery0 } = useQuery({
     queryKey: ['profit-report', dateFrom, dateTo],
     queryFn: async () => {
       const { data } = await api.get('/expenses/reports/profit', {
@@ -63,7 +64,7 @@ export default function Finance() {
     },
   })
 
-  const { data: expensesResponse, isLoading: isLoadingExpenses } = useQuery({
+  const { data: expensesResponse, isLoading: isLoadingExpenses, isError: queryError1, refetch: retryQuery1 } = useQuery({
     queryKey: ['expenses', dateFrom, dateTo, selectedCategory],
     queryFn: async () => {
       const params = new URLSearchParams()
@@ -76,7 +77,7 @@ export default function Finance() {
     },
   })
 
-  const { data: categories } = useQuery({
+  const { data: categories, isError: queryError2, refetch: retryQuery2 } = useQuery({
     queryKey: ['expense-categories'],
     queryFn: async () => {
       const { data } = await api.get('/expenses/categories')
@@ -84,28 +85,16 @@ export default function Finance() {
     },
   })
 
-  const { data: paymentStats, isLoading: isLoadingPayments } = useQuery({
+  const { data: paymentStats, isLoading: isLoadingPayments, isError: queryError3, refetch: retryQuery3 } = useQuery({
     queryKey: ['payment-statistics', dateFrom, dateTo],
     queryFn: async () => {
-      try {
-        const { data } = await api.get('/analytics/payments/statistics', {
-          params: {
-            date_from: dateFrom ? new Date(dateFrom).toISOString() : undefined,
-            date_to: dateTo ? new Date(dateTo + 'T23:59:59').toISOString() : undefined,
-          },
-        })
-        return data
-      } catch (error: any) {
-        return {
-          total_payments: 0,
-          total_count: 0,
-          gateway_payments: { total: 0, count: 0, percentage: 0 },
-          terminal_payments: { total: 0, count: 0, percentage: 0 },
-          physical_card: { total: 0, count: 0, percentage: 0 },
-          virtual_card: { total: 0, count: 0, percentage: 0 },
-          cash_payments: { total: 0, count: 0, percentage: 0 },
-        }
-      }
+      const { data } = await api.get('/analytics/payments/statistics', {
+        params: {
+          date_from: dateFrom ? new Date(dateFrom).toISOString() : undefined,
+          date_to: dateTo ? new Date(dateTo + 'T23:59:59').toISOString() : undefined,
+        },
+      })
+      return data
     },
   })
 
@@ -120,6 +109,8 @@ export default function Finance() {
       queryClient.invalidateQueries({ queryKey: ['profit-report'] })
     },
   })
+
+  if (queryError0 || queryError1 || queryError2 || queryError3) return <QueryError retry={() => { void retryQuery0(); void retryQuery1(); void retryQuery2(); void retryQuery3() }} />
 
   return (
     <div className="animate-fade-in">

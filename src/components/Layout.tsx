@@ -24,6 +24,17 @@ export default function Layout() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [offline, setOffline] = useState(!navigator.onLine)
+  useEffect(() => {
+    const online = () => setOffline(false)
+    const offline = () => setOffline(true)
+    window.addEventListener('online', online)
+    window.addEventListener('offline', offline)
+    return () => {
+      window.removeEventListener('online', online)
+      window.removeEventListener('offline', offline)
+    }
+  }, [])
   useSyncUiLanguage()
 
   useEffect(() => {
@@ -253,6 +264,7 @@ export default function Layout() {
 
         {}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 animate-fade-in">
+          {offline && <div role="status" className="mb-4 rounded bg-amber-100 p-3 text-amber-900">{t('common.offline')}</div>}
           <Outlet />
         </main>
       </div>

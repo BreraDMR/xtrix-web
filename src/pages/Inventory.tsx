@@ -1,3 +1,4 @@
+import QueryError from '../components/QueryError'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
@@ -38,7 +39,7 @@ export default function Inventory() {
   const [addQuantityProduct, setAddQuantityProduct] = useState<Product | null>(null)
   const [addQuantityValue, setAddQuantityValue] = useState('')
 
-  const { data: productsResponse, isLoading } = useQuery({
+  const { data: productsResponse, isLoading, isError, refetch } = useQuery({
     queryKey: ['products', searchTerm, lowStockOnly],
     queryFn: async () => {
       const params = new URLSearchParams()
@@ -140,6 +141,8 @@ export default function Inventory() {
       setAddQuantityValue('')
     },
   })
+
+  if (isError) return <QueryError retry={refetch} />
 
   if (isLoading) {
     return <LoadingSpinner />

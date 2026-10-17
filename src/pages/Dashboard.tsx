@@ -1,3 +1,4 @@
+import QueryError from '../components/QueryError'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -13,7 +14,7 @@ export default function Dashboard() {
   const { t } = useTranslation()
   const currency = useBusinessCurrency()
   
-  const { data: profitData, isLoading: isLoadingProfit } = useQuery({
+  const { data: profitData, isLoading: isLoadingProfit, isError: queryError0, refetch: retryQuery0 } = useQuery({
     queryKey: ['profit-current-month'],
     queryFn: async () => {
       const token = useAuthStore.getState().token || localStorage.getItem('auth_token')
@@ -28,45 +29,27 @@ export default function Dashboard() {
     enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
   })
 
-  const { data: visitStats, isLoading: isLoadingVisitStats } = useQuery({
+  const { data: visitStats, isLoading: isLoadingVisitStats, isError: queryError1, refetch: retryQuery1 } = useQuery({
     queryKey: ['visits-statistics'],
     queryFn: async () => {
-      try {
-        const { data } = await api.get('/analytics/visits/statistics')
-        return data
-      } catch (error: any) {
-        return {
-          total_visits: 0,
-          visits_by_status: {
-            completed: 0,
-            planned: 0,
-            in_progress: 0,
-            cancelled: 0,
-          },
-        }
-      }
+      const { data } = await api.get('/analytics/visits/statistics')
+      return data
     },
     retry: false,
     enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
   })
 
-  const { data: clientStats, isLoading: isLoadingClientStats } = useQuery({
+  const { data: clientStats, isLoading: isLoadingClientStats, isError: queryError2, refetch: retryQuery2 } = useQuery({
     queryKey: ['clients-statistics'],
     queryFn: async () => {
-      try {
-        const { data } = await api.get('/analytics/clients/statistics')
-        return data
-      } catch (error: any) {
-        return {
-          total_clients: 0,
-          new_clients: 0,
-          average_spending: 0,
-        }
-      }
+      const { data } = await api.get('/analytics/clients/statistics')
+      return data
     },
     retry: false,
     enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
   })
+
+  if (queryError0 || queryError1 || queryError2) return <QueryError retry={() => { void retryQuery0(); void retryQuery1(); void retryQuery2() }} />
 
   return (
     <div className="animate-fade-in">
