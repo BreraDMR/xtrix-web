@@ -18,6 +18,13 @@ describe('API errors', () => {
     expect(apiValidationErrors(err)).toEqual({ contact_email: 'value is not a valid email address' })
   })
 
+  it('strips backend Value error prefixes from messages and field errors', () => {
+    const err = apiError(422, 'Value error, Invalid input', { validation_errors: [{ field: 'body -> price', message: 'Value error, Price must be positive' }] })
+    expect(apiErrorMessage(err, 'fallback')).toBe('price: Price must be positive')
+    expect(apiValidationErrors(err)).toEqual({ price: 'Price must be positive' })
+    expect(apiErrorMessage(apiError(400, 'Value error, Invalid input'), 'fallback')).toBe('Invalid input')
+  })
+
   it('reads a plain string error from the rate limiter', () => {
     const response = apiError(429, 'unused').response!
     const err = new AxiosError('Rate limit', '429', response.config, null, {

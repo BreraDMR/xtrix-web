@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
+import FormError from './FormError'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import type { ClientOut, Schema } from '../api/types'
 import { useAuthStore } from '../store/authStore'
@@ -42,6 +43,9 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const { user: currentUser } = useAuthStore()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState('')
+  const [savedWithLoyaltyError, setSavedWithLoyaltyError] = useState(false)
+  const visitSaved = useRef(false)
   const [clients, setClients] = useState<ClientOut[]>([])
   const [services, setServices] = useState<any[]>([])
   const [availableSpecialists, setAvailableSpecialists] = useState<any[]>([])
@@ -316,9 +320,18 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (submitting.current) return
+    if (submitting.current || visitSaved.current) return
+    setFormError('')
+    if (formData.date_end && (!Number.isFinite(new Date(formData.date_end).getTime()) || new Date(formData.date_end) <= new Date(formData.date_start))) {
+      setFormError(t('validation.visitEnd'))
+      return
+    }
+    if (formData.price !== undefined && (!Number.isFinite(formData.price) || formData.price < 0)) {
+      setFormError(t('validation.price'))
+      return
+    }
     if (!formData.client_id) {
-      alert(t('visits.selectClient'))
+      setFormError(t('visits.selectClient'))
       return
     }
     submitting.current = true
@@ -340,6 +353,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         savedVisitId = data.id
       }
       
+      visitSaved.current = true
       if (currentClientId && (pointsToUse > 0 || cashbackToUse > 0)) {
         try {
           await api.post('/loyalty/use-points', {
@@ -349,21 +363,34 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           }, { params: { client_id: currentClientId } })
         } catch (error: any) {
           console.error('Error using loyalty points:', error)
-          alert(apiErrorMessage(error, t('visits.loyaltyError')))
+          setFormError(apiErrorMessage(error, t('visits.loyaltyError')))
+          setSavedWithLoyaltyError(true)
+          return
         }
       }
       
       onSuccess()
     } catch (error: any) {
-      alert(apiErrorMessage(error, t('visits.saveError')))
+      setFormError(apiErrorMessage(error, t('visits.saveError')))
     } finally {
       submitting.current = false
       setLoading(false)
     }
   }
 
+  if (savedWithLoyaltyError) {
+    return (
+      <div className="space-y-4">
+        <p>{t('visits.savedLoyaltyWarning')}</p>
+        <div role="alert"><FormError message={formError} /></div>
+        <button type="button" onClick={onSuccess} className="px-4 py-2 bg-primary-600 text-white rounded-lg">{t('common.close')}</button>
+      </div>
+    )
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {formError && <div role="alert"><FormError message={formError} /></div>}
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.client')} *</label>
         <div className="space-y-2">
@@ -561,8 +588,9 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           <label className="block text-sm font-medium mb-1">{t('visits.price')}</label>
           <input
             type="number"
+            min="0"
             step="0.01"
-            value={formData.price || ''}
+            value={formData.price ?? ''}
             onChange={(e) =>
               setFormData({ ...formData, price: e.target.value ? parseFloat(e.target.value) : undefined })
             }

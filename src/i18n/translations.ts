@@ -1,4 +1,9 @@
 export type TranslationKey =
+  | 'visits.savedLoyaltyWarning'
+  | 'validation.visitEnd'
+  | 'validation.commission'
+  | 'validation.salary'
+  | 'validation.price'
   | 'pagination.previous'
   | 'pagination.next'
   | 'pagination.range'
@@ -808,6 +813,12 @@ export type TranslationKey =
   | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  "validation.price": {"en": "Price must be zero or greater", "ru": "Цена должна быть не меньше нуля", "cz": "Cena musí být nezáporná"},
+  "validation.salary": {"en": "Salary must be between 0 and 100000000", "ru": "Зарплата должна быть от 0 до 100000000", "cz": "Mzda musí být v rozmezí 0 až 100000000"},
+  "validation.commission": {"en": "Commission must be between 0 and 100", "ru": "Комиссия должна быть от 0 до 100", "cz": "Provize musí být v rozmezí 0 až 100"},
+  "validation.visitEnd": {"en": "End time must be after start time", "ru": "Конец визита должен быть позже начала", "cz": "Čas konce musí být pozdější než čas začátku"},
+  "visits.savedLoyaltyWarning": {"en": "Visit saved. Loyalty points could not be applied. Check the balance before trying again from the saved visit.", "ru": "Визит сохранён, но списать бонусы не удалось. Проверьте баланс перед повторной попыткой в сохранённом визите.", "cz": "Návštěva byla uložena, ale věrnostní body se nepodařilo uplatnit. Před dalším pokusem v uložené návštěvě zkontrolujte zůstatek."},
+
   "pagination.previous": {"en": "Previous", "ru": "Назад", "cz": "Předchozí"},
   "pagination.next": {"en": "Next", "ru": "Далее", "cz": "Další"},
   "pagination.range": {"en": "Showing {start}–{end} of {total} results", "ru": "Показано {start}–{end} из {total}", "cz": "Zobrazeno {start}–{end} z {total} záznamů"},

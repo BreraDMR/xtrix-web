@@ -23,14 +23,13 @@ describe('VisitForm', () => {
   })
 
   it('books the visit for the current user and shows the 409 reason', async () => {
-    const alert = vi.spyOn(window, 'alert').mockImplementation(() => {})
     vi.mocked(api.post).mockRejectedValue(apiError(409, 'This time is already booked for the specialist'))
     renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
 
     await pickClient()
     await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
 
-    await waitFor(() => expect(alert).toHaveBeenCalledWith('This time is already booked for the specialist'))
+    expect(await screen.findByRole('alert')).toHaveTextContent('This time is already booked for the specialist')
     expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({ client_id: 3, specialist_id: 7 }))
   })
 

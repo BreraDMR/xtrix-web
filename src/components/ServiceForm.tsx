@@ -1,6 +1,7 @@
 import { useTranslation } from '../hooks/useTranslation'
 import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
+import FormError from './FormError'
 import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
@@ -33,6 +34,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
   const { user: currentUser } = useAuthStore()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState('')
   const [availableSpecialists, setAvailableSpecialists] = useState<Specialist[]>([])
   const [loadingSpecialists, setLoadingSpecialists] = useState(false)
   const [formData, setFormData] = useState<ServiceData>({
@@ -100,6 +102,11 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (submitting.current) return
+    setFormError('')
+    if (!Number.isFinite(formData.price) || formData.price < 0) {
+      setFormError(t('validation.price'))
+      return
+    }
     submitting.current = true
     setLoading(true)
 
@@ -116,7 +123,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       }
       onSuccess()
     } catch (error: any) {
-      alert(apiErrorMessage(error, t('serviceForm.saveError')))
+      setFormError(apiErrorMessage(error, t('serviceForm.saveError')))
     } finally {
       submitting.current = false
       setLoading(false)
@@ -125,6 +132,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {formError && <div role="alert"><FormError message={formError} /></div>}
       <div>
         <label className="block text-sm font-medium mb-1">{t('serviceForm.name')} *</label>
         <input

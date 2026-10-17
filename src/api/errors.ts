@@ -17,6 +17,10 @@ interface ApiErrorBody {
   detail?: unknown
 }
 
+function cleanMessage(message: string): string {
+  return message.replace(/^Value error,\s*/i, '')
+}
+
 function errorBody(err: unknown): ApiErrorBody | undefined {
   if (!axios.isAxiosError(err)) return undefined
   const data = err.response?.data
@@ -38,17 +42,17 @@ export function apiValidationErrors(err: unknown): Record<string, string> {
   const error = errorBody(err)?.error
   if (typeof error === 'string') return errors
   for (const item of error?.detail?.validation_errors ?? []) {
-    if (item.field && item.message) errors[fieldName(item.field)] = item.message
+    if (item.field && item.message) errors[fieldName(item.field)] = cleanMessage(item.message)
   }
   return errors
 }
 
 export function apiErrorMessage(err: unknown, fallback: string): string {
   const body = errorBody(err)
-  if (typeof body?.error === 'string') return body.error
+  if (typeof body?.error === 'string') return cleanMessage(body.error)
   const first = body?.error?.detail?.validation_errors?.[0]
-  if (first) return `${fieldName(first.field)}: ${first.message}`
-  if (body?.error?.message) return body.error.message
-  if (typeof body?.detail === 'string') return body.detail
+  if (first) return `${fieldName(first.field)}: ${cleanMessage(first.message)}`
+  if (body?.error?.message) return cleanMessage(body.error.message)
+  if (typeof body?.detail === 'string') return cleanMessage(body.detail)
   return fallback
 }

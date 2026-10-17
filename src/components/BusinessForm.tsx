@@ -1,6 +1,8 @@
 import { useTranslation } from '../hooks/useTranslation'
 import { useState, useEffect } from 'react'
 import api from '../api/client'
+import FormError from './FormError'
+import { validateEmail, validatePhone } from '../utils/validation'
 import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useLabels } from '../i18n/labels'
@@ -29,6 +31,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
   const { t } = useTranslation()
   const labels = useLabels()
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState('')
   const [formData, setFormData] = useState<BusinessData>({
     name: '',
     business_type: 'salon',
@@ -61,6 +64,15 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setFormError('')
+    if (formData.email && validateEmail(formData.email)) {
+      setFormError(t('clientForm.invalidEmail'))
+      return
+    }
+    if (formData.phone && validatePhone(formData.phone)) {
+      setFormError(t('clientForm.invalidPhone'))
+      return
+    }
     setLoading(true)
 
     try {
@@ -80,7 +92,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
     } catch (error: any) {
       console.error('Error saving business:', error)
       const errorMessage = apiErrorMessage(error, t('business.saveError'))
-      alert(errorMessage)
+      setFormError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -88,6 +100,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {formError && <div role="alert"><FormError message={formError} /></div>}
       <div>
         <label className="block text-sm font-medium mb-1">{t('business.name')} *</label>
         <input

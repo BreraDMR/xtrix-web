@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
+import FormError from './FormError'
+import { validateEmail, validatePhone } from '../utils/validation'
 import { apiErrorMessage } from '../api/errors'
 import { useTranslation } from '../hooks/useTranslation'
 import SpecialistTypeSelector from './SpecialistTypeSelector'
@@ -48,6 +50,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
   const { t } = useTranslation()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState('')
   const [employeeName, setEmployeeName] = useState('')
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null)
   const [passwordCopied, setPasswordCopied] = useState(false)
@@ -93,13 +96,30 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
     if (submitting.current) return
     if (generatedPassword) return
 
+    setFormError('')
+    if (formData.base_salary !== undefined && (!Number.isFinite(formData.base_salary) || formData.base_salary < 0 || formData.base_salary > 1e8)) {
+      setFormError(t('validation.salary'))
+      return
+    }
+    if (formData.commission_percentage !== undefined && (!Number.isFinite(formData.commission_percentage) || formData.commission_percentage < 0 || formData.commission_percentage > 100)) {
+      setFormError(t('validation.commission'))
+      return
+    }
     if (!employeeId) {
+      if (newUserData.email && validateEmail(newUserData.email)) {
+        setFormError(t('clientForm.invalidEmail'))
+        return
+      }
+      if (newUserData.phone && validatePhone(newUserData.phone)) {
+        setFormError(t('clientForm.invalidPhone'))
+        return
+      }
       if (!newUserData.full_name.trim()) {
-        alert(t('clientForm.nameRequired'))
+        setFormError(t('clientForm.nameRequired'))
         return
       }
       if (!newUserData.email && !newUserData.phone) {
-        alert(t('register.contactRequired'))
+        setFormError(t('register.contactRequired'))
         return
       }
 
@@ -112,15 +132,15 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
           email: newUserData.email.trim() || undefined,
           specialist_type: newUserData.specialist_type || undefined,
           position: formData.position || undefined,
-          commission_percentage: formData.commission_percentage || null,
-          base_salary: formData.base_salary || null,
+          commission_percentage: formData.commission_percentage ?? null,
+          base_salary: formData.base_salary ?? null,
           permissions: formData.permissions,
         }
         const { data } = await api.post<Schema<'EmployeeCreateResponse'>>('/employees/create-with-user', payload)
         setGeneratedPassword(data.generated_password)
       } catch (error) {
         console.error('Failed to create employee with user:', error)
-        alert(apiErrorMessage(error, t('common.error')))
+        setFormError(apiErrorMessage(error, t('common.error')))
       } finally {
         submitting.current = false
         setLoading(false)
@@ -134,14 +154,14 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       const payload: Schema<'EmployeeUpdate'> = {
         position: formData.position,
         permissions: formData.permissions,
-        commission_percentage: formData.commission_percentage || null,
-        base_salary: formData.base_salary || null,
+        commission_percentage: formData.commission_percentage ?? null,
+        base_salary: formData.base_salary ?? null,
       }
       await api.put(`/employees/${employeeId}`, payload)
       onSuccess()
     } catch (error) {
       console.error('Failed to save employee:', error)
-      alert(apiErrorMessage(error, t('common.error')))
+      setFormError(apiErrorMessage(error, t('common.error')))
     } finally {
       submitting.current = false
       setLoading(false)
@@ -207,6 +227,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {formError && <div role="alert"><FormError message={formError} /></div>}
       {!employeeId ? (
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
@@ -298,7 +319,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
             min="0"
             max="100"
             step="0.1"
-            value={formData.commission_percentage || ''}
+            value={formData.commission_percentage ?? ''}
             onChange={(e) =>
               setFormData({
                 ...formData,
@@ -316,8 +337,9 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
           <input
             type="number"
             min="0"
+            max="100000000"
             step="0.01"
-            value={formData.base_salary || ''}
+            value={formData.base_salary ?? ''}
             onChange={(e) =>
               setFormData({
                 ...formData,
