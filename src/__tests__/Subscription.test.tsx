@@ -51,4 +51,22 @@ describe('Subscription', () => {
     expect(screen.getAllByText('Pending Cancellation').length).toBeGreaterThan(0)
     expect(screen.queryByText('succeeded')).not.toBeInTheDocument()
   })
+
+  it('lets a specialist on the signup trial buy a paid plan', async () => {
+    vi.mocked(api.get).mockImplementation(
+      routes({
+        '/subscriptions/me': { id: 2, user_id: 7, plan_id: 8, status: 'active', is_trial: true, cancel_at_period_end: false, created_at: '2026-10-17T10:00:00', trial_end: '2026-10-31T10:00:00' },
+        '/subscriptions/trial/status': { is_trial: true, trial_end: '2026-10-31T10:00:00' },
+        '/subscriptions/plans?active_only=true': [plan],
+        '/subscriptions/history': [],
+      }) as any
+    )
+    vi.mocked(api.post).mockResolvedValue({ data: { url: '' } })
+    renderWithProviders(<Subscription />)
+
+    const subscribe = await screen.findByRole('button', { name: /^subscribe$/i })
+    expect(subscribe).toBeEnabled()
+    await userEvent.click(subscribe)
+    expect(api.post).toHaveBeenCalledWith('/subscriptions/checkout/create-session', null, { params: { plan_id: 1 } })
+  })
 })

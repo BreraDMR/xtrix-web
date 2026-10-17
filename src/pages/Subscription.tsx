@@ -213,6 +213,11 @@ export default function Subscription() {
 
   const isEmployee = user?.role === 'specialist' && user?.employer_id
 
+  // every new specialist starts on an active trial subscription - that must not lock the
+  // paid plans, only the plan you're actually paying for counts as current
+  const isCurrentPlan = (plan: SubscriptionPlan) =>
+    subscription?.status === 'active' && !subscription.is_trial && subscription.plan_id === plan.id
+
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return '-'
     return new Date(dateString).toLocaleDateString()
@@ -394,16 +399,14 @@ export default function Subscription() {
                 </div>
                 <button
                   onClick={() => handleSubscribe(plan.id)}
-                  disabled={loading || subscription?.status === 'active'}
+                  disabled={loading || isCurrentPlan(plan)}
                   className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
-                    subscription?.status === 'active'
+                    isCurrentPlan(plan)
                       ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                       : 'bg-primary-600 text-white hover:bg-primary-700'
                   }`}
                 >
-                    {subscription?.status === 'active'
-                    ? t('subscription.currentPlan')
-                    : t('subscription.subscribe')}
+                  {isCurrentPlan(plan) ? t('subscription.currentPlan') : t('subscription.subscribe')}
                 </button>
               </div>
             ))}
