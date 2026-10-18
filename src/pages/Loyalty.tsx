@@ -7,6 +7,8 @@ import { apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LoyaltyAnalytics from './LoyaltyAnalytics'
 import { showDay } from '../utils/dates'
+import FormError from '../components/FormError'
+import { apiErrorMessage } from '../api/errors'
 
 type TabType = 'program' | 'levels' | 'promotions' | 'transactions' | 'analytics'
 
@@ -329,6 +331,8 @@ export default function Loyalty() {
   })
 
   const [showProgramForm, setShowProgramForm] = useState(false)
+  const [programError, setProgramError] = useState('')
+  const [promotionError, setPromotionError] = useState('')
   const [showLevelForm, setShowLevelForm] = useState(false)
   const [showPromotionForm, setShowPromotionForm] = useState(false)
   const [editingLevel, setEditingLevel] = useState<LoyaltyLevel | null>(null)
@@ -338,8 +342,14 @@ export default function Loyalty() {
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null)
   const [transactionType, setTransactionType] = useState<string | null>(null)
   
+  // a fresh form shouldn't show the last attempt's error
+  useEffect(() => {
+    if (showProgramForm) setProgramError('')
+  }, [showProgramForm])
+
   useEffect(() => {
     if (showPromotionForm) {
+      setPromotionError('')
       if (editingPromotion) {
         setPromotionType(editingPromotion.promotion_type)
       } else {
@@ -350,6 +360,7 @@ export default function Loyalty() {
 
   const handleCreateProgram = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setProgramError('')
     const formData = new FormData(e.currentTarget)
     
     let businessId = user?.business_id
@@ -357,7 +368,7 @@ export default function Loyalty() {
       businessId = userBusiness.id
     }
     if (!businessId) {
-      alert('Business ID not found. Please ensure you have a business assigned.')
+      setProgramError(t('loyalty.businessRequired'))
       return
     }
     
@@ -381,12 +392,13 @@ export default function Loyalty() {
       await programMutation.mutateAsync(programData)
       setShowProgramForm(false)
     } catch (error) {
-      console.error('Error creating program:', error)
+      setProgramError(apiErrorMessage(error, t('common.error_saving')))
     }
   }
 
   const handleUpdateProgram = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setProgramError('')
     const formData = new FormData(e.currentTarget)
     const programData: Partial<LoyaltyProgram> = {
       program_type: formData.get('program_type') as LoyaltyProgram['program_type'],
@@ -407,7 +419,7 @@ export default function Loyalty() {
       await programMutation.mutateAsync(programData)
       setShowProgramForm(false)
     } catch (error) {
-      console.error('Error updating program:', error)
+      setProgramError(apiErrorMessage(error, t('common.error_saving')))
     }
   }
 
@@ -544,6 +556,7 @@ export default function Loyalty() {
               <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">{program ? t('loyalty.edit_program') : t('loyalty.create_program')}</h3>
                 <form onSubmit={program ? handleUpdateProgram : handleCreateProgram}>
+                  {programError && <div role="alert" className="mb-4"><FormError message={programError} /></div>}
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.program_type')}</label>
@@ -963,6 +976,7 @@ export default function Loyalty() {
                 <form
                   onSubmit={async (e) => {
                     e.preventDefault()
+                    setPromotionError('')
                     const formData = new FormData(e.currentTarget)
                     const promotionData: Partial<LoyaltyPromotion> = {
                       program_id: program.id,
@@ -998,11 +1012,11 @@ export default function Loyalty() {
                       setEditingPromotion(null)
                       setPromotionType('double_points')
                     } catch (error) {
-                      console.error('Error saving promotion:', error)
-                      alert('Failed to save promotion')
+                      setPromotionError(apiErrorMessage(error, t('common.error_saving')))
                     }
                   }}
                 >
+                  {promotionError && <div role="alert" className="mb-4"><FormError message={promotionError} /></div>}
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.promotion_name')} *</label>
