@@ -1,0 +1,302 @@
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useQueryClient, type UseQueryResult } from '@tanstack/react-query'
+import { HiOutlinePaperAirplane, HiOutlineSparkles, HiOutlineX } from 'react-icons/hi'
+import api from '../../api/client'
+import {
+  apiErrorCode, apiErrorMessage, apiErrorStatus, apiIsNetworkError, apiRetryAfter, apiValidationCodes,
+} from '../../api/errors'
+import type { AssistantExecuteOut, AssistantPlanOut, AssistantStatusOut } from '../../api/types'
+import { assistantT, type AssistantGender, type AssistantKey } from '../../i18n/assistant'
+import { useLocaleStore } from '../../store/localeStore'
+import { ASSISTANT_STATUS_KEY, formatDay, refreshAfterAssistant } from '../../hooks/useAssistant'
+import { useCountdown } from '../../hooks/useCountdown'
+import PlanCard from './PlanCard'
+import { confirmable, type PlanEntry, type PlanPhase, type Say } from './plan'
+
+const MAX_REQUEST_LENGTH = 2000
+// when a 503 ai_busy somehow comes without Retry-After
+const DEFAULT_BUSY_SECONDS = 10
+const AUDIO_CODES: AssistantKey[] = ['audio_type_not_supported', 'audio_empty', 'audio_too_large']
+
+type Entry =
+  | { id: number; kind: 'user'; text: string }
+  | { id: number; kind: 'notice'; tone: 'info' | 'error'; text: string }
+  | PlanEntry
+type NewEntry = Entry extends infer E ? (E extends Entry ? Omit<E, 'id'> : never) : never
+
+interface AssistantPanelProps {
+  open: boolean
+  onClose: () => void
+  status: UseQueryResult<AssistantStatusOut>
+  persona: { name: string; gender: AssistantGender }
+}
+
+export default function AssistantPanel({ open, onClose, status, persona }: AssistantPanelProps) {
+  const locale = useLocaleStore((state) => state.locale)
+  const queryClient = useQueryClient()
+  const say: Say = useCallback(
+    (key, options = {}) => assistantT(locale, key, { ...options, name: persona.name, gender: persona.gender }),
+    [locale, persona.name, persona.gender],
+  )
+
+  const [entries, setEntries] = useState<Entry[]>([])
+  const [text, setText] = useState('')
+  const [sending, setSending] = useState(false)
+  const [busy, setBusy] = useState<{ until: number; fromModel: boolean } | null>(null)
+  const [limitUntil, setLimitUntil] = useState<number | null>(null)
+  const [notConfigured, setNotConfigured] = useState(false)
+  const nextId = useRef(1)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const logRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+  const hintId = useId()
+
+  const busySeconds = useCountdown(busy?.until ?? null)
+  const data = status.data
+  const off = data?.enabled === false || notConfigured
+  const ready = !!data && !off
+  const limitReached = (!!data && data.used >= data.limit) || (limitUntil !== null && Date.now() < limitUntil)
+  const resetsAt = data?.resets_at ?? (limitUntil ? new Date(limitUntil).toISOString() : null)
+  const canSend = !!text.trim() && !sending && busySeconds === 0 && !limitReached
+
+  const add = useCallback((entry: NewEntry) => {
+    const id = nextId.current++
+    setEntries((prev) => [...prev, { ...entry, id } as Entry])
+  }, [])
+  const notice = useCallback((message: string, tone: 'info' | 'error' = 'error') => add({ kind: 'notice', tone, text: message }), [add])
+  const setPhase = useCallback((id: number, phase: PlanPhase, result?: AssistantExecuteOut) => {
+    setEntries((prev) => prev.map((e) => (e.kind === 'plan' && e.id === id ? { ...e, phase, ...(result ? { result } : {}) } : e)))
+  }, [])
+
+  // focus goes in when the panel opens (to the input once there is one)
+  useEffect(() => {
+    if (!open) return
+    if (ready) inputRef.current?.focus()
+    else closeRef.current?.focus()
+  }, [open, ready])
+
+  useEffect(() => {
+    const log = logRef.current
+    if (log) log.scrollTop = log.scrollHeight
+  }, [entries, sending])
+
+  const handleError = useCallback((err: unknown) => {
+    const code = apiErrorCode(err)
+    const wait = apiRetryAfter(err)
+    if (code === 'ai_limit_reached') {
+      setLimitUntil(Date.now() + (wait ?? 3600) * 1000)
+      queryClient.invalidateQueries({ queryKey: ASSISTANT_STATUS_KEY })
+      return
+    }
+    if (code === 'ai_busy') {
+      setBusy({ until: Date.now() + (wait ?? DEFAULT_BUSY_SECONDS) * 1000, fromModel: true })
+      return
+    }
+    if (code === 'ai_not_configured') {
+      setNotConfigured(true)
+      queryClient.invalidateQueries({ queryKey: ASSISTANT_STATUS_KEY })
+      return
+    }
+    if (code === 'ai_unavailable') return notice(say('unavailable'))
+    if (apiIsNetworkError(err)) return notice(say('networkError'))
+    if (apiErrorStatus(err) === 429 && wait) setBusy({ until: Date.now() + wait * 1000, fromModel: false })
+    const audio = AUDIO_CODES.find((c) => apiValidationCodes(err).includes(c))
+    notice(audio ? say(audio) : apiErrorMessage(err, say('requestFailed')))
+  }, [notice, queryClient, say])
+
+  const send = async () => {
+    const typed = text.trim()
+    if (!canSend) return
+    // the model has no memory: an answer to its questions goes out together with the request it asked about
+    const lastPlan = [...entries].reverse().find((e): e is PlanEntry => e.kind === 'plan')
+    const asking = lastPlan && lastPlan.phase === 'open' && lastPlan.plan.questions.length > 0 ? lastPlan : null
+    const request = (asking ? `${asking.request}\n${typed}` : typed).slice(0, MAX_REQUEST_LENGTH)
+    add({ kind: 'user', text: typed })
+    setText('')
+    setSending(true)
+    try {
+      const { data: plan } = await api.post<AssistantPlanOut>('/assistant/plan', { text: request, locale })
+      const id = nextId.current++
+      setEntries((prev) => {
+        const older = prev.map((e) => (e.kind === 'plan' && e.phase === 'open'
+          ? { ...e, phase: (confirmable(e.plan) ? 'replaced' : 'answered') as PlanPhase } : e))
+        if (!plan.actions.length && !plan.questions.length) {
+          return [...older, { id, kind: 'notice', tone: 'info', text: plan.summary || say('notUnderstood') }]
+        }
+        return [...older, { id, kind: 'plan', plan, request, phase: 'open' }]
+      })
+      queryClient.invalidateQueries({ queryKey: ASSISTANT_STATUS_KEY })
+    } catch (err) {
+      // give the text back so it can be sent again, unless something new was typed meanwhile
+      setText((current) => current || typed)
+      handleError(err)
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const confirm = useCallback(async (id: number) => {
+    const entry = entries.find((e): e is PlanEntry => e.kind === 'plan' && e.id === id)
+    if (!entry || entry.phase !== 'open') return
+    setPhase(id, 'running')
+    try {
+      const { data: result } = await api.post<AssistantExecuteOut>('/assistant/execute', { plan_id: entry.plan.plan_id })
+      setPhase(id, 'done', result)
+      refreshAfterAssistant(queryClient)
+    } catch (err) {
+      if (apiErrorCode(err) === 'plan_not_found') {
+        setPhase(id, 'expired')
+        return
+      }
+      setPhase(id, 'open')
+      handleError(err)
+    }
+  }, [entries, handleError, queryClient, setPhase])
+
+  const cancel = useCallback((id: number) => setPhase(id, 'cancelled'), [setPhase])
+  const expire = useCallback((id: number) => setPhase(id, 'expired'), [setPhase])
+
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.stopPropagation()
+      onClose()
+    }
+  }
+
+  const onInputKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+      event.preventDefault()
+      void send()
+    }
+  }
+
+  return (
+    <div
+      role="dialog"
+      aria-labelledby={titleId}
+      hidden={!open}
+      onKeyDown={onKeyDown}
+      className={open
+        ? 'fixed inset-0 z-[60] flex flex-col bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[400px] sm:border-l sm:border-gray-200 sm:shadow-2xl dark:sm:border-gray-700'
+        : 'hidden'}
+    >
+      <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">
+          <HiOutlineSparkles className="h-5 w-5" aria-hidden="true" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 id={titleId} className="truncate text-base font-semibold">{persona.name}</h2>
+          {data && <p className="text-xs text-gray-500 dark:text-gray-400">{say('usage', { used: data.used, limit: data.limit })}</p>}
+        </div>
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          aria-label={say('close')}
+          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-gray-300 dark:hover:bg-gray-700"
+        >
+          <HiOutlineX className="h-5 w-5" aria-hidden="true" />
+        </button>
+      </div>
+
+      {status.isError && !data ? (
+        <div role="alert" className="m-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
+          <p>{say('statusError')}</p>
+          <button type="button" onClick={() => void status.refetch()} className="mt-3 rounded border border-red-300 px-3 py-1.5">
+            {say('retry')}
+          </button>
+        </div>
+      ) : !data ? (
+        <div className="flex flex-1 items-center justify-center" aria-busy="true">
+          <span className="h-8 w-8 animate-spin rounded-full border-2 border-purple-200 border-t-purple-600" />
+        </div>
+      ) : off ? (
+        <p className="m-4 rounded-lg bg-gray-50 p-4 text-sm text-gray-700 dark:bg-gray-900/40 dark:text-gray-300">{say('notConfigured')}</p>
+      ) : (
+        <>
+          <div
+            ref={logRef}
+            role="log"
+            aria-live="polite"
+            aria-label={persona.name}
+            className="flex-1 space-y-3 overflow-y-auto bg-gray-50 p-4 dark:bg-gray-900/30"
+          >
+            {entries.length === 0 && <p className="text-center text-sm text-gray-500 dark:text-gray-400">{say('ready')}</p>}
+            {entries.map((entry) => {
+              if (entry.kind === 'user') {
+                return (
+                  <div key={entry.id} className="flex justify-end">
+                    <p className="max-w-[85%] whitespace-pre-wrap break-words rounded-lg bg-purple-600 px-3 py-2 text-sm text-white">
+                      <span className="sr-only">{say('you')}: </span>
+                      {entry.text}
+                    </p>
+                  </div>
+                )
+              }
+              if (entry.kind === 'notice') {
+                return (
+                  <p
+                    key={entry.id}
+                    role={entry.tone === 'error' ? 'alert' : undefined}
+                    className={entry.tone === 'error'
+                      ? 'rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800 dark:bg-red-900/30 dark:text-red-200'
+                      : 'max-w-[85%] rounded-lg bg-white px-3 py-2 text-sm text-gray-800 shadow-sm dark:bg-gray-800 dark:text-gray-100'}
+                  >
+                    {entry.text}
+                  </p>
+                )
+              }
+              return (
+                <PlanCard key={entry.id} entry={entry} locale={locale} say={say} onConfirm={confirm} onCancel={cancel} onExpire={expire} />
+              )
+            })}
+            {sending && <p className="text-sm text-gray-500 dark:text-gray-400">{say('thinking')}</p>}
+          </div>
+
+          <form
+            onSubmit={(event) => {
+              event.preventDefault()
+              void send()
+            }}
+            className="border-t border-gray-200 p-3 dark:border-gray-700"
+          >
+            {limitReached && resetsAt && (
+              <p role="status" className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-900/30 dark:text-amber-200">
+                {say('limitReachedUntil', { date: formatDay(resetsAt, locale) })}
+              </p>
+            )}
+            {busy?.fromModel && busySeconds > 0 && (
+              <p role="status" className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-900/30 dark:text-amber-200">
+                {say('busy', { seconds: busySeconds })}
+              </p>
+            )}
+            <div className="flex items-end gap-2">
+              <textarea
+                ref={inputRef}
+                value={text}
+                onChange={(event) => setText(event.target.value)}
+                onKeyDown={onInputKeyDown}
+                aria-label={say('inputPlaceholder')}
+                aria-describedby={hintId}
+                placeholder={say('inputPlaceholder')}
+                maxLength={MAX_REQUEST_LENGTH}
+                rows={2}
+                className="min-h-[44px] min-w-0 flex-1 resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <button
+                type="submit"
+                disabled={!canSend}
+                aria-label={say('send')}
+                className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-purple-600 text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <HiOutlinePaperAirplane className="h-5 w-5 rotate-90" aria-hidden="true" />
+              </button>
+            </div>
+            <p id={hintId} className="mt-1 hidden text-xs text-gray-500 dark:text-gray-400 sm:block">{say('keyboardHint')}</p>
+          </form>
+        </>
+      )}
+    </div>
+  )
+}

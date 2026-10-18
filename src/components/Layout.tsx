@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/authStore'
 import { signOut } from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
 import { useSyncUiLanguage } from '../hooks/useUiLanguage'
+import AssistantLauncher from './assistant/AssistantLauncher'
 import { 
   HiOutlineViewGrid, 
   HiOutlineUsers, 
@@ -248,6 +249,7 @@ export default function Layout() {
 
           <div className="flex-1"></div>
           <div className="flex items-center space-x-2 sm:space-x-4">
+            <AssistantLauncher />
             <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">
               <div className="w-8 h-8 bg-primary-600 dark:bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                 {user?.full_name?.charAt(0).toUpperCase() || 'U'}
