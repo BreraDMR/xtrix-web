@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
+import { apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LoyaltyAnalytics from './LoyaltyAnalytics'
 import { showDay } from '../utils/dates'
@@ -190,8 +191,8 @@ export default function Loyalty() {
       try {
         const { data } = await api.get('/businesses/me')
         return data
-      } catch (error: any) {
-        if (error?.response?.status === 404) {
+      } catch (error) {
+        if (apiErrorStatus(error) === 404) {
           return null
         }
         throw error
@@ -217,8 +218,8 @@ export default function Loyalty() {
       try {
         const { data } = await api.get('/loyalty/program')
         return data
-      } catch (error: any) {
-        if (error.response?.status === 404) {
+      } catch (error) {
+        if (apiErrorStatus(error) === 404) {
           return null
         }
         throw error
@@ -360,9 +361,9 @@ export default function Loyalty() {
       return
     }
     
-    const programData: any = {
+    const programData: Partial<LoyaltyProgram> = {
       business_id: businessId,
-      program_type: formData.get('program_type'),
+      program_type: formData.get('program_type') as LoyaltyProgram['program_type'],
       points_per_currency: parseFloat(formData.get('points_per_currency') as string),
       points_name: formData.get('points_name') as string || undefined,
       currency_per_point: formData.get('currency_per_point') ? parseFloat(formData.get('currency_per_point') as string) : undefined,
@@ -387,8 +388,8 @@ export default function Loyalty() {
   const handleUpdateProgram = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    const programData: any = {
-      program_type: formData.get('program_type'),
+    const programData: Partial<LoyaltyProgram> = {
+      program_type: formData.get('program_type') as LoyaltyProgram['program_type'],
       points_per_currency: parseFloat(formData.get('points_per_currency') as string),
       points_name: formData.get('points_name') as string || undefined,
       currency_per_point: formData.get('currency_per_point') ? parseFloat(formData.get('currency_per_point') as string) : undefined,
@@ -759,7 +760,7 @@ export default function Loyalty() {
                   onSubmit={async (e) => {
                     e.preventDefault()
                     const formData = new FormData(e.currentTarget)
-                    const levelData: any = {
+                    const levelData: Partial<LoyaltyLevel> = {
                       program_id: program.id,
                       name: formData.get('name') as string,
                       level_number: parseInt(formData.get('level_number') as string),
@@ -963,11 +964,11 @@ export default function Loyalty() {
                   onSubmit={async (e) => {
                     e.preventDefault()
                     const formData = new FormData(e.currentTarget)
-                    const promotionData: any = {
+                    const promotionData: Partial<LoyaltyPromotion> = {
                       program_id: program.id,
                       name: formData.get('name') as string,
                       description: formData.get('description') as string || undefined,
-                      promotion_type: formData.get('promotion_type') as string,
+                      promotion_type: formData.get('promotion_type') as LoyaltyPromotion['promotion_type'],
                       start_date: formData.get('start_date') as string,
                       end_date: formData.get('end_date') as string,
                       min_amount: formData.get('min_amount') ? parseFloat(formData.get('min_amount') as string) : undefined,

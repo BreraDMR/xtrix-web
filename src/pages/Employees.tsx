@@ -58,7 +58,7 @@ export default function Employees() {
   const { data: employees, isLoading, isError, refetch } = useQuery<Employee[]>({
     queryKey: ['employees', activeOnly],
     queryFn: async () => {
-      const params: any = {}
+      const params: { is_active?: boolean } = {}
       if (activeOnly !== undefined) {
         params.is_active = activeOnly
       }
@@ -96,7 +96,7 @@ export default function Employees() {
         ...emp,
         employee_name: emp.employee_user?.full_name || '',
         email: emp.employee_user?.email || '',
-      })), sortConfig as SortConfig<any>).map((emp: any) => {
+      })), sortConfig as SortConfig<Employee & { employee_name: string; email: string }>).map((emp) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { employee_name, email, ...rest } = emp
         return rest

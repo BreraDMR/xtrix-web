@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorMessage } from '../api/errors'
+import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -17,6 +17,9 @@ import type { Schema } from '../api/types'
 // system categories and automatic expenses come with codes (category.code, source) we translate
 type Expense = Schema<'ExpenseOut'>
 type ExpenseCategory = Schema<'ExpenseCategoryOut'>
+type NewExpense = Omit<Schema<'ExpenseCreate'>, 'business_id'>
+// /expenses/reports/profit has no response model in the contract, this is one row of its expenses_by_category
+type CategoryTotal = { category_id: number; category_name: string; category_code: string | null; color: string | null; total: number }
 
 export default function Finance() {
   const { t } = useTranslation()
@@ -325,7 +328,7 @@ export default function Finance() {
         <div className="bg-white p-6 rounded-xl shadow-md mb-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">{t('finance.expenses_by_category')}</h2>
           <div className="space-y-3">
-            {profitReport.expenses_by_category.map((item: any) => (
+            {(profitReport.expenses_by_category as CategoryTotal[]).map((item) => (
               <div key={item.category_id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
@@ -480,8 +483,8 @@ function ExpenseForm({
       try {
         const { data } = await api.get('/businesses/me')
         return data
-      } catch (error: any) {
-        if (error?.response?.status === 404) {
+      } catch (error) {
+        if (apiErrorStatus(error) === 404) {
           return null
         }
         throw error
@@ -492,7 +495,7 @@ function ExpenseForm({
   })
 
   const createMutation = useMutation({
-    mutationFn: async (expense: any) => {
+    mutationFn: async (expense: NewExpense) => {
       let businessId = user?.business_id
       if (!businessId && userBusiness?.id) {
         businessId = userBusiness.id
@@ -510,7 +513,7 @@ function ExpenseForm({
     onSuccess: () => {
       onSuccess()
     },
-    onError: (error: any) => {
+    onError: (error) => {
       const errorMessage = apiErrorMessage(error, 'Failed to create expense')
       alert(errorMessage)
     },

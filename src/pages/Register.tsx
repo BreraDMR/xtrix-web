@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { apiFormErrors } from '../api/errors'
+import type { Schema } from '../api/types'
 import FormError from '../components/FormError'
 import LoadingSpinner from '../components/LoadingSpinner'
 import SpecialistTypeSelector from '../components/SpecialistTypeSelector'
@@ -68,7 +69,7 @@ export default function Register() {
         return
       }
 
-      const userDataPayload: any = {
+      const userDataPayload: Schema<'UserCreate'> = {
         full_name: formData.full_name,
         password: formData.password,
         role: formData.role,
@@ -107,7 +108,7 @@ export default function Register() {
       if (!token) throw new Error('Session expired')
       setAuth(token, user)
       navigate('/', { replace: true })
-    } catch (err: any) {
+    } catch (err) {
       if (accountCreated) {
         useAuthStore.getState().logout()
         navigate('/login', { replace: true, state: { accountCreated: true } })

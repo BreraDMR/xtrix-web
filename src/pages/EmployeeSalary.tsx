@@ -270,19 +270,18 @@ export default function EmployeeSalary() {
       {}
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8">
-          {['current', 'adjustments', 'payments', 'history'].map((tab) => {
-            const tabKey = `salary.tabs.${tab}` as any;
+          {(['current', 'adjustments', 'payments', 'history'] as const).map((tab) => {
             return (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab as any)}
+                onClick={() => setActiveTab(tab)}
                 className={`${
                   activeTab === tab
                     ? 'border-purple-500 text-purple-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               >
-                {t(tabKey as any)}
+                {t(`salary.tabs.${tab}`)}
               </button>
             );
           })}
@@ -784,7 +783,7 @@ export default function EmployeeSalary() {
                           }}
                           className="text-blue-600 hover:text-blue-900"
                         >
-                          {t('common.view' as any)}
+                          {t('common.view')}
                         </button>
                       </td>
                     </tr>

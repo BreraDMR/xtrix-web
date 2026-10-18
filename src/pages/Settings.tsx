@@ -5,6 +5,7 @@ import { useLocaleStore } from '../store/localeStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
+import { apiErrorStatus } from '../api/errors'
 import { CURRENCIES, Currency, getCurrencySymbol } from '../utils/currency'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { TranslationKey } from '../i18n/translations'
@@ -28,24 +29,27 @@ const TIMEZONES = [
   { value: 'Asia/Shanghai', label: 'Asia/Shanghai (CST)' },
 ]
 
-const DATE_FORMATS = [
+// options for a preference, typed by what the API accepts for it
+type Option<K extends keyof UserPreferencesUpdate> = { value: NonNullable<UserPreferencesUpdate[K]>; label: string }
+
+const DATE_FORMATS: Option<'date_format'>[] = [
   { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY' },
   { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY' },
   { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
 ]
 
-const TIME_FORMATS = [
+const TIME_FORMATS: Option<'time_format'>[] = [
   { value: '24h', label: '24 hour (14:30)' },
   { value: '12h', label: '12 hour (2:30 PM)' },
 ]
 
-const EXPORT_FORMATS = [
+const EXPORT_FORMATS: Option<'export_format'>[] = [
   { value: 'csv', label: 'CSV' },
   { value: 'excel', label: 'Excel' },
   { value: 'json', label: 'JSON' },
 ]
 
-const THEMES = [
+const THEMES: Option<'theme'>[] = [
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
 ]
@@ -64,8 +68,8 @@ export default function Settings() {
       try {
         const { data } = await api.get('/businesses/me')
         return data
-      } catch (error: any) {
-        if (error?.response?.status === 404) {
+      } catch (error) {
+        if (apiErrorStatus(error) === 404) {
           return null
         }
         throw error
@@ -122,7 +126,7 @@ export default function Settings() {
     }
   }
 
-  const handlePreferenceChange = (field: keyof UserPreferencesUpdate, value: any) => {
+  const handlePreferenceChange = <K extends keyof UserPreferencesUpdate>(field: K, value: UserPreferencesUpdate[K]) => {
     updatePreferencesMutation.mutate({ [field]: value })
   }
 
@@ -283,7 +287,7 @@ export default function Settings() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('settings.date_format')}</label>
                 <select
                   value={preferences.date_format || 'DD/MM/YYYY'}
-                  onChange={(e) => handlePreferenceChange('date_format', e.target.value)}
+                  onChange={(e) => handlePreferenceChange('date_format', e.target.value as Option<'date_format'>['value'])}
                   disabled={updatePreferencesMutation.isPending}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
@@ -298,7 +302,7 @@ export default function Settings() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('settings.time_format')}</label>
                 <select
                   value={preferences.time_format || '24h'}
-                  onChange={(e) => handlePreferenceChange('time_format', e.target.value)}
+                  onChange={(e) => handlePreferenceChange('time_format', e.target.value as Option<'time_format'>['value'])}
                   disabled={updatePreferencesMutation.isPending}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
@@ -411,7 +415,7 @@ export default function Settings() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.export_format_description')}</p>
             <select
               value={preferences.export_format || 'csv'}
-              onChange={(e) => handlePreferenceChange('export_format', e.target.value)}
+              onChange={(e) => handlePreferenceChange('export_format', e.target.value as Option<'export_format'>['value'])}
               disabled={updatePreferencesMutation.isPending}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >

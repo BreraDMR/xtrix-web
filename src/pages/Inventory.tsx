@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorMessage } from '../api/errors'
+import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -63,9 +63,9 @@ export default function Inventory() {
         const { data } = await api.get('/businesses/me')
         console.log('User business fetched:', data)
         return data
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error fetching user business:', error)
-        if (error?.response?.status === 404) {
+        if (apiErrorStatus(error) === 404) {
           return null
         }
         throw error
@@ -97,7 +97,7 @@ export default function Inventory() {
         })
         console.log('Product created successfully:', data)
         return data
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error creating product:', error)
         const errorMessage = apiErrorMessage(error, t('inventory.createError'))
         throw new Error(errorMessage)
@@ -107,7 +107,7 @@ export default function Inventory() {
       queryClient.invalidateQueries({ queryKey: ['products'] })
       setShowAddForm(false)
     },
-    onError: (error: any) => {
+    onError: (error) => {
       console.error('Mutation error:', error)
       alert(error?.message || t('inventory.createError'))
     },

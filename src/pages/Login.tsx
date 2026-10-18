@@ -45,7 +45,7 @@ export default function Login() {
       if (!token) throw new Error('Session expired')
       setAuth(token, user)
       navigate(returnTo, { replace: true })
-    } catch (err: any) {
+    } catch (err) {
       useAuthStore.getState().logout()
       // with the code step on, a 401 means the code was off (the password passed a moment ago)
       setError(needsCode && apiErrorStatus(err) === 401 ? t('login.twoFactorWrong') : apiErrorMessage(err, t('login.failed')))

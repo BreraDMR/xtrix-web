@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
+import type { Schema } from '../api/types'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -25,7 +26,7 @@ export default function LoyaltyAnalytics() {
       const params = new URLSearchParams()
       if (dateFrom) params.append('date_from', dayStart(dateFrom))
       if (dateTo) params.append('date_to', dayEnd(dateTo))
-      const { data } = await api.get(`/loyalty/analytics/statistics?${params.toString()}`)
+      const { data } = await api.get<Schema<'LoyaltyStatisticsResponse'>>(`/loyalty/analytics/statistics?${params.toString()}`)
       return data
     },
   })
@@ -33,7 +34,7 @@ export default function LoyaltyAnalytics() {
   const { data: levelDistribution, isLoading: isLoadingLevelDist } = useQuery({
     queryKey: ['loyalty-level-distribution'],
     queryFn: async () => {
-      const { data } = await api.get('/loyalty/analytics/level-distribution')
+      const { data } = await api.get<Schema<'LevelDistributionResponse'>>('/loyalty/analytics/level-distribution')
       return data
     },
   })
@@ -41,7 +42,7 @@ export default function LoyaltyAnalytics() {
   const { data: topClients, isLoading: isLoadingTopClients } = useQuery({
     queryKey: ['loyalty-top-clients'],
     queryFn: async () => {
-      const { data } = await api.get('/loyalty/analytics/top-clients?limit=10')
+      const { data } = await api.get<Schema<'TopClientsResponse'>>('/loyalty/analytics/top-clients?limit=10')
       return data
     },
   })
@@ -52,7 +53,7 @@ export default function LoyaltyAnalytics() {
       const params = new URLSearchParams()
       if (dateFrom) params.append('date_from', dayStart(dateFrom))
       if (dateTo) params.append('date_to', dayEnd(dateTo))
-      const { data } = await api.get(`/loyalty/analytics/promotion-effectiveness?${params.toString()}`)
+      const { data } = await api.get<Schema<'PromotionEffectivenessResponse'>>(`/loyalty/analytics/promotion-effectiveness?${params.toString()}`)
       return data
     },
   })
@@ -114,7 +115,7 @@ export default function LoyaltyAnalytics() {
         <div className="bg-white p-6 rounded-xl shadow-md">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('loyalty.levels')} Distribution</h2>
           <div className="space-y-3">
-            {levelDistribution.distribution.map((item: any) => (
+            {levelDistribution.distribution.map((item) => (
               <div key={item.level_id || 'none'} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {item.color && (
@@ -148,7 +149,7 @@ export default function LoyaltyAnalytics() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {topClients.clients.map((client: any) => (
+                {topClients.clients.map((client) => (
                   <tr key={client.client_id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {client.client_name}
@@ -184,7 +185,7 @@ export default function LoyaltyAnalytics() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {promotions.promotions.map((promo: any) => (
+                {promotions.promotions.map((promo) => (
                   <tr key={promo.promotion_id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {promo.promotion_name}

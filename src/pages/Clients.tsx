@@ -2,6 +2,7 @@ import QueryError from '../components/QueryError'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
+import { apiErrorStatus } from '../api/errors'
 import ClientForm from '../components/ClientForm'
 import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -29,8 +30,8 @@ function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
       try {
         const { data } = await api.get(`/loyalty/balance/${clientId}`)
         return data
-      } catch (error: any) {
-        if (error.response?.status === 404) {
+      } catch (error) {
+        if (apiErrorStatus(error) === 404) {
           return null
         }
         return null

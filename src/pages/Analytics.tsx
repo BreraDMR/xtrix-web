@@ -2,6 +2,10 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
+import type { Schema } from '../api/types'
+
+// the contract says "list of dicts" for cohort_table; the rows are CohortData on the API side
+type CohortRow = { cohort_month: string; total_clients: number } & Partial<Record<`month_${number}`, number | null>>
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -43,7 +47,7 @@ export default function Analytics() {
       const params = new URLSearchParams()
       if (dateFrom) params.append('date_from', dayStart(dateFrom))
       if (dateTo) params.append('date_to', dayEnd(dateTo))
-      const { data } = await api.get(`/analytics/retention/metrics?${params.toString()}`)
+      const { data } = await api.get<Schema<'RetentionMetricsResponse'>>(`/analytics/retention/metrics?${params.toString()}`)
       return data
     },
     enabled: activeTab === 'retention',
@@ -55,7 +59,7 @@ export default function Analytics() {
       const params = new URLSearchParams()
       if (dateFrom) params.append('date_from', dayStart(dateFrom))
       if (dateTo) params.append('date_to', dayEnd(dateTo))
-      const { data } = await api.get(`/analytics/retention/cohorts?${params.toString()}`)
+      const { data } = await api.get<Schema<'CohortTableResponse'>>(`/analytics/retention/cohorts?${params.toString()}`)
       return data
     },
     enabled: activeTab === 'cohorts',
@@ -64,7 +68,7 @@ export default function Analytics() {
   const { data: trendsData, isLoading: isLoadingTrends } = useQuery({
     queryKey: ['trends', trendMetric, trendComparison],
     queryFn: async () => {
-      const { data } = await api.get('/analytics/trends', {
+      const { data } = await api.get<Schema<'TrendsAnalysisResponse'>>('/analytics/trends', {
         params: {
           metric: trendMetric,
           comparison_type: trendComparison,
@@ -78,7 +82,7 @@ export default function Analytics() {
   const { data: forecastData, isLoading: isLoadingForecast } = useQuery({
     queryKey: ['forecast', forecastType, forecastPeriods],
     queryFn: async () => {
-      const { data } = await api.get('/analytics/forecast', {
+      const { data } = await api.get<Schema<'ForecastResponse'>>('/analytics/forecast', {
         params: {
           forecast_type: forecastType,
           periods: forecastPeriods,
@@ -95,7 +99,7 @@ export default function Analytics() {
       const params = new URLSearchParams()
       if (dateFrom) params.append('date_from', dayStart(dateFrom))
       if (dateTo) params.append('date_to', dayEnd(dateTo))
-      const { data } = await api.get(`/analytics/services-specialists?${params.toString()}`)
+      const { data } = await api.get<Schema<'ServiceAndSpecialistAnalyticsResponse'>>(`/analytics/services-specialists?${params.toString()}`)
       return data
     },
     enabled: activeTab === 'services',
@@ -104,7 +108,7 @@ export default function Analytics() {
   const { data: insightsData, isLoading: isLoadingInsights } = useQuery({
     queryKey: ['insights'],
     queryFn: async () => {
-      const { data } = await api.get('/analytics/insights')
+      const { data } = await api.get<Schema<'SmartInsightsResponse'>>('/analytics/insights')
       return data
     },
     enabled: activeTab === 'insights',
@@ -113,7 +117,7 @@ export default function Analytics() {
   const { data: benchmarksData, isLoading: isLoadingBenchmarks } = useQuery({
     queryKey: ['benchmarks'],
     queryFn: async () => {
-      const { data } = await api.get('/analytics/benchmarks')
+      const { data } = await api.get<Schema<'AnonymousBenchmarksResponse'>>('/analytics/benchmarks')
       return data
     },
     enabled: activeTab === 'benchmarks',
@@ -237,7 +241,7 @@ export default function Analytics() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {cohortsData.cohort_table.map((cohort: any, idx: number) => (
+                  {(cohortsData.cohort_table as CohortRow[]).map((cohort, idx) => (
                     <tr key={idx}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cohort.cohort_month}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{cohort.total_clients}</td>
@@ -266,7 +270,7 @@ export default function Analytics() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.trend_metric')}</label>
                 <select
                   value={trendMetric}
-                  onChange={(e) => setTrendMetric(e.target.value as any)}
+                  onChange={(e) => setTrendMetric(e.target.value as typeof trendMetric)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="revenue">{t('analytics.metric_revenue')}</option>
@@ -280,7 +284,7 @@ export default function Analytics() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.trend_comparison')}</label>
                 <select
                   value={trendComparison}
-                  onChange={(e) => setTrendComparison(e.target.value as any)}
+                  onChange={(e) => setTrendComparison(e.target.value as typeof trendComparison)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="MoM">{t('analytics.comparison_mom')}</option>
@@ -336,7 +340,7 @@ export default function Analytics() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.forecast_type')}</label>
                 <select
                   value={forecastType}
-                  onChange={(e) => setForecastType(e.target.value as any)}
+                  onChange={(e) => setForecastType(e.target.value as typeof forecastType)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                 >
                   <option value="revenue">{t('analytics.forecast_revenue')}</option>
@@ -380,7 +384,7 @@ export default function Analytics() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {forecastData.forecast?.map((f: any, idx: number) => (
+                    {forecastData.forecast?.map((f, idx) => (
                       <tr key={idx}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{f.period}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{f.forecasted_value?.toFixed(2)}</td>
@@ -419,7 +423,7 @@ export default function Analytics() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {servicesData.services?.map((service: any, idx: number) => (
+                    {servicesData.services?.map((service, idx) => (
                       <tr key={idx}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{service.service_name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.visit_count}</td>
@@ -449,7 +453,7 @@ export default function Analytics() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {servicesData.specialists?.map((specialist: any, idx: number) => (
+                    {servicesData.specialists?.map((specialist, idx) => (
                       <tr key={idx}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{specialist.specialist_name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{specialist.visit_count}</td>
@@ -475,7 +479,7 @@ export default function Analytics() {
           {isLoadingInsights ? (
             <LoadingSpinner />
           ) : insightsData?.insights && insightsData.insights.length > 0 ? (
-            insightsData.insights.map((insight: any, idx: number) => (
+            insightsData.insights.map((insight, idx) => (
               <div
                 key={idx}
                 className={`p-6 rounded-xl shadow-md border-l-4 ${

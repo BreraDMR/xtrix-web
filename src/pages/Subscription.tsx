@@ -157,7 +157,7 @@ export default function Subscription() {
       })
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
-    } catch (err: any) {
+    } catch (err) {
       setError(apiErrorMessage(err, t('subscription.failed_cancel')))
     } finally {
       setLoading(false)
@@ -173,7 +173,7 @@ export default function Subscription() {
       await api.post(`/subscriptions/${subscription.id}/reactivate`, {})
       queryClient.invalidateQueries({ queryKey: ['subscription'] })
       queryClient.invalidateQueries({ queryKey: ['subscription-history'] })
-    } catch (err: any) {
+    } catch (err) {
       setError(apiErrorMessage(err, t('subscription.failed_reactivate')))
     } finally {
       setLoading(false)
