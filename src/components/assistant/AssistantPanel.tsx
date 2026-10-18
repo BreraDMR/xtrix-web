@@ -94,7 +94,10 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   useEffect(() => {
     const log = logRef.current
     if (log) log.scrollTop = log.scrollHeight
-  }, [entries, sending])
+    // Confirm/Cancel disappear once used; don't leave the keyboard user on <body>
+    const focused = document.activeElement
+    if (open && (!focused || focused === document.body)) inputRef.current?.focus()
+  }, [entries, sending, open])
 
   const handleError = useCallback((err: unknown) => {
     const code = apiErrorCode(err)

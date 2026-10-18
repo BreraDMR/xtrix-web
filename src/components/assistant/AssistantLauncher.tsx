@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { HiOutlineChatAlt2 } from 'react-icons/hi'
 import { useAuthStore } from '../../store/authStore'
 import { useLocaleStore } from '../../store/localeStore'
@@ -43,7 +44,8 @@ export default function AssistantLauncher() {
         <HiOutlineChatAlt2 className="h-6 w-6" aria-hidden="true" />
         <span className="hidden text-sm font-medium md:inline">{persona.name}</span>
       </button>
-      <AssistantPanel open={open} onClose={close} status={status} persona={persona} />
+      {/* straight into <body>: the header's spacing and stacking shouldn't reach a full-screen panel */}
+      {createPortal(<AssistantPanel open={open} onClose={close} status={status} persona={persona} />, document.body)}
     </>
   )
 }

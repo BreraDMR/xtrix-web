@@ -277,6 +277,7 @@ describe('plan card', () => {
     const card = await screen.findByRole('article', { name: /Book Clara for a haircut/ })
     await userEvent.click(within(card).getByRole('button', { name: 'Cancel' }))
     expect(within(card).getByText('Cancelled, nothing was changed')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Type a request…' })).toHaveFocus()
     expect(within(card).queryByRole('button', { name: 'Confirm' })).not.toBeInTheDocument()
     expect(api.post).toHaveBeenCalledTimes(1)
   })
@@ -318,6 +319,8 @@ describe('confirming a plan', () => {
     await waitFor(() => expect(api.post).toHaveBeenLastCalledWith('/assistant/execute', { plan_id: 'plan-1' }))
     expect(await screen.findByText('Sasha booked the visit')).toBeInTheDocument()
     expect(within(card).getAllByText('Done')).toHaveLength(2)
+    // the Confirm button is gone, so the focus goes back to the input instead of getting lost
+    await waitFor(() => expect(screen.getByRole('textbox', { name: 'Type a request…' })).toHaveFocus())
     expect(within(card).queryByRole('button', { name: 'Confirm' })).not.toBeInTheDocument()
 
     const keys = invalidate.mock.calls.map(([filters]) => filters)
