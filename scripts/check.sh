@@ -23,6 +23,9 @@ fi
 echo "==> tsc"
 npx tsc --noEmit
 
+echo "==> tsc e2e"
+npx tsc --noEmit -p tsconfig.e2e.json
+
 echo "==> lint"
 npm run lint --silent
 
