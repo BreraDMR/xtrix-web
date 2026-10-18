@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import FormError from './FormError'
 import { apiErrorMessage, apiErrorStatus, apiFormErrors } from '../api/errors'
-import { serviceSpecialists, type ClientLoyaltyBalance, type ClientOut, type Schema, type ServiceOut, type ServicePage, type ServiceSpecialist } from '../api/types'
+import type { ClientLoyaltyBalance, ClientOut, Schema, ServiceOut, ServicePage, ServiceSpecialistOut } from '../api/types'
 import { useAuthStore } from '../store/authStore'
 import LoadingSpinner from './LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
@@ -39,6 +39,12 @@ type SelectedClient = Pick<ClientOut, 'id' | 'full_name' | 'contact_phone' | 'co
 const PHONE_RE = /^[+]?[0-9\s\-()]+$/
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// who can take the service: its specialists, or at least the one it belongs to
+function specialistsFor(service: ServiceOut): ServiceSpecialistOut[] {
+  if (service.specialists?.length) return service.specialists
+  return [{ id: service.specialist_id, full_name: service.specialist?.full_name ?? '' }]
+}
+
 const VISIT_FIELDS = ['client_id', 'service_id', 'specialist_id', 'service_name', 'date_start', 'date_end', 'price', 'status', 'payment_method', 'note']
 
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
@@ -52,7 +58,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const visitSaved = useRef(false)
   const [clients, setClients] = useState<ClientOut[]>([])
   const [services, setServices] = useState<ServiceOut[]>([])
-  const [availableSpecialists, setAvailableSpecialists] = useState<ServiceSpecialist[]>([])
+  const [availableSpecialists, setAvailableSpecialists] = useState<ServiceSpecialistOut[]>([])
   const [clientSearchQuery, setClientSearchQuery] = useState('')
   const [selectedClient, setSelectedClient] = useState<SelectedClient | null>(null)
   const [nameMatches, setNameMatches] = useState<ClientOut[]>([])
@@ -202,9 +208,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       if (data.service_id) {
         try {
           const { data: serviceDetails } = await api.get<ServiceOut>(`/services/${data.service_id}`)
-          const specialists = serviceSpecialists(serviceDetails)
-          if (specialists.length > 0) {
-            setAvailableSpecialists(specialists)
+          if (serviceDetails.specialists?.length) {
+            setAvailableSpecialists(serviceDetails.specialists)
           }
         } catch (error) {
           console.error('Failed to load service specialists:', error)
@@ -254,28 +259,15 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     if (selectedService) {
       try {
         const { data: serviceDetails } = await api.get<ServiceOut>(`/services/${selectedServiceId}`)
-        const specialists = serviceSpecialists(serviceDetails)
-        if (specialists.length > 0) {
-          setAvailableSpecialists(specialists)
-          if (!specialists.find((s) => s.id === formData.specialist_id)) {
-            updates.specialist_id = specialists[0].id
-          }
-        } else {
-          // ServiceOut has no specialist object, only the id - the name stays empty here
-          setAvailableSpecialists([{
-            id: selectedService.specialist_id,
-            full_name: '',
-            email: '',
-          }])
-          updates.specialist_id = selectedService.specialist_id
+        const specialists = specialistsFor(serviceDetails)
+        setAvailableSpecialists(specialists)
+        if (!specialists.find((s) => s.id === formData.specialist_id)) {
+          updates.specialist_id = specialists[0].id
         }
       } catch (error) {
         console.error('Failed to load service specialists:', error)
-        setAvailableSpecialists([{
-          id: selectedService.specialist_id,
-          full_name: '',
-          email: '',
-        }])
+        // the list item has the service's own specialist too
+        setAvailableSpecialists(specialistsFor({ ...selectedService, specialists: null }))
         updates.specialist_id = selectedService.specialist_id
       }
 

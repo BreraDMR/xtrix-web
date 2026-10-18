@@ -75,4 +75,50 @@ describe('VisitForm', () => {
       { params: { client_id: 3 } }
     )
   })
+
+  describe('specialist for the picked service', () => {
+    const eva = { id: 9, full_name: 'Eva Svobodová' }
+    const massage = { id: 5, name: 'Massage', duration_minutes: 60, price: 900, is_active: true, specialist_id: 9, specialist: eva }
+
+    async function pickService() {
+      const option = await screen.findByRole('option', { name: /Massage/ })
+      await userEvent.selectOptions(option.closest('select')!, option)
+    }
+
+    it('lists the specialists of the service and picks the first one', async () => {
+      vi.mocked(api.get).mockImplementation(routes({
+        '/clients/': [jana],
+        '/services/': [massage],
+        '/services/5': { ...massage, specialist_ids: [9, 11], specialists: [{ ...eva, email: 'eva@example.com' }, { id: 11, full_name: 'Petr Novák' }] },
+      }))
+      renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+      await pickService()
+
+      const first = await screen.findByRole('option', { name: 'Eva Svobodová (eva@example.com)' })
+      expect(screen.getByRole('option', { name: 'Petr Novák' })).toHaveValue('11')
+      expect(first.closest('select')).toHaveValue('9')
+    })
+
+    it("falls back to the service's own specialist by name", async () => {
+      vi.mocked(api.get).mockImplementation(routes({
+        '/clients/': [jana],
+        '/services/': [massage],
+        '/services/5': { ...massage, specialists: [] },
+      }))
+      renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+      await pickService()
+
+      const option = await screen.findByRole('option', { name: 'Eva Svobodová' })
+      expect(option.closest('select')).toHaveValue('9')
+    })
+
+    it('still names the specialist when the service details fail to load', async () => {
+      vi.mocked(api.get).mockImplementation(routes({ '/clients/': [jana], '/services/': [massage] }))
+      renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+      await pickService()
+
+      const option = await screen.findByRole('option', { name: 'Eva Svobodová' })
+      expect(option.closest('select')).toHaveValue('9')
+    })
+  })
 })
