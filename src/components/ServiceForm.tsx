@@ -5,7 +5,7 @@ import FormError from './FormError'
 import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
-import type { EmployeeOut, ServiceOut, UserOut, UserPage } from '../api/types'
+import type { EmployeeOut, ServiceCreate, ServiceOut, UserOut, UserPage } from '../api/types'
 
 interface ServiceFormProps {
   serviceId?: number
@@ -96,9 +96,14 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       const { data } = await api.get<ServiceOut>(`/services/${serviceId}`)
       // the API allows a null price/duration, the form doesn't - a null shows up empty and the form asks for it on save
       setFormData({
-        ...data,
+        name: data.name,
+        duration_minutes: data.duration_minutes as number,
+        price: data.price as number,
+        description: data.description ?? '',
+        is_active: data.is_active ?? true,
+        specialist_id: data.specialist_id,
         specialist_ids: data.specialist_ids || [data.specialist_id],
-      } as ServiceData)
+      })
     } catch (error) {
       console.error('Failed to load service:', error)
     }
@@ -117,8 +122,14 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     setLoading(true)
 
     try {
-      const payload: ServiceData = {
-        ...formData,
+      const payload: ServiceCreate = {
+        name: formData.name,
+        duration_minutes: formData.duration_minutes,
+        price: formData.price,
+        // a cleared description goes as null, otherwise the old one stays
+        description: formData.description?.trim() ? formData.description : null,
+        is_active: formData.is_active,
+        specialist_id: formData.specialist_id,
         specialist_ids: (formData.specialist_ids || []).filter(id => id !== formData.specialist_id),
       }
       
@@ -267,8 +278,9 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">{t('business.description')}</label>
+        <label htmlFor="service-description" className="block text-sm font-medium mb-1">{t('business.description')}</label>
         <textarea
+          id="service-description"
           aria-invalid={fieldErrors.description ? true : undefined}
           value={formData.description || ''}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}

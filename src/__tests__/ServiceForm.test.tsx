@@ -61,4 +61,47 @@ describe('ServiceForm', () => {
       expect.objectContaining({ name: 'Facial Treatment', duration_minutes: 90, price: 150, specialist_id: 7 })
     )
   })
+
+  describe('description', () => {
+    const stones = {
+      id: 4, name: 'Hot stones', duration_minutes: 60, price: 900, is_active: true, specialist_id: 7,
+      specialist: { id: 7, full_name: 'Test User' }, specialist_ids: [7], specialists: [{ id: 7, full_name: 'Test User' }],
+      description: 'Basalt stones, 50 °C',
+    }
+
+    beforeEach(() => {
+      vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': [], '/services/4': stones }))
+      vi.mocked(api.put).mockResolvedValue({ data: {} })
+    })
+
+    it('sends the description of a new service', async () => {
+      vi.mocked(api.post).mockResolvedValue({ data: {} })
+      renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+      await userEvent.type(screen.getByPlaceholderText(/facial treatment/i), 'Massage')
+      await userEvent.type(screen.getByRole('textbox', { name: 'Description' }), 'Whole body, 60 min')
+      await userEvent.click(screen.getByRole('button', { name: /create service/i }))
+      await waitFor(() => expect(api.post).toHaveBeenCalledWith('/services/', expect.objectContaining({ description: 'Whole body, 60 min' })))
+    })
+
+    it('loads the saved description and sends the edited one', async () => {
+      const onSuccess = vi.fn()
+      renderWithProviders(<ServiceForm serviceId={4} onSuccess={onSuccess} onCancel={() => {}} />)
+      const field = await screen.findByDisplayValue('Basalt stones, 50 °C')
+      await userEvent.clear(field)
+      await userEvent.type(field, 'River stones')
+      await userEvent.click(screen.getByRole('button', { name: /update service|save/i }))
+      await waitFor(() => expect(onSuccess).toHaveBeenCalled())
+      expect(api.put).toHaveBeenCalledWith('/services/4', expect.objectContaining({ description: 'River stones' }))
+    })
+
+    it('clears the description with null and sends only the fields the API takes', async () => {
+      renderWithProviders(<ServiceForm serviceId={4} onSuccess={() => {}} onCancel={() => {}} />)
+      await userEvent.clear(await screen.findByDisplayValue('Basalt stones, 50 °C'))
+      await userEvent.click(screen.getByRole('button', { name: /update service|save/i }))
+      await waitFor(() => expect(api.put).toHaveBeenCalled())
+      const body = vi.mocked(api.put).mock.calls[0][1] as Record<string, unknown>
+      expect(body.description).toBeNull()
+      expect(Object.keys(body).sort()).toEqual(['description', 'duration_minutes', 'is_active', 'name', 'price', 'specialist_id', 'specialist_ids'])
+    })
+  })
 })

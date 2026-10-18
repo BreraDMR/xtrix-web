@@ -13,18 +13,13 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { sortData, SortConfig } from '../utils/table'
 import { today } from '../utils/dates'
+import type { ServiceOut } from '../api/types'
+
+type Service = ServiceOut
 
 export default function Services() {
   const { t } = useTranslation()
   const currency = useBusinessCurrency()
-
-interface Service {
-  id: number
-  name: string
-  duration_minutes: number
-  price: number
-  is_active: boolean
-}
 
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
@@ -47,9 +42,11 @@ interface Service {
     if (!services) return []
     
     let filtered = services.filter((service) => {
+      const needle = searchQuery.toLowerCase()
       const matchesSearch =
         searchQuery === '' ||
-        service.name.toLowerCase().includes(searchQuery.toLowerCase())
+        service.name.toLowerCase().includes(needle) ||
+        (service.description ?? '').toLowerCase().includes(needle)
       
       const matchesActive =
         activeFilter === null ||
@@ -237,8 +234,13 @@ interface Service {
               ) : (
                 paginatedData.map((service) => (
               <tr key={service.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">
                   {service.name}
+                  {service.description && (
+                    <p className="mt-1 max-w-md text-xs font-normal text-gray-500 line-clamp-2" title={service.description}>
+                      {service.description}
+                    </p>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {service.duration_minutes} {t('services.min')}

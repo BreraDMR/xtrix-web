@@ -19,6 +19,7 @@ export type ClientLoyaltyBalance = Schema<'ClientLoyaltyBalance'>
 export type ClientPage = Schema<'PaginatedResponse_ClientOut_'>
 export type SalaryPaymentCreate = Schema<'SalaryPaymentCreate'>
 export type ServiceOut = Schema<'ServiceOut'>
+export type ServiceCreate = Schema<'ServiceCreate'>
 export type ServicePage = Schema<'PaginatedResponse_ServiceOut_'>
 export type ServiceSpecialistOut = Schema<'ServiceSpecialistOut'>
 export type EmployeeOut = Schema<'EmployeeOut'>
