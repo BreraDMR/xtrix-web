@@ -12,6 +12,8 @@ import SalaryPaymentModal from '../components/SalaryPaymentModal'
 import EditEmployeeSalaryModal from '../components/EditEmployeeSalaryModal'
 import { HiPlus, HiTrash, HiCheckCircle, HiXCircle, HiExclamationCircle, HiPencil } from 'react-icons/hi'
 import { dayEnd, dayStart } from '../utils/dates'
+import FormError from '../components/FormError'
+import { apiErrorMessage } from '../api/errors'
 
 interface SalaryAdjustment {
   id: number
@@ -77,6 +79,7 @@ export default function EmployeeSalary() {
   const [periodStart, setPeriodStart] = useState<string>('')
   const [periodEnd, setPeriodEnd] = useState<string>('')
   const [calculateNotes, setCalculateNotes] = useState<string>('')
+  const [calculateError, setCalculateError] = useState('')
 
   const canManageSalaries = user?.role === 'admin' || user?.role === 'business_owner'
 
@@ -148,7 +151,9 @@ export default function EmployeeSalary() {
       setPeriodStart('')
       setPeriodEnd('')
       setCalculateNotes('')
+      setCalculateError('')
     },
+    onError: (err) => setCalculateError(apiErrorMessage(err, t('common.error_saving'))),
   })
 
   const deleteAdjustmentMutation = useMutation({
@@ -430,6 +435,7 @@ export default function EmployeeSalary() {
                   </button>
                 ) : (
                   <div className="max-w-md mx-auto mt-4 space-y-4">
+                    {calculateError && <div role="alert"><FormError message={calculateError} /></div>}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         {t('salary.periodStart')}
@@ -479,8 +485,9 @@ export default function EmployeeSalary() {
                       </button>
                       <button
                         onClick={() => {
+                          setCalculateError('')
                           if (!periodStart || !periodEnd) {
-                            alert(t('salary.fillPeriod'))
+                            setCalculateError(t('salary.fillPeriod'))
                             return
                           }
                           calculateSalaryMutation.mutate({

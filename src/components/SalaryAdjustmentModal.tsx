@@ -3,6 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { HiX } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
+import FormError from './FormError'
+import { apiErrorMessage } from '../api/errors'
 
 // the API takes any string here, these are the ones the screen offers
 type AdjustmentType = 'bonus' | 'penalty' | 'overtime' | 'allowance' | 'deduction'
@@ -25,6 +27,7 @@ export default function SalaryAdjustmentModal({
   const [type, setType] = useState<AdjustmentType>('bonus')
   const [amount, setAmount] = useState<string>('')
   const [description, setDescription] = useState<string>('')
+  const [error, setError] = useState('')
 
   const createMutation = useMutation({
     mutationFn: async (data: { type: string; amount: number; description?: string }) => {
@@ -40,20 +43,23 @@ export default function SalaryAdjustmentModal({
       queryClient.invalidateQueries({ queryKey: ['employee-salary-detail', employeeId, salaryId] })
       handleClose()
     },
+    onError: (err) => setError(apiErrorMessage(err, t('common.error_saving'))),
   })
 
   const handleClose = () => {
     setType('bonus')
     setAmount('')
     setDescription('')
+    setError('')
     onClose()
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const numAmount = parseFloat(amount)
+    setError('')
     if (isNaN(numAmount) || numAmount === 0) {
-      alert(t('salary.invalidAmount'))
+      setError(t('salary.invalidAmount'))
       return
     }
 
@@ -94,6 +100,7 @@ export default function SalaryAdjustmentModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && <div role="alert"><FormError message={error} /></div>}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {t('salary.adjustmentType')}

@@ -3,6 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
 import { HiX } from 'react-icons/hi'
+import FormError from './FormError'
+import { apiErrorMessage } from '../api/errors'
 
 interface EditEmployeeSalaryModalProps {
   isOpen: boolean
@@ -23,11 +25,13 @@ export default function EditEmployeeSalaryModal({
   const queryClient = useQueryClient()
   const [baseSalary, setBaseSalary] = useState<string>(currentBaseSalary.toString())
   const [commissionPercentage, setCommissionPercentage] = useState<string>(currentCommissionPercentage.toString())
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (isOpen) {
       setBaseSalary(currentBaseSalary.toString())
       setCommissionPercentage(currentCommissionPercentage.toString())
+      setError('')
     }
   }, [isOpen, currentBaseSalary, currentCommissionPercentage])
 
@@ -41,20 +45,22 @@ export default function EditEmployeeSalaryModal({
       queryClient.invalidateQueries({ queryKey: ['employees'] })
       onClose()
     },
+    onError: (err) => setError(apiErrorMessage(err, t('common.error_saving'))),
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const baseSalaryNum = parseFloat(baseSalary) || 0
     const commissionNum = parseFloat(commissionPercentage) || 0
+    setError('')
 
     if (commissionNum < 0 || commissionNum > 100) {
-      alert(t('employees.commission_invalid_range'))
+      setError(t('employees.commission_invalid_range'))
       return
     }
 
     if (baseSalaryNum < 0) {
-      alert(t('employees.base_salary_invalid'))
+      setError(t('employees.base_salary_invalid'))
       return
     }
 
@@ -82,6 +88,7 @@ export default function EditEmployeeSalaryModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && <div role="alert"><FormError message={error} /></div>}
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
               {t('employees.base_salary')} *

@@ -3,6 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { HiX } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
+import FormError from './FormError'
+import { apiErrorMessage } from '../api/errors'
 import { formatCurrency } from '../utils/currency'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { dayNoon, today } from '../utils/dates'
@@ -33,6 +35,7 @@ export default function SalaryPaymentModal({
   const [paymentMethod, setPaymentMethod] = useState<SalaryPaymentCreate['payment_method']>('cash')
   const [status, setStatus] = useState<SalaryPaymentCreate['status']>('completed')
   const [notes, setNotes] = useState<string>('')
+  const [error, setError] = useState('')
 
   const createMutation = useMutation({
     mutationFn: async (data: {
@@ -55,6 +58,7 @@ export default function SalaryPaymentModal({
       queryClient.invalidateQueries({ queryKey: ['expenses'] })
       handleClose()
     },
+    onError: (err) => setError(apiErrorMessage(err, t('common.error_saving'))),
   })
 
   const handleClose = () => {
@@ -63,19 +67,21 @@ export default function SalaryPaymentModal({
     setPaymentMethod('cash')
     setStatus('completed')
     setNotes('')
+    setError('')
     onClose()
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const numAmount = parseFloat(amount)
+    setError('')
     if (isNaN(numAmount) || numAmount <= 0) {
-      alert(t('salary.invalidAmount'))
+      setError(t('salary.invalidAmount'))
       return
     }
 
     if (numAmount > remainingAmount) {
-      alert(t('salary.exceedsRemaining'))
+      setError(t('salary.exceedsRemaining'))
       return
     }
 
@@ -108,6 +114,7 @@ export default function SalaryPaymentModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && <div role="alert"><FormError message={error} /></div>}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-sm text-blue-700">
               {t('salary.remainingAmount')}:{' '}
