@@ -24,7 +24,7 @@ export function signIn(user: { id: number; role: string; full_name?: string; bus
 }
 
 export function resetStores() {
-  useAuthStore.setState({ token: null, user: null })
+  useAuthStore.setState({ token: null, user: null, signedOut: false })
   useLocaleStore.setState({ locale: 'en' })
   localStorage.clear()
 }

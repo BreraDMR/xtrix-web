@@ -91,7 +91,7 @@ api.interceptors.response.use(
 export function signOut() {
   const token = useAuthStore.getState().token
   const refreshToken = localStorage.getItem('auth_refresh_token')
-  useAuthStore.getState().logout()
+  useAuthStore.getState().logout(true)
   if (!refreshToken) return
   api.post('/users/logout', { refresh_token: refreshToken }, {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
