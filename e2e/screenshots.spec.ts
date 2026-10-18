@@ -90,5 +90,21 @@ test.describe('screenshots', () => {
         await expect(page).toHaveScreenshot(`${screen.name}-${width}.png`, { mask: screen.mask?.(page) })
       })
     }
+
+    // the assistant panel over the dashboard: a side panel on a wide screen, full screen on a phone
+    test(`assistant panel at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: width > 400 ? 800 : 812 })
+      await page.clock.install({ time: CLOCK_START })
+      await page.clock.resume()
+      await openAs(page, OWNER, '/')
+      await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+      await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(CHART_ANIMATION_MS)
+      await page.getByRole('button', { name: 'Open the assistant: Sasha' }).click()
+      const panel = page.getByRole('dialog', { name: 'Sasha' })
+      await expect(panel.getByText('Sasha is ready to help')).toBeVisible()
+      await page.waitForLoadState('networkidle')
+      await expect(page).toHaveScreenshot(`assistant-${width}.png`)
+    })
   }
 })
