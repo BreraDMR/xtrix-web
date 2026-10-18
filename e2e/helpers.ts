@@ -33,20 +33,21 @@ export interface Session {
   headers: { Authorization: string }
 }
 
-async function ok(response: Awaited<ReturnType<APIRequestContext['get']>>) {
+// the caller says what shape it expects back, nothing checks it
+async function ok<T = unknown>(response: Awaited<ReturnType<APIRequestContext['get']>>): Promise<T> {
   expect(response.ok(), `${response.url()} -> ${response.status()} ${await response.text()}`).toBeTruthy()
-  return response.json()
+  return (await response.json()) as T
 }
 
 export async function apiLogin(request: APIRequestContext, email: string, password: string): Promise<Session> {
-  const { access_token: token } = await ok(await request.post(`${apiUrl}/users/login`, { data: { email, password } }))
+  const { access_token: token } = await ok<{ access_token: string }>(await request.post(`${apiUrl}/users/login`, { data: { email, password } }))
   const headers = { Authorization: `Bearer ${token}` }
-  const user = await ok(await request.get(`${apiUrl}/users/me`, { headers }))
+  const user = await ok<Session['user']>(await request.get(`${apiUrl}/users/me`, { headers }))
   return { email, password, token, user, headers }
 }
 
-export async function apiPost(request: APIRequestContext, s: Session, path: string, data: unknown) {
-  return ok(await request.post(`${apiUrl}${path}`, { headers: s.headers, data }))
+export async function apiPost<T = unknown>(request: APIRequestContext, s: Session, path: string, data: unknown) {
+  return ok<T>(await request.post(`${apiUrl}${path}`, { headers: s.headers, data }))
 }
 
 // A brand-new owner (with a business unless told otherwise), so tests don't share state.

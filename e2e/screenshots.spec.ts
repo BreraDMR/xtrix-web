@@ -17,19 +17,19 @@ async function ensureData() {
     expect(signup.ok(), await signup.text()).toBeTruthy()
     let owner = await apiLogin(request, OWNER.email, OWNER.password)
     await request.put(`${apiUrl}/user-preferences/me`, { headers: owner.headers, data: { language: 'en' } })
-    const business = await apiPost(request, owner, '/businesses/', { name: 'Studio Shot', business_type: 'salon', currency: 'EUR' })
+    const business = await apiPost<{ id: number }>(request, owner, '/businesses/', { name: 'Studio Shot', business_type: 'salon', currency: 'EUR' })
     owner = await apiLogin(request, OWNER.email, OWNER.password)
 
-    const service = await apiPost(request, owner, '/services/', {
+    const service = await apiPost<{ id: number }>(request, owner, '/services/', {
       name: 'Haircut', duration_minutes: 60, price: 40, specialist_id: owner.user.id,
     })
-    const clients = []
+    const clients: { id: number }[] = []
     for (const [name, phone, email] of [
       ['Alice Brown', '+420700000101', 'alice.brown@example.com'],
       ['Boris Kral', '+420700000102', 'boris.kral@example.com'],
       ['Cecile Dvorak', '+420700000103', 'cecile.dvorak@example.com'],
     ]) {
-      clients.push(await apiPost(request, owner, '/clients/', { full_name: name, contact_phone: phone, contact_email: email }))
+      clients.push(await apiPost<{ id: number }>(request, owner, '/clients/', { full_name: name, contact_phone: phone, contact_email: email }))
     }
     const visit = (client: { id: number }, start: string, extra = {}) => apiPost(request, owner, '/visits/', {
       client_id: client.id, specialist_id: owner.user.id, service_id: service.id, date_start: start, price: 40, ...extra,
