@@ -98,15 +98,15 @@ export default function SalaryPaymentModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full dark:bg-gray-800">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             {t('salary.recordPayment')}
           </h2>
           <button
             aria-label={t('common.close')}
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-400"
             disabled={createMutation.isPending}
           >
             <HiX className="w-6 h-6" />
@@ -123,7 +123,7 @@ export default function SalaryPaymentModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               {t('salary.amount')}
             </label>
             <input
@@ -133,33 +133,33 @@ export default function SalaryPaymentModal({
               max={remainingAmount}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
               placeholder="0.00"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               {t('salary.paymentDate')}
             </label>
             <input
               type="date"
               value={paymentDate}
               onChange={(e) => setPaymentDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               {t('salary.paymentMethod')}
             </label>
             <select
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value as SalaryPaymentCreate['payment_method'])}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
               required
             >
               <option value="cash">{t('finance.payment_cash')}</option>
@@ -170,13 +170,13 @@ export default function SalaryPaymentModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               {t('salary.status')}
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as SalaryPaymentCreate['status'])}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
               required
             >
               <option value="completed">{t('salary.completed')}</option>
@@ -186,13 +186,13 @@ export default function SalaryPaymentModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               {t('salary.notes')}
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
               rows={3}
               placeholder={t('salary.paymentNotes')}
             />
@@ -203,7 +203,7 @@ export default function SalaryPaymentModal({
               type="button"
               onClick={handleClose}
               disabled={createMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-900"
             >
               {t('common.cancel')}
             </button>

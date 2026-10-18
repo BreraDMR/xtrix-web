@@ -226,9 +226,9 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       </div>
 
       {businessId && (
-        <fieldset className="space-y-4 pt-4 border-t border-gray-200">
+        <fieldset className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <legend className="text-base font-semibold">{t('business.assistant')}</legend>
-          <p className="text-xs text-gray-500">{t('business.assistantHint')}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t('business.assistantHint')}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="assistant-name" className="block text-sm font-medium mb-1">{t('business.assistantName')}</label>
@@ -259,7 +259,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
                   setFormData({ ...formData, assistant_gender: e.target.value as AssistantGender })
                   if (fieldErrors.assistant_gender) setFieldErrors({ ...fieldErrors, assistant_gender: '' })
                 }}
-                className="w-full px-3 py-2 border rounded-md bg-white"
+                className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
               >
                 {ASSISTANT_GENDERS.map((gender) => (
                   <option key={gender} value={gender}>{t(`business.assistantGender.${gender}`)}</option>
@@ -271,11 +271,11 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
         </fieldset>
       )}
 
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
+          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all dark:border-gray-600 dark:hover:bg-gray-900 dark:text-gray-300"
         >
           {t('common.cancel')}
         </button>

@@ -433,14 +433,14 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               />
               
               {searchingClient && (
-                <div className="text-sm text-gray-500 flex items-center gap-2">
+                <div className="text-sm text-gray-500 flex items-center gap-2 dark:text-gray-400">
                   <LoadingSpinner size="sm" />
                   {t('visits.searching')}
                 </div>
               )}
 
               {clientNotFound && !searchingClient && (
-                <p className="text-sm text-gray-500">{t('visits.clientNotFound')}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('visits.clientNotFound')}</p>
               )}
 
               {nameMatches.length > 0 && (
@@ -450,42 +450,42 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                       key={client.id}
                       type="button"
                       onClick={() => pickClient(client)}
-                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50"
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-900"
                     >
                       {client.full_name}
-                      {client.contact_phone && <span className="text-gray-500"> · {client.contact_phone}</span>}
+                      {client.contact_phone && <span className="text-gray-500 dark:text-gray-400"> · {client.contact_phone}</span>}
                     </button>
                   ))}
                 </div>
               )}
 
               {selectedClient && (
-                <div className="p-3 border rounded-md bg-gray-50">
+                <div className="p-3 border rounded-md bg-gray-50 dark:bg-gray-900">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-medium">{selectedClient.full_name}</p>
                       {selectedClient.contact_phone && (
-                        <p className="text-sm text-gray-600">📞 {selectedClient.contact_phone}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">📞 {selectedClient.contact_phone}</p>
                       )}
                       {selectedClient.contact_email && (
-                        <p className="text-sm text-gray-600">✉️ {selectedClient.contact_email}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">✉️ {selectedClient.contact_email}</p>
                       )}
                     </div>
                   </div>
                   
                   {}
                   {selectedClient.basic_medical_info && (
-                    <div className="mt-2 pt-2 border-t border-gray-200">
-                      <p className="text-xs font-medium text-gray-700 mb-1">
+                    <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-xs font-medium text-gray-700 mb-1 dark:text-gray-300">
                         {t('visits.basicMedicalInfo')}
                       </p>
                       {selectedClient.basic_medical_info.allergies && (
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                           <span className="font-medium">{t('clientForm.allergies')}:</span> {selectedClient.basic_medical_info.allergies}
                         </p>
                       )}
                       {selectedClient.basic_medical_info.chronic_diseases && (
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                           <span className="font-medium">{t('clientForm.chronicDiseases')}:</span> {selectedClient.basic_medical_info.chronic_diseases}
                         </p>
                       )}
@@ -659,11 +659,11 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
       {}
       {currentClientId && clientBalance && (
-        <div className="border-t border-gray-200 pt-4 mt-4">
+        <div className="border-t border-gray-200 pt-4 mt-4 dark:border-gray-700">
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">{t('loyalty.use_points')}</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">{t('loyalty.use_points')}</h3>
             {clientBalance.points > 0 && (
-              <p className="text-xs text-gray-600 mb-2">
+              <p className="text-xs text-gray-600 mb-2 dark:text-gray-400">
                 {t('loyalty.client_balance')}: {clientBalance.points.toFixed(0)} {t('loyalty.points')}
                 {clientBalance.cashback > 0 && `, ${clientBalance.cashback.toFixed(2)} € ${t('loyalty.cashback')}`}
               </p>
@@ -712,11 +712,11 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         {fieldErrors.note && <FormError message={fieldErrors.note} />}
       </div>
 
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
+          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all dark:border-gray-600 dark:hover:bg-gray-900 dark:text-gray-300"
         >
           {t('common.cancel')}
         </button>

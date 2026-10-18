@@ -41,7 +41,7 @@ export default function FormField({
       {control ? cloneElement(control, { id: controlId, 'aria-invalid': error ? true : undefined }) : children}
       {error && <FormError message={error} />}
       {hint && !error && (
-        <p className="mt-1 text-xs text-gray-500">{hint}</p>
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{hint}</p>
       )}
     </div>
   )

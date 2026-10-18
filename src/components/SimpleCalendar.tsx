@@ -105,7 +105,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           <button className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium">
             {t('calendar.monthView')}
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
             {totalEventsThisMonth} {t('calendar.eventsThisMonth')}
           </span>
         </div>
@@ -126,16 +126,16 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
 
       <div className="space-y-4">
         {}
-        <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('calendar.selectedDay')}</h3>
-          <p className="text-lg font-bold text-gray-900 mb-2">
+        <div className="bg-white p-4 rounded-lg shadow border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3 dark:text-gray-300">{t('calendar.selectedDay')}</h3>
+          <p className="text-lg font-bold text-gray-900 mb-2 dark:text-gray-100">
             {format(selectedDate, 'EEEE, MMMM d', { locale: dateLocale })}
           </p>
           {showForm ? (
             <div>
               <button
                 onClick={handleFormCancel}
-                className="mb-4 text-sm text-gray-600 hover:text-gray-800"
+                className="mb-4 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
               >
                 ← {t('common.cancel')}
               </button>
@@ -150,18 +150,18 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           ) : (
             <div className="space-y-2">
               {dayVisits.length === 0 ? (
-                <p className="text-sm text-gray-500">{t('calendar.noVisits')}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('calendar.noVisits')}</p>
               ) : (
                 dayVisits.map((visit) => (
                   <div
                     key={visit.id}
                     onClick={() => handleVisitClick(visit)}
-                    className="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:hover:bg-gray-700"
                   >
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {visit.service_name || t('visits.title')}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
                       {format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })}
                     </p>
                   </div>
@@ -172,37 +172,37 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
         </div>
 
         {}
-        <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('calendar.insights')}</h3>
-          <p className="text-xs text-gray-500 mb-3">{t('calendar.insightsTitle')}</p>
+        <div className="bg-white p-4 rounded-lg shadow border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('calendar.insights')}</h3>
+          <p className="text-xs text-gray-500 mb-3 dark:text-gray-400">{t('calendar.insightsTitle')}</p>
           <div className="space-y-3">
             <div>
               <p className="text-lg font-bold text-purple-600">
                 {visits.filter((v) => v.status === 'completed' || v.status === 'in_progress').length}
               </p>
-              <p className="text-xs text-gray-600">Meetings</p>
-              <p className="text-xs text-gray-500">sync/planning</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Meetings</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">sync/planning</p>
             </div>
             <div>
               <p className="text-lg font-bold text-purple-600">
                 {visits.filter((v) => v.status === 'planned').length}
               </p>
-              <p className="text-xs text-gray-600">Calls</p>
-              <p className="text-xs text-gray-500">clients</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Calls</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">clients</p>
             </div>
             <div>
               <p className="text-lg font-bold text-purple-600">
                 {visits.filter((v) => v.status === 'completed').length}
               </p>
-              <p className="text-xs text-gray-600">Finance</p>
-              <p className="text-xs text-gray-500">Invoices</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Finance</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Invoices</p>
             </div>
             <div>
               <p className="text-lg font-bold text-purple-600">
                 {visits.filter((v) => v.status === 'cancelled').length}
               </p>
-              <p className="text-xs text-gray-600">Releases</p>
-              <p className="text-xs text-gray-500">Deploy windows</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Releases</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Deploy windows</p>
             </div>
           </div>
         </div>

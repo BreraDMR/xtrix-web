@@ -91,15 +91,15 @@ export default function ExportModal<T extends object>({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800">
         {}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             {t('export.title')}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-400"
             disabled={isExporting}
           >
             <HiX className="w-6 h-6" />
@@ -111,13 +111,13 @@ export default function ExportModal<T extends object>({
           {exportError && <div role="alert"><FormError message={exportError} /></div>}
           {reportTypes && reportTypes.length > 1 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                 {t('export.reportType')}
               </label>
               <select
                 value={selectedReportType || ''}
                 onChange={(e) => setSelectedReportType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                 disabled={isExporting}
               >
                 {reportTypes.map((type) => (
@@ -131,7 +131,7 @@ export default function ExportModal<T extends object>({
 
           {}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               {t('export.format')}
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -145,7 +145,7 @@ export default function ExportModal<T extends object>({
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="font-medium">PDF</div>
-                <div className="text-xs text-gray-500 mt-1">Document</div>
+                <div className="text-xs text-gray-500 mt-1 dark:text-gray-400">Document</div>
               </button>
               <button
                 onClick={() => setSelectedFormat('excel')}
@@ -157,7 +157,7 @@ export default function ExportModal<T extends object>({
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="font-medium">Excel</div>
-                <div className="text-xs text-gray-500 mt-1">Spreadsheet</div>
+                <div className="text-xs text-gray-500 mt-1 dark:text-gray-400">Spreadsheet</div>
               </button>
               <button
                 onClick={() => setSelectedFormat('csv')}
@@ -169,7 +169,7 @@ export default function ExportModal<T extends object>({
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="font-medium">CSV</div>
-                <div className="text-xs text-gray-500 mt-1">Text file</div>
+                <div className="text-xs text-gray-500 mt-1 dark:text-gray-400">Text file</div>
               </button>
               <button
                 onClick={() => setSelectedFormat('print')}
@@ -181,7 +181,7 @@ export default function ExportModal<T extends object>({
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <HiPrinter className="w-5 h-5 mx-auto mb-1" />
-                <div className="text-xs text-gray-500">Print</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Print</div>
               </button>
             </div>
           </div>
@@ -195,9 +195,9 @@ export default function ExportModal<T extends object>({
                 checked={includeChartsOption}
                 onChange={(e) => setIncludeChartsOption(e.target.checked)}
                 disabled={isExporting || selectedFormat === 'print'}
-                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 dark:border-gray-600"
               />
-              <label htmlFor="includeCharts" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="includeCharts" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                 {t('export.includeCharts')}
               </label>
             </div>
@@ -211,11 +211,11 @@ export default function ExportModal<T extends object>({
         </div>
 
         {}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
           <button
             onClick={onClose}
             disabled={isExporting}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-900"
           >
             {t('common.cancel')}
           </button>

@@ -161,7 +161,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
             <button
               type="button"
               onClick={() => onOpenExisting(existing.id)}
-              className="px-3 py-1.5 bg-white border border-yellow-300 rounded-md font-medium hover:bg-yellow-100"
+              className="px-3 py-1.5 bg-white border border-yellow-300 rounded-md font-medium hover:bg-yellow-100 dark:bg-gray-800"
             >
               {t('clientForm.openExisting')}
             </button>
@@ -279,7 +279,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
         <select
           value={formData.language}
           onChange={(e) => setFormData({ ...formData, language: e.target.value as ClientLanguage })}
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 border-gray-300"
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 border-gray-300 dark:border-gray-600"
         >
           {CLIENT_LANGUAGES.map((lang) => (
             <option key={lang.code} value={lang.code}>{lang.label}</option>
@@ -287,11 +287,11 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
         </select>
       </FormField>
 
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
+          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all dark:border-gray-600 dark:hover:bg-gray-900 dark:text-gray-300"
         >
           {t('common.cancel')}
         </button>

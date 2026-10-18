@@ -235,7 +235,7 @@ export default function Clients() {
                     setGenderFilter(null)
                     setCurrentPage(1)
                   }}
-                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
                 >
                   {t('clients.clearFilters')}
                 </button>
@@ -267,7 +267,7 @@ export default function Clients() {
       )}
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
           <ClientForm
             key={editingId ?? 'new'}
             clientId={editingId}
@@ -280,10 +280,10 @@ export default function Clients() {
           />
         </div>
       ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-white shadow rounded-lg overflow-hidden dark:bg-gray-800">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
                 <TableSortHeader
                   columnKey="full_name"
@@ -306,42 +306,42 @@ export default function Clients() {
                   onSort={handleSort}
                   className="px-2 sm:px-6 hidden md:table-cell"
                 />
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell dark:text-gray-400">
                   {t('loyalty.points')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                   {t('common.actions')}
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-gray-500">
+                  <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((client) => (
-                <tr key={client.id} className="hover:bg-gray-50">
-                  <td className="px-2 sm:px-6 py-4 text-sm font-medium text-gray-900">
+                <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                  <td className="px-2 sm:px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                     <div className="flex flex-col">
                       <span>{client.full_name}</span>
-                      <span className="text-xs text-gray-500 sm:hidden mt-1">
+                      <span className="text-xs text-gray-500 sm:hidden mt-1 dark:text-gray-400">
                         {client.contact_phone || '-'}
                       </span>
                     </div>
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell dark:text-gray-400">
                     {client.contact_phone || '-'}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell dark:text-gray-400">
                     {client.contact_email || '-'}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
+                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell dark:text-gray-400">
                     <ClientLoyaltyBalance clientId={client.id} />
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => handleEdit(client.id)}

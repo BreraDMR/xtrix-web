@@ -103,36 +103,36 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
   }
 
   if (transactions.length === 0) {
-    return <p className="text-gray-600">{t('loyalty.no_transactions')}</p>
+    return <p className="text-gray-600 dark:text-gray-400">{t('loyalty.no_transactions')}</p>
   }
 
   return (
     <div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-900">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                 {t('loyalty.transaction_type')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                 {t('loyalty.points')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                 {t('loyalty.cashback')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                 Description
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                 Date
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
             {transactions.map((transaction) => (
               <tr key={transaction.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                   {t(`loyalty.transaction_${transaction.transaction_type}`)}
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap text-sm ${transaction.points_amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -143,10 +143,10 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
                     ? `${transaction.cashback_amount >= 0 ? '+' : ''}${transaction.cashback_amount.toFixed(2)}`
                     : '-'}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900">
+                <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                   {transaction.description || '-'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {new Date(transaction.created_at).toLocaleString()}
                 </td>
               </tr>
@@ -161,17 +161,17 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           >
             Previous
           </button>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
             Page {page} of {pages}
           </span>
           <button
             onClick={() => setPage(p => Math.min(pages, p + 1))}
             disabled={page >= pages}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           >
             Next
           </button>
@@ -406,13 +406,13 @@ export default function Loyalty() {
   return (
     <div className="animate-fade-in">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('loyalty.title')}</h1>
-        <p className="text-sm sm:text-base text-gray-600">{t('loyalty.subtitle')}</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 dark:text-gray-100">{t('loyalty.title')}</h1>
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{t('loyalty.subtitle')}</p>
       </div>
 
       {}
-      <div className="bg-white rounded-lg shadow-md mb-6 overflow-x-auto">
-        <div className="flex border-b border-gray-200">
+      <div className="bg-white rounded-lg shadow-md mb-6 overflow-x-auto dark:bg-gray-800">
+        <div className="flex border-b border-gray-200 dark:border-gray-700">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -431,12 +431,12 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'program' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           {isLoadingProgram ? (
             <LoadingSpinner />
           ) : !program ? (
             <div>
-              <p className="text-gray-600 mb-4">{t('loyalty.no_program')}</p>
+              <p className="text-gray-600 mb-4 dark:text-gray-400">{t('loyalty.no_program')}</p>
               {isAdmin && (
                 <button
                   onClick={() => setShowProgramForm(true)}
@@ -450,7 +450,7 @@ export default function Loyalty() {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{t('loyalty.program_settings')}</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('loyalty.program_settings')}</h2>
                   <p className={`text-sm mt-1 ${program.is_active ? 'text-green-600' : 'text-red-600'}`}>
                     {program.is_active ? t('loyalty.is_active') : t('loyalty.program_not_active')}
                   </p>
@@ -491,8 +491,8 @@ export default function Loyalty() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.program_type')}</label>
-                  <p className="text-gray-900">
+                  <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.program_type')}</label>
+                  <p className="text-gray-900 dark:text-gray-100">
                     {program.program_type === 'points' 
                       ? t('loyalty.program_points') 
                       : program.program_type === 'cashback' 
@@ -501,29 +501,29 @@ export default function Loyalty() {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_per_currency')}</label>
-                  <p className="text-gray-900">{program.points_per_currency}</p>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.points_per_currency')}</label>
+                  <p className="text-gray-900 dark:text-gray-100">{program.points_per_currency}</p>
                 </div>
                 {program.currency_per_point && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.currency_per_point')}</label>
-                    <p className="text-gray-900">{program.currency_per_point}</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.currency_per_point')}</label>
+                    <p className="text-gray-900 dark:text-gray-100">{program.currency_per_point}</p>
                   </div>
                 )}
                 {program.cashback_percent && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.cashback_percent')}</label>
-                    <p className="text-gray-900">{program.cashback_percent}%</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.cashback_percent')}</label>
+                    <p className="text-gray-900 dark:text-gray-100">{program.cashback_percent}%</p>
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.use_levels')}</label>
-                  <p className="text-gray-900">{program.use_levels ? 'Yes' : 'No'}</p>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.use_levels')}</label>
+                  <p className="text-gray-900 dark:text-gray-100">{program.use_levels ? 'Yes' : 'No'}</p>
                 </div>
                 {program.points_expiry_days && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_expiry_days')}</label>
-                    <p className="text-gray-900">{program.points_expiry_days} {t('common.days')}</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.points_expiry_days')}</label>
+                    <p className="text-gray-900 dark:text-gray-100">{program.points_expiry_days} {t('common.days')}</p>
                   </div>
                 )}
               </div>
@@ -533,17 +533,17 @@ export default function Loyalty() {
           {}
           {showProgramForm && isAdmin && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowProgramForm(false)}>
-              <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{program ? t('loyalty.edit_program') : t('loyalty.create_program')}</h3>
+              <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">{program ? t('loyalty.edit_program') : t('loyalty.create_program')}</h3>
                 <form onSubmit={program ? handleUpdateProgram : handleCreateProgram}>
                   {programError && <div role="alert" className="mb-4"><FormError message={programError} /></div>}
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.program_type')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.program_type')}</label>
                       <select
                         name="program_type"
                         defaultValue={program?.program_type}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         required
                       >
                         <option value="points">{t('loyalty.program_points')}</option>
@@ -552,43 +552,43 @@ export default function Loyalty() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_per_currency')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.points_per_currency')}</label>
                       <input
                         type="number"
                         name="points_per_currency"
                         step="0.01"
                         defaultValue={program?.points_per_currency}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_name')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.points_name')}</label>
                       <input
                         type="text"
                         name="points_name"
                         defaultValue={program?.points_name || 'Points'}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.currency_per_point')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.currency_per_point')}</label>
                       <input
                         type="number"
                         name="currency_per_point"
                         step="0.01"
                         defaultValue={program?.currency_per_point}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.cashback_percent')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.cashback_percent')}</label>
                       <input
                         type="number"
                         name="cashback_percent"
                         step="0.01"
                         defaultValue={program?.cashback_percent}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div className="flex items-center">
@@ -598,15 +598,15 @@ export default function Loyalty() {
                         defaultChecked={program?.use_levels}
                         className="mr-2"
                       />
-                      <label className="text-sm font-medium text-gray-700">{t('loyalty.use_levels')}</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('loyalty.use_levels')}</label>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_expiry_days')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.points_expiry_days')}</label>
                       <input
                         type="number"
                         name="points_expiry_days"
                         defaultValue={program?.points_expiry_days}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div className="flex items-center">
@@ -616,26 +616,26 @@ export default function Loyalty() {
                         defaultChecked={program?.birthday_bonus_enabled}
                         className="mr-2"
                       />
-                      <label className="text-sm font-medium text-gray-700">{t('loyalty.birthday_bonus_enabled')}</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('loyalty.birthday_bonus_enabled')}</label>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.birthday_bonus_points')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.birthday_bonus_points')}</label>
                       <input
                         type="number"
                         name="birthday_bonus_points"
                         step="0.01"
                         defaultValue={program?.birthday_bonus_points}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.max_bonus_payment_percent')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.max_bonus_payment_percent')}</label>
                       <input
                         type="number"
                         name="max_bonus_payment_percent"
                         step="0.01"
                         defaultValue={program?.max_bonus_payment_percent}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div className="flex items-center">
@@ -645,7 +645,7 @@ export default function Loyalty() {
                         defaultChecked={program?.is_active ?? true}
                         className="mr-2"
                       />
-                      <label className="text-sm font-medium text-gray-700">{t('loyalty.is_active')}</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('loyalty.is_active')}</label>
                     </div>
                   </div>
                   <div className="flex gap-2 mt-6">
@@ -658,7 +658,7 @@ export default function Loyalty() {
                     <button
                       type="button"
                       onClick={() => setShowProgramForm(false)}
-                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium dark:bg-gray-600 dark:text-gray-300"
                     >
                       {t('common.cancel')}
                     </button>
@@ -672,15 +672,15 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'levels' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           {!program ? (
-            <p className="text-gray-600">{t('loyalty.no_program')}</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('loyalty.no_program')}</p>
           ) : isLoadingLevels ? (
             <LoadingSpinner />
           ) : (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">{t('loyalty.levels')}</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('loyalty.levels')}</h2>
                 {isAdmin && (
                   <button
                     onClick={() => {
@@ -694,11 +694,11 @@ export default function Loyalty() {
                 )}
               </div>
               {levels.length === 0 ? (
-                <p className="text-gray-600">{t('loyalty.no_levels')}</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('loyalty.no_levels')}</p>
               ) : (
                 <div className="space-y-4">
                   {levels.map((level: LoyaltyLevel) => (
-                    <div key={level.id} className="border border-gray-200 rounded-lg p-4">
+                    <div key={level.id} className="border border-gray-200 rounded-lg p-4 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
                           {level.color && (
@@ -708,9 +708,9 @@ export default function Loyalty() {
                             />
                           )}
                           <div>
-                            <h3 className="text-lg font-bold text-gray-900">{level.name}</h3>
-                            <p className="text-sm text-gray-600">Level {level.level_number} • Min: {level.min_spending} €</p>
-                            {level.benefits && <p className="text-sm text-gray-600 mt-1">{level.benefits}</p>}
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{level.name}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Level {level.level_number} • Min: {level.min_spending} €</p>
+                            {level.benefits && <p className="text-sm text-gray-600 mt-1 dark:text-gray-400">{level.benefits}</p>}
                           </div>
                         </div>
                         {isAdmin && (
@@ -747,8 +747,8 @@ export default function Loyalty() {
           {}
           {showLevelForm && isAdmin && program && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowLevelForm(false)}>
-              <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{editingLevel ? t('loyalty.edit_level') : t('loyalty.add_level')}</h3>
+              <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">{editingLevel ? t('loyalty.edit_level') : t('loyalty.add_level')}</h3>
                 <form
                   onSubmit={async (e) => {
                     e.preventDefault()
@@ -778,76 +778,76 @@ export default function Loyalty() {
                 >
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.level_name')} *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.level_name')} *</label>
                       <input
                         type="text"
                         name="name"
                         defaultValue={editingLevel?.name}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.level_number')} *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.level_number')} *</label>
                       <input
                         type="number"
                         name="level_number"
                         min="1"
                         defaultValue={editingLevel?.level_number || 1}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.min_spending')} *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.min_spending')} *</label>
                       <input
                         type="number"
                         name="min_spending"
                         step="0.01"
                         min="0"
                         defaultValue={editingLevel?.min_spending}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_multiplier')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.points_multiplier')}</label>
                       <input
                         type="number"
                         name="points_multiplier"
                         step="0.01"
                         min="0"
                         defaultValue={editingLevel?.points_multiplier || 1.0}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.cashback_multiplier')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.cashback_multiplier')}</label>
                       <input
                         type="number"
                         name="cashback_multiplier"
                         step="0.01"
                         min="0"
                         defaultValue={editingLevel?.cashback_multiplier || 1.0}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.benefits')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.benefits')}</label>
                       <textarea
                         name="benefits"
                         rows={3}
                         defaultValue={editingLevel?.benefits}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.color')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.color')}</label>
                       <input
                         type="color"
                         name="color"
                         defaultValue={editingLevel?.color || '#3B82F6'}
-                        className="w-full h-10 border border-gray-300 rounded-lg"
+                        className="w-full h-10 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                   </div>
@@ -864,7 +864,7 @@ export default function Loyalty() {
                         setShowLevelForm(false)
                         setEditingLevel(null)
                       }}
-                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium dark:bg-gray-600 dark:text-gray-300"
                     >
                       {t('common.cancel')}
                     </button>
@@ -878,15 +878,15 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'promotions' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           {!program ? (
-            <p className="text-gray-600">{t('loyalty.no_program')}</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('loyalty.no_program')}</p>
           ) : isLoadingPromotions ? (
             <LoadingSpinner />
           ) : (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">{t('loyalty.promotions')}</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('loyalty.promotions')}</h2>
                 {isAdmin && (
                   <button
                     onClick={() => {
@@ -901,15 +901,15 @@ export default function Loyalty() {
                 )}
               </div>
               {promotions.length === 0 ? (
-                <p className="text-gray-600">{t('loyalty.no_promotions')}</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('loyalty.no_promotions')}</p>
               ) : (
                 <div className="space-y-4">
                   {promotions.map((promotion: LoyaltyPromotion) => (
-                    <div key={promotion.id} className="border border-gray-200 rounded-lg p-4">
+                    <div key={promotion.id} className="border border-gray-200 rounded-lg p-4 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="text-lg font-bold text-gray-900">{promotion.name}</h3>
-                          <p className="text-sm text-gray-600">
+                          <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{promotion.name}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
                             {showDay(promotion.start_date)} - {showDay(promotion.end_date)}
                           </p>
                           <p className={`text-sm mt-1 ${promotion.is_active ? 'text-green-600' : 'text-gray-500'}`}>
@@ -951,8 +951,8 @@ export default function Loyalty() {
           {}
           {showPromotionForm && isAdmin && program && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowPromotionForm(false)}>
-              <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{editingPromotion ? t('loyalty.edit_promotion') : t('loyalty.add_promotion')}</h3>
+              <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">{editingPromotion ? t('loyalty.edit_promotion') : t('loyalty.add_promotion')}</h3>
                 <form
                   onSubmit={async (e) => {
                     e.preventDefault()
@@ -999,22 +999,22 @@ export default function Loyalty() {
                   {promotionError && <div role="alert" className="mb-4"><FormError message={promotionError} /></div>}
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.promotion_name')} *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.promotion_name')} *</label>
                       <input
                         type="text"
                         name="name"
                         defaultValue={editingPromotion?.name}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.promotion_type')} *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.promotion_type')} *</label>
                       <select
                         name="promotion_type"
                         value={promotionType}
                         onChange={(e) => setPromotionType(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         required
                       >
                         <option value="double_points">{t('loyalty.promotion_double_points')}</option>
@@ -1024,82 +1024,82 @@ export default function Loyalty() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Description</label>
                       <textarea
                         name="description"
                         defaultValue={editingPromotion?.description || ''}
                         rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.start_date')} *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.start_date')} *</label>
                         <input
                           type="date"
                           name="start_date"
                           defaultValue={editingPromotion?.start_date ? editingPromotion.start_date.split('T')[0] : ''}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.end_date')} *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.end_date')} *</label>
                         <input
                           type="date"
                           name="end_date"
                           defaultValue={editingPromotion?.end_date ? editingPromotion.end_date.split('T')[0] : ''}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                           required
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.min_amount')}</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.min_amount')}</label>
                       <input
                         type="number"
                         name="min_amount"
                         step="0.01"
                         min="0"
                         defaultValue={editingPromotion?.min_amount}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Client ID (optional, leave empty for all clients)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Client ID (optional, leave empty for all clients)</label>
                       <input
                         type="number"
                         name="client_id"
                         defaultValue={editingPromotion?.client_id}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Service IDs (optional, comma-separated, leave empty for all services)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Service IDs (optional, comma-separated, leave empty for all services)</label>
                       <input
                         type="text"
                         name="service_ids"
                         defaultValue={editingPromotion?.service_ids ? JSON.parse(editingPromotion.service_ids).join(', ') : ''}
                         placeholder="1, 2, 3"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                       />
                     </div>
                     {promotionType === 'double_points' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.points_multiplier')}</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.points_multiplier')}</label>
                         <input
                           type="number"
                           name="points_multiplier"
                           step="0.01"
                           min="0"
                           defaultValue={editingPromotion?.points_multiplier || 2.0}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         />
                       </div>
                     )}
                     {promotionType === 'extra_cashback' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.cashback_percent')}</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.cashback_percent')}</label>
                         <input
                           type="number"
                           name="cashback_percent"
@@ -1107,26 +1107,26 @@ export default function Loyalty() {
                           min="0"
                           max="100"
                           defaultValue={editingPromotion?.cashback_percent}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         />
                       </div>
                     )}
                     {promotionType === 'bonus_points' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.bonus_points')}</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.bonus_points')}</label>
                         <input
                           type="number"
                           name="bonus_points"
                           step="0.01"
                           min="0"
                           defaultValue={editingPromotion?.bonus_points}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         />
                       </div>
                     )}
                     {promotionType === 'discount' && (
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.discount_percent')}</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.discount_percent')}</label>
                         <input
                           type="number"
                           name="discount_percent"
@@ -1134,7 +1134,7 @@ export default function Loyalty() {
                           min="0"
                           max="100"
                           defaultValue={editingPromotion?.discount_percent}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                         />
                       </div>
                     )}
@@ -1145,7 +1145,7 @@ export default function Loyalty() {
                         defaultChecked={editingPromotion?.is_active ?? true}
                         className="mr-2"
                       />
-                      <label className="text-sm font-medium text-gray-700">{t('loyalty.is_active')}</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('loyalty.is_active')}</label>
                     </div>
                   </div>
                   <div className="flex gap-2 mt-6">
@@ -1162,7 +1162,7 @@ export default function Loyalty() {
                         setEditingPromotion(null)
                         setPromotionType('double_points')
                       }}
-                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium dark:bg-gray-600 dark:text-gray-300"
                     >
                       {t('common.cancel')}
                     </button>
@@ -1176,31 +1176,31 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'transactions' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('loyalty.transactions')}</h2>
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 dark:text-gray-100">{t('loyalty.transactions')}</h2>
           
           {!program ? (
-            <p className="text-gray-600">{t('loyalty.no_program')}</p>
+            <p className="text-gray-600 dark:text-gray-400">{t('loyalty.no_program')}</p>
           ) : (
             <>
               {}
               <div className="mb-6 flex gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Client ID</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">Client ID</label>
                   <input
                     type="number"
                     value={selectedClientId || ''}
                     onChange={(e) => setSelectedClientId(e.target.value ? parseInt(e.target.value) : null)}
                     placeholder="Enter client ID"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('loyalty.transaction_type')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.transaction_type')}</label>
                   <select
                     value={transactionType || ''}
                     onChange={(e) => setTransactionType(e.target.value || null)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                   >
                     <option value="">All</option>
                     <option value="earned">{t('loyalty.transaction_earned')}</option>
@@ -1215,7 +1215,7 @@ export default function Loyalty() {
               {selectedClientId ? (
                 <TransactionsList clientId={selectedClientId} transactionType={transactionType} />
               ) : (
-                <p className="text-gray-600">Please enter a client ID to view transactions</p>
+                <p className="text-gray-600 dark:text-gray-400">Please enter a client ID to view transactions</p>
               )}
             </>
           )}
@@ -1224,7 +1224,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'analytics' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           <LoyaltyAnalytics />
         </div>
       )}

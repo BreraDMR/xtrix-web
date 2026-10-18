@@ -86,7 +86,7 @@ export default function Business() {
       </div>
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
           <BusinessForm
             businessId={editingId}
             onSuccess={handleSuccess}
@@ -97,48 +97,48 @@ export default function Business() {
           />
         </div>
       ) : business ? (
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className="bg-white shadow rounded-lg p-6 dark:bg-gray-800">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">{t('business.name')}</label>
-              <p className="text-lg font-semibold text-gray-900">{business.name}</p>
+              <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.name')}</label>
+              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{business.name}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">{t('business.type')}</label>
-              <p className="text-gray-900">{labels.businessType(business.business_type)}</p>
+              <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.type')}</label>
+              <p className="text-gray-900 dark:text-gray-100">{labels.businessType(business.business_type)}</p>
             </div>
             {business.address && (
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">{t('business.address')}</label>
-                <p className="text-gray-900">{business.address}</p>
+                <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.address')}</label>
+                <p className="text-gray-900 dark:text-gray-100">{business.address}</p>
               </div>
             )}
             <div className="grid grid-cols-2 gap-4">
               {business.phone && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">{t('clients.phone')}</label>
-                  <p className="text-gray-900">{business.phone}</p>
+                  <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('clients.phone')}</label>
+                  <p className="text-gray-900 dark:text-gray-100">{business.phone}</p>
                 </div>
               )}
               {business.email && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">{t('clients.email')}</label>
-                  <p className="text-gray-900">{business.email}</p>
+                  <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('clients.email')}</label>
+                  <p className="text-gray-900 dark:text-gray-100">{business.email}</p>
                 </div>
               )}
             </div>
             {business.description && (
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1">{t('business.description')}</label>
-                <p className="text-gray-900">{business.description}</p>
+                <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.description')}</label>
+                <p className="text-gray-900 dark:text-gray-100">{business.description}</p>
               </div>
             )}
             <AssistantInfo business={business} />
           </div>
         </div>
       ) : (
-        <div className="bg-white shadow rounded-lg p-6 text-center">
-          <p className="text-gray-500 mb-4">{t('business.empty')}</p>
+        <div className="bg-white shadow rounded-lg p-6 text-center dark:bg-gray-800">
+          <p className="text-gray-500 mb-4 dark:text-gray-400">{t('business.empty')}</p>
           <button
             onClick={() => {
               setEditingId(undefined)
@@ -158,14 +158,14 @@ function AssistantInfo({ business }: { business: BusinessOut }) {
   const { t, locale } = useTranslation()
   const { name, gender, isDefault } = effectiveAssistant(business, locale)
   return (
-    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
       <div>
-        <label className="block text-sm font-medium text-gray-500 mb-1">{t('business.assistantName')}</label>
-        <p className="text-gray-900">{isDefault ? `${name} (${t('business.assistantDefault')})` : name}</p>
+        <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.assistantName')}</label>
+        <p className="text-gray-900 dark:text-gray-100">{isDefault ? `${name} (${t('business.assistantDefault')})` : name}</p>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-500 mb-1">{t('business.assistantGender')}</label>
-        <p className="text-gray-900">{t(`business.assistantGender.${gender}`)}</p>
+        <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.assistantGender')}</label>
+        <p className="text-gray-900 dark:text-gray-100">{t(`business.assistantGender.${gender}`)}</p>
       </div>
     </div>
   )

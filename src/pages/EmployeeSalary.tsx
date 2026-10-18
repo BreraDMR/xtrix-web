@@ -273,7 +273,7 @@ export default function EmployeeSalary() {
       </div>
 
       {}
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-gray-200 mb-6 dark:border-gray-700">
         <nav className="-mb-px flex space-x-8">
           {(['current', 'adjustments', 'payments', 'history'] as const).map((tab) => {
             return (
@@ -299,26 +299,26 @@ export default function EmployeeSalary() {
           {currentSalary ? (
             <div className="space-y-6">
               {}
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
                 <h2 className="text-xl font-semibold mb-4">{t('salary.currentCalculation')}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div>
-                    <p className="text-sm text-gray-600">{t('salary.period')}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('salary.period')}</p>
                     <p className="text-lg font-medium">
                       {new Date(currentSalary.period_start).toLocaleDateString()} -{' '}
                       {new Date(currentSalary.period_end).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">{t('salary.totalVisits')}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('salary.totalVisits')}</p>
                     <p className="text-lg font-medium">{currentSalary.total_visits}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">{t('salary.completed')}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('salary.completed')}</p>
                     <p className="text-lg font-medium">{currentSalary.completed_visits}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">{t('salary.totalRevenue')}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('salary.totalRevenue')}</p>
                     <p className="text-lg font-medium">
                       {formatCurrency(currentSalary.total_revenue, currency)}
                     </p>
@@ -326,15 +326,15 @@ export default function EmployeeSalary() {
                 </div>
 
                 {}
-                <div className="border-t border-gray-200 pt-4 mt-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">{t('salary.breakdown')}</h3>
+                <div className="border-t border-gray-200 pt-4 mt-4 dark:border-gray-700">
+                  <h3 className="font-semibold text-gray-900 mb-3 dark:text-gray-100">{t('salary.breakdown')}</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">{t('salary.base')}</span>
+                      <span className="text-gray-600 dark:text-gray-400">{t('salary.base')}</span>
                       <span className="font-medium">{formatCurrency(currentSalary.base_salary, currency)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">
+                      <span className="text-gray-600 dark:text-gray-400">
                         {t('salary.commission')} ({currentSalary.commission_percentage}%)
                       </span>
                       <span className="font-medium">
@@ -344,7 +344,7 @@ export default function EmployeeSalary() {
                     {currentSalary.adjustments_total !== 0 && (
                       <>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">{t('salary.bonuses')}</span>
+                          <span className="text-gray-600 dark:text-gray-400">{t('salary.bonuses')}</span>
                           <span className={`font-medium ${currentSalary.adjustments_total > 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {currentSalary.adjustments_total > 0 ? '+' : ''}
                             {formatCurrency(currentSalary.adjustments_total, currency)}
@@ -352,8 +352,8 @@ export default function EmployeeSalary() {
                         </div>
                       </>
                     )}
-                    <div className="flex justify-between border-t border-gray-200 pt-2 mt-2">
-                      <span className="font-semibold text-gray-900">{t('salary.total')}</span>
+                    <div className="flex justify-between border-t border-gray-200 pt-2 mt-2 dark:border-gray-700">
+                      <span className="font-semibold text-gray-900 dark:text-gray-100">{t('salary.total')}</span>
                       <span className="font-bold text-lg">
                         {formatCurrency(currentSalary.total_with_adjustments, currency)}
                       </span>
@@ -361,13 +361,13 @@ export default function EmployeeSalary() {
                     {currentSalary.paid_amount > 0 && (
                       <>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">{t('salary.paid')}</span>
+                          <span className="text-gray-600 dark:text-gray-400">{t('salary.paid')}</span>
                           <span className="font-medium text-red-600">
                             -{formatCurrency(currentSalary.paid_amount, currency)}
                           </span>
                         </div>
-                        <div className="flex justify-between border-t border-gray-200 pt-2 mt-2">
-                          <span className="font-semibold text-gray-900">{t('salary.remaining')}</span>
+                        <div className="flex justify-between border-t border-gray-200 pt-2 mt-2 dark:border-gray-700">
+                          <span className="font-semibold text-gray-900 dark:text-gray-100">{t('salary.remaining')}</span>
                           <span className="font-bold text-lg text-green-600">
                             {formatCurrency(remainingAmount, currency)}
                           </span>
@@ -378,7 +378,7 @@ export default function EmployeeSalary() {
                 </div>
 
                 {}
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex items-center justify-between">
                     <div>
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentSalary.payment_status)}`}>
@@ -412,20 +412,20 @@ export default function EmployeeSalary() {
                   </div>
                   {currentSalary.notes && (
                     <div className="mt-3">
-                      <p className="text-sm text-gray-600">{t('salary.notes')}</p>
-                      <p className="text-gray-800">{currentSalary.notes}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{t('salary.notes')}</p>
+                      <p className="text-gray-800 dark:text-gray-200">{currentSalary.notes}</p>
                     </div>
                   )}
-                  <div className="mt-2 text-xs text-gray-500">
+                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     {t('salary.calculatedAt')}: {new Date(currentSalary.calculated_at).toLocaleString()}
                   </div>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
               <div className="text-center py-8">
-                <p className="text-gray-600 mb-4">{t('salary.noUnpaidSalary')}</p>
+                <p className="text-gray-600 mb-4 dark:text-gray-400">{t('salary.noUnpaidSalary')}</p>
                 {!showCalculateForm ? (
                   <button
                     onClick={() => setShowCalculateForm(true)}
@@ -437,37 +437,37 @@ export default function EmployeeSalary() {
                   <div className="max-w-md mx-auto mt-4 space-y-4">
                     {calculateError && <div role="alert"><FormError message={calculateError} /></div>}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                         {t('salary.periodStart')}
                       </label>
                       <input
                         type="date"
                         value={periodStart}
                         onChange={(e) => setPeriodStart(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                         {t('salary.periodEnd')}
                       </label>
                       <input
                         type="date"
                         value={periodEnd}
                         onChange={(e) => setPeriodEnd(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                         {t('salary.notes')}
                       </label>
                       <textarea
                         value={calculateNotes}
                         onChange={(e) => setCalculateNotes(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                         rows={3}
                       />
                     </div>
@@ -479,7 +479,7 @@ export default function EmployeeSalary() {
                           setPeriodEnd('')
                           setCalculateNotes('')
                         }}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-900"
                       >
                         {t('common.cancel')}
                       </button>
@@ -514,7 +514,7 @@ export default function EmployeeSalary() {
 
       {}
       {activeTab === 'adjustments' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">{t('salary.adjustments')}</h2>
             {}
@@ -526,7 +526,7 @@ export default function EmployeeSalary() {
                     const id = e.target.value ? parseInt(e.target.value, 10) : null
                     setSelectedSalaryId(id)
                   }}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                 >
                   <option value="">{t('salary.selectSalary')}</option>
                   {salaryHistory.map((sal) => (
@@ -559,7 +559,7 @@ export default function EmployeeSalary() {
             const salaryToShow = currentSalary || selectedSalary
             if (!salaryToShow) {
               return (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   {!currentSalary && (!salaryHistory || salaryHistory.length === 0)
                     ? t('salary.noUnpaidSalary')
                     : t('salary.selectSalary')}
@@ -571,7 +571,7 @@ export default function EmployeeSalary() {
               {salaryToShow.adjustments!.map((adj) => (
                 <div
                   key={adj.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg dark:border-gray-700"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
@@ -584,9 +584,9 @@ export default function EmployeeSalary() {
                       </span>
                     </div>
                     {adj.description && (
-                      <p className="text-sm text-gray-600 mt-1">{adj.description}</p>
+                      <p className="text-sm text-gray-600 mt-1 dark:text-gray-400">{adj.description}</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 mt-1 dark:text-gray-400">
                       {new Date(adj.created_at).toLocaleString()}
                     </p>
                   </div>
@@ -605,7 +605,7 @@ export default function EmployeeSalary() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
               {t('salary.noAdjustments')}
             </div>
           )
@@ -735,44 +735,44 @@ export default function EmployeeSalary() {
 
       {}
       {activeTab === 'history' && (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-800">
           {isLoadingHistory ? (
             <div className="p-8 text-center">
               <LoadingSpinner />
             </div>
           ) : salaryHistory && salaryHistory.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                       {t('salary.period')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                       {t('salary.total')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                       {t('salary.paid')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                       {t('salary.status')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                       {t('common.actions')}
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                   {salaryHistory.map((salary) => (
-                    <tr key={salary.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <tr key={salary.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         {new Date(salary.period_start).toLocaleDateString()} -{' '}
                         {new Date(salary.period_end).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         {formatCurrency(salary.total_with_adjustments, currency)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {formatCurrency(salary.paid_amount, currency)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -799,7 +799,7 @@ export default function EmployeeSalary() {
               </table>
             </div>
           ) : (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-gray-500 dark:text-gray-400">
               {t('salary.noHistory')}
             </div>
           )}

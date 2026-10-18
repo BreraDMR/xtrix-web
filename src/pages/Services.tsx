@@ -170,7 +170,7 @@ export default function Services() {
                   setActiveFilter(null)
                   setCurrentPage(1)
                 }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
               >
                 {t('services.clearFilters')}
               </button>
@@ -180,7 +180,7 @@ export default function Services() {
       )}
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
           <ServiceForm
             serviceId={editingId}
             onSuccess={handleSuccess}
@@ -191,10 +191,10 @@ export default function Services() {
           />
         </div>
       ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-white shadow rounded-lg overflow-hidden dark:bg-gray-800">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
                 <TableSortHeader
                   columnKey="name"
@@ -214,18 +214,18 @@ export default function Services() {
                   currentSort={sortConfig}
                   onSort={handleSort}
                 />
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                   {t('services.status')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                   {t('common.actions')}
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     {searchQuery || activeFilter
                       ? t('services.noServicesMatch')
                       : t('services.noServicesFound')}
@@ -233,19 +233,19 @@ export default function Services() {
                 </tr>
               ) : (
                 paginatedData.map((service) => (
-              <tr key={service.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm font-medium text-gray-900">
+              <tr key={service.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                   {service.name}
                   {service.description && (
-                    <p className="mt-1 max-w-md text-xs font-normal text-gray-500 line-clamp-2" title={service.description}>
+                    <p className="mt-1 max-w-md text-xs font-normal text-gray-500 line-clamp-2 dark:text-gray-400" title={service.description}>
                       {service.description}
                     </p>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {service.duration_minutes} {t('services.min')}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {formatCurrency(service.price, currency)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -259,7 +259,7 @@ export default function Services() {
                     {service.is_active ? t('services.active') : t('services.inactive')}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <button
                     onClick={() => handleEdit(service.id)}
                     className="text-blue-600 hover:text-blue-800"

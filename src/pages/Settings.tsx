@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
@@ -11,6 +10,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import type { TranslationKey } from '../i18n/translations'
 import type { UserPreferencesUpdate } from '../api/types'
 import { PREFERENCES_KEY, usePreferences, useSetUiLanguage } from '../hooks/useUiLanguage'
+import { applyTheme, isTheme } from '../utils/theme'
 import type { Locale } from '../store/localeStore'
 
 
@@ -52,6 +52,7 @@ const EXPORT_FORMATS: Option<'export_format'>[] = [
 const THEMES: Option<'theme'>[] = [
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
+  { value: 'system', label: 'System' },
 ]
 
 export default function Settings() {
@@ -86,9 +87,9 @@ export default function Settings() {
       const { data } = await api.put('/user-preferences/me', updates)
       return data
     },
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: PREFERENCES_KEY })
-      if (variables.theme) {
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(PREFERENCES_KEY, data)
+      if (isTheme(variables.theme)) {
         applyTheme(variables.theme)
       }
     },
@@ -114,32 +115,6 @@ export default function Settings() {
   const handlePreferenceChange = <K extends keyof UserPreferencesUpdate>(field: K, value: UserPreferencesUpdate[K]) => {
     updatePreferencesMutation.mutate({ [field]: value })
   }
-
-  const applyTheme = (theme: string) => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  }
-
-  useEffect(() => {
-    if (preferences?.theme) {
-      applyTheme(preferences.theme)
-    } else {
-      const savedTheme = localStorage.getItem('theme') || 'light'
-      applyTheme(savedTheme)
-    }
-  }, [preferences?.theme])
-
-  useEffect(() => {
-    if (!preferences) {
-      const savedTheme = localStorage.getItem('theme') || 'light'
-      applyTheme(savedTheme)
-    }
-  }, [preferences])
 
   if (isLoadingBusiness || isLoadingPreferences) {
     return (
@@ -224,7 +199,7 @@ export default function Settings() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.theme')}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.theme_description')}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {THEMES.map((theme) => (
                 <button
                   key={theme.value}

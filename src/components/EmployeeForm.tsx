@@ -192,7 +192,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
             type="text"
             readOnly
             value={generatedPassword}
-            className="flex-1 bg-white p-3 rounded border border-green-300 font-mono text-lg font-bold text-center select-all cursor-text"
+            className="flex-1 bg-white p-3 rounded border border-green-300 font-mono text-lg font-bold text-center select-all cursor-text dark:bg-gray-800"
             onClick={(e) => (e.target as HTMLInputElement).select()}
           />
           <button
@@ -237,7 +237,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       {formError && <div role="alert"><FormError message={formError} /></div>}
       {!employeeId ? (
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {t('employeeForm.passwordInfo')}
           </p>
 
@@ -290,7 +290,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
               {fieldErrors.phone && <FormError message={fieldErrors.phone} />}
             </div>
           </div>
-          <p className="text-xs text-gray-500">{t('register.contactRequired')}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t('register.contactRequired')}</p>
 
           <div>
             <label className="block text-sm font-medium mb-1">{t('register.specialistType')}</label>
@@ -417,7 +417,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-900"
           disabled={loading}
         >
           {t('common.cancel')}

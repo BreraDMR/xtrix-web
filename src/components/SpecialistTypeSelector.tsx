@@ -48,7 +48,7 @@ export default function SpecialistTypeSelector({
 
   if (loading) {
     return (
-      <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+      <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-400">
         {t('common.loading')}
       </div>
     )
@@ -69,7 +69,7 @@ export default function SpecialistTypeSelector({
         onChange={(e) => onChange(e.target.value)}
         required={required}
         disabled={disabled}
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed dark:border-gray-600 dark:disabled:bg-gray-700"
       >
         <option value="">-- {t('register.selectSpecialistType')} --</option>
         {Object.entries(typesData.categories).map(([categoryKey, category]) => (
@@ -91,7 +91,7 @@ export default function SpecialistTypeSelector({
         if (!categoryName) return null
         
         return (
-          <div className="text-sm text-gray-600 mt-1">
+          <div className="text-sm text-gray-600 mt-1 dark:text-gray-400">
             Category: {categoryName}
           </div>
         )

@@ -157,15 +157,15 @@ export default function ClientPersonalReportModal({
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800">
           {}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               {t('export.personalReport')} - {client?.full_name || ''}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-400"
             >
               <HiX className="w-6 h-6" />
             </button>
@@ -175,13 +175,13 @@ export default function ClientPersonalReportModal({
           <div className="p-6 space-y-6">
             {}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                 {t('export.selectReportType')}
               </label>
               <select
                 value={selectedReportType}
                 onChange={(e) => setSelectedReportType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
               >
                 <option value="profile">{t('export.clientProfile')}</option>
                 <option value="contacts">{t('export.clientContacts')}</option>
@@ -194,25 +194,25 @@ export default function ClientPersonalReportModal({
             {(selectedReportType === 'visits' || selectedReportType === 'finance') && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     {t('export.fromDate')}
                   </label>
                   <input
                     type="date"
                     value={dateFrom}
                     onChange={(e) => setDateFrom(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     {t('export.toDate')}
                   </label>
                   <input
                     type="date"
                     value={dateTo}
                     onChange={(e) => setDateTo(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                   />
                 </div>
               </div>
@@ -224,31 +224,31 @@ export default function ClientPersonalReportModal({
                 <LoadingSpinner />
               </div>
             ) : exportData.length > 0 ? (
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
-                <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-                  <h3 className="text-sm font-medium text-gray-700">
+              <div className="border border-gray-200 rounded-lg overflow-hidden dark:border-gray-700">
+                <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Preview
                   </h3>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-900">
                       <tr>
                         {columns.map((col) => (
                           <th
                             key={col.key}
-                            className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                            className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
                           >
                             {col.label}
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                       {exportData.map((row, idx) => (
                         <tr key={idx}>
                           {columns.map((col) => (
-                            <td key={col.key} className="px-4 py-2 text-sm text-gray-900">
+                            <td key={col.key} className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
                               {row[col.key] || '-'}
                             </td>
                           ))}
@@ -262,17 +262,17 @@ export default function ClientPersonalReportModal({
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 {t('common.noData')}
               </div>
             )}
           </div>
 
           {}
-          <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-900"
             >
               {t('common.cancel')}
             </button>

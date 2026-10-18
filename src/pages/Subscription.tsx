@@ -251,7 +251,7 @@ export default function Subscription() {
 
       {}
       {subscription && (
-        <div className="mb-8 bg-white rounded-lg shadow-md p-6">
+        <div className="mb-8 bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
           <div className="flex justify-between items-start mb-4">
             <h2 className="text-xl font-semibold">
               {t('subscription.currentSubscription')}
@@ -281,7 +281,7 @@ export default function Subscription() {
           </div>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-gray-600">{t('subscription.status_label')}:</span>
+              <span className="text-gray-600 dark:text-gray-400">{t('subscription.status_label')}:</span>
               <span
                 className={`font-medium ${
                   subscription.status === 'active' || subscription.status === 'pending_cancellation'
@@ -296,7 +296,7 @@ export default function Subscription() {
             </div>
             {subscription.cancel_at_period_end && subscription.current_period_end && (
               <div className="flex justify-between">
-                <span className="text-gray-600">{t('subscription.cancellation_date')}:</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('subscription.cancellation_date')}:</span>
                 <span className="font-medium text-orange-600">
                   {formatDate(subscription.current_period_end)} ({getDaysRemaining(subscription.current_period_end)} {t('subscription.days_remaining')})
                 </span>
@@ -305,12 +305,12 @@ export default function Subscription() {
             {subscription.is_trial && (
               <>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{t('subscription.trial_period')}:</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscription.trial_period')}:</span>
                   <span className="font-medium text-yellow-600">{t('subscription.trial_period_active')}</span>
                 </div>
                 {subscription.trial_end && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">{t('subscription.trialEnds')}:</span>
+                    <span className="text-gray-600 dark:text-gray-400">{t('subscription.trialEnds')}:</span>
                     <span className="font-medium">
                       {formatDate(subscription.trial_end)} ({getDaysRemaining(subscription.trial_end)} {t('subscription.days_remaining')})
                     </span>
@@ -320,7 +320,7 @@ export default function Subscription() {
             )}
             {subscription.current_period_end && !subscription.cancel_at_period_end && (
               <div className="flex justify-between">
-                <span className="text-gray-600">{t('subscription.period_ends')}:</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('subscription.period_ends')}:</span>
                 <span className="font-medium">{formatDate(subscription.current_period_end)}</span>
               </div>
             )}
@@ -328,16 +328,16 @@ export default function Subscription() {
 
           {}
           {transactions && transactions.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold mb-3">
                 {t('subscription.transactionHistory')}
               </h3>
               <div className="space-y-2">
                 {transactions.map((transaction) => (
-                  <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                  <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded dark:bg-gray-900">
                     <div>
                       <div className="font-medium">{transaction.payment_method}</div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         {transaction.transaction_date
                           ? formatDate(transaction.transaction_date)
                           : formatDate(transaction.created_at)}
@@ -391,17 +391,17 @@ export default function Subscription() {
             {availablePlans.map((plan) => (
               <div
                 key={plan.id}
-                className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200"
+                className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 dark:bg-gray-800 dark:border-gray-700"
               >
                 <h3 className="text-lg font-semibold mb-2">{labels.planName(plan)}</h3>
                 {labels.planFeatures(plan) && (
-                  <p className="mb-3 text-sm text-gray-600">{labels.planFeatures(plan)}</p>
+                  <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">{labels.planFeatures(plan)}</p>
                 )}
                 <div className="mb-4">
                   <span className="text-3xl font-bold">{plan.price}€</span>
-                  <span className="text-gray-600">{t('subscription.per_month')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('subscription.per_month')}</span>
                 </div>
-                <div className="mb-4 text-sm text-gray-600">
+                <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
                   <p>{t('subscription.period_days')}: {plan.period_days} {t('common.days')}</p>
                 </div>
                 <button
@@ -437,12 +437,12 @@ export default function Subscription() {
       )}
 
       {!subscription && !trialStatus?.is_trial && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-          <p className="text-gray-600 mb-4">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center dark:bg-gray-900 dark:border-gray-700">
+          <p className="text-gray-600 mb-4 dark:text-gray-400">
             {t('subscription.noSubscription')}
           </p>
           {availablePlans && availablePlans.length > 0 && (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               {t('subscription.selectPlan')}
             </p>
           )}
@@ -455,30 +455,30 @@ export default function Subscription() {
           <h2 className="text-xl font-semibold mb-4">
             {t('subscription.history')}
           </h2>
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-800">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                     {t('subscription.plan_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                     {t('subscription.status_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                     {t('subscription.created_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                     {t('subscription.period_end_label')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                 {subscriptionHistory
                   .filter((sub: Subscription) => sub.id !== subscription?.id)
                   .map((sub: Subscription) => (
                     <tr key={sub.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         {planById(sub.plan_id) ? labels.planName(planById(sub.plan_id)) : `${t('subscription.plan_number')} #${sub.plan_id}`}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -494,10 +494,10 @@ export default function Subscription() {
                           {labels.subscriptionStatus(sub.status)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(sub.created_at)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(sub.current_period_end)}
                       </td>
                     </tr>

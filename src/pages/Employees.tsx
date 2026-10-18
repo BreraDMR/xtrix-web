@@ -155,7 +155,7 @@ export default function Employees() {
   return (
     <div className="p-0 sm:p-6 animate-fade-in">
       <div className="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <h1 className="text-3xl font-bold text-gray-900">{t('employees.title')}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t('employees.title')}</h1>
         <button
           onClick={() => {
             setEditingId(undefined)
@@ -178,7 +178,7 @@ export default function Employees() {
               setSearchQuery(e.target.value)
               setCurrentPage(1)
             }}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600"
           />
         </div>
         <div className="flex flex-wrap gap-4 items-center">
@@ -192,7 +192,7 @@ export default function Employees() {
               }}
               className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
             />
-            <span className="text-gray-700">{t('employees.active_only')}</span>
+            <span className="text-gray-700 dark:text-gray-300">{t('employees.active_only')}</span>
           </label>
           {filteredEmployees.length > 0 && (
             <ExportButton
@@ -216,12 +216,12 @@ export default function Employees() {
       </div>
 
       {}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow overflow-hidden dark:bg-gray-800">
         <div className="overflow-x-auto">
-          <table role="table" className="responsive-card-table min-w-full divide-y divide-gray-200">
-            <thead role="rowgroup" className="bg-gray-50">
+          <table role="table" className="responsive-card-table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead role="rowgroup" className="bg-gray-50 dark:bg-gray-900">
               <tr role="row">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   {t('employees.employee')}
                 </th>
                 <TableSortHeader
@@ -242,7 +242,7 @@ export default function Employees() {
                   currentSort={sortConfig}
                   onSort={handleSort}
                 />
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   {t('employees.status')}
                 </th>
                 <TableSortHeader
@@ -251,41 +251,41 @@ export default function Employees() {
                   currentSort={sortConfig}
                   onSort={handleSort}
                 />
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   {t('employees.actions')}
                 </th>
               </tr>
             </thead>
-            <tbody role="rowgroup" className="bg-white divide-y divide-gray-200">
+            <tbody role="rowgroup" className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
               {paginatedData.length === 0 ? (
                 <tr role="row">
-                  <td role="cell" colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                  <td role="cell" colSpan={7} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     {t('employees.no_employees')}
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((employee) => (
-                <tr role="row" key={employee.id} className="hover:bg-gray-50">
+                <tr role="row" key={employee.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
                   <td role="cell" data-label={t('employees.employee')} className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {employee.employee_user?.full_name || t('employees.unknown')}
                       </div>
-                      <div className="text-sm text-gray-500">{employee.employee_user?.email}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">{employee.employee_user?.email}</div>
                       {employee.employee_user?.phone && (
-                        <div className="text-sm text-gray-500">{employee.employee_user.phone}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{employee.employee_user.phone}</div>
                       )}
                     </div>
                   </td>
-                  <td role="cell" data-label={t('employees.position')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td role="cell" data-label={t('employees.position')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                     {employee.position || '-'}
                   </td>
-                  <td role="cell" data-label={t('employees.commission')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td role="cell" data-label={t('employees.commission')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                     {employee.commission_percentage !== undefined
                       ? `${employee.commission_percentage}%`
                       : '-'}
                   </td>
-                  <td role="cell" data-label={t('employees.base_salary')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td role="cell" data-label={t('employees.base_salary')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                     {employee.base_salary !== undefined
                       ? formatCurrency(employee.base_salary, currency)
                       : '-'}
@@ -301,7 +301,7 @@ export default function Employees() {
                       {employee.is_active ? t('employees.active') : t('employees.inactive')}
                     </span>
                   </td>
-                  <td role="cell" data-label={t('employees.hired_at')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td role="cell" data-label={t('employees.hired_at')} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {employee.hired_at
                       ? new Date(employee.hired_at).toLocaleDateString()
                       : '-'}
@@ -364,7 +364,7 @@ export default function Employees() {
       {}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800">
             <h2 className="text-2xl font-bold mb-4">
               {editingId ? t('employees.edit_employee') : t('employees.add_employee')}
             </h2>

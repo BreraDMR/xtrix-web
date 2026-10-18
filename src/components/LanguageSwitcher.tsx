@@ -17,7 +17,7 @@ export default function LanguageSwitcher() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all flex items-center gap-1"
+        className="px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all flex items-center gap-1 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-900"
       >
         <span>{currentLanguage.label}</span>
         <span className="text-xs">▼</span>
@@ -29,7 +29,7 @@ export default function LanguageSwitcher() {
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-20 min-w-[80px]">
+          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-20 min-w-[80px] dark:bg-gray-800 dark:border-gray-600">
             {languages.map((lang) => (
               <button
                 key={lang.code}

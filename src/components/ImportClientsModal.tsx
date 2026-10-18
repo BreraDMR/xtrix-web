@@ -325,16 +325,16 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800">
         {}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             {t('import.title')}
           </h2>
           <button
             aria-label={t('common.close')}
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-400"
             disabled={isImporting}
           >
             <HiX className="w-6 h-6" />
@@ -347,7 +347,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
           {fileError && <div role="alert"><FormError message={fileError} /></div>}
           {!file && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                 {t('import.selectFile')}
               </label>
               <div className="flex items-center gap-4">
@@ -356,10 +356,10 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
                   type="file"
                   accept=".xlsx,.xls"
                   onChange={handleFileSelect}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:text-gray-400"
                 />
               </div>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                 {t('import.fileFormat')}
               </p>
             </div>
@@ -369,12 +369,12 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
           {file && parsedData.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   {t('import.preview')}
                 </h3>
                 <button
                   onClick={handleReset}
-                  className="text-sm text-gray-600 hover:text-gray-800"
+                  className="text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
                   disabled={isImporting}
                 >
                   {t('import.selectOtherFile')}
@@ -423,29 +423,29 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
               )}
 
               {}
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="border border-gray-200 rounded-lg overflow-hidden dark:border-gray-700">
                 <div className="overflow-x-auto max-h-96">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50 sticky top-0">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 sticky top-0 dark:bg-gray-900">
                       <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                           #
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                           {t('clients.name')}
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                           {t('clients.phone')}
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                           {t('clients.email')}
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                           {t('import.status')}
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                       {parsedData.slice(0, 20).map((client, idx) => {
                         const hasError = validationErrors.some((err) => err.row === client.row)
                         return (
@@ -453,12 +453,12 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
                             key={idx}
                             className={hasError ? 'bg-red-50' : 'bg-green-50'}
                           >
-                            <td className="px-4 py-2 text-sm text-gray-900">{client.row}</td>
-                            <td className="px-4 py-2 text-sm text-gray-900">{client.full_name}</td>
-                            <td className="px-4 py-2 text-sm text-gray-500">
+                            <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{client.row}</td>
+                            <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{client.full_name}</td>
+                            <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
                               {client.contact_phone || '-'}
                             </td>
-                            <td className="px-4 py-2 text-sm text-gray-500">
+                            <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
                               {client.contact_email || '-'}
                             </td>
                             <td className="px-4 py-2 text-sm">
@@ -479,7 +479,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
                       })}
                       {parsedData.length > 20 && (
                         <tr>
-                          <td colSpan={5} className="px-4 py-2 text-sm text-gray-500 text-center">
+                          <td colSpan={5} className="px-4 py-2 text-sm text-gray-500 text-center dark:text-gray-400">
                             … {parsedData.length - 20} {t('import.moreRows')}
                           </td>
                         </tr>
@@ -553,12 +553,12 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
         </div>
 
         {}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
           <button
             aria-label={t('common.close')}
             onClick={onClose}
             disabled={isImporting}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-900"
           >
             {t('common.cancel')}
           </button>

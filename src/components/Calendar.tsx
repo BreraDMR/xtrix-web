@@ -107,10 +107,10 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
   return (
     <div>
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
           <button
             onClick={handleFormCancel}
-            className="mb-4 text-gray-600 hover:text-gray-800"
+            className="mb-4 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
           >
             ← {t('calendar.backToCalendar')}
           </button>
@@ -131,7 +131,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                 prev.setMonth(prev.getMonth() - 1)
                 setCurrentMonth(prev)
               }}
-              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
             >
               ← {t('calendar.previous')}
             </button>
@@ -144,7 +144,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                 next.setMonth(next.getMonth() + 1)
                 setCurrentMonth(next)
               }}
-              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
             >
               {t('calendar.next')} →
             </button>
@@ -152,7 +152,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
           
           <div className="grid grid-cols-7 gap-1">
             {weekDays.map((day) => (
-              <div key={day} className="p-2 text-center font-semibold text-gray-700">
+              <div key={day} className="p-2 text-center font-semibold text-gray-700 dark:text-gray-300">
                 {day}
               </div>
             ))}
@@ -167,11 +167,11 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                 <div
                   key={idx}
                   onClick={() => handleDateClick(day)}
-                  className={`p-2 min-h-[80px] border rounded cursor-pointer transition-colors ${
+                  className={`p-2 min-h-[80px] border dark:border-gray-700 rounded cursor-pointer transition-colors ${
                     !isCurrentMonth ? 'text-gray-400' : ''
-                  } ${isSelected ? 'bg-purple-100 border-purple-300' : isToday ? 'bg-gray-50 border-gray-300' : 'hover:bg-gray-50'}`}
+                  } ${isSelected ? 'bg-purple-100 border-purple-300 dark:bg-purple-900/30 dark:border-purple-600' : isToday ? 'bg-gray-50 border-gray-300 dark:bg-gray-900 dark:border-gray-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                 >
-                  <div className={`text-sm font-medium mb-1 ${isSelected ? 'text-purple-700' : ''}`}>
+                  <div className={`text-sm font-medium mb-1 ${isSelected ? 'text-purple-700 dark:text-purple-300' : ''}`}>
                     {day.getDate()}
                   </div>
                   {dayVisits.length > 0 && (

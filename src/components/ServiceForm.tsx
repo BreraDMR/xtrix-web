@@ -203,7 +203,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       <div>
         <label className="block text-sm font-medium mb-1">{t('serviceForm.primary')} *</label>
         {loadingSpecialists ? (
-          <div className="text-sm text-gray-500">{t('serviceForm.loading')}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{t('serviceForm.loading')}</div>
         ) : (
           <select
             aria-invalid={fieldErrors.specialist_id ? true : undefined}
@@ -232,9 +232,9 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('serviceForm.additional')}</label>
-        <p className="text-xs text-gray-500 mb-2">{t('serviceForm.hint')}</p>
+        <p className="text-xs text-gray-500 mb-2 dark:text-gray-400">{t('serviceForm.hint')}</p>
         {loadingSpecialists ? (
-          <div className="text-sm text-gray-500">{t('serviceForm.loading')}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{t('serviceForm.loading')}</div>
         ) : (
           <div className="max-h-40 overflow-y-auto border rounded-md p-2 space-y-2">
             {availableSpecialists.map((spec) => {
@@ -268,7 +268,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
                   />
                   <span className={isPrimary ? 'font-medium text-gray-700' : 'text-gray-600'}>
                     {spec.full_name} ({spec.email})
-                    {isPrimary && <span className="text-xs text-gray-500 ml-1">{t('serviceForm.primaryBadge')}</span>}
+                    {isPrimary && <span className="text-xs text-gray-500 ml-1 dark:text-gray-400">{t('serviceForm.primaryBadge')}</span>}
                   </span>
                 </label>
               )
@@ -302,11 +302,11 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
         </label>
       </div>
 
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all"
+          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all dark:border-gray-600 dark:hover:bg-gray-900 dark:text-gray-300"
         >
           {t('common.cancel')}
         </button>

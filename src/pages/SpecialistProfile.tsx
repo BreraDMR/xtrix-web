@@ -131,13 +131,13 @@ export default function SpecialistProfile() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <div className="bg-white rounded-lg shadow-md p-6 space-y-6 dark:bg-gray-800">
         {}
         <div>
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.basicInfo')}</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.specialistType')}
               </label>
               {isEditing ? (
@@ -145,10 +145,10 @@ export default function SpecialistProfile() {
                   type="text"
                   value={formData.specialist_type || ''}
                   disabled
-                  className="w-full px-3 py-2 border rounded-md bg-gray-50"
+                  className="w-full px-3 py-2 border rounded-md bg-gray-50 dark:bg-gray-900"
                 />
               ) : (
-                <p className="text-gray-900">
+                <p className="text-gray-900 dark:text-gray-100">
                   {formData.specialist_type
                     ? getTranslatedSpecialistType(formData.specialist_type, locale)
                     : '-'}
@@ -156,10 +156,10 @@ export default function SpecialistProfile() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.category')}
               </label>
-              <p className="text-gray-900">
+              <p className="text-gray-900 dark:text-gray-100">
                 {formData.specialist_category
                   ? labels.specialistCategory(formData.specialist_category)
                   : '-'}
@@ -180,7 +180,7 @@ export default function SpecialistProfile() {
               placeholder={t('specialistProfile.specializationPlaceholder')}
             />
           ) : (
-            <p className="text-gray-900">{formData.specialization || '-'}</p>
+            <p className="text-gray-900 dark:text-gray-100">{formData.specialization || '-'}</p>
           )}
         </div>
 
@@ -189,7 +189,7 @@ export default function SpecialistProfile() {
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.experience')}</h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.experienceYears')}
               </label>
               {isEditing ? (
@@ -207,13 +207,13 @@ export default function SpecialistProfile() {
                   className="w-full px-3 py-2 border rounded-md"
                 />
               ) : (
-                <p className="text-gray-900">
+                <p className="text-gray-900 dark:text-gray-100">
                   {formData.experience_years ? `${formData.experience_years} ${t('specialistProfile.years')}` : '-'}
                 </p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.education')}
               </label>
               {isEditing ? (
@@ -225,11 +225,11 @@ export default function SpecialistProfile() {
                   placeholder={t('specialistProfile.educationPlaceholder')}
                 />
               ) : (
-                <p className="text-gray-900">{formData.education || '-'}</p>
+                <p className="text-gray-900 dark:text-gray-100">{formData.education || '-'}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.certifications')}
               </label>
               {isEditing ? (
@@ -241,7 +241,7 @@ export default function SpecialistProfile() {
                   placeholder={t('specialistProfile.certificationsPlaceholder')}
                 />
               ) : (
-                <p className="text-gray-900">{formData.certifications || '-'}</p>
+                <p className="text-gray-900 dark:text-gray-100">{formData.certifications || '-'}</p>
               )}
             </div>
           </div>
@@ -252,7 +252,7 @@ export default function SpecialistProfile() {
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.businessInfo')}</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.businessName')}
               </label>
               {isEditing ? (
@@ -263,11 +263,11 @@ export default function SpecialistProfile() {
                   className="w-full px-3 py-2 border rounded-md"
                 />
               ) : (
-                <p className="text-gray-900">{formData.business_name || '-'}</p>
+                <p className="text-gray-900 dark:text-gray-100">{formData.business_name || '-'}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.businessType')}
               </label>
               {isEditing ? (
@@ -285,7 +285,7 @@ export default function SpecialistProfile() {
                   <option value="rehab_center">{t('businessType.rehabCenter')}</option>
                 </select>
               ) : (
-                <p className="text-gray-900">
+                <p className="text-gray-900 dark:text-gray-100">
                   {formData.business_type
                     ? labels.businessType(formData.business_type)
                     : '-'}
@@ -293,7 +293,7 @@ export default function SpecialistProfile() {
               )}
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.address')}
               </label>
               {isEditing ? (
@@ -304,7 +304,7 @@ export default function SpecialistProfile() {
                   className="w-full px-3 py-2 border rounded-md"
                 />
               ) : (
-                <p className="text-gray-900">{formData.address || '-'}</p>
+                <p className="text-gray-900 dark:text-gray-100">{formData.address || '-'}</p>
               )}
             </div>
           </div>
@@ -315,7 +315,7 @@ export default function SpecialistProfile() {
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.additionalInfo')}</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.description')}
               </label>
               {isEditing ? (
@@ -327,11 +327,11 @@ export default function SpecialistProfile() {
                   placeholder={t('specialistProfile.descriptionPlaceholder')}
                 />
               ) : (
-                <p className="text-gray-900 whitespace-pre-wrap">{formData.description || '-'}</p>
+                <p className="text-gray-900 whitespace-pre-wrap dark:text-gray-100">{formData.description || '-'}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('specialistProfile.languages')}
               </label>
               {isEditing ? (
@@ -343,7 +343,7 @@ export default function SpecialistProfile() {
                   placeholder={t('specialistProfile.languagesPlaceholder')}
                 />
               ) : (
-                <p className="text-gray-900">{formData.languages || '-'}</p>
+                <p className="text-gray-900 dark:text-gray-100">{formData.languages || '-'}</p>
               )}
             </div>
           </div>
@@ -361,7 +361,7 @@ export default function SpecialistProfile() {
             <button
               onClick={handleCancel}
               disabled={loading}
-              className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+              className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             >
               {t('common.cancel')}
             </button>

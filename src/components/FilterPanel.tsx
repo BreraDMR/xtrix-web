@@ -57,7 +57,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-20 p-4">
+          <div className="absolute top-full left-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-20 p-4 dark:bg-gray-800">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold">Filters</h3>
               {hasActiveFilters && (

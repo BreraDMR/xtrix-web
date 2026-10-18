@@ -206,7 +206,7 @@ export default function Visits() {
               <option value="cancelled">{t('visits.cancelled')}</option>
             </select>
             <div className="relative">
-              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none">{t('visits.fromDate')}</label>
+              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none dark:bg-gray-800 dark:text-gray-400">{t('visits.fromDate')}</label>
               <input
                 type="date"
                 value={dateFrom}
@@ -218,7 +218,7 @@ export default function Visits() {
               />
             </div>
             <div className="relative">
-              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none">{t('visits.toDate')}</label>
+              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none dark:bg-gray-800 dark:text-gray-400">{t('visits.toDate')}</label>
               <input
                 type="date"
                 value={dateTo}
@@ -238,7 +238,7 @@ export default function Visits() {
                   setDateTo('')
                   setCurrentPage(1)
                 }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md"
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md dark:text-gray-400 dark:hover:text-gray-200"
               >
                 {t('visits.clearFilters')}
               </button>
@@ -248,7 +248,7 @@ export default function Visits() {
       )}
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
           <VisitForm
             visitId={editingId}
             onSuccess={handleSuccess}
@@ -259,10 +259,10 @@ export default function Visits() {
           />
         </div>
       ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-white shadow rounded-lg overflow-hidden dark:bg-gray-800">
         <div className="overflow-x-auto">
-          <table role="table" className="responsive-card-table min-w-full divide-y divide-gray-200">
-            <thead role="rowgroup" className="bg-gray-50">
+          <table role="table" className="responsive-card-table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead role="rowgroup" className="bg-gray-50 dark:bg-gray-900">
               <tr role="row">
                 <TableSortHeader
                   columnKey="date_start"
@@ -285,7 +285,7 @@ export default function Visits() {
                   onSort={handleSort}
                   className="px-2 sm:px-6"
                 />
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell dark:text-gray-400">
                   {t('visits.status')}
                 </th>
                 <TableSortHeader
@@ -295,15 +295,15 @@ export default function Visits() {
                   onSort={handleSort}
                   className="px-2 sm:px-6 hidden md:table-cell"
                 />
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                   {t('common.actions')}
                 </th>
               </tr>
             </thead>
-            <tbody role="rowgroup" className="bg-white divide-y divide-gray-200">
+            <tbody role="rowgroup" className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
               {paginatedData.length === 0 ? (
                 <tr role="row">
-                  <td role="cell" colSpan={6} className="px-2 sm:px-6 py-4 text-center text-gray-500">
+                  <td role="cell" colSpan={6} className="px-2 sm:px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     {searchQuery || statusFilter || dateFrom || dateTo
                       ? t('visits.noVisitsMatch')
                       : t('visits.noVisitsFound')}
@@ -311,17 +311,17 @@ export default function Visits() {
                 </tr>
               ) : (
                 paginatedData.map((visit) => (
-                <tr role="row" key={visit.id} className="hover:bg-gray-50">
-                  <td role="cell" data-label={t('visits.date')} className="px-2 sm:px-6 py-4 text-sm text-gray-900">
+                <tr role="row" key={visit.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                  <td role="cell" data-label={t('visits.date')} className="px-2 sm:px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                     <div className="flex flex-col">
                       <span className="whitespace-nowrap">{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
-                      <span className="text-xs text-gray-500 sm:hidden">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
+                      <span className="text-xs text-gray-500 sm:hidden dark:text-gray-400">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
                     </div>
                   </td>
-                  <td role="cell" data-label={t('visits.client')} className="px-2 sm:px-6 py-4 text-sm text-gray-900">
+                  <td role="cell" data-label={t('visits.client')} className="px-2 sm:px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                     {visit.client_name || '-'}
                   </td>
-                  <td role="cell" data-label={t('visits.service')} className="px-2 sm:px-6 py-4 text-sm text-gray-500">
+                  <td role="cell" data-label={t('visits.service')} className="px-2 sm:px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex flex-col">
                       <span>{visit.service_name || '-'}</span>
                     </div>
@@ -337,10 +337,10 @@ export default function Visits() {
                       {getStatusTranslation(visit.status)}
                     </span>
                   </td>
-                  <td role="cell" data-label={t('services.price')} className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td role="cell" data-label={t('services.price')} className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {visit.price ? formatCurrency(visit.price, currency) : '-'}
                   </td>
-                  <td role="cell" data-label={t('common.actions')} className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td role="cell" data-label={t('common.actions')} className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     <button
                       onClick={() => handleEdit(visit.id)}
                       className="text-blue-600 hover:text-blue-800 font-medium"

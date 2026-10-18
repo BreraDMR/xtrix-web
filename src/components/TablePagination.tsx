@@ -34,38 +34,38 @@ export default function TablePagination({
   }
 
   return (
-    <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 bg-white sm:px-6">
+    <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 bg-white sm:px-6 dark:border-gray-700 dark:bg-gray-800">
       <div className="flex-1 flex justify-between sm:hidden">
         <button
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-900"
         >
           {t('pagination.previous')}
         </button>
         <button
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage >= totalPages}
-          className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-900"
         >
           {t('pagination.next')}
         </button>
       </div>
       <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
             {t('pagination.range').replace('{start}', String(startItem)).replace('{end}', String(endItem)).replace('{total}', String(totalItems))}
           </p>
           {onPerPageChange && (
             <div className="flex items-center gap-2">
-              <label htmlFor="per-page" className="text-sm text-gray-700">
+              <label htmlFor="per-page" className="text-sm text-gray-700 dark:text-gray-300">
                 {t('pagination.perPage')}
               </label>
               <select
                 id="per-page"
                 value={perPage}
                 onChange={handlePerPageChange}
-                className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
               >
                 {perPageOptions.map((option) => (
                   <option key={option} value={option}>
@@ -84,7 +84,7 @@ export default function TablePagination({
             <button
               onClick={() => onPageChange(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-900"
             >
               <span className="sr-only">{t('pagination.previous')}</span>
               <HiChevronLeft className="h-5 w-5" />
@@ -118,7 +118,7 @@ export default function TablePagination({
             <button
               onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage >= totalPages}
-              className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-900"
             >
               <span className="sr-only">{t('pagination.next')}</span>
               <HiChevronRight className="h-5 w-5" />

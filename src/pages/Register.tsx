@@ -152,7 +152,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               {t('register.email')}
             </label>
             <input
@@ -169,7 +169,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               {t('register.phone')}
             </label>
             <input
@@ -185,10 +185,10 @@ export default function Register() {
             {fieldErrors.phone && <FormError message={fieldErrors.phone} />}
           </div>
 
-          <p className="text-xs text-gray-500">{t('register.contactRequired')}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t('register.contactRequired')}</p>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               {t('register.password')} *
             </label>
             <input
@@ -210,7 +210,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               {t('register.confirmPassword')} *
             </label>
             <input
@@ -226,7 +226,7 @@ export default function Register() {
           </div>
 
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               {t('register.role')} *
             </label>
             <select
@@ -254,7 +254,7 @@ export default function Register() {
 
           {formData.role === 'specialist' && (
             <div>
-              <label htmlFor="specialist_type" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="specialist_type" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                 {t('register.specialistType')} *
               </label>
               <SpecialistTypeSelector

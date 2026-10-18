@@ -122,7 +122,7 @@ export default function Inventory() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('inventory.title')}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{t('inventory.title')}</h1>
         {(user?.role === 'admin' || user?.role === 'business_owner') && (
           <button
             onClick={() => setShowAddForm(true)}
@@ -157,7 +157,7 @@ export default function Inventory() {
           placeholder={t('inventory.search_placeholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600"
         />
         <div className="flex gap-4 items-center">
           <label className="flex items-center gap-2">
@@ -197,35 +197,35 @@ export default function Inventory() {
       </div>
 
       {}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow overflow-hidden dark:bg-gray-800">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-900">
               <tr>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   {t('inventory.name')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell dark:text-gray-400">
                   {t('inventory.category')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   {t('inventory.quantity')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell dark:text-gray-400">
                   {t('inventory.min_quantity')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell dark:text-gray-400">
                   {t('inventory.price')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   {t('inventory.actions')}
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-2 sm:px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-2 sm:px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     {t('inventory.no_products')}
                   </td>
                 </tr>
@@ -236,15 +236,15 @@ export default function Inventory() {
                 className={product.quantity <= product.min_quantity ? 'bg-yellow-50' : ''}
               >
                 <td className="px-2 sm:px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{product.name}</div>
                   {product.description && (
-                    <div className="text-xs sm:text-sm text-gray-500 mt-1">{product.description}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 mt-1 dark:text-gray-400">{product.description}</div>
                   )}
-                  <div className="text-xs text-gray-500 md:hidden mt-1">
+                  <div className="text-xs text-gray-500 md:hidden mt-1 dark:text-gray-400">
                     {product.category || '-'}
                   </div>
                 </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell dark:text-gray-400">
                   {product.category || '-'}
                 </td>
                 <td className="px-2 sm:px-6 py-4">
@@ -261,15 +261,15 @@ export default function Inventory() {
                         {t('inventory.low_stock')}
                       </span>
                     )}
-                    <div className="text-xs text-gray-500 lg:hidden">
+                    <div className="text-xs text-gray-500 lg:hidden dark:text-gray-400">
                       {t('inventory.min_quantity')}: {product.min_quantity} {labels.unit(product.unit)}
                     </div>
                   </div>
                 </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell dark:text-gray-400">
                   {product.min_quantity} {labels.unit(product.unit)}
                 </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell dark:text-gray-400">
                   {product.price_per_unit ? formatCurrency(product.price_per_unit, currency) : '-'}
                 </td>
                 <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1 sm:space-x-2">
@@ -345,7 +345,7 @@ export default function Inventory() {
       {}
       {addQuantityProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full dark:bg-gray-800">
             <h3 className="text-lg font-semibold mb-4">
               {t('inventory.add_quantity_to')} {addQuantityProduct.name}
             </h3>
@@ -356,7 +356,7 @@ export default function Inventory() {
               value={addQuantityValue}
               onChange={(e) => setAddQuantityValue(e.target.value)}
               placeholder={t('inventory.quantity')}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 dark:border-gray-600"
             />
             <div className="flex gap-2 justify-end">
               <button
@@ -364,7 +364,7 @@ export default function Inventory() {
                   setAddQuantityProduct(null)
                   setAddQuantityValue('')
                 }}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-700"
               >
                 {t('common.cancel')}
               </button>
@@ -439,7 +439,7 @@ function ProductForm({
       onClick={onCancel}
     >
       <div 
-        className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-lg font-semibold mb-4">
@@ -449,7 +449,7 @@ function ProductForm({
           {error && <div role="alert" className="mb-4"><FormError message={error} /></div>}
           <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               {t('inventory.name')} *
             </label>
             <input
@@ -462,26 +462,26 @@ function ProductForm({
             <FormError message={nameError} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               {t('inventory.description')}
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               rows={3}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="product-unit" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="product-unit" className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('inventory.unit')} *
               </label>
               <select
                 id="product-unit"
                 value={formData.unit}
                 onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white dark:border-gray-600 dark:bg-gray-800"
                 required
               >
                 {unitOptions.map((code) => (
@@ -490,20 +490,20 @@ function ProductForm({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('inventory.category')}
               </label>
               <input
                 type="text"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('inventory.quantity')} *
               </label>
               <input
@@ -512,12 +512,12 @@ function ProductForm({
                 min="0"
                 value={formData.quantity}
                 onChange={(e) => setFormData({ ...formData, quantity: parseFloat(e.target.value) || 0 })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('inventory.min_quantity')} *
               </label>
               <input
@@ -526,12 +526,12 @@ function ProductForm({
                 min="0"
                 value={formData.min_quantity}
                 onChange={(e) => setFormData({ ...formData, min_quantity: parseFloat(e.target.value) || 0 })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('inventory.price')}
               </label>
               <input
@@ -540,43 +540,43 @@ function ProductForm({
                 min="0"
                 value={formData.price_per_unit || ''}
                 onChange={(e) => setFormData({ ...formData, price_per_unit: parseFloat(e.target.value) || undefined })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('inventory.barcode')}
               </label>
               <input
                 type="text"
                 value={formData.barcode}
                 onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                 {t('inventory.supplier')}
               </label>
               <input
                 type="text"
                 value={formData.supplier}
                 onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
               {t('inventory.location')}
             </label>
             <input
               type="text"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
             />
           </div>
           </div>
@@ -584,7 +584,7 @@ function ProductForm({
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-700"
             >
               {t('common.cancel')}
             </button>

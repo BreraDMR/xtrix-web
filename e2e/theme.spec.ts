@@ -1,0 +1,45 @@
+import { expect, test } from '@playwright/test'
+import { apiUrl, newOwner, openAs } from './helpers'
+
+test('account theme applies on the dashboard and follows the system when selected', async ({ page, request }) => {
+  const owner = await newOwner(request)
+  const saved = await request.put(`${apiUrl}/user-preferences/me`, {
+    headers: owner.headers, data: { theme: 'dark' },
+  })
+  expect(saved.ok()).toBeTruthy()
+  await page.emulateMedia({ colorScheme: 'light' })
+  await openAs(page, owner)
+  await expect(page.locator('html')).toHaveClass(/dark/)
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(17, 24, 39)')
+  await page.reload()
+  await expect(page.locator('html')).toHaveClass(/dark/)
+
+  await page.goto('/settings')
+  await page.getByRole('button', { name: 'System', exact: true }).click()
+  await expect(page.locator('html')).not.toHaveClass(/dark/)
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveClass(/dark/)
+  await page.goto('/clients')
+  await expect(page.locator('main tbody')).toHaveCSS('background-color', 'rgb(31, 41, 55)')
+  await expect(page.locator('html')).toHaveClass(/dark/)
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(page.locator('html')).not.toHaveClass(/dark/)
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(249, 250, 251)')
+})
+
+for (const width of [1280, 375]) {
+  for (const path of ['/clients', '/settings']) {
+    test(`dark ${path.slice(1)} at ${width}px`, async ({ page, request }) => {
+      const owner = await newOwner(request)
+      const saved = await request.put(`${apiUrl}/user-preferences/me`, {
+        headers: owner.headers, data: { theme: 'dark' },
+      })
+      expect(saved.ok()).toBeTruthy()
+      await page.setViewportSize({ width, height: 900 })
+      await openAs(page, owner, path)
+      await expect(page.locator('html')).toHaveClass(/dark/)
+      await page.waitForLoadState('networkidle')
+      await expect(page).toHaveScreenshot(`dark-${path.slice(1)}-${width}.png`, { fullPage: true })
+    })
+  }
+}

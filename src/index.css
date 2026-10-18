@@ -162,3 +162,50 @@ select option {
     font-weight: 600;
   }
 }
+
+.dark .react-calendar {
+  background: #1f2937;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+.dark .react-calendar button {
+  color: inherit;
+}
+
+.dark .react-calendar__navigation button:enabled:hover,
+.dark .react-calendar__navigation button:enabled:focus,
+.dark .react-calendar__tile:enabled:hover,
+.dark .react-calendar__tile:enabled:focus {
+  background: #374151;
+}
+
+.dark .react-calendar__navigation button:disabled,
+.dark .react-calendar__tile:disabled {
+  background: #111827;
+  color: #6b7280;
+}
+
+.dark .react-calendar__month-view__days__day--neighboringMonth {
+  color: #9ca3af;
+}
+
+.dark .react-calendar__month-view__days__day--weekend {
+  color: #fca5a5;
+}
+
+.dark .react-calendar__tile--now {
+  background: #713f12;
+  color: #fef3c7;
+}
+
+.dark .react-calendar__tile--active,
+.dark .react-calendar__tile--active:enabled:hover,
+.dark .react-calendar__tile--active:enabled:focus {
+  background: #7e22ce;
+  color: white;
+}
+
+.dark .responsive-card-table td[data-label]::before {
+  color: #9ca3af;
+}

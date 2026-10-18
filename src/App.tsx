@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useTheme } from './hooks/useTheme'
 import PrivateRoute from './components/PrivateRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -21,6 +22,7 @@ import Settings from './pages/Settings'
 import Layout from './components/Layout'
 
 function App() {
+  useTheme()
   return (
     <BrowserRouter
       future={{

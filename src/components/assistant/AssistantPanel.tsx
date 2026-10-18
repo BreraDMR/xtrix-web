@@ -282,7 +282,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
           type="button"
           onClick={onClose}
           aria-label={say('close')}
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200"
         >
           <HiOutlineX className="h-5 w-5" aria-hidden="true" />
         </button>

@@ -15,11 +15,12 @@ test.describe('signup', () => {
     await page.getByLabel('Role').selectOption('business_owner')
     await page.getByRole('button', { name: 'Create Account' }).click()
 
-    // signed in straight away (the dashboard itself has nothing to show before a business exists)
+    // A new owner starts with the business setup link.
     await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible()
     await expect(page).toHaveURL(/\/$/)
     await expect(page.getByText('Sofia Signup')).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Business' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Create Business', exact: true })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Business', exact: true })).toBeVisible()
   })
 
   test('mismatched passwords are caught before sending', async ({ page }) => {

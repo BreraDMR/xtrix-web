@@ -14,11 +14,11 @@ export default function EmptyState({ title, description, icon, action }: EmptySt
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
       {icon && <div className="mb-4 text-gray-400">{icon}</div>}
-      <h3 className="text-lg font-medium text-gray-900 mb-2">
+      <h3 className="text-lg font-medium text-gray-900 mb-2 dark:text-gray-100">
         {title || t('common.noData')}
       </h3>
       {description && (
-        <p className="text-sm text-gray-500 max-w-md mb-4">{description}</p>
+        <p className="text-sm text-gray-500 max-w-md mb-4 dark:text-gray-400">{description}</p>
       )}
       {action && <div className="mt-2">{action}</div>}
     </div>
