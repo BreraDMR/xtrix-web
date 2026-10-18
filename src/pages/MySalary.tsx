@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/authStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { HiCheckCircle, HiExclamationCircle, HiXCircle } from 'react-icons/hi'
+import ExportButton from '../components/ExportButton'
 
 interface SalaryAdjustment {
   id: number
@@ -474,22 +475,26 @@ export default function MySalary() {
             {t('salary.exportDescription')}
           </p>
           <div className="flex gap-3">
-            <button
-              onClick={() => {
-                alert(t('common.export'))
-              }}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-            >
-              {t('common.export')} PDF
-            </button>
-            <button
-              onClick={() => {
-                alert(t('common.export'))
-              }}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-            >
-              {t('common.export')} Excel
-            </button>
+            <ExportButton
+              data={[
+                { item: t('salary.period'), value: `${new Date(currentSalary.period_start).toLocaleDateString()} - ${new Date(currentSalary.period_end).toLocaleDateString()}` },
+                { item: t('salary.totalVisits'), value: String(currentSalary.total_visits) },
+                { item: t('salary.completed'), value: String(currentSalary.completed_visits) },
+                { item: t('salary.totalRevenue'), value: formatCurrency(currentSalary.total_revenue, currency) },
+                { item: t('salary.base'), value: formatCurrency(currentSalary.base_salary, currency) },
+                { item: `${t('salary.commission')} (${currentSalary.commission_percentage}%)`, value: formatCurrency(currentSalary.commission_amount, currency) },
+                { item: t('salary.adjustments'), value: formatCurrency(currentSalary.adjustments_total, currency) },
+                { item: t('salary.total'), value: formatCurrency(currentSalary.total_with_adjustments, currency) },
+                { item: t('salary.paid'), value: formatCurrency(currentSalary.paid_amount, currency) },
+                { item: t('salary.remaining'), value: formatCurrency(remainingAmount, currency) },
+              ]}
+              columns={[
+                { key: 'item', label: t('common.item') },
+                { key: 'value', label: t('common.value') },
+              ]}
+              filename={`my-salary-${currentSalary.period_start.slice(0, 10)}`}
+              title={t('salary.currentSalary')}
+            />
             <button
               onClick={() => window.print()}
               className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"

@@ -5,6 +5,8 @@ export type TranslationKey =
   | 'validation.salary'
   | 'validation.price'
   | 'loyalty.businessRequired'
+  | 'common.item'
+  | 'common.value'
   | 'subscription.paidByOwner'
   | 'subscription.ownerPlanInactive'
   | 'unit.pcs'
@@ -902,6 +904,8 @@ export type TranslationKey =
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
+  "common.item": {"en": "Item", "ru": "Показатель", "cz": "Položka"},
+  "common.value": {"en": "Value", "ru": "Значение", "cz": "Hodnota"},
   "subscription.paidByOwner": {"en": "Your plan is paid by the business owner, there is nothing to pay here.", "ru": "Ваш тариф оплачивает владелец бизнеса, здесь ничего платить не нужно.", "cz": "Váš tarif platí majitel firmy, zde nic platit nemusíte."},
   "subscription.ownerPlanInactive": {"en": "The business owner's subscription is not active right now. Ask them to renew it.", "ru": "Подписка владельца бизнеса сейчас не активна. Попросите его продлить её.", "cz": "Předplatné majitele firmy teď není aktivní. Požádejte ho o obnovení."},
   "unit.pcs": {"en": "pcs", "ru": "шт", "cz": "ks"},
