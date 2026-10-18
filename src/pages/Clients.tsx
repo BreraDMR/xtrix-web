@@ -258,14 +258,20 @@ export default function Clients() {
         <ImportClientsModal
           isOpen={showImportModal}
           onClose={() => setShowImportModal(false)}
+          onOpenClient={(id) => {
+            setShowImportModal(false)
+            handleEdit(id)
+          }}
         />
       )}
 
       {showForm ? (
         <div className="bg-white p-6 rounded-lg shadow">
           <ClientForm
+            key={editingId ?? 'new'}
             clientId={editingId}
             onSuccess={handleSuccess}
+            onOpenExisting={handleEdit}
             onCancel={() => {
               setShowForm(false)
               setEditingId(undefined)

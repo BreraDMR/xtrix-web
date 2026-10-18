@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
-import { apiErrorMessage } from '../api/errors'
+import { apiClientExists, apiErrorMessage } from '../api/errors'
 import { useTranslation } from '../hooks/useTranslation'
 import LoadingSpinner from './LoadingSpinner'
 import FormField from './FormField'
 import FormError from './FormError'
 import { validateEmail, validatePhone, validateRequired, extractApiErrors } from '../utils/validation'
 import type { ClientLanguage } from '../api/types'
+import type { TranslationKey } from '../i18n/translations'
 
 // native names on purpose - this is the client's language, not ours
 const CLIENT_LANGUAGES: { code: ClientLanguage; label: string }[] = [
@@ -19,6 +20,8 @@ interface ClientFormProps {
   clientId?: number
   onSuccess: () => void
   onCancel: () => void
+  // the API refused a duplicate: let the page switch to the client we already have
+  onOpenExisting?: (clientId: number) => void
 }
 
 interface ClientData {
@@ -33,11 +36,18 @@ interface ClientData {
   language: ClientLanguage
 }
 
-export default function ClientForm({ clientId, onSuccess, onCancel }: ClientFormProps) {
+const EXISTS_MESSAGE: Record<string, TranslationKey> = {
+  contact_phone: 'clientForm.existsPhone',
+  contact_email: 'clientForm.existsEmail',
+  'full_name+birth_date': 'clientForm.existsNameBirth',
+}
+
+export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisting }: ClientFormProps) {
   const { t, locale } = useTranslation()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [existing, setExisting] = useState<{ id: number; message: string } | null>(null)
   const [formData, setFormData] = useState<ClientData>({
     full_name: '',
     // a new client most likely speaks what the salon's staff use
@@ -100,6 +110,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
     submitting.current = true
     setLoading(true)
     setErrors({})
+    setExisting(null)
 
     try {
       const clientData: any = {
@@ -128,7 +139,14 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
       
       onSuccess()
     } catch (error: any) {
-      console.error('Error saving client:', error)
+      const duplicate = apiClientExists(error)
+      if (duplicate) {
+        setExisting({
+          id: duplicate.existingClientId,
+          message: t(EXISTS_MESSAGE[duplicate.matchedBy ?? ''] ?? 'clientForm.exists'),
+        })
+        return
+      }
       const apiErrors = extractApiErrors(error)
       
       if (Object.keys(apiErrors).length > 0) {
@@ -145,6 +163,20 @@ export default function ClientForm({ clientId, onSuccess, onCancel }: ClientForm
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {existing && (
+        <div role="alert" className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-900 flex flex-wrap items-center gap-3">
+          <span className="flex-1">{existing.message}</span>
+          {onOpenExisting && (
+            <button
+              type="button"
+              onClick={() => onOpenExisting(existing.id)}
+              className="px-3 py-1.5 bg-white border border-yellow-300 rounded-md font-medium hover:bg-yellow-100"
+            >
+              {t('clientForm.openExisting')}
+            </button>
+          )}
+        </div>
+      )}
       {errors._general && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
           <FormError message={errors._general} />

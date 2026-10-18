@@ -3,12 +3,13 @@ import { useQueryClient } from '@tanstack/react-query'
 import { HiX, HiUpload, HiCheckCircle, HiXCircle, HiExclamationCircle } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
-import { apiErrorMessage } from '../api/errors'
+import { apiClientExists, apiErrorMessage } from '../api/errors'
 import * as XLSX from 'xlsx'
 
 interface ImportClientsModalProps {
   isOpen: boolean
   onClose: () => void
+  onOpenClient?: (clientId: number) => void
 }
 
 interface ParsedClient {
@@ -28,9 +29,11 @@ interface ImportResult {
   success: number
   skipped: number
   errors: Array<{ row: number; message: string }>
+  // rows the API refused as duplicates of a client we already have
+  existing: Array<{ row: number; clientId: number }>
 }
 
-export default function ImportClientsModal({ isOpen, onClose }: ImportClientsModalProps) {
+export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: ImportClientsModalProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -246,6 +249,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
       success: 0,
       skipped: 0,
       errors: [],
+      existing: [],
     }
 
     const validRows = new Set(
@@ -271,6 +275,11 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
         result.success++
       } catch (error: any) {
         result.skipped++
+        const duplicate = apiClientExists(error)
+        if (duplicate) {
+          result.existing.push({ row: client.row, clientId: duplicate.existingClientId })
+          continue
+        }
         result.errors.push({
           row: client.row,
           message:
@@ -489,6 +498,29 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                     {t('import.skippedCount')}: {importResult.skipped}
                   </span>
                 </div>
+                {importResult.existing.length > 0 && (
+                  <div className="mt-3">
+                    <div className="font-medium text-yellow-800 mb-2">
+                      {t('import.alreadyInList')}:
+                    </div>
+                    <div className="max-h-32 overflow-y-auto space-y-1">
+                      {importResult.existing.map((item) => (
+                        <div key={item.row} className="text-sm text-yellow-800 flex items-center gap-2">
+                          <span>{t('import.row')} {item.row}</span>
+                          {onOpenClient && (
+                            <button
+                              type="button"
+                              onClick={() => onOpenClient(item.clientId)}
+                              className="text-purple-700 hover:underline font-medium"
+                            >
+                              {t('import.openClient')}
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {importResult.errors.length > 0 && (
                   <div className="mt-3">
                     <div className="font-medium text-red-700 mb-2">

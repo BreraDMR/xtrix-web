@@ -4,6 +4,13 @@ export type TranslationKey =
   | 'validation.commission'
   | 'validation.salary'
   | 'validation.price'
+  | 'clientForm.existsPhone'
+  | 'clientForm.existsEmail'
+  | 'clientForm.existsNameBirth'
+  | 'clientForm.exists'
+  | 'clientForm.openExisting'
+  | 'import.alreadyInList'
+  | 'import.openClient'
   | 'login.twoFactorPrompt'
   | 'login.twoFactorCode'
   | 'login.twoFactorWrong'
@@ -864,6 +871,13 @@ export type TranslationKey =
   | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  "clientForm.existsPhone": {"en": "A client with this phone number is already in your list.", "ru": "Клиент с этим номером телефона уже есть в вашем списке.", "cz": "Klient s tímto telefonním číslem už ve vašem seznamu je."},
+  "clientForm.existsEmail": {"en": "A client with this email is already in your list.", "ru": "Клиент с этим email уже есть в вашем списке.", "cz": "Klient s tímto e-mailem už ve vašem seznamu je."},
+  "clientForm.existsNameBirth": {"en": "A client with this name and date of birth is already in your list.", "ru": "Клиент с таким именем и датой рождения уже есть в вашем списке.", "cz": "Klient s tímto jménem a datem narození už ve vašem seznamu je."},
+  "clientForm.exists": {"en": "This client is already in your list.", "ru": "Этот клиент уже есть в вашем списке.", "cz": "Tento klient už ve vašem seznamu je."},
+  "clientForm.openExisting": {"en": "Open the existing client", "ru": "Открыть существующего клиента", "cz": "Otevřít existujícího klienta"},
+  "import.alreadyInList": {"en": "Already in your list", "ru": "Уже есть в вашем списке", "cz": "Už ve vašem seznamu"},
+  "import.openClient": {"en": "Open", "ru": "Открыть", "cz": "Otevřít"},
   "login.twoFactorPrompt": {"en": "Two-factor authentication is on for this account. Enter the 6-digit code from your authenticator app.", "ru": "Для этого аккаунта включена двухфакторная аутентификация. Введите 6-значный код из приложения-аутентификатора.", "cz": "U tohoto účtu je zapnuté dvoufázové ověření. Zadejte 6místný kód z ověřovací aplikace."},
   "login.twoFactorCode": {"en": "Authentication code", "ru": "Код подтверждения", "cz": "Ověřovací kód"},
   "login.twoFactorWrong": {"en": "Wrong code, try again with a fresh one.", "ru": "Неверный код, попробуйте ещё раз со свежим кодом.", "cz": "Nesprávný kód, zkuste to znovu s novým kódem."},

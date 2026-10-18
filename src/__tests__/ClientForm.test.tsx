@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import ClientForm from '../components/ClientForm'
 import api from '../api/client'
 import { useLocaleStore } from '../store/localeStore'
-import { renderWithProviders, resetStores, routes, signIn } from '../test/render'
+import { apiError, renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn() } }))
 
@@ -55,5 +55,21 @@ describe('ClientForm', () => {
     await userEvent.click(screen.getByRole('button', { name: /update client/i }))
 
     await waitFor(() => expect(api.put).toHaveBeenCalledWith('/clients/1', expect.objectContaining({ language: 'ru' })))
+  })
+
+  it('offers to open the client that already has this phone', async () => {
+    vi.mocked(api.post).mockRejectedValue(apiError(409, 'This client is already in your list',
+      { code: 'client_exists', existing_client_id: 17, matched_by: 'contact_phone' }))
+    const onOpenExisting = vi.fn()
+    const onSuccess = vi.fn()
+    renderWithProviders(<ClientForm onSuccess={onSuccess} onCancel={() => {}} onOpenExisting={onOpenExisting} />)
+    await userEvent.type(screen.getByLabelText(/full name/i), 'John Again')
+    await userEvent.type(screen.getByLabelText(/phone/i), '+420123456789')
+    await userEvent.click(screen.getByRole('button', { name: /create client/i }))
+
+    expect(await screen.findByText('A client with this phone number is already in your list.')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /open the existing client/i }))
+    expect(onOpenExisting).toHaveBeenCalledWith(17)
+    expect(onSuccess).not.toHaveBeenCalled()
   })
 })
