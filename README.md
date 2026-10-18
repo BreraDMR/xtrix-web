@@ -47,6 +47,21 @@ with `useLabels()` from `src/i18n/labels.ts`. Error messages come already transl
 vitest and a build. CI runs the same against `openapi.json` from the matching xtrix-api branch, so a
 contract change in the API turns this repo red until `npm run gen:api` is run here.
 
+## E2E
+
+`npm run e2e` (= `./scripts/e2e.sh`) runs the Playwright suite in `e2e/` against a throwaway stack:
+a `postgres:15` container `xtrix-e2e-pg` on 55470, `alembic upgrade head` and `scripts/seed_demo.py`
+from the API, uvicorn on 8170 and vite on 3170. It stops all of it when done. Needs Docker and a
+Python with the API's requirements:
+
+    API_DIR=../api API_PYTHON=../api/.venv/bin/python npm run e2e
+
+Extra arguments go to `playwright test` (`npm run e2e -- e2e/clients.spec.ts`, `--headed`...).
+The API checkout is only read - migrations, the seed and the server run from a temp dir.
+Tests that change data sign up their own owner through the API, so they don't depend on each other's order.
+Not in CI yet; it would be one more job with Docker and the API checked out next to this repo,
+running the same command after `npx playwright install chromium`.
+
 ## License
 
 Proprietary. All rights reserved.

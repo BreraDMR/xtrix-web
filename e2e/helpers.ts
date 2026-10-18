@@ -1,0 +1,100 @@
+import { expect, type APIRequestContext, type Locator, type Page } from '@playwright/test'
+import fs from 'fs'
+
+export const apiUrl = process.env.E2E_API_URL || 'http://localhost:8170'
+// the API refuses "123"/"abc" style runs, keep it that way when editing
+export const PASSWORD = 'Ok!E2e-Owner-58x'
+
+export interface SeedUser {
+  id: number
+  email: string
+  password: string
+  role: string
+}
+
+// logins made by the API's scripts/seed_demo.py, scripts/e2e.sh saves its output for us
+export function seedUser(key: 'owner_a' | 'employee_a' | 'solo' | 'owner_b'): SeedUser {
+  const file = process.env.E2E_SEED_FILE
+  if (!file) throw new Error('E2E_SEED_FILE is not set - run the suite with scripts/e2e.sh')
+  return JSON.parse(fs.readFileSync(file, 'utf8')).users[key]
+}
+
+let counter = 0
+export function unique(prefix: string): string {
+  counter += 1
+  return `${prefix}-${Date.now().toString(36)}${counter}${Math.floor(Math.random() * 1000)}`
+}
+
+export interface Session {
+  email: string
+  password: string
+  token: string
+  user: { id: number; full_name: string; role: string; business_id?: number | null }
+  headers: { Authorization: string }
+}
+
+async function ok(response: Awaited<ReturnType<APIRequestContext['get']>>) {
+  expect(response.ok(), `${response.url()} -> ${response.status()} ${await response.text()}`).toBeTruthy()
+  return response.json()
+}
+
+export async function apiLogin(request: APIRequestContext, email: string, password: string): Promise<Session> {
+  const { access_token: token } = await ok(await request.post(`${apiUrl}/users/login`, { data: { email, password } }))
+  const headers = { Authorization: `Bearer ${token}` }
+  const user = await ok(await request.get(`${apiUrl}/users/me`, { headers }))
+  return { email, password, token, user, headers }
+}
+
+export async function apiPost(request: APIRequestContext, s: Session, path: string, data: unknown) {
+  return ok(await request.post(`${apiUrl}${path}`, { headers: s.headers, data }))
+}
+
+// A brand-new owner (with a business unless told otherwise), so tests don't share state.
+export async function newOwner(
+  request: APIRequestContext,
+  { business = true, fullName = 'Olga Owner' }: { business?: boolean; fullName?: string } = {},
+): Promise<Session> {
+  const email = `${unique('owner')}@example.com`
+  await ok(await request.post(`${apiUrl}/users/`, {
+    data: { email, full_name: fullName, password: PASSWORD, role: 'business_owner' },
+  }))
+  let s = await apiLogin(request, email, PASSWORD)
+  await ok(await request.put(`${apiUrl}/user-preferences/me`, { headers: s.headers, data: { language: 'en' } }))
+  if (business) {
+    await apiPost(request, s, '/businesses/', { name: 'Test Salon', business_type: 'salon', currency: 'EUR' })
+    s = await apiLogin(request, email, PASSWORD)
+  }
+  return s
+}
+
+export async function loginThroughForm(page: Page, email: string, password: string) {
+  await page.goto('/login')
+  await page.getByLabel('Email').fill(email)
+  await page.getByLabel('Password').fill(password)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+}
+
+// Logs in through the form (how tokens are kept is the app's business, not the test's)
+// and opens the page.
+export async function openAs(page: Page, s: { email: string; password: string }, path = '/') {
+  await loginThroughForm(page, s.email, s.password)
+  await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible()
+  if (new URL(page.url()).pathname !== path) await page.goto(path)
+}
+
+// Edit forms load their record in an effect (twice in dev, StrictMode) - typing before
+// that lands gets overwritten.
+export async function waitForFormData(page: Page) {
+  await page.waitForLoadState('networkidle')
+}
+
+// Some forms (visit, business) still have labels that aren't tied to their inputs,
+// so take the first control that sits next to the label text.
+export function field(scope: Page | Locator, label: RegExp): Locator {
+  return scope.locator('label', { hasText: label }).locator('xpath=..').locator('input, select, textarea').first()
+}
+
+// native browser validation (required, type=email...) - the form is not sent at all
+export async function isInvalid(input: Locator): Promise<boolean> {
+  return input.evaluate((el) => !(el as HTMLInputElement).checkValidity())
+}

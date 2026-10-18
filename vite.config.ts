@@ -29,6 +29,7 @@ export default defineConfig(({ command, mode }) => {
     },
     test: {
       globals: true,
+      include: ['src/**/*.{test,spec}.{ts,tsx}'],
       environment: 'jsdom',
       setupFiles: './src/test/setup.ts',
       // Node 25+ ships its own localStorage global (undefined without a file) and it

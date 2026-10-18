@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "gen:api": "openapi-typescript ${OPENAPI_JSON:-../api/openapi.json} -o src/api/schema.d.ts"
+    "gen:api": "openapi-typescript ${OPENAPI_JSON:-../api/openapi.json} -o src/api/schema.d.ts",
+    "e2e": "./scripts/e2e.sh"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.12.2",
@@ -28,6 +29,7 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
