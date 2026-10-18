@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { MY_BUSINESS_KEY, useMyBusiness } from '../hooks/useMyBusiness'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorStatus } from '../api/errors'
 import { CURRENCIES, Currency, getCurrencySymbol } from '../utils/currency'
 import LoadingSpinner from '../components/LoadingSpinner'
 import type { TranslationKey } from '../i18n/translations'
@@ -62,22 +62,7 @@ export default function Settings() {
   const queryClient = useQueryClient()
   const currentCurrency = useBusinessCurrency()
 
-  const { data: business, isLoading: isLoadingBusiness } = useQuery({
-    queryKey: ['user-business'],
-    queryFn: async () => {
-      try {
-        const { data } = await api.get('/businesses/me')
-        return data
-      } catch (error) {
-        if (apiErrorStatus(error) === 404) {
-          return null
-        }
-        throw error
-      }
-    },
-    enabled: !!user,
-    retry: false,
-  })
+  const { data: business, isLoading: isLoadingBusiness } = useMyBusiness(!!user)
 
   const { data: preferences, isLoading: isLoadingPreferences } = usePreferences(!!user)
 
@@ -90,7 +75,7 @@ export default function Settings() {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-business'] })
+      queryClient.invalidateQueries({ queryKey: MY_BUSINESS_KEY })
       queryClient.invalidateQueries({ queryKey: ['profit-current-month'] })
       queryClient.invalidateQueries({ queryKey: ['profit-report'] })
     },
