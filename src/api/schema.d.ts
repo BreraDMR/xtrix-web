@@ -2486,6 +2486,13 @@ export interface components {
             /** Address */
             address?: string | null;
             /**
+             * Assistant Gender
+             * @default female
+             */
+            assistant_gender: string;
+            /** Assistant Name */
+            assistant_name?: string | null;
+            /**
              * Business Type
              * @enum {string}
              */
@@ -2512,6 +2519,16 @@ export interface components {
         BusinessUpdate: {
             /** Address */
             address?: string | null;
+            /**
+             * Assistant Gender
+             * @description female|male|neuter, for verb forms in ru/cz
+             */
+            assistant_gender?: ("female" | "male" | "neuter") | null;
+            /**
+             * Assistant Name
+             * @description Empty = default name for the interface language
+             */
+            assistant_name?: string | null;
             /** Business Type */
             business_type?: ("salon" | "clinic" | "medical" | "dental" | "hospital" | "individual") | null;
             /** Currency */
@@ -2731,12 +2748,41 @@ export interface components {
             /** Location Lon */
             location_lon?: number | null;
         };
+        /** CohortData */
+        CohortData: {
+            /** Cohort Month */
+            cohort_month: string;
+            /** Month 0 */
+            month_0?: number | null;
+            /** Month 1 */
+            month_1?: number | null;
+            /** Month 10 */
+            month_10?: number | null;
+            /** Month 11 */
+            month_11?: number | null;
+            /** Month 2 */
+            month_2?: number | null;
+            /** Month 3 */
+            month_3?: number | null;
+            /** Month 4 */
+            month_4?: number | null;
+            /** Month 5 */
+            month_5?: number | null;
+            /** Month 6 */
+            month_6?: number | null;
+            /** Month 7 */
+            month_7?: number | null;
+            /** Month 8 */
+            month_8?: number | null;
+            /** Month 9 */
+            month_9?: number | null;
+            /** Total Clients */
+            total_clients: number;
+        };
         /** CohortTableResponse */
         CohortTableResponse: {
             /** Cohort Table */
-            cohort_table: {
-                [key: string]: unknown;
-            }[];
+            cohort_table: components["schemas"]["CohortData"][];
             /** Total Cohorts */
             total_cohorts: number;
         };
@@ -3037,6 +3083,19 @@ export interface components {
              * @default variable
              */
             type: string;
+        };
+        /** ExpenseCategoryTotal */
+        ExpenseCategoryTotal: {
+            /** Category Code */
+            category_code?: string | null;
+            /** Category Id */
+            category_id: number;
+            /** Category Name */
+            category_name: string;
+            /** Color */
+            color?: string | null;
+            /** Total */
+            total: number;
         };
         /** ExpenseCategoryUpdate */
         ExpenseCategoryUpdate: {
@@ -4088,6 +4147,52 @@ export interface components {
             /** Visit Id */
             visit_id?: number | null;
         };
+        /** ProfitDay */
+        ProfitDay: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Expenses */
+            expenses: number;
+            /** Profit */
+            profit: number;
+            /** Revenue */
+            revenue: number;
+        };
+        /** ProfitReportPeriod */
+        ProfitReportPeriod: {
+            /**
+             * From
+             * Format: date-time
+             */
+            from: string;
+            /**
+             * To
+             * Format: date-time
+             */
+            to: string;
+        };
+        /** ProfitReportResponse */
+        ProfitReportResponse: {
+            /** Daily */
+            daily: components["schemas"]["ProfitDay"][];
+            /** Expenses */
+            expenses: number;
+            /** Expenses By Category */
+            expenses_by_category: components["schemas"]["ExpenseCategoryTotal"][];
+            period: components["schemas"]["ProfitReportPeriod"];
+            /** Profit */
+            profit: number;
+            /**
+             * Profit Margin
+             * @description Profit as a percent of revenue, 0 when there is no revenue
+             */
+            profit_margin: number;
+            /** Revenue */
+            revenue: number;
+        };
         /** PromotionEffectivenessItem */
         PromotionEffectivenessItem: {
             /** End Date */
@@ -4647,6 +4752,8 @@ export interface components {
              * @description Category of service: beauty, wellness, healthcare. If not provided, will be determined from specialist type.
              */
             category?: string | null;
+            /** Description */
+            description?: string | null;
             /** Duration Minutes */
             duration_minutes?: number | null;
             /**
@@ -4673,6 +4780,8 @@ export interface components {
              * @description Category of service: beauty, wellness, healthcare. If not provided, will be determined from specialist type.
              */
             category?: string | null;
+            /** Description */
+            description?: string | null;
             /** Duration Minutes */
             duration_minutes?: number | null;
             /** Id */
@@ -4686,6 +4795,8 @@ export interface components {
             name: string;
             /** Price */
             price?: number | null;
+            /** @description The specialist the service belongs to (specialist_id), just id and name */
+            specialist?: components["schemas"]["SpecialistBrief"] | null;
             /** Specialist Id */
             specialist_id: number;
             /**
@@ -4697,14 +4808,25 @@ export interface components {
              * Specialists
              * @description Specialists' info
              */
-            specialists?: {
-                [key: string]: unknown;
-            }[] | null;
+            specialists?: components["schemas"]["ServiceSpecialistOut"][] | null;
+        };
+        /** ServiceSpecialistOut */
+        ServiceSpecialistOut: {
+            /** Email */
+            email?: string | null;
+            /** Full Name */
+            full_name: string;
+            /** Id */
+            id: number;
+            /** Phone */
+            phone?: string | null;
         };
         /** ServiceUpdate */
         ServiceUpdate: {
             /** Category */
             category?: string | null;
+            /** Description */
+            description?: string | null;
             /** Duration Minutes */
             duration_minutes?: number | null;
             /** Is Active */
@@ -4742,6 +4864,13 @@ export interface components {
             unique_clients: number;
             /** Visit Count */
             visit_count: number;
+        };
+        /** SpecialistBrief */
+        SpecialistBrief: {
+            /** Full Name */
+            full_name: string;
+            /** Id */
+            id: number;
         };
         /** SpecialistProfileCreate */
         SpecialistProfileCreate: {
@@ -5259,8 +5388,18 @@ export interface components {
         };
         /** UserOut */
         UserOut: {
+            /**
+             * Business Id
+             * @description Business the user works in: their own, or the employer's for staff
+             */
+            business_id?: number | null;
             /** Email */
             email?: string | null;
+            /**
+             * Employer Id
+             * @description User id of the owner who employs this user; null for owners and solo specialists
+             */
+            employer_id?: number | null;
             /** Full Name */
             full_name: string;
             /** Id */
@@ -8035,7 +8174,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ExpenseCategoryTotal"][];
                 };
             };
             /** @description Validation Error */
@@ -8069,7 +8208,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ProfitReportResponse"];
                 };
             };
             /** @description Validation Error */
