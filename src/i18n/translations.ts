@@ -4,6 +4,10 @@ export type TranslationKey =
   | 'validation.commission'
   | 'validation.salary'
   | 'validation.price'
+  | 'login.twoFactorPrompt'
+  | 'login.twoFactorCode'
+  | 'login.twoFactorWrong'
+  | 'login.twoFactorBack'
   | 'errors.tooManyRequests'
   | 'errors.tooManyRequestsLater'
   | 'errors.loginThrottled'
@@ -860,6 +864,10 @@ export type TranslationKey =
   | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  "login.twoFactorPrompt": {"en": "Two-factor authentication is on for this account. Enter the 6-digit code from your authenticator app.", "ru": "Для этого аккаунта включена двухфакторная аутентификация. Введите 6-значный код из приложения-аутентификатора.", "cz": "U tohoto účtu je zapnuté dvoufázové ověření. Zadejte 6místný kód z ověřovací aplikace."},
+  "login.twoFactorCode": {"en": "Authentication code", "ru": "Код подтверждения", "cz": "Ověřovací kód"},
+  "login.twoFactorWrong": {"en": "Wrong code, try again with a fresh one.", "ru": "Неверный код, попробуйте ещё раз со свежим кодом.", "cz": "Nesprávný kód, zkuste to znovu s novým kódem."},
+  "login.twoFactorBack": {"en": "Use a different account", "ru": "Войти в другой аккаунт", "cz": "Použít jiný účet"},
   "errors.tooManyRequests": {"en": "Too many requests. Try again in {wait}.", "ru": "Слишком много запросов. Повторите через {wait}.", "cz": "Příliš mnoho požadavků. Zkuste to znovu za {wait}."},
   "errors.tooManyRequestsLater": {"en": "Too many requests. Try again a bit later.", "ru": "Слишком много запросов. Повторите чуть позже.", "cz": "Příliš mnoho požadavků. Zkuste to o něco později."},
   "errors.loginThrottled": {"en": "Too many failed sign-in attempts. Try again in {wait}.", "ru": "Слишком много неудачных попыток входа. Повторите через {wait}.", "cz": "Příliš mnoho neúspěšných pokusů o přihlášení. Zkuste to znovu za {wait}."},

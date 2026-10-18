@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorMessage } from '../api/errors'
+import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
@@ -17,6 +17,9 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  // the server said this account has 2FA on: same form, plus the code from the app
+  const [needsCode, setNeedsCode] = useState(false)
+  const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const { setAuth, startSession } = useAuthStore()
   
@@ -30,7 +33,11 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const { data } = await api.post('/users/login', { email, password })
+      const { data } = await api.post('/users/login', needsCode ? { email, password, totp_token: code.trim() } : { email, password })
+      if (data?.requires_2fa && !data.access_token) {
+        setNeedsCode(true)
+        return
+      }
       if (!data.access_token) throw new Error('No access token received')
       startSession(data.access_token, data.refresh_token)
       const { data: user } = await api.get('/users/me')
@@ -40,8 +47,8 @@ export default function Login() {
       navigate(returnTo, { replace: true })
     } catch (err: any) {
       useAuthStore.getState().logout()
-      const errorMessage = apiErrorMessage(err, t('login.failed'))
-      setError(errorMessage)
+      // with the code step on, a 401 means the code was off (the password passed a moment ago)
+      setError(needsCode && apiErrorStatus(err) === 401 ? t('login.twoFactorWrong') : apiErrorMessage(err, t('login.failed')))
     } finally {
       setLoading(false)
     }
@@ -72,6 +79,7 @@ export default function Login() {
               name="email"
               type="email"
               value={email}
+              readOnly={needsCode}
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
@@ -87,12 +95,45 @@ export default function Login() {
               name="password"
               type="password"
               value={password}
+              readOnly={needsCode}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="••••••••"
             />
           </div>
+          {needsCode && (
+            <div>
+              <p role="status" className="mb-3 p-3 text-sm text-blue-800 dark:text-blue-200 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                {t('login.twoFactorPrompt')}
+              </p>
+              <label htmlFor="totp" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                {t('login.twoFactorCode')}
+              </label>
+              <input
+                id="totp"
+                name="totp"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                autoFocus
+                maxLength={6}
+                pattern="[0-9]{6}"
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                required
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent tracking-widest"
+                placeholder="123456"
+              />
+              <button
+                type="button"
+                onClick={() => { setNeedsCode(false); setCode(''); setPassword(''); setError('') }}
+                className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {t('login.twoFactorBack')}
+              </button>
+            </div>
+          )}
           {error && (
             <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg text-sm animate-slide-in">
               {error}
