@@ -101,6 +101,8 @@ const FIELD_LABELS: Record<string, TranslationKey> = {
   currency: 'field.currency',
   duration_minutes: 'field.duration_minutes',
   unit: 'field.unit',
+  assistant_name: 'field.assistant_name',
+  assistant_gender: 'field.assistant_gender',
 }
 
 export function fieldLabel(field: string): string {
@@ -140,6 +142,7 @@ const CODE_KEYS: Record<string, TranslationKey> = {
   invalid_currency: 'validation.code.invalid_currency',
   invalid_timezone: 'validation.code.invalid_timezone',
   invalid_choice: 'validation.code.invalid_choice',
+  invalid_assistant_name: 'validation.code.invalid_assistant_name',
   payment_method_required: 'validation.code.payment_method_required',
   string_type: 'validation.code.string_type',
   bool_type: 'validation.code.bool',

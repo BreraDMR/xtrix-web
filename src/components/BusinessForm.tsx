@@ -6,8 +6,10 @@ import { validateEmail, validatePhone } from '../utils/validation'
 import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useLabels } from '../i18n/labels'
-import type { BusinessType } from '../api/types'
+import type { BusinessType, BusinessUpdate } from '../api/types'
 import { withoutBlanks } from '../utils/payload'
+import { ASSISTANT_GENDERS, DEFAULT_ASSISTANT_GENDER, DEFAULT_ASSISTANT_NAMES, assistantNameProblem, type AssistantGender } from '../i18n/assistant'
+import type { TranslationKey } from '../i18n/translations'
 
 // same order as the API enum
 const BUSINESS_TYPES: BusinessType[] = ['salon', 'clinic', 'medical', 'dental', 'hospital', 'individual']
@@ -26,12 +28,20 @@ interface BusinessData {
   email?: string
   description?: string
   currency?: string
+  // the API takes these on update only
+  assistant_name: string
+  assistant_gender: AssistantGender
 }
 
-const BUSINESS_FIELDS = ['name', 'business_type', 'address', 'phone', 'email', 'description', 'currency']
+const BUSINESS_FIELDS = ['name', 'business_type', 'address', 'phone', 'email', 'description', 'currency', 'assistant_name', 'assistant_gender']
+
+const NAME_PROBLEM: Record<'tooLong' | 'invalid', TranslationKey> = {
+  tooLong: 'business.assistantNameTooLong',
+  invalid: 'business.assistantNameInvalid',
+}
 
 export default function BusinessForm({ businessId, onSuccess, onCancel }: BusinessFormProps) {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const labels = useLabels()
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
@@ -40,7 +50,10 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
     name: '',
     business_type: 'salon',
     currency: 'EUR',
+    assistant_name: '',
+    assistant_gender: DEFAULT_ASSISTANT_GENDER,
   })
+  const nameProblem = assistantNameProblem(formData.assistant_name)
 
   useEffect(() => {
     if (businessId) {
@@ -60,6 +73,8 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
         email: data.email || '',
         description: data.description || '',
         currency: data.currency || 'EUR',
+        assistant_name: data.assistant_name || '',
+        assistant_gender: ASSISTANT_GENDERS.includes(data.assistant_gender) ? data.assistant_gender : DEFAULT_ASSISTANT_GENDER,
       })
     } catch (error) {
       console.error('Failed to load business:', error)
@@ -78,13 +93,22 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       setFormError(t('clientForm.invalidPhone'))
       return
     }
+    // the problem is already shown under the field
+    if (businessId && nameProblem) return
     setLoading(true)
 
     try {
-      const businessData = withoutBlanks(formData)
+      const { assistant_name, assistant_gender, ...rest } = formData
+      const businessData = withoutBlanks(rest)
 
       if (businessId) {
-        await api.put(`/businesses/${businessId}`, businessData)
+        const update: BusinessUpdate = {
+          ...businessData,
+          // null, not "", so a cleared name really goes back to the default
+          assistant_name: assistant_name.trim() || null,
+          assistant_gender,
+        }
+        await api.put(`/businesses/${businessId}`, update)
       } else {
         await api.post('/businesses/', businessData)
       }
@@ -200,6 +224,52 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
         </select>
         {fieldErrors.currency && <FormError message={fieldErrors.currency} />}
       </div>
+
+      {businessId && (
+        <fieldset className="space-y-4 pt-4 border-t border-gray-200">
+          <legend className="text-base font-semibold">{t('business.assistant')}</legend>
+          <p className="text-xs text-gray-500">{t('business.assistantHint')}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="assistant-name" className="block text-sm font-medium mb-1">{t('business.assistantName')}</label>
+              <input
+                id="assistant-name"
+                aria-invalid={nameProblem || fieldErrors.assistant_name ? true : undefined}
+                type="text"
+                value={formData.assistant_name}
+                onChange={(e) => {
+                  setFormData({ ...formData, assistant_name: e.target.value })
+                  if (fieldErrors.assistant_name) setFieldErrors({ ...fieldErrors, assistant_name: '' })
+                }}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder={DEFAULT_ASSISTANT_NAMES[locale]}
+                autoComplete="off"
+              />
+              {nameProblem
+                ? <FormError message={t(NAME_PROBLEM[nameProblem])} />
+                : fieldErrors.assistant_name && <FormError message={fieldErrors.assistant_name} />}
+            </div>
+            <div>
+              <label htmlFor="assistant-gender" className="block text-sm font-medium mb-1">{t('business.assistantGender')}</label>
+              <select
+                id="assistant-gender"
+                aria-invalid={fieldErrors.assistant_gender ? true : undefined}
+                value={formData.assistant_gender}
+                onChange={(e) => {
+                  setFormData({ ...formData, assistant_gender: e.target.value as AssistantGender })
+                  if (fieldErrors.assistant_gender) setFieldErrors({ ...fieldErrors, assistant_gender: '' })
+                }}
+                className="w-full px-3 py-2 border rounded-md bg-white"
+              >
+                {ASSISTANT_GENDERS.map((gender) => (
+                  <option key={gender} value={gender}>{t(`business.assistantGender.${gender}`)}</option>
+                ))}
+              </select>
+              {fieldErrors.assistant_gender && <FormError message={fieldErrors.assistant_gender} />}
+            </div>
+          </div>
+        </fieldset>
+      )}
 
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
         <button

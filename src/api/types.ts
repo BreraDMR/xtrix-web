@@ -14,6 +14,7 @@ export type UserPreferencesOut = Schema<'UserPreferencesOut'>
 export type UserPreferencesUpdate = Schema<'UserPreferencesUpdate'>
 export type VisitOut = Schema<'VisitOut'>
 export type BusinessOut = Schema<'BusinessOut'>
+export type BusinessUpdate = Schema<'BusinessUpdate'>
 export type BusinessType = BusinessOut['business_type']
 export type ClientLoyaltyBalance = Schema<'ClientLoyaltyBalance'>
 export type ClientPage = Schema<'PaginatedResponse_ClientOut_'>

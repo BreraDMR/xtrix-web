@@ -8,6 +8,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
 import { useLabels } from '../i18n/labels'
 import type { BusinessOut } from '../api/types'
+import { effectiveAssistant } from '../i18n/assistant'
 
 export default function Business() {
   const { user } = useAuthStore()
@@ -132,6 +133,7 @@ export default function Business() {
                 <p className="text-gray-900">{business.description}</p>
               </div>
             )}
+            <AssistantInfo business={business} />
           </div>
         </div>
       ) : (
@@ -152,3 +154,19 @@ export default function Business() {
   )
 }
 
+function AssistantInfo({ business }: { business: BusinessOut }) {
+  const { t, locale } = useTranslation()
+  const { name, gender, isDefault } = effectiveAssistant(business, locale)
+  return (
+    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+      <div>
+        <label className="block text-sm font-medium text-gray-500 mb-1">{t('business.assistantName')}</label>
+        <p className="text-gray-900">{isDefault ? `${name} (${t('business.assistantDefault')})` : name}</p>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-500 mb-1">{t('business.assistantGender')}</label>
+        <p className="text-gray-900">{t(`business.assistantGender.${gender}`)}</p>
+      </div>
+    </div>
+  )
+}

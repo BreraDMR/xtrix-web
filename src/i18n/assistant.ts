@@ -132,3 +132,14 @@ export function assistantT(locale: Locale, key: AssistantKey, options: Assistant
   return text.replace(/\{\{\s*(\w+)\s*\}\}/g, (match, name: string) =>
     options[name] !== undefined && name !== 'gender' ? String(options[name]) : match)
 }
+
+// same checks as the API: trimmed, up to 30 characters (code points, like Python's len),
+// no line breaks or other control characters
+// eslint-disable-next-line no-control-regex -- control characters are exactly what we look for
+const CONTROL_CHARS = /[\u0000-\u001f\u007f]/
+export function assistantNameProblem(value: string): 'tooLong' | 'invalid' | null {
+  const name = value.trim()
+  if (CONTROL_CHARS.test(name)) return 'invalid'
+  if ([...name].length > ASSISTANT_NAME_MAX) return 'tooLong'
+  return null
+}

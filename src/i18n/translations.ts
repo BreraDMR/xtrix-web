@@ -131,6 +131,19 @@ export type TranslationKey =
   | 'business.addressPlaceholder'
   | 'business.descriptionPlaceholder'
   | 'business.saveError'
+  | 'business.assistant'
+  | 'business.assistantHint'
+  | 'business.assistantName'
+  | 'business.assistantGender'
+  | 'business.assistantGender.female'
+  | 'business.assistantGender.male'
+  | 'business.assistantGender.neuter'
+  | 'business.assistantDefault'
+  | 'business.assistantNameTooLong'
+  | 'business.assistantNameInvalid'
+  | 'validation.code.invalid_assistant_name'
+  | 'field.assistant_name'
+  | 'field.assistant_gender'
   | 'serviceForm.name'
   | 'serviceForm.duration'
   | 'serviceForm.primary'
@@ -1037,6 +1050,19 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "business.addressPlaceholder": {"en": "Business address", "ru": "Адрес бизнеса", "cz": "Adresa podniku"},
   "business.descriptionPlaceholder": {"en": "Business description", "ru": "Описание бизнеса", "cz": "Popis podniku"},
   "business.saveError": {"en": "Failed to save business", "ru": "Не удалось сохранить бизнес", "cz": "Podnik se nepodařilo uložit"},
+  "business.assistant": {"en": "Assistant", "ru": "Помощник", "cz": "Asistent"},
+  "business.assistantHint": {"en": "The assistant in the app goes by this name. Leave it empty for the default name in each user's language.", "ru": "Так помощника зовут в приложении. Оставьте пустым — будет имя по умолчанию на языке каждого пользователя.", "cz": "Takto se asistent v aplikaci jmenuje. Když pole necháte prázdné, použije se výchozí jméno v jazyce každého uživatele."},
+  "business.assistantName": {"en": "Assistant name", "ru": "Имя помощника", "cz": "Jméno asistenta"},
+  "business.assistantGender": {"en": "Gender in phrases", "ru": "Род в фразах", "cz": "Rod ve větách"},
+  "business.assistantGender.female": {"en": "Female (she)", "ru": "Женский (записала)", "cz": "Ženský (zapsala)"},
+  "business.assistantGender.male": {"en": "Male (he)", "ru": "Мужской (записал)", "cz": "Mužský (zapsal)"},
+  "business.assistantGender.neuter": {"en": "Neuter (it)", "ru": "Средний (записало)", "cz": "Střední (zapsalo)"},
+  "business.assistantDefault": {"en": "default", "ru": "по умолчанию", "cz": "výchozí"},
+  "business.assistantNameTooLong": {"en": "Up to 30 characters", "ru": "Не больше 30 символов", "cz": "Nejvýše 30 znaků"},
+  "business.assistantNameInvalid": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
+  "validation.code.invalid_assistant_name": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
+  "field.assistant_name": {"en": "Assistant name", "ru": "Имя помощника", "cz": "Jméno asistenta"},
+  "field.assistant_gender": {"en": "Assistant gender", "ru": "Род помощника", "cz": "Rod asistenta"},
   "serviceForm.name": {"en": "Service Name", "ru": "Название услуги", "cz": "Název služby"},
   "serviceForm.duration": {"en": "Duration (minutes)", "ru": "Длительность (минуты)", "cz": "Délka (minuty)"},
   "serviceForm.primary": {"en": "Primary Specialist", "ru": "Основной специалист", "cz": "Hlavní specialista"},
