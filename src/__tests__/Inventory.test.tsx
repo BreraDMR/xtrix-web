@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { screen, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Inventory from '../pages/Inventory'
 import api from '../api/client'
-import { renderWithProviders, resetStores, routes, signIn } from '../test/render'
+import { apiError, renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
-vi.mock('../api/client', () => ({ default: { get: vi.fn(), delete: vi.fn() } }))
+vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() } }))
 
 describe('Inventory deletion', () => {
   beforeEach(() => {
@@ -29,5 +29,43 @@ describe('Inventory deletion', () => {
     } else {
       expect(api.delete).not.toHaveBeenCalled()
     }
+  })
+})
+
+describe('Inventory product form errors', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    resetStores()
+    signIn({ id: 1, role: 'business_owner', business_id: 1 })
+    vi.mocked(api.get).mockImplementation(routes({
+      '/products/?': { items: [{ id: 3, name: 'Shampoo', unit: 'pcs', quantity: 10, min_quantity: 1 }] },
+      '/businesses/me': { id: 1, currency: 'EUR' },
+    }))
+  })
+
+  it('keeps the add form open and shows why the API refused it', async () => {
+    vi.mocked(api.post).mockRejectedValue(apiError(400, 'This barcode is already used'))
+    renderWithProviders(<Inventory />)
+    await userEvent.click(await screen.findByRole('button', { name: /add product/i }))
+    await userEvent.type(within(document.querySelector('form')!).getAllByRole('textbox')[0], 'Gel')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('This barcode is already used')
+    expect(screen.getByRole('heading', { name: /add product/i })).toBeInTheDocument()
+  })
+
+  it('shows a failed edit too', async () => {
+    vi.mocked(api.put).mockRejectedValue(apiError(400, 'Quantity is locked'))
+    renderWithProviders(<Inventory />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Quantity is locked')
+  })
+
+  it('asks for a name under the field instead of an alert', async () => {
+    renderWithProviders(<Inventory />)
+    await userEvent.click(await screen.findByRole('button', { name: /add product/i }))
+    fireEvent.submit(document.querySelector('form')!)
+    expect(await screen.findByText("This field can't be empty")).toBeInTheDocument()
+    expect(api.post).not.toHaveBeenCalled()
   })
 })

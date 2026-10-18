@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
+import FormError from '../components/FormError'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
@@ -37,6 +38,7 @@ export default function Inventory() {
   const currency = useBusinessCurrency()
   const [showAddForm, setShowAddForm] = useState(false)
   const [showEditForm, setShowEditForm] = useState<Product | null>(null)
+  const [formError, setFormError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [lowStockOnly, setLowStockOnly] = useState(false)
   const [addQuantityProduct, setAddQuantityProduct] = useState<Product | null>(null)
@@ -107,10 +109,7 @@ export default function Inventory() {
       queryClient.invalidateQueries({ queryKey: ['products'] })
       setShowAddForm(false)
     },
-    onError: (error) => {
-      console.error('Mutation error:', error)
-      alert(error?.message || t('inventory.createError'))
-    },
+    onError: (error) => setFormError(error.message || t('inventory.createError')),
   })
 
   const updateMutation = useMutation({
@@ -122,6 +121,7 @@ export default function Inventory() {
       queryClient.invalidateQueries({ queryKey: ['products'] })
       setShowEditForm(null)
     },
+    onError: (error) => setFormError(apiErrorMessage(error, t('common.error_saving'))),
   })
 
   const deleteMutation = useMutation({
@@ -345,11 +345,15 @@ export default function Inventory() {
         <ProductForm
           product={undefined}
           isLoading={createMutation.isPending}
+          error={formError}
           onSubmit={(product) => {
-            console.log('ProductForm onSubmit called with:', product)
+            setFormError('')
             createMutation.mutate(product)
           }}
-          onCancel={() => setShowAddForm(false)}
+          onCancel={() => {
+            setFormError('')
+            setShowAddForm(false)
+          }}
         />
       )}
 
@@ -358,8 +362,15 @@ export default function Inventory() {
         <ProductForm
           product={showEditForm}
           isLoading={updateMutation.isPending}
-          onSubmit={(updates) => updateMutation.mutate({ id: showEditForm.id, ...updates })}
-          onCancel={() => setShowEditForm(null)}
+          error={formError}
+          onSubmit={(updates) => {
+            setFormError('')
+            updateMutation.mutate({ id: showEditForm.id, ...updates })
+          }}
+          onCancel={() => {
+            setFormError('')
+            setShowEditForm(null)
+          }}
         />
       )}
 
@@ -413,11 +424,13 @@ function ProductForm({
   onSubmit,
   onCancel,
   isLoading = false,
+  error = '',
 }: {
   product?: Product
   onSubmit: (product: Partial<Product>) => void
   onCancel: () => void
   isLoading?: boolean
+  error?: string
 }) {
   const { t } = useTranslation()
   const labels = useLabels()
@@ -437,29 +450,19 @@ function ProductForm({
     location: product?.location || '',
     is_active: product?.is_active ?? true,
   })
+  const [nameError, setNameError] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     e.stopPropagation()
     
-    console.log('Form submit triggered, formData:', formData)
-    
+    // unit is a select with a default, so the name is the only thing that can be missing
     if (!formData.name || !formData.name.trim()) {
-      alert(t('inventory.name') + ': ' + t('common.required_field'))
+      setNameError(t('validation.code.empty'))
       return
     }
-    if (!formData.unit || !formData.unit.trim()) {
-      alert(t('inventory.unit') + ': ' + t('common.required_field'))
-      return
-    }
-    
-    console.log('Validation passed, calling onSubmit')
-    try {
-      onSubmit(formData)
-    } catch (error) {
-      console.error('Error in onSubmit:', error)
-      alert(t('common.error_saving') + ': ' + (error as Error).message)
-    }
+    setNameError('')
+    onSubmit(formData)
   }
 
   return (
@@ -475,6 +478,7 @@ function ProductForm({
           {product ? t('inventory.edit_product') : t('inventory.add_product')}
         </h3>
         <form onSubmit={handleSubmit}>
+          {error && <div role="alert" className="mb-4"><FormError message={error} /></div>}
           <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -484,9 +488,10 @@ function ProductForm({
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className={`w-full px-4 py-2 border rounded-lg ${nameError ? 'border-red-500' : 'border-gray-300'}`}
               required
             />
+            <FormError message={nameError} />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
