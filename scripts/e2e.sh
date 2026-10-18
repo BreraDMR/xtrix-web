@@ -76,6 +76,12 @@ export ENVIRONMENT=development
 export RATE_LIMIT_ENABLED=false
 export CORS_ORIGINS="http://localhost:$WEB_PORT,http://127.0.0.1:$WEB_PORT"
 export FRONTEND_URL="http://localhost:$WEB_PORT"
+# the assistant answers from a fixture file and "hears" a fixed phrase - no model or speech
+# service is ever called, whatever the shell has in LLM_* / STT_*
+export LLM_PROVIDER=fake
+export LLM_FAKE_PLAN_FILE="$(pwd)/e2e/fixtures/assistant-plan.json"
+export STT_PROVIDER=fake
+export STT_FAKE_TEXT="Book Alice Assistant for the earliest free time"
 export PYTHONPATH="$API_DIR"
 export PYTHONDONTWRITEBYTECODE=1
 

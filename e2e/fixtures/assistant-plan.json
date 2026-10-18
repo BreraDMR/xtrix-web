@@ -1,0 +1,9 @@
+{
+  "summary": "Book Alice Assistant at the earliest free time",
+  "questions": [],
+  "actions": [
+    {"action": "find_client", "ref": "client", "name": "Alice Assistant"},
+    {"action": "find_free_slot", "ref": "slot", "duration_minutes": 60},
+    {"action": "create_visit", "client_ref": "client", "slot_ref": "slot", "note": "Booked from the chat"}
+  ]
+}

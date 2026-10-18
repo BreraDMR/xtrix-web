@@ -1,4 +1,4 @@
-import { expect, type APIRequestContext, type Locator, type Page } from '@playwright/test'
+import { expect, test, type APIRequestContext, type Locator, type Page } from '@playwright/test'
 import fs from 'fs'
 
 export const apiUrl = process.env.E2E_API_URL || 'http://localhost:8170'
@@ -98,4 +98,13 @@ export function field(scope: Page | Locator, label: RegExp): Locator {
 // native browser validation (required, type=email...) - the form is not sent at all
 export async function isInvalid(input: Locator): Promise<boolean> {
   return input.evaluate((el) => !(el as HTMLInputElement).checkValidity())
+}
+
+// the assistant needs the API from its own branch on; scripts/e2e.sh runs it with fake providers
+export async function assistantOn(request: APIRequestContext, s: Session) {
+  const response = await request.get(`${apiUrl}/assistant/status`, { headers: s.headers })
+  // an API from before the assistant has no such route
+  test.skip(response.status() === 404, 'this API has no /assistant endpoints')
+  expect(response.ok(), await response.text()).toBeTruthy()
+  expect((await response.json()).enabled, 'the API should run with LLM_PROVIDER=fake').toBe(true)
 }
