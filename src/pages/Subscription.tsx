@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
+import CheckoutReturn from '../components/CheckoutReturn'
 import { useLabels } from '../i18n/labels'
 import type { Schema } from '../api/types'
 
@@ -245,6 +246,7 @@ export default function Subscription() {
       <h1 className="text-2xl font-bold mb-6">
         {t('subscription.title')}
       </h1>
+      <CheckoutReturn />
 
 
       {}

@@ -731,6 +731,13 @@ export type TranslationKey =
   | 'subscription.transaction.failed'
   | 'subscription.transaction.refunded'
   | 'subscription.checkoutUnavailable'
+  | 'subscription.checkoutCancelled'
+  | 'subscription.checkoutVerifyError'
+  | 'subscription.checkoutActive'
+  | 'subscription.checkoutPending'
+  | 'subscription.checkoutUnpaid'
+  | 'subscription.checkoutChecking'
+  | 'subscription.checkoutRetry'
   | 'subscription.cancellation_date'
   | 'subscription.days_remaining'
   | 'subscription.trial_period'
@@ -1759,6 +1766,13 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'subscription.transaction.pending': { en: 'Pending', ru: 'В обработке', cz: 'Zpracovává se' },
   'subscription.transaction.failed': { en: 'Failed', ru: 'Не прошёл', cz: 'Selhalo' },
   'subscription.transaction.refunded': { en: 'Refunded', ru: 'Возвращён', cz: 'Vráceno' },
+  'subscription.checkoutCancelled': { en: "Checkout was cancelled. You can choose a plan again.", ru: "Оплата отменена. Можно снова выбрать тариф.", cz: "Platba byla zrušena. Můžete znovu vybrat tarif." },
+  'subscription.checkoutVerifyError': { en: "Could not verify the payment. Please try again.", ru: "Не удалось проверить оплату. Попробуйте ещё раз.", cz: "Platbu se nepodařilo ověřit. Zkuste to znovu." },
+  'subscription.checkoutActive': { en: "Your paid subscription is active.", ru: "Оплаченная подписка активна.", cz: "Vaše placené předplatné je aktivní." },
+  'subscription.checkoutPending': { en: "Payment received. Waiting for subscription activation…", ru: "Оплата получена. Ожидаем активации подписки…", cz: "Platba přijata. Čekáme na aktivaci předplatného…" },
+  'subscription.checkoutUnpaid': { en: "Payment has not been completed.", ru: "Оплата ещё не завершена.", cz: "Platba ještě nebyla dokončena." },
+  'subscription.checkoutChecking': { en: "Checking payment…", ru: "Проверяем оплату…", cz: "Ověřujeme platbu…" },
+  'subscription.checkoutRetry': { en: "Check again", ru: "Проверить ещё раз", cz: "Zkontrolovat znovu" },
   'subscription.checkoutUnavailable': { en: 'Online payment is not available right now, please try again later', ru: 'Онлайн-оплата сейчас недоступна, попробуйте позже', cz: 'Online platba teď není dostupná, zkuste to prosím později' },
   'subscription.cancellation_date': { en: 'Cancellation Date', ru: 'Дата отмены', cz: 'Datum zrušení' },
   'subscription.days_remaining': { en: 'days remaining', ru: 'дней осталось', cz: 'dní zbývá' },
