@@ -27,6 +27,27 @@ export default function Subscription() {
   const queryClient = useQueryClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  // checkout answered 403: the API counts us as staff even if we couldn't tell up front
+  const [checkoutForbidden, setCheckoutForbidden] = useState(false)
+
+  // The owner pays for the whole team. /users/me doesn't say whether a specialist works for
+  // someone, so look for their staff record; 404 means a solo specialist who pays for themselves.
+  const { data: staffRecord, isLoading: staffLoading } = useQuery<{ is_active?: boolean } | null>({
+    queryKey: ['my-staff-record', user?.id],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get(`/employees/by-user/${user!.id}`)
+        return data
+      } catch (err) {
+        if (apiErrorStatus(err) === 404) return null
+        throw err
+      }
+    },
+    enabled: user?.role === 'specialist' && !user.employer_id,
+    retry: false,
+  })
+  const isStaff = user?.role === 'employee' || !!user?.employer_id || !!staffRecord?.is_active || checkoutForbidden
+  const isPayer = !isStaff && !staffLoading && (user?.role === 'admin' || user?.role === 'business_owner' || user?.role === 'specialist')
 
   const { data: subscription, isLoading: subscriptionLoading } = useQuery<Subscription | null>({
     queryKey: ['subscription'],
@@ -34,7 +55,7 @@ export default function Subscription() {
       const { data } = await api.get('/subscriptions/me')
       return data
     },
-    enabled: user?.role === 'admin' || user?.role === 'specialist',
+    enabled: isPayer,
   })
 
   const { data: trialStatus } = useQuery<TrialStatus>({
@@ -64,7 +85,7 @@ export default function Subscription() {
       return []
     }
     
-    if (user?.role === 'admin') {
+    if (user?.role === 'admin' || user?.role === 'business_owner') {
       const adminPlans = nonTrialPlans.filter((plan) => {
         const code = plan.code?.toLowerCase() || ''
         const matches = code.includes('admin') || 
@@ -111,6 +132,10 @@ export default function Subscription() {
       }
       setError(t('subscription.checkoutUnavailable'))
     } catch (err) {
+      if (apiErrorStatus(err) === 403) {
+        setCheckoutForbidden(true)
+        return
+      }
       setError(
         apiErrorStatus(err) === 503
           ? t('subscription.checkoutUnavailable')
@@ -171,10 +196,10 @@ export default function Subscription() {
       const { data } = await api.get('/subscriptions/history')
       return data
     },
-    enabled: user?.role === 'admin' || user?.role === 'specialist',
+    enabled: isPayer,
   })
 
-  if (subscriptionLoading || plansLoading) {
+  if (subscriptionLoading || plansLoading || staffLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <LoadingSpinner size="lg" />
@@ -182,7 +207,23 @@ export default function Subscription() {
     )
   }
 
-  if (user?.role !== 'admin' && user?.role !== 'specialist') {
+  if (isStaff) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold mb-6">{t('subscription.title')}</h1>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-green-800">{t('subscription.paidByOwner')}</p>
+        </div>
+        {trialStatus && trialStatus.has_access === false && (
+          <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-yellow-800">{t('subscription.ownerPlanInactive')}</p>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  if (!isPayer) {
     return (
       <div className="p-6">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -193,8 +234,6 @@ export default function Subscription() {
       </div>
     )
   }
-
-  const isEmployee = user?.role === 'specialist' && user?.employer_id
 
   // every new specialist starts on an active trial subscription - that must not lock the
   // paid plans, only the plan you're actually paying for counts as current
@@ -222,13 +261,6 @@ export default function Subscription() {
         {t('subscription.title')}
       </h1>
 
-      {isEmployee && (
-        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-green-800">
-            {t('subscription.employeeMessage')}
-          </p>
-        </div>
-      )}
 
       {}
       {subscription && (

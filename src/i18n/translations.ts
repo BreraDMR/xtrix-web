@@ -4,6 +4,8 @@ export type TranslationKey =
   | 'validation.commission'
   | 'validation.salary'
   | 'validation.price'
+  | 'subscription.paidByOwner'
+  | 'subscription.ownerPlanInactive'
   | 'unit.pcs'
   | 'unit.ml'
   | 'unit.l'
@@ -686,7 +688,6 @@ export type TranslationKey =
   | 'finance.payment_other'
   | 'subscription.title'
   | 'subscription.notRequired'
-  | 'subscription.employeeMessage'
   | 'subscription.currentSubscription'
   | 'subscription.trialActive'
   | 'subscription.trialEnds'
@@ -899,6 +900,8 @@ export type TranslationKey =
   | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  "subscription.paidByOwner": {"en": "Your plan is paid by the business owner, there is nothing to pay here.", "ru": "Ваш тариф оплачивает владелец бизнеса, здесь ничего платить не нужно.", "cz": "Váš tarif platí majitel firmy, zde nic platit nemusíte."},
+  "subscription.ownerPlanInactive": {"en": "The business owner's subscription is not active right now. Ask them to renew it.", "ru": "Подписка владельца бизнеса сейчас не активна. Попросите его продлить её.", "cz": "Předplatné majitele firmy teď není aktivní. Požádejte ho o obnovení."},
   "unit.pcs": {"en": "pcs", "ru": "шт", "cz": "ks"},
   "unit.ml": {"en": "ml", "ru": "мл", "cz": "ml"},
   "unit.l": {"en": "l", "ru": "л", "cz": "l"},
@@ -1697,7 +1700,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   
   'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },
   'subscription.notRequired': { en: 'Subscription is not required for your role', ru: 'Подписка не требуется для вашей роли', cz: 'Předplatné není vyžadováno pro vaši roli' },
-  'subscription.employeeMessage': { en: 'You are using the subscription provided by your administrator. No payment required.', ru: 'Вы используете подписку, предоставленную вашим администратором. Оплата не требуется.', cz: 'Používáte předplatné poskytnuté vaším správcem. Platba není vyžadována.' },
   'subscription.currentSubscription': { en: 'Current Subscription', ru: 'Текущая подписка', cz: 'Aktuální předplatné' },
   'subscription.trialActive': { en: 'Trial period is active', ru: 'Пробный период активен', cz: 'Zkušební období je aktivní' },
   'subscription.trialEnds': { en: 'Trial ends', ru: 'Пробный период заканчивается', cz: 'Zkušební období končí' },

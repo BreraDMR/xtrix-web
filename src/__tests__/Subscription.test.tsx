@@ -21,6 +21,7 @@ describe('Subscription', () => {
         '/subscriptions/trial/status': { is_trial: false, is_trial_active: false, has_access: false },
         '/subscriptions/plans?active_only=true': [plan],
         '/subscriptions/history': [],
+        // 404: not on anyone's staff, a solo specialist
       }) as any
     )
   })
@@ -95,5 +96,59 @@ describe('Subscription', () => {
     renderWithProviders(<Subscription />)
     expect(await screen.findByText('Расписание, онлайн-запись, клиенты')).toBeInTheDocument()
     expect(screen.queryByText('Schedule, online booking, clients')).not.toBeInTheDocument()
+  })
+
+  it('lets a business owner buy a business plan for the team', async () => {
+    signIn({ id: 5, role: 'business_owner', business_id: 1 })
+    const businessPlan = { ...plan, id: 4, code: 'admin_up_to_7_employees', name: 'Admin: up to 7 employees', price: 79 }
+    vi.mocked(api.get).mockImplementation(routes({
+      '/subscriptions/me': { id: 9, user_id: 5, plan_id: 99, status: 'active', is_trial: true, cancel_at_period_end: false, created_at: '2026-10-17T10:00:00', trial_end: '2026-10-22T10:00:00' },
+      '/subscriptions/trial/status': { is_trial: true, is_trial_active: true, has_access: true, trial_end: '2026-10-22T10:00:00' },
+      '/subscriptions/plans?active_only=true': [plan, businessPlan],
+      '/subscriptions/history': [],
+    }) as any)
+    vi.mocked(api.post).mockResolvedValue({ data: { url: '' } })
+    renderWithProviders(<Subscription />)
+
+    expect(await screen.findByText('Business: up to 7 employees')).toBeInTheDocument()
+    expect(screen.queryByText('Solo')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /^subscribe$/i }))
+    expect(api.post).toHaveBeenCalledWith('/subscriptions/checkout/create-session', null, { params: { plan_id: 4 } })
+    expect(api.get).toHaveBeenCalledWith('/subscriptions/me')
+  })
+
+  it.each([
+    ['an employee', { id: 8, role: 'employee' }, {}],
+    ['a specialist on the owner\'s staff', { id: 8, role: 'specialist' }, { '/employees/by-user/8': { id: 2, employee_user_id: 8, business_owner_id: 5, is_active: true } }],
+  ])('tells %s the owner pays, with no pay buttons', async (_who, user, extra) => {
+    signIn(user)
+    vi.mocked(api.get).mockImplementation(routes({
+      '/subscriptions/trial/status': { is_trial: false, has_access: true },
+      '/subscriptions/plans?active_only=true': [plan],
+      ...extra,
+    }) as any)
+    renderWithProviders(<Subscription />)
+
+    expect(await screen.findByText(/paid by the business owner/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /subscribe/i })).not.toBeInTheDocument()
+    expect(api.get).not.toHaveBeenCalledWith('/subscriptions/me')
+  })
+
+  it('warns staff when the owner\'s subscription has lapsed', async () => {
+    signIn({ id: 8, role: 'employee' })
+    vi.mocked(api.get).mockImplementation(routes({
+      '/subscriptions/trial/status': { is_trial: false, has_access: false },
+      '/subscriptions/plans?active_only=true': [plan],
+    }) as any)
+    renderWithProviders(<Subscription />)
+    expect(await screen.findByText(/ask them to renew/i)).toBeInTheDocument()
+  })
+
+  it('switches to the staff message if checkout says staff cannot buy', async () => {
+    vi.mocked(api.post).mockRejectedValue(apiError(403, 'Not allowed'))
+    renderWithProviders(<Subscription />)
+    await userEvent.click(await screen.findByRole('button', { name: /^subscribe$/i }))
+    expect(await screen.findByText(/paid by the business owner/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /subscribe/i })).not.toBeInTheDocument()
   })
 })
