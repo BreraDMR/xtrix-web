@@ -43,7 +43,8 @@ test('second client with the same phone is refused with a message', async ({ pag
   await page.getByLabel(/^Full Name/).fill('Petr Second')
   await page.getByLabel(/^Phone/).fill('+420777333444')
   await page.getByRole('button', { name: 'Create Client' }).click()
-  await expect(page.getByText('This client is already in your list')).toBeVisible()
+  await expect(page.getByRole('alert')).toContainText('A client with this phone number is already in your list.')
+  await expect(page.getByRole('button', { name: 'Open the existing client' })).toBeVisible()
   // still in the form, nothing new in the list
   await page.getByRole('button', { name: 'Cancel' }).click()
   await expect(page.getByRole('row').filter({ hasText: 'Petr Second' })).toHaveCount(0)

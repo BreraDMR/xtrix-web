@@ -44,7 +44,9 @@ test.describe('signup', () => {
     await page.getByLabel('Confirm Password').fill('password')
     await page.getByLabel('Role').selectOption('business_owner')
     await page.getByRole('button', { name: 'Create Account' }).click()
-    await expect(page.getByText(/^password: /)).toBeVisible()
+    // the API's answer lands under the password field
+    await expect(page.getByText(/^Password is too weak/)).toBeVisible()
+    await expect(page.getByLabel('Password *', { exact: true })).toHaveAttribute('aria-invalid', 'true')
     await expect(page).toHaveURL(/\/register$/)
   })
 
@@ -80,8 +82,9 @@ test.describe('login and logout', () => {
 
     await page.getByRole('button', { name: 'Logout' }).click()
     await expect(page).toHaveURL(/\/login$/)
+    // opening a private page later remembers it for after the login
     await page.goto('/clients')
-    await expect(page).toHaveURL(/\/login$/)
+    await expect(page).toHaveURL(/\/login\?returnTo=%2Fclients$/)
   })
 
   test('wrong password shows an error and keeps you on the login page', async ({ page, request }) => {
