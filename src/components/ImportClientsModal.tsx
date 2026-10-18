@@ -6,6 +6,7 @@ import api from '../api/client'
 import { apiClientExists, apiErrorMessage } from '../api/errors'
 import * as XLSX from 'xlsx'
 import type { ClientOut, ClientPage } from '../api/types'
+import FormError from './FormError'
 
 interface ImportClientsModalProps {
   isOpen: boolean
@@ -44,6 +45,14 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
   const [isImporting, setIsImporting] = useState(false)
   const [importResult, setImportResult] = useState<ImportResult | null>(null)
   const [existingClients, setExistingClients] = useState<Set<string>>(new Set())
+  const [fileError, setFileError] = useState('')
+
+  // a file we can't use: say why and let them pick another one
+  const rejectFile = (message: string) => {
+    setFile(null)
+    setFileError(message)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
 
   const loadExistingClients = async () => {
     try {
@@ -175,6 +184,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
     if (!selectedFile) return
 
     setFile(selectedFile)
+    setFileError('')
     setParsedData([])
     setValidationErrors([])
     setImportResult(null)
@@ -187,7 +197,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as unknown[][]
 
       if (jsonData.length === 0) {
-        alert(t('import.emptyFile'))
+        rejectFile(t('import.emptyFile'))
         return
       }
 
@@ -203,7 +213,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
       )
 
       if (nameColIndex === -1) {
-        alert(t('import.nameColumnNotFound'))
+        rejectFile(t('import.nameColumnNotFound'))
         return
       }
 
@@ -231,7 +241,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
       setValidationErrors(errors)
     } catch (error) {
       console.error('Error parsing file:', error)
-      alert(t('import.parseError'))
+      rejectFile(t('import.parseError'))
     }
   }
 
@@ -334,6 +344,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
         {}
         <div className="p-6 space-y-6">
           {}
+          {fileError && <div role="alert"><FormError message={fileError} /></div>}
           {!file && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

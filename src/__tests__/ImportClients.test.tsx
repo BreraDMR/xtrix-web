@@ -41,4 +41,13 @@ describe('ImportClientsModal', () => {
     await userEvent.click(screen.getByRole('button', { name: /^open$/i }))
     expect(onOpenClient).toHaveBeenCalledWith(42)
   })
+
+  it('says so inline when the sheet has no name column and lets them pick another file', async () => {
+    const { container } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} />)
+    await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,
+      sheet([['Phone', 'Email'], ['+420111222333', 'a@b.cz']]))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Name column not found')
+    expect(container.querySelector('input[type="file"]')).toBeInTheDocument()
+    expect(api.post).not.toHaveBeenCalled()
+  })
 })

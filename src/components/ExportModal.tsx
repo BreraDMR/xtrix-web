@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { HiX, HiDownload, HiPrinter } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
+import FormError from './FormError'
 import { exportData, exportChartToImage, ExportFormat, ExportOptions, type ExportColumn } from '../utils/export'
 import { getExportPreferences, saveExportPreferences } from '../utils/export'
 
@@ -37,6 +38,7 @@ export default function ExportModal<T extends object>({
     reportTypes?.[0] || null
   )
   const [isExporting, setIsExporting] = useState(false)
+  const [exportError, setExportError] = useState('')
   const [includeChartsOption, setIncludeChartsOption] = useState(includeCharts)
 
   useEffect(() => {
@@ -50,6 +52,7 @@ export default function ExportModal<T extends object>({
     if (data.length === 0) return
 
     setIsExporting(true)
+    setExportError('')
     onExportStart?.()
 
     try {
@@ -77,7 +80,7 @@ export default function ExportModal<T extends object>({
       onClose()
     } catch (error) {
       console.error('Export error:', error)
-      alert(t('export.error'))
+      setExportError(t('export.error'))
     } finally {
       setIsExporting(false)
     }
@@ -105,7 +108,7 @@ export default function ExportModal<T extends object>({
 
         {}
         <div className="p-6 space-y-6">
-          {}
+          {exportError && <div role="alert"><FormError message={exportError} /></div>}
           {reportTypes && reportTypes.length > 1 && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
