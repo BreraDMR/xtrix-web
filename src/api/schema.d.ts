@@ -2495,11 +2495,7 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
-            /**
-             * Currency
-             * @description ISO code: EUR, USD, CZK...
-             * @default EUR
-             */
+            /** Currency */
             currency: string;
             /** Description */
             description?: string | null;
@@ -3011,6 +3007,11 @@ export interface components {
             /** Business Id */
             business_id: number | null;
             /**
+             * Code
+             * @description Set on system categories: rent, salaries, stock_purchase, marketing, utilities, subscriptions, other
+             */
+            code?: string | null;
+            /**
              * Color
              * @description Hex color, e.g. #3B82F6
              */
@@ -3090,13 +3091,15 @@ export interface components {
             created_at: string;
             /** Created By Id */
             created_by_id?: number | null;
-            /**
-             * Currency
-             * @default EUR
-             */
+            /** Currency */
             currency: string;
             /** Description */
             description?: string | null;
+            /**
+             * Employee Id
+             * @description Employee paid, when source is salary_payment
+             */
+            employee_id?: number | null;
             /**
              * Expense Date
              * Format: date-time
@@ -3109,6 +3112,11 @@ export interface components {
              * @default other
              */
             payment_method: string;
+            /**
+             * Source
+             * @description null for manual expenses, salary_payment for automatic ones
+             */
+            source?: string | null;
             /**
              * Updated At
              * Format: date-time
@@ -3934,7 +3942,8 @@ export interface components {
             supplier?: string | null;
             /**
              * Unit
-             * @default шт
+             * @description Unit code (pcs, ml, g...) or free text
+             * @default pcs
              */
             unit: string;
         };
@@ -3980,7 +3989,8 @@ export interface components {
             supplier?: string | null;
             /**
              * Unit
-             * @default шт
+             * @description Unit code (pcs, ml, g...) or free text
+             * @default pcs
              */
             unit: string;
             /**
@@ -4031,8 +4041,6 @@ export interface components {
         };
         /** ProductUsageCreate */
         ProductUsageCreate: {
-            /** Business Id */
-            business_id: number;
             /** Client Id */
             client_id?: number | null;
             /** Notes */
@@ -4065,6 +4073,11 @@ export interface components {
             product_id: number;
             /** Quantity */
             quantity: number;
+            /**
+             * Source
+             * @description null for manual write-offs, visit when a visit made it
+             */
+            source?: string | null;
             /**
              * Usage Date
              * Format: date-time
@@ -6343,7 +6356,6 @@ export interface operations {
                 limit?: number;
             };
             header?: {
-                authorization?: string | null;
                 "Accept-Language"?: string | null;
             };
             path?: never;
@@ -6762,6 +6774,13 @@ export interface operations {
             };
             /** @description Insufficient permissions */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description A client with this phone, email or name + birth date already exists; error.detail.existing_client_id points at it */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -11052,14 +11071,14 @@ export interface operations {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Account is locked */
+            /** @description Account is locked by an admin */
             423: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Rate limit exceeded */
+            /** @description Too many attempts from this address (Retry-After) */
             429: {
                 headers: {
                     [name: string]: unknown;
