@@ -4,15 +4,13 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
 import html2canvas from 'html2canvas'
+import { cellText, type ExportColumn } from './columns'
+
+export type { ExportColumn }
 
 export type ExportFormat = 'pdf' | 'excel' | 'csv' | 'print'
 
-export interface ExportColumn<T> {
-  key: keyof T | string
-  label: string
-  format?: (value: any, row?: T) => string
-  width?: number
-}
+export type ExportPreferences = Partial<Pick<ExportOptions<unknown>, 'format'>>
 
 export interface ExportOptions<T> {
   data: T[]
@@ -25,7 +23,7 @@ export interface ExportOptions<T> {
 }
 
 
-export async function exportToPDF<T extends Record<string, any>>(
+export async function exportToPDF<T extends object>(
   options: ExportOptions<T>
 ): Promise<void> {
   const { data, columns, filename, title } = options
@@ -40,9 +38,8 @@ export async function exportToPDF<T extends Record<string, any>>(
 
   const tableData = data.map((row) =>
     columns.map((col) => {
-      const key = col.key as string
-      const value = row[key]
-      return col.format ? col.format(value, row) : String(value ?? '')
+      const text = cellText(row, col)
+      return typeof text === 'string' ? text : String(text ?? '')
     })
   )
 
@@ -62,7 +59,8 @@ export async function exportToPDF<T extends Record<string, any>>(
   })
 
   if (options.includeCharts && options.chartSelectors) {
-    let currentY = (doc as any).lastAutoTable.finalY + 20
+    // jspdf-autotable sticks this onto the doc, its typings don't declare it
+    let currentY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 20
 
     for (const selector of options.chartSelectors) {
       const element = document.querySelector(selector) as HTMLElement
@@ -94,22 +92,18 @@ export async function exportToPDF<T extends Record<string, any>>(
 }
 
 
-export function exportToExcel<T extends Record<string, any>>(
+export function exportToExcel<T extends object>(
   options: ExportOptions<T>
 ): void {
   const { data, columns, filename } = options
 
-  const worksheetData: any[][] = []
+  const worksheetData: unknown[][] = []
 
   worksheetData.push(columns.map((col) => col.label))
 
   data.forEach((row) => {
     worksheetData.push(
-      columns.map((col) => {
-        const key = col.key as string
-        const value = row[key]
-        return col.format ? col.format(value, row) : value ?? ''
-      })
+      columns.map((col) => cellText(row, col) ?? '')
     )
   })
 
@@ -193,7 +187,7 @@ export function printElement(selector?: string): void {
 }
 
 
-export async function exportData<T extends Record<string, any>>(
+export async function exportData<T extends object>(
   options: ExportOptions<T>
 ): Promise<void> {
   switch (options.format) {
@@ -205,15 +199,7 @@ export async function exportData<T extends Record<string, any>>(
       break
     case 'csv': {
       const { exportTableToCSV } = await import('./table')
-      exportTableToCSV(
-        options.data,
-        options.columns.map((col) => ({
-          key: col.key as keyof T,
-          label: col.label,
-          format: col.format,
-        })),
-        options.filename
-      )
+      exportTableToCSV(options.data, options.columns, options.filename)
       break
     }
     case 'print':
@@ -225,7 +211,7 @@ export async function exportData<T extends Record<string, any>>(
 }
 
 
-export function getExportPreferences(): Partial<ExportOptions<any>> {
+export function getExportPreferences(): ExportPreferences {
   try {
     const saved = localStorage.getItem('export_preferences')
     return saved ? JSON.parse(saved) : {}
@@ -235,7 +221,7 @@ export function getExportPreferences(): Partial<ExportOptions<any>> {
 }
 
 
-export function saveExportPreferences(preferences: Partial<ExportOptions<any>>): void {
+export function saveExportPreferences(preferences: ExportPreferences): void {
   try {
     localStorage.setItem('export_preferences', JSON.stringify(preferences))
   } catch {

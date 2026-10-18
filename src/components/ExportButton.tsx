@@ -2,17 +2,11 @@ import { useState } from 'react'
 import { HiDownload } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import ExportModal from './ExportModal'
+import type { ExportColumn } from '../utils/export'
 
-interface Column<T> {
-  key: keyof T | string
-  label: string
-  format?: (value: any, row?: T) => string
-  width?: number
-}
-
-interface ExportButtonProps<T extends Record<string, any>> {
+interface ExportButtonProps<T extends object> {
   data: T[]
-  columns: Column<T>[]
+  columns: ExportColumn<T>[]
   filename: string
   title?: string
   className?: string
@@ -23,7 +17,7 @@ interface ExportButtonProps<T extends Record<string, any>> {
   selectedRows?: T[]
 }
 
-export default function ExportButton<T extends Record<string, any>>({
+export default function ExportButton<T extends object>({
   data,
   columns,
   filename,

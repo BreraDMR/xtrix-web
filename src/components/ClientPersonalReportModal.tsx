@@ -10,6 +10,9 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { dayEnd, dayStart, today } from '../utils/dates'
 
+// one line of the report: column title -> cell
+type ReportRow = Record<string, string | number>
+
 interface ClientPersonalReportModalProps {
   isOpen: boolean
   onClose: () => void
@@ -83,7 +86,7 @@ export default function ClientPersonalReportModal({
     }
   }, [isOpen, clientId])
 
-  const prepareExportData = () => {
+  const prepareExportData = (): ReportRow[] => {
     if (!client) return []
 
     switch (selectedReportType) {
@@ -246,7 +249,7 @@ export default function ClientPersonalReportModal({
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {exportData.map((row: Record<string, any>, idx: number) => (
+                      {exportData.map((row, idx) => (
                         <tr key={idx}>
                           {columns.map((col) => (
                             <td key={col.key} className="px-4 py-2 text-sm text-gray-900">

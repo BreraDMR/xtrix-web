@@ -3,7 +3,7 @@ export interface ValidationError {
   message: string
 }
 
-export type Validator = (value: any) => string | null
+export type Validator = (value: unknown) => string | null
 
 export function validateEmail(email: string): string | null {
   if (!email) return null
@@ -23,7 +23,7 @@ export function validatePhone(phone: string): string | null {
   return null
 }
 
-export function validateRequired(value: any, fieldName?: string): string | null {
+export function validateRequired(value: unknown, fieldName?: string): string | null {
   if (value === null || value === undefined || value === '') {
     return `${fieldName || 'This field'} is required`
   }
@@ -89,7 +89,7 @@ export function validateDateRange(startDate: string, endDate: string): string | 
 
 
 export function combineValidators(...validators: Validator[]): Validator {
-  return (value: any) => {
+  return (value: unknown) => {
     for (const validator of validators) {
       const error = validator(value)
       if (error) return error

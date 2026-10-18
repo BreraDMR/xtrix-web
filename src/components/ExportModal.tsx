@@ -1,21 +1,14 @@
 import { useState, useEffect } from 'react'
 import { HiX, HiDownload, HiPrinter } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
-import { exportData, exportChartToImage, ExportFormat, ExportOptions } from '../utils/export'
+import { exportData, exportChartToImage, ExportFormat, ExportOptions, type ExportColumn } from '../utils/export'
 import { getExportPreferences, saveExportPreferences } from '../utils/export'
 
-interface Column<T> {
-  key: keyof T | string
-  label: string
-  format?: (value: any, row?: T) => string
-  width?: number
-}
-
-interface ExportModalProps<T extends Record<string, any>> {
+interface ExportModalProps<T extends object> {
   isOpen: boolean
   onClose: () => void
   data: T[]
-  columns: Column<T>[]
+  columns: ExportColumn<T>[]
   filename: string
   title?: string
   reportTypes?: string[]
@@ -25,7 +18,7 @@ interface ExportModalProps<T extends Record<string, any>> {
   onExportComplete?: () => void
 }
 
-export default function ExportModal<T extends Record<string, any>>({
+export default function ExportModal<T extends object>({
   isOpen,
   onClose,
   data,
@@ -49,7 +42,7 @@ export default function ExportModal<T extends Record<string, any>>({
   useEffect(() => {
     if (isOpen) {
       const prefs = getExportPreferences()
-      if (prefs.format) setSelectedFormat(prefs.format as ExportFormat)
+      if (prefs.format) setSelectedFormat(prefs.format)
     }
   }, [isOpen])
 
@@ -62,12 +55,7 @@ export default function ExportModal<T extends Record<string, any>>({
     try {
       const options: ExportOptions<T> = {
         data,
-        columns: columns.map((col) => ({
-          key: col.key,
-          label: col.label,
-          format: col.format,
-          width: col.width,
-        })),
+        columns,
         filename: `${filename}-${selectedFormat}`,
         title: title || selectedReportType || undefined,
         format: selectedFormat,

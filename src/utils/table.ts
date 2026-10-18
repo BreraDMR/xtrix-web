@@ -1,3 +1,5 @@
+import { cellValue, type ExportColumn } from './columns'
+
 
 
 export type SortDirection = 'asc' | 'desc' | null
@@ -60,9 +62,9 @@ export function paginateData<T>(
 }
 
 
-export function convertToCSV<T extends Record<string, any>>(
+export function convertToCSV<T extends object>(
   data: T[],
-  columns: Array<{ key: keyof T; label: string; format?: (value: any) => string }>
+  columns: ExportColumn<T>[]
 ): string {
   if (data.length === 0) {
     return columns.map((col) => col.label).join(',')
@@ -73,8 +75,9 @@ export function convertToCSV<T extends Record<string, any>>(
   const rows = data.map((item) => {
     return columns
       .map((col) => {
-        const value = item[col.key]
-        const formattedValue = col.format ? col.format(value) : value ?? ''
+        const format = col.format as ((value: unknown) => string) | undefined
+        const value = cellValue(item, col)
+        const formattedValue = format ? format(value) : value ?? ''
         const escaped = String(formattedValue).replace(/"/g, '""')
         return `"${escaped}"`
       })
@@ -99,9 +102,9 @@ export function downloadCSV(csvContent: string, filename: string): void {
 }
 
 
-export function exportTableToCSV<T extends Record<string, any>>(
+export function exportTableToCSV<T extends object>(
   data: T[],
-  columns: Array<{ key: keyof T; label: string; format?: (value: any) => string }>,
+  columns: ExportColumn<T>[],
   filename: string
 ): void {
   const csv = convertToCSV(data, columns)
