@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { apiClientExists, apiErrorMessage, apiErrorStatus, apiRetryAfter, apiValidationErrors } from '../api/errors'
+import { apiClientExists, apiErrorMessage, apiFormErrors, apiErrorStatus, apiRetryAfter, apiValidationErrors } from '../api/errors'
 import { AxiosError } from 'axios'
 import { apiError, resetStores } from '../test/render'
 import { useLocaleStore } from '../store/localeStore'
@@ -112,5 +112,20 @@ describe('API errors', () => {
   it('falls back for anything that is not an API error', () => {
     expect(apiErrorMessage(new Error('boom'), 'fallback')).toBe('fallback')
     expect(apiErrorStatus(new Error('boom'))).toBeUndefined()
+  })
+
+  it('splits validation errors into the fields a form shows and a general message for the rest', () => {
+    const err = apiError(422, 'Validation error', {
+      validation_errors: [
+        { field: 'body -> price', message: 'x', code: 'greater_than_equal', params: { ge: 0 } },
+        { field: 'body -> specialist_id', message: 'Field required', code: 'missing', params: {} },
+      ],
+    })
+    expect(apiFormErrors(err, ['price', 'name'], 'fallback')).toEqual({
+      fields: { price: 'Must be at least 0' },
+      general: 'specialist_id: Required field',
+    })
+    expect(apiFormErrors(apiError(409, 'Already booked'), ['price'], 'fallback')).toEqual({ fields: {}, general: 'Already booked' })
+    expect(apiFormErrors(new Error('x'), ['price'], 'fallback')).toEqual({ fields: {}, general: 'fallback' })
   })
 })

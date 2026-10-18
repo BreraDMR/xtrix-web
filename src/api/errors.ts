@@ -193,3 +193,17 @@ export function apiErrorMessage(err: unknown, fallback: string): string {
   if (typeof body?.detail === 'string') return cleanMessage(body.detail)
   return fallback
 }
+
+// For a form: errors for fields it shows go under those fields, anything else (another field,
+// a conflict, a server error) becomes one general message above the form.
+export function apiFormErrors(err: unknown, formFields: readonly string[], fallback: string): { fields: Record<string, string>; general: string } {
+  const all = apiValidationErrors(err)
+  const fields: Record<string, string> = {}
+  const rest: string[] = []
+  for (const [field, message] of Object.entries(all)) {
+    if (formFields.includes(field)) fields[field] = message
+    else rest.push(`${fieldLabel(field)}: ${message}`)
+  }
+  if (!Object.keys(all).length) return { fields, general: apiErrorMessage(err, fallback) }
+  return { fields, general: rest.join('; ') }
+}

@@ -2,7 +2,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
 import FormError from './FormError'
-import { apiErrorMessage } from '../api/errors'
+import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
 
@@ -29,12 +29,15 @@ interface Specialist {
   phone?: string
 }
 
+const SERVICE_FIELDS = ['name', 'duration_minutes', 'price', 'specialist_id', 'description']
+
 export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceFormProps) {
   const { t } = useTranslation()
   const { user: currentUser } = useAuthStore()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [availableSpecialists, setAvailableSpecialists] = useState<Specialist[]>([])
   const [loadingSpecialists, setLoadingSpecialists] = useState(false)
   const [formData, setFormData] = useState<ServiceData>({
@@ -103,6 +106,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     e.preventDefault()
     if (submitting.current) return
     setFormError('')
+    setFieldErrors({})
     if (!Number.isFinite(formData.price) || formData.price < 0) {
       setFormError(t('validation.price'))
       return
@@ -123,7 +127,9 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       }
       onSuccess()
     } catch (error: any) {
-      setFormError(apiErrorMessage(error, t('serviceForm.saveError')))
+      const { fields, general } = apiFormErrors(error, SERVICE_FIELDS, t('serviceForm.saveError'))
+      setFieldErrors(fields)
+      setFormError(general)
     } finally {
       submitting.current = false
       setLoading(false)
@@ -136,6 +142,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       <div>
         <label className="block text-sm font-medium mb-1">{t('serviceForm.name')} *</label>
         <input
+          aria-invalid={fieldErrors.name ? true : undefined}
           type="text"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -143,12 +150,14 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
           className="w-full px-3 py-2 border rounded-md"
           placeholder={t('serviceForm.placeholder')}
         />
+        {fieldErrors.name && <FormError message={fieldErrors.name} />}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">{t('serviceForm.duration')} *</label>
           <input
+            aria-invalid={fieldErrors.duration_minutes ? true : undefined}
             type="number"
             min="1"
             value={formData.duration_minutes}
@@ -158,10 +167,12 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
             required
             className="w-full px-3 py-2 border rounded-md"
           />
+          {fieldErrors.duration_minutes && <FormError message={fieldErrors.duration_minutes} />}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">{t('services.price')} *</label>
           <input
+            aria-invalid={fieldErrors.price ? true : undefined}
             type="number"
             step="0.01"
             min="0"
@@ -172,6 +183,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
             required
             className="w-full px-3 py-2 border rounded-md"
           />
+          {fieldErrors.price && <FormError message={fieldErrors.price} />}
         </div>
       </div>
 
@@ -181,6 +193,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
           <div className="text-sm text-gray-500">{t('serviceForm.loading')}</div>
         ) : (
           <select
+            aria-invalid={fieldErrors.specialist_id ? true : undefined}
             value={formData.specialist_id}
             onChange={(e) => {
               const newId = parseInt(e.target.value)
@@ -201,6 +214,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
             ))}
           </select>
         )}
+        {fieldErrors.specialist_id && <FormError message={fieldErrors.specialist_id} />}
       </div>
 
       <div>
@@ -253,11 +267,13 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
       <div>
         <label className="block text-sm font-medium mb-1">{t('business.description')}</label>
         <textarea
+          aria-invalid={fieldErrors.description ? true : undefined}
           value={formData.description || ''}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={3}
           className="w-full px-3 py-2 border rounded-md"
         />
+        {fieldErrors.description && <FormError message={fieldErrors.description} />}
       </div>
 
       <div>

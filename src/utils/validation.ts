@@ -1,7 +1,3 @@
-import { apiErrorMessage, apiValidationErrors } from '../api/errors'
-
-
-
 export interface ValidationError {
   field: string
   message: string
@@ -100,14 +96,4 @@ export function combineValidators(...validators: Validator[]): Validator {
     }
     return null
   }
-}
-
-
-export function extractApiErrors(error: unknown): Record<string, string> {
-  const errors = apiValidationErrors(error)
-  if (!Object.keys(errors).length) {
-    const message = apiErrorMessage(error, '')
-    if (message) errors._general = message
-  }
-  return errors
 }

@@ -21,7 +21,7 @@ export default function FormField({
 }: FormFieldProps) {
   // tie the label to the control, so the field can be found by its label
   const generatedId = useId()
-  const control = isValidElement(children) ? (children as ReactElement<{ id?: string }>) : null
+  const control = isValidElement(children) ? (children as ReactElement<{ id?: string; 'aria-invalid'?: boolean }>) : null
   const controlId = control?.props.id ?? generatedId
 
   return (
@@ -38,7 +38,7 @@ export default function FormField({
           </span>
         )}
       </label>
-      {control ? cloneElement(control, { id: controlId }) : children}
+      {control ? cloneElement(control, { id: controlId, 'aria-invalid': error ? true : undefined }) : children}
       {error && <FormError message={error} />}
       {hint && !error && (
         <p className="mt-1 text-xs text-gray-500">{hint}</p>

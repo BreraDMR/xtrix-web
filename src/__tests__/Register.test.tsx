@@ -59,6 +59,22 @@ describe('Register', () => {
     expect(api.post).toHaveBeenCalledTimes(1)
   })
 
+  it('shows a weak password error under the password field, in the UI language', async () => {
+    vi.mocked(api.post).mockRejectedValue(apiError(422, 'Validation error', {
+      validation_errors: [{ field: 'body -> password', message: 'Password must contain at least one digit', code: 'weak_password', params: {} }],
+    }))
+    renderWithProviders(<Register />)
+    await userEvent.type(screen.getByLabelText(/full name/i), 'Jana Owner')
+    await userEvent.type(screen.getByLabelText(/email/i), 'jana@example.com')
+    await userEvent.type(screen.getByLabelText(/^password/i), 'Strong!pass')
+    await userEvent.type(screen.getByLabelText(/confirm password/i), 'Strong!pass')
+    await userEvent.selectOptions(screen.getByLabelText(/role/i), 'business_owner')
+    useLocaleStore.setState({ locale: 'ru' })
+    await userEvent.click(screen.getByRole('button', { name: /создать|create/i }))
+    expect(await screen.findByText(/Слабый пароль/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^пароль/i)).toHaveAttribute('aria-invalid', 'true')
+  })
+
   it('offers only the roles public signup accepts', () => {
     renderWithProviders(<Register />)
     const options = Array.from((screen.getByLabelText(/role/i) as HTMLSelectElement).options).map((o) => o.value)

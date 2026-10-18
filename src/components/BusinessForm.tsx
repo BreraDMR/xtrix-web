@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import api from '../api/client'
 import FormError from './FormError'
 import { validateEmail, validatePhone } from '../utils/validation'
-import { apiErrorMessage } from '../api/errors'
+import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useLabels } from '../i18n/labels'
 import type { BusinessType } from '../api/types'
@@ -27,11 +27,14 @@ interface BusinessData {
   currency?: string
 }
 
+const BUSINESS_FIELDS = ['name', 'business_type', 'address', 'phone', 'email', 'description', 'currency']
+
 export default function BusinessForm({ businessId, onSuccess, onCancel }: BusinessFormProps) {
   const { t } = useTranslation()
   const labels = useLabels()
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState<BusinessData>({
     name: '',
     business_type: 'salon',
@@ -65,6 +68,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormError('')
+    setFieldErrors({})
     if (formData.email && validateEmail(formData.email)) {
       setFormError(t('clientForm.invalidEmail'))
       return
@@ -90,9 +94,9 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       }
       onSuccess()
     } catch (error: any) {
-      console.error('Error saving business:', error)
-      const errorMessage = apiErrorMessage(error, t('business.saveError'))
-      setFormError(errorMessage)
+      const { fields, general } = apiFormErrors(error, BUSINESS_FIELDS, t('business.saveError'))
+      setFieldErrors(fields)
+      setFormError(general)
     } finally {
       setLoading(false)
     }
@@ -104,6 +108,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
       <div>
         <label className="block text-sm font-medium mb-1">{t('business.name')} *</label>
         <input
+          aria-invalid={fieldErrors.name ? true : undefined}
           type="text"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -111,11 +116,13 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
           className="w-full px-3 py-2 border rounded-md"
           placeholder={t('business.namePlaceholder')}
         />
+        {fieldErrors.name && <FormError message={fieldErrors.name} />}
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('business.type')} *</label>
         <select
+          aria-invalid={fieldErrors.business_type ? true : undefined}
           value={formData.business_type}
           onChange={(e) => setFormData({ ...formData, business_type: e.target.value as BusinessType })}
           required
@@ -125,56 +132,66 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
             <option key={type} value={type}>{labels.businessType(type)}</option>
           ))}
         </select>
+        {fieldErrors.business_type && <FormError message={fieldErrors.business_type} />}
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('business.address')}</label>
         <input
+          aria-invalid={fieldErrors.address ? true : undefined}
           type="text"
           value={formData.address || ''}
           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
           className="w-full px-3 py-2 border rounded-md"
           placeholder={t('business.addressPlaceholder')}
         />
+        {fieldErrors.address && <FormError message={fieldErrors.address} />}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">{t('clients.phone')}</label>
           <input
+            aria-invalid={fieldErrors.phone ? true : undefined}
             type="tel"
             value={formData.phone || ''}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
             placeholder="+1234567890"
           />
+          {fieldErrors.phone && <FormError message={fieldErrors.phone} />}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">{t('clients.email')}</label>
           <input
+            aria-invalid={fieldErrors.email ? true : undefined}
             type="email"
             value={formData.email || ''}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
             placeholder="business@example.com"
           />
+          {fieldErrors.email && <FormError message={fieldErrors.email} />}
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('business.description')}</label>
         <textarea
+          aria-invalid={fieldErrors.description ? true : undefined}
           value={formData.description || ''}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={3}
           className="w-full px-3 py-2 border rounded-md"
           placeholder={t('business.descriptionPlaceholder')}
         />
+        {fieldErrors.description && <FormError message={fieldErrors.description} />}
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('business.currency')}</label>
         <select
+          aria-invalid={fieldErrors.currency ? true : undefined}
           value={formData.currency || 'EUR'}
           onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
           className="w-full px-3 py-2 border rounded-md"
@@ -185,6 +202,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
           <option value="RUB">RUB (₽)</option>
           <option value="UAH">UAH (₴)</option>
         </select>
+        {fieldErrors.currency && <FormError message={fieldErrors.currency} />}
       </div>
 
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorMessage } from '../api/errors'
+import { apiFormErrors } from '../api/errors'
+import FormError from '../components/FormError'
 import LoadingSpinner from '../components/LoadingSpinner'
 import SpecialistTypeSelector from '../components/SpecialistTypeSelector'
 import LanguageSwitcher from '../components/LanguageSwitcher'
@@ -14,6 +15,8 @@ import { useLabels } from '../i18n/labels'
 // made by hand, employees are created by their business owner.
 const SIGNUP_ROLES = ['specialist', 'business_owner'] as const
 type SignupRole = (typeof SIGNUP_ROLES)[number]
+
+const SIGNUP_FIELDS = ['full_name', 'email', 'phone', 'password', 'role', 'specialist_type']
 
 export default function Register() {
   const { t } = useTranslation()
@@ -29,6 +32,7 @@ export default function Register() {
     specialist_type: '',
   })
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const { setAuth, startSession } = useAuthStore()
 
@@ -39,6 +43,7 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setFieldErrors({})
     setLoading(true)
 
     if (formData.password !== formData.confirmPassword) {
@@ -108,11 +113,9 @@ export default function Register() {
         navigate('/login', { replace: true, state: { accountCreated: true } })
         return
       }
-      console.error('Registration error:', err)
-      
-      const errorMessage = apiErrorMessage(err, t('register.failed'))
-      
-      setError(errorMessage)
+      const { fields, general } = apiFormErrors(err, SIGNUP_FIELDS, t('register.failed'))
+      setFieldErrors(fields)
+      setError(general)
     } finally {
       setLoading(false)
     }
@@ -134,6 +137,7 @@ export default function Register() {
               {t('register.fullName')} *
             </label>
             <input
+              aria-invalid={fieldErrors.full_name ? true : undefined}
               id="full_name"
               name="full_name"
               type="text"
@@ -143,6 +147,7 @@ export default function Register() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder={t('register.namePlaceholder')}
             />
+            {fieldErrors.full_name && <FormError message={fieldErrors.full_name} />}
           </div>
 
           <div>
@@ -150,6 +155,7 @@ export default function Register() {
               {t('register.email')}
             </label>
             <input
+              aria-invalid={fieldErrors.email ? true : undefined}
               id="email"
               name="email"
               type="email"
@@ -158,6 +164,7 @@ export default function Register() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="your@email.com"
             />
+            {fieldErrors.email && <FormError message={fieldErrors.email} />}
           </div>
 
           <div>
@@ -165,6 +172,7 @@ export default function Register() {
               {t('register.phone')}
             </label>
             <input
+              aria-invalid={fieldErrors.phone ? true : undefined}
               id="phone"
               name="phone"
               type="tel"
@@ -173,6 +181,7 @@ export default function Register() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="+1234567890"
             />
+            {fieldErrors.phone && <FormError message={fieldErrors.phone} />}
           </div>
 
           <p className="text-xs text-gray-500">{t('register.contactRequired')}</p>
@@ -182,6 +191,7 @@ export default function Register() {
               {t('register.password')} *
             </label>
             <input
+              aria-invalid={fieldErrors.password ? true : undefined}
               id="password"
               name="password"
               type="password"
@@ -192,6 +202,7 @@ export default function Register() {
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="••••••••"
             />
+            {fieldErrors.password && <FormError message={fieldErrors.password} />}
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               {t('register.passwordHint')}
             </p>
@@ -218,6 +229,7 @@ export default function Register() {
               {t('register.role')} *
             </label>
             <select
+              aria-invalid={fieldErrors.role ? true : undefined}
               id="role"
               name="role"
               value={formData.role}
@@ -236,6 +248,7 @@ export default function Register() {
                 <option key={role} value={role}>{labels.role(role)}</option>
               ))}
             </select>
+            {fieldErrors.role && <FormError message={fieldErrors.role} />}
           </div>
 
           {formData.role === 'specialist' && (

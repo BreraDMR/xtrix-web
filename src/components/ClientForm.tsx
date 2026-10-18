@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
-import { apiClientExists, apiErrorMessage } from '../api/errors'
+import { apiClientExists, apiFormErrors } from '../api/errors'
 import { useTranslation } from '../hooks/useTranslation'
 import LoadingSpinner from './LoadingSpinner'
 import FormField from './FormField'
 import FormError from './FormError'
-import { validateEmail, validatePhone, validateRequired, extractApiErrors } from '../utils/validation'
+import { validateEmail, validatePhone, validateRequired } from '../utils/validation'
 import type { ClientLanguage } from '../api/types'
 import type { TranslationKey } from '../i18n/translations'
 
@@ -35,6 +35,8 @@ interface ClientData {
   owner_id?: number
   language: ClientLanguage
 }
+
+const CLIENT_FIELDS = ['full_name', 'birth_date', 'gender', 'contact_phone', 'contact_email', 'language']
 
 const EXISTS_MESSAGE: Record<string, TranslationKey> = {
   contact_phone: 'clientForm.existsPhone',
@@ -147,14 +149,8 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
         })
         return
       }
-      const apiErrors = extractApiErrors(error)
-      
-      if (Object.keys(apiErrors).length > 0) {
-        setErrors(apiErrors)
-      } else {
-        const errorMessage = apiErrorMessage(error, t('clientForm.saveError'))
-        setErrors({ _general: errorMessage })
-      }
+      const { fields, general } = apiFormErrors(error, CLIENT_FIELDS, t('clientForm.saveError'))
+      setErrors(general ? { ...fields, _general: general } : fields)
     } finally {
       submitting.current = false
       setLoading(false)

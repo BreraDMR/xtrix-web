@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import FormError from './FormError'
-import { apiErrorMessage, apiErrorStatus } from '../api/errors'
+import { apiErrorMessage, apiErrorStatus, apiFormErrors } from '../api/errors'
 import type { ClientOut, Schema } from '../api/types'
 import { useAuthStore } from '../store/authStore'
 import LoadingSpinner from './LoadingSpinner'
@@ -39,12 +39,15 @@ type SelectedClient = Pick<ClientOut, 'id' | 'full_name' | 'contact_phone' | 'co
 const PHONE_RE = /^[+]?[0-9\s\-()]+$/
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+const VISIT_FIELDS = ['client_id', 'service_id', 'specialist_id', 'service_name', 'date_start', 'date_end', 'price', 'status', 'payment_method', 'note']
+
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
   const { t } = useTranslation()
   const { user: currentUser } = useAuthStore()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [savedWithLoyaltyError, setSavedWithLoyaltyError] = useState(false)
   const visitSaved = useRef(false)
   const [clients, setClients] = useState<ClientOut[]>([])
@@ -323,6 +326,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     e.preventDefault()
     if (submitting.current || visitSaved.current) return
     setFormError('')
+    setFieldErrors({})
     if (formData.date_end && (!Number.isFinite(new Date(formData.date_end).getTime()) || new Date(formData.date_end) <= new Date(formData.date_start))) {
       setFormError(t('validation.visitEnd'))
       return
@@ -372,7 +376,9 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       
       onSuccess()
     } catch (error: any) {
-      setFormError(apiErrorMessage(error, t('visits.saveError')))
+      const { fields, general } = apiFormErrors(error, VISIT_FIELDS, t('visits.saveError'))
+      setFieldErrors(fields)
+      setFormError(general)
     } finally {
       submitting.current = false
       setLoading(false)
@@ -500,6 +506,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             </div>
           ) : (
             <select
+              aria-invalid={fieldErrors.client_id ? true : undefined}
               value={formData.client_id}
               onChange={(e) => setFormData({ ...formData, client_id: parseInt(e.target.value) })}
               required
@@ -513,12 +520,14 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               ))}
             </select>
           )}
+          {fieldErrors.client_id && <FormError message={fieldErrors.client_id} />}
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.service')}</label>
         <select
+          aria-invalid={fieldErrors.service_id ? true : undefined}
           value={formData.service_id || ''}
           onChange={(e) => handleServiceChange(e.target.value)}
           className="w-full px-3 py-2 border rounded-md"
@@ -530,12 +539,14 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             </option>
           ))}
         </select>
+        {fieldErrors.service_id && <FormError message={fieldErrors.service_id} />}
       </div>
 
       {formData.service_id && availableSpecialists.length > 0 && (
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.specialist')} *</label>
           <select
+            aria-invalid={fieldErrors.specialist_id ? true : undefined}
             value={formData.specialist_id}
             onChange={(e) => setFormData({ ...formData, specialist_id: parseInt(e.target.value) })}
             required
@@ -547,23 +558,27 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               </option>
             ))}
           </select>
+          {fieldErrors.specialist_id && <FormError message={fieldErrors.specialist_id} />}
         </div>
       )}
 
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.serviceName')}</label>
         <input
+          aria-invalid={fieldErrors.service_name ? true : undefined}
           type="text"
           value={formData.service_name || ''}
           onChange={(e) => setFormData({ ...formData, service_name: e.target.value })}
           className="w-full px-3 py-2 border rounded-md"
         />
+        {fieldErrors.service_name && <FormError message={fieldErrors.service_name} />}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.startDateTime')} *</label>
           <input
+            aria-invalid={fieldErrors.date_start ? true : undefined}
             type="datetime-local"
             style={{ minWidth: 0, maxWidth: '100%' }}
             value={formData.date_start}
@@ -571,16 +586,19 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             required
             className="w-full px-3 py-2 border rounded-md"
           />
+          {fieldErrors.date_start && <FormError message={fieldErrors.date_start} />}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.endDateTime')}</label>
           <input
+            aria-invalid={fieldErrors.date_end ? true : undefined}
             type="datetime-local"
             style={{ minWidth: 0, maxWidth: '100%' }}
             value={formData.date_end || ''}
             onChange={(e) => setFormData({ ...formData, date_end: e.target.value })}
             className="w-full px-3 py-2 border rounded-md"
           />
+          {fieldErrors.date_end && <FormError message={fieldErrors.date_end} />}
         </div>
       </div>
 
@@ -588,6 +606,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.price')}</label>
           <input
+            aria-invalid={fieldErrors.price ? true : undefined}
             type="number"
             min="0"
             step="0.01"
@@ -597,10 +616,12 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             }
             className="w-full px-3 py-2 border rounded-md"
           />
+          {fieldErrors.price && <FormError message={fieldErrors.price} />}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.status')}</label>
           <select
+            aria-invalid={fieldErrors.status ? true : undefined}
             value={formData.status}
             onChange={(e) => {
               const newStatus = e.target.value
@@ -617,6 +638,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             <option value="completed">{t('visits.completed')}</option>
             <option value="cancelled">{t('visits.cancelled')}</option>
           </select>
+          {fieldErrors.status && <FormError message={fieldErrors.status} />}
         </div>
       </div>
 
@@ -627,6 +649,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             {t('finance.payment_method')} {formData.price ? `(${t('common.required_field')})` : ''}
           </label>
           <select
+            aria-invalid={fieldErrors.payment_method ? true : undefined}
             value={formData.payment_method || ''}
             onChange={(e) => setFormData({ ...formData, payment_method: e.target.value || undefined })}
             required={!!formData.price}
@@ -637,6 +660,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             <option value="cash">{t('finance.payment_cash')}</option>
             <option value="other">{t('visits.paymentOther')}</option>
           </select>
+          {fieldErrors.payment_method && <FormError message={fieldErrors.payment_method} />}
         </div>
       )}
 
@@ -686,11 +710,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.notes')}</label>
         <textarea
+          aria-invalid={fieldErrors.note ? true : undefined}
           value={formData.note || ''}
           onChange={(e) => setFormData({ ...formData, note: e.target.value })}
           rows={3}
           className="w-full px-3 py-2 border rounded-md"
         />
+        {fieldErrors.note && <FormError message={fieldErrors.note} />}
       </div>
 
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">

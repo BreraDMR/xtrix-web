@@ -118,6 +118,39 @@ describe('form validation before API requests', () => {
     expect(await screen.findByText('Save failed')).toBeInTheDocument()
   })
 
+  it.each([
+    ['Business', 'name'],
+    ['Employee', 'full_name'],
+    ['Service', 'name'],
+    ['Client', 'full_name'],
+  ])('puts a %s validation error from the API under its field, translated', async (kind, field) => {
+    vi.mocked(api.post).mockRejectedValue(apiError(422, 'Validation error', {
+      validation_errors: [{ field: `body -> ${field}`, message: 'String should have at least 2 characters', code: 'string_too_short', params: { min_length: 2 } }],
+    }))
+    const Component = { Business: BusinessForm, Employee: EmployeeForm, Service: ServiceForm, Client: ClientForm }[kind]!
+    const { container } = renderWithProviders(<Component onSuccess={noop} onCancel={noop} />)
+    const input = container.querySelector('input[type="text"]')!
+    fireEvent.change(input, { target: { value: 'N' } })
+    const email = container.querySelector('input[type="email"]')
+    if (email) fireEvent.change(email, { target: { value: 'test@example.com' } })
+    fireEvent.submit(container.querySelector('form')!)
+    expect(await screen.findByText('At least 2 characters')).toBeInTheDocument()
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.queryByText(/String should have/)).not.toBeInTheDocument()
+  })
+
+  it('puts a visit time range error from the API under the end field', async () => {
+    vi.mocked(api.post).mockRejectedValue(apiError(422, 'Validation error', {
+      validation_errors: [{ field: 'body -> date_end', message: 'End date/time must be after start date/time', code: 'invalid_time_range', params: {} }],
+    }))
+    const { container } = renderWithProviders(<VisitForm onSuccess={noop} onCancel={noop} />)
+    await screen.findByRole('option', { name: 'Jana' })
+    fireEvent.change(container.querySelector('select')!, { target: { value: '3' } })
+    fireEvent.submit(container.querySelector('form')!)
+    expect(await screen.findByText('The end must be after the start and the visit no longer than 24 hours')).toBeInTheDocument()
+    expect(container.querySelectorAll('input[type="datetime-local"]')[1]).toHaveAttribute('aria-invalid', 'true')
+  })
+
   it('keeps a loyalty failure visible after saving, without allowing duplicate visits', async () => {
     vi.mocked(api.get).mockImplementation(routes({ '/clients/': [jana], '/services/': [], '/loyalty/balance/3': { points: 100, cashback: 0 } }) as never)
     vi.mocked(api.post).mockImplementation(async (url) => {

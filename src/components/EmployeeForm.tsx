@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
 import FormError from './FormError'
 import { validateEmail, validatePhone } from '../utils/validation'
-import { apiErrorMessage } from '../api/errors'
+import { apiFormErrors } from '../api/errors'
 import { useTranslation } from '../hooks/useTranslation'
 import SpecialistTypeSelector from './SpecialistTypeSelector'
 import type { Schema } from '../api/types'
@@ -46,11 +46,19 @@ const DEFAULT_PERMISSIONS: Permissions = {
 
 // New staff always get a fresh account (POST /employees/create-with-user). Picking an
 // existing user from "all specialists" is gone: GET /users/ only returns your own business now.
+const EMPLOYEE_FIELDS = ['full_name', 'email', 'phone', 'position', 'commission_percentage', 'base_salary']
+
 export default function EmployeeForm({ employeeId, onSuccess, onCancel }: EmployeeFormProps) {
   const { t } = useTranslation()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const showApiError = (error: unknown) => {
+    const { fields, general } = apiFormErrors(error, EMPLOYEE_FIELDS, t('common.error'))
+    setFieldErrors(fields)
+    setFormError(general)
+  }
   const [employeeName, setEmployeeName] = useState('')
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null)
   const [passwordCopied, setPasswordCopied] = useState(false)
@@ -97,6 +105,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
     if (generatedPassword) return
 
     setFormError('')
+    setFieldErrors({})
     if (formData.base_salary !== undefined && (!Number.isFinite(formData.base_salary) || formData.base_salary < 0 || formData.base_salary > 1e8)) {
       setFormError(t('validation.salary'))
       return
@@ -139,8 +148,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         const { data } = await api.post<Schema<'EmployeeCreateResponse'>>('/employees/create-with-user', payload)
         setGeneratedPassword(data.generated_password)
       } catch (error) {
-        console.error('Failed to create employee with user:', error)
-        setFormError(apiErrorMessage(error, t('common.error')))
+        showApiError(error)
       } finally {
         submitting.current = false
         setLoading(false)
@@ -160,8 +168,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       await api.put(`/employees/${employeeId}`, payload)
       onSuccess()
     } catch (error) {
-      console.error('Failed to save employee:', error)
-      setFormError(apiErrorMessage(error, t('common.error')))
+      showApiError(error)
     } finally {
       submitting.current = false
       setLoading(false)
@@ -239,6 +246,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
               {t('register.fullName')} *
             </label>
             <input
+              aria-invalid={fieldErrors.full_name ? true : undefined}
               id="employee_full_name"
               type="text"
               value={newUserData.full_name}
@@ -247,6 +255,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
               className="w-full px-3 py-2 border rounded-md"
               placeholder={t('register.namePlaceholder')}
             />
+            {fieldErrors.full_name && <FormError message={fieldErrors.full_name} />}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -255,6 +264,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                 {t('register.email')}
               </label>
               <input
+                aria-invalid={fieldErrors.email ? true : undefined}
                 id="employee_email"
                 type="email"
                 value={newUserData.email}
@@ -262,12 +272,14 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                 className="w-full px-3 py-2 border rounded-md"
                 placeholder="john@example.com"
               />
+              {fieldErrors.email && <FormError message={fieldErrors.email} />}
             </div>
             <div>
               <label htmlFor="employee_phone" className="block text-sm font-medium mb-1">
                 {t('register.phone')}
               </label>
               <input
+                aria-invalid={fieldErrors.phone ? true : undefined}
                 id="employee_phone"
                 type="tel"
                 value={newUserData.phone}
@@ -275,6 +287,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                 className="w-full px-3 py-2 border rounded-md"
                 placeholder="+1234567890"
               />
+              {fieldErrors.phone && <FormError message={fieldErrors.phone} />}
             </div>
           </div>
           <p className="text-xs text-gray-500">{t('register.contactRequired')}</p>
@@ -301,12 +314,14 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
       <div>
         <label className="block text-sm font-medium mb-1">{t('employees.position')}</label>
         <input
+          aria-invalid={fieldErrors.position ? true : undefined}
           type="text"
           value={formData.position || ''}
           onChange={(e) => setFormData({ ...formData, position: e.target.value })}
           className="w-full px-3 py-2 border rounded-md"
           placeholder={t('employees.position_placeholder')}
         />
+        {fieldErrors.position && <FormError message={fieldErrors.position} />}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -315,6 +330,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
             {t('employees.commission')} (%)
           </label>
           <input
+            aria-invalid={fieldErrors.commission_percentage ? true : undefined}
             type="number"
             min="0"
             max="100"
@@ -329,12 +345,14 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
             className="w-full px-3 py-2 border rounded-md"
             placeholder="0"
           />
+          {fieldErrors.commission_percentage && <FormError message={fieldErrors.commission_percentage} />}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">
             {t('employees.base_salary')}
           </label>
           <input
+            aria-invalid={fieldErrors.base_salary ? true : undefined}
             type="number"
             min="0"
             max="100000000"
@@ -349,6 +367,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
             className="w-full px-3 py-2 border rounded-md"
             placeholder="0"
           />
+          {fieldErrors.base_salary && <FormError message={fieldErrors.base_salary} />}
         </div>
       </div>
 
