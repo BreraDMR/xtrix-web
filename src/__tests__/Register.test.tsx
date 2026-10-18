@@ -18,7 +18,7 @@ describe('Register', () => {
       routes({
         '/specialist-profiles/types': { categories: { beauty: { name: 'Beauty', types: ['massage'] } } },
         '/users/me': { id: 5, full_name: 'Jana Owner', role: 'business_owner' },
-      }) as any
+      })
     )
   })
 
@@ -29,7 +29,7 @@ describe('Register', () => {
   ] as const)('redirects to login with a translated notice after signup succeeds but auto-login is limited (%s)', async (locale, message) => {
     vi.mocked(api.post).mockImplementation(((url: string) => url === '/users/'
       ? Promise.resolve({ data: { id: 5 } })
-      : Promise.reject(apiError(429, 'Rate limit exceeded'))) as any)
+      : Promise.reject(apiError(429, 'Rate limit exceeded'))) as typeof api.post)
     const { container } = renderWithProviders(<Routes>
       <Route path="/" element={<Register />} />
       <Route path="/login" element={<Login />} />
@@ -83,7 +83,7 @@ describe('Register', () => {
 
   it('signs up a business owner without a business_id', async () => {
     vi.mocked(api.post).mockImplementation(((url: string) =>
-      Promise.resolve({ data: url === '/users/login' ? { access_token: 'token' } : { id: 5 } })) as any)
+      Promise.resolve({ data: url === '/users/login' ? { access_token: 'token' } : { id: 5 } })) as typeof api.post)
     renderWithProviders(<Register />)
 
     await userEvent.type(screen.getByLabelText(/full name/i), 'Jana Owner')

@@ -42,7 +42,7 @@ describe('visits date filter', () => {
         { id: 2, client_id: 3, specialist_id: 7, date_start: '2026-10-18T15:00:00Z', status: 'planned', price: 30 },
       ],
       '/clients/': [{ id: 3, full_name: 'Jana Nováková' }], '/businesses/me': { currency: 'EUR' },
-    }) as any)
+    }))
   })
 
   it('keeps only visits on the picked local day', async () => {

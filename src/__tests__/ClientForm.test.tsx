@@ -14,7 +14,7 @@ describe('ClientForm', () => {
     resetStores()
     signIn({ id: 2, role: 'business_owner', business_id: 1 })
     vi.mocked(api.get).mockImplementation(
-      routes({ '/clients/1': { id: 1, full_name: 'John Doe', language: 'ru', created_at: '2026-10-01T10:00:00' } }) as any
+      routes({ '/clients/1': { id: 1, full_name: 'John Doe', language: 'ru', created_at: '2026-10-01T10:00:00' } })
     )
   })
 

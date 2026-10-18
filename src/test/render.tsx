@@ -3,6 +3,7 @@ import { render } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from 'axios'
+import type api from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import { useLocaleStore } from '../store/localeStore'
 
@@ -42,7 +43,8 @@ export function apiError(status: number, message: string, detail?: unknown,
 }
 
 // api.get mock that answers by URL; anything not listed is a 404
+// typed as api.get so it drops straight into vi.mocked(api.get).mockImplementation()
 export function routes(table: Record<string, unknown>) {
-  return (url: string) =>
-    url in table ? Promise.resolve({ data: table[url] }) : Promise.reject(apiError(404, `no mock for ${url}`))
+  return ((url: string) =>
+    url in table ? Promise.resolve({ data: table[url] }) : Promise.reject(apiError(404, `no mock for ${url}`))) as typeof api.get
 }

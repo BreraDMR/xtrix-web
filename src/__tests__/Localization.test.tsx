@@ -23,7 +23,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   resetStores()
   signIn({ id: 2, role: 'business_owner', business_id: 1 })
-  vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': [], '/specialist-profiles/types': { categories: {} }, '/businesses/me': { currency: 'EUR' } }) as any)
+  vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': [], '/specialist-profiles/types': { categories: {} }, '/businesses/me': { currency: 'EUR' } }))
 })
 
 for (const copy of locales) {

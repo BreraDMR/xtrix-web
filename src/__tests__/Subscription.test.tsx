@@ -22,7 +22,7 @@ describe('Subscription', () => {
         '/subscriptions/plans?active_only=true': [plan],
         '/subscriptions/history': [],
         // 404: not on anyone's staff, a solo specialist
-      }) as any
+      })
     )
   })
 
@@ -32,7 +32,7 @@ describe('Subscription', () => {
       '/subscriptions/trial/status': { is_trial: false, has_access: false },
       '/subscriptions/plans?active_only=true': [{ ...plan, code: 'admin_month', price: 100 }],
       '/subscriptions/history': [],
-    }) as any)
+    }))
     const { container } = renderWithProviders(<Subscription />)
     await screen.findByText(/no.*plans/i)
     expect(container.querySelector('details')).toBeNull()
@@ -58,7 +58,7 @@ describe('Subscription', () => {
         '/subscriptions/plans?active_only=true': [plan],
         '/subscriptions/history': [],
         '/subscriptions/3/transactions': [{ id: 1, subscription_id: 3, amount: 20, currency: 'eur', payment_method: 'card', status: 'succeeded', created_at: '2026-10-01T10:00:00', updated_at: '2026-10-01T10:00:00' }],
-      }) as any
+      })
     )
     renderWithProviders(<Subscription />)
 
@@ -74,7 +74,7 @@ describe('Subscription', () => {
         '/subscriptions/trial/status': { is_trial: true, trial_end: '2026-10-31T10:00:00' },
         '/subscriptions/plans?active_only=true': [plan],
         '/subscriptions/history': [],
-      }) as any
+      })
     )
     vi.mocked(api.post).mockResolvedValue({ data: { url: '' } })
     renderWithProviders(<Subscription />)
@@ -92,7 +92,7 @@ describe('Subscription', () => {
       '/subscriptions/trial/status': { is_trial: false },
       '/subscriptions/plans?active_only=true': [{ ...plan, code: 'solo_basic', name: 'Solo Basic', features: 'Schedule, online booking, clients' }],
       '/subscriptions/history': [],
-    }) as any)
+    }))
     renderWithProviders(<Subscription />)
     expect(await screen.findByText('Расписание, онлайн-запись, клиенты')).toBeInTheDocument()
     expect(screen.queryByText('Schedule, online booking, clients')).not.toBeInTheDocument()
@@ -106,7 +106,7 @@ describe('Subscription', () => {
       '/subscriptions/trial/status': { is_trial: true, is_trial_active: true, has_access: true, trial_end: '2026-10-22T10:00:00' },
       '/subscriptions/plans?active_only=true': [plan, businessPlan],
       '/subscriptions/history': [],
-    }) as any)
+    }))
     vi.mocked(api.post).mockResolvedValue({ data: { url: '' } })
     renderWithProviders(<Subscription />)
 
@@ -126,7 +126,7 @@ describe('Subscription', () => {
       '/subscriptions/trial/status': { is_trial: false, has_access: true },
       '/subscriptions/plans?active_only=true': [plan],
       ...extra,
-    }) as any)
+    }))
     renderWithProviders(<Subscription />)
 
     expect(await screen.findByText(/paid by the business owner/i)).toBeInTheDocument()
@@ -139,7 +139,7 @@ describe('Subscription', () => {
     vi.mocked(api.get).mockImplementation(routes({
       '/subscriptions/trial/status': { is_trial: false, has_access: false },
       '/subscriptions/plans?active_only=true': [plan],
-    }) as any)
+    }))
     renderWithProviders(<Subscription />)
     expect(await screen.findByText(/ask them to renew/i)).toBeInTheDocument()
   })

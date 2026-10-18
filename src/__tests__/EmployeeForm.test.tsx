@@ -16,7 +16,7 @@ describe('EmployeeForm', () => {
       routes({
         '/specialist-profiles/types': { categories: { beauty: { name: 'Beauty', types: ['massage', 'barber'] } } },
         '/employees/4': { id: 4, employee_user_id: 9, business_owner_id: 2, position: 'Barber', is_active: true, base_salary: 1000, commission_percentage: 10, employee_user: { id: 9, full_name: 'Petr Novák' } },
-      }) as any
+      })
     )
   })
 

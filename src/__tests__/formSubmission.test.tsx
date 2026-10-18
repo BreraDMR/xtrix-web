@@ -28,7 +28,7 @@ describe('Form submission locks', () => {
       '/employees/': [], '/users/': [{ id: 7, full_name: 'Test User', role: 'specialist' }],
       '/specialist-profiles/types': { categories: {} },
       '/specialist-profiles/me': {}, '/loyalty/balance/3': { points: 0, cashback: 0 },
-    }) as any)
+    }))
   })
 
   it.each(forms)('$name sends once for three synchronous clicks and allows retry after failure', async ({ name, Component, endpoint }) => {

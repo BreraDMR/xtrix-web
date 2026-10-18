@@ -15,7 +15,7 @@ describe('Inventory deletion', () => {
     vi.mocked(api.get).mockImplementation(routes({
       '/products/?': { items: [{ id: 3, name: 'Shampoo', unit: 'pcs', quantity: 10, min_quantity: 1 }] },
       '/businesses/me': { id: 1, currency: 'EUR' },
-    }) as any)
+    }))
     vi.mocked(api.delete).mockResolvedValue({ data: {} })
   })
 

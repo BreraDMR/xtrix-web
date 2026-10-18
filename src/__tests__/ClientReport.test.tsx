@@ -26,7 +26,7 @@ describe('Client personal report', () => {
     vi.mocked(api.get).mockImplementation(routes({
       '/clients/5': client,
       '/businesses/me': { id: 1, currency: 'EUR' },
-    }) as typeof api.get)
+    }))
   })
 
   it('shows the birth date the API sends and only the fields it has', async () => {

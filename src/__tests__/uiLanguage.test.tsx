@@ -25,11 +25,11 @@ describe('UI language', () => {
     resetStores()
     signIn({ id: 2, role: 'specialist' })
     vi.mocked(api.put).mockImplementation(((_url: string, body: { language: string }) =>
-      Promise.resolve({ data: preferences(body.language) })) as any)
+      Promise.resolve({ data: preferences(body.language) })) as typeof api.put)
   })
 
   it('applies the language saved in the account after login', async () => {
-    vi.mocked(api.get).mockImplementation(routes({ '/user-preferences/me': preferences('ru') }) as any)
+    vi.mocked(api.get).mockImplementation(routes({ '/user-preferences/me': preferences('ru') }))
     renderWithProviders(<SyncProbe />)
     await waitFor(() => expect(useLocaleStore.getState().locale).toBe('ru'))
     expect(api.put).not.toHaveBeenCalled()
@@ -37,13 +37,13 @@ describe('UI language', () => {
 
   it('saves the login-page language for an account without one', async () => {
     useLocaleStore.setState({ locale: 'cz' })
-    vi.mocked(api.get).mockImplementation(routes({ '/user-preferences/me': preferences(null) }) as any)
+    vi.mocked(api.get).mockImplementation(routes({ '/user-preferences/me': preferences(null) }))
     renderWithProviders(<SyncProbe />)
     await waitFor(() => expect(api.put).toHaveBeenCalledWith('/user-preferences/me', { language: 'cz' }))
   })
 
   it('switching language in Settings saves it to the account', async () => {
-    vi.mocked(api.get).mockImplementation(routes({ '/user-preferences/me': preferences('en') }) as any)
+    vi.mocked(api.get).mockImplementation(routes({ '/user-preferences/me': preferences('en') }))
     renderWithProviders(<Settings />)
 
     await userEvent.click(await screen.findByRole('button', { name: /čeština/i }))

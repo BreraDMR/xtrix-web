@@ -13,13 +13,13 @@ describe('ServiceForm', () => {
     resetStores()
     signIn({ id: 7, role: 'specialist' })
     vi.mocked(api.get).mockImplementation(
-      routes({ '/employees/': [], '/users/': [{ id: 7, full_name: 'Test User', role: 'specialist' }] }) as any
+      routes({ '/employees/': [], '/users/': [{ id: 7, full_name: 'Test User', role: 'specialist' }] })
     )
   })
 
   it.each(['business_owner', 'specialist'])('includes the current %s without staff and selects them by default', async (role) => {
     signIn({ id: 7, role })
-    vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': [] }) as any)
+    vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': [] }))
     vi.mocked(api.post).mockResolvedValue({ data: {} })
     renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
     const select = await screen.findByRole('combobox')

@@ -20,7 +20,7 @@ describe('Visits client names', () => {
     signIn({ id: 7, role: 'specialist' })
     vi.mocked(api.get).mockImplementation(routes({
       '/visits/': visits, '/clients/': [{ id: 3, full_name: 'Jana Nováková' }], '/businesses/me': { currency: 'EUR' },
-    }) as any)
+    }))
   })
 
   it('shows names from the client list and filters by them', async () => {
@@ -35,7 +35,7 @@ describe('Visits client names', () => {
   })
 
   it('keeps visits visible when their client is unavailable', async () => {
-    vi.mocked(api.get).mockImplementation(routes({ '/visits/': visits, '/clients/': [], '/businesses/me': {} }) as any)
+    vi.mocked(api.get).mockImplementation(routes({ '/visits/': visits, '/clients/': [], '/businesses/me': {} }))
     renderWithProviders(<Visits />)
     await screen.findByText(formatCurrency(20, 'EUR'))
     expect(screen.getAllByRole('row')).toHaveLength(3)

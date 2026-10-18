@@ -19,7 +19,7 @@ describe('VisitForm', () => {
     vi.clearAllMocks()
     resetStores()
     signIn({ id: 7, role: 'specialist' })
-    vi.mocked(api.get).mockImplementation(routes({ '/clients/': [jana], '/services/': [] }) as any)
+    vi.mocked(api.get).mockImplementation(routes({ '/clients/': [jana], '/services/': [] }))
   })
 
   it('books the visit for the current user and shows the 409 reason', async () => {
@@ -56,7 +56,7 @@ describe('VisitForm', () => {
 
   it('spends loyalty points on /loyalty/use-points with the client as a query param', async () => {
     vi.mocked(api.get).mockImplementation(
-      routes({ '/clients/': [jana], '/services/': [], '/loyalty/balance/3': { points: 100, cashback: 0 } }) as any
+      routes({ '/clients/': [jana], '/services/': [], '/loyalty/balance/3': { points: 100, cashback: 0 } })
     )
     vi.mocked(api.post).mockResolvedValue({ data: { id: 9 } })
     const onSuccess = vi.fn()

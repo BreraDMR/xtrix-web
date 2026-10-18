@@ -29,7 +29,7 @@ describe('ImportClientsModal', () => {
   it('lists rows the API already has and offers to open that client', async () => {
     vi.mocked(api.post).mockImplementation(((_url: string, body: { full_name: string }) => body.full_name === 'Old Friend'
       ? Promise.reject(apiError(409, 'This client is already in your list', { code: 'client_exists', existing_client_id: 42, matched_by: 'contact_phone' }))
-      : Promise.resolve({ data: { id: 7 } })) as any)
+      : Promise.resolve({ data: { id: 7 } })) as typeof api.post)
     const onOpenClient = vi.fn()
     const { container } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} onOpenClient={onOpenClient} />)
     await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,

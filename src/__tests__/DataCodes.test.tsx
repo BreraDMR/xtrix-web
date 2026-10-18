@@ -35,7 +35,7 @@ describe('codes from the API are translated on screen', () => {
     resetStores()
     signIn({ id: 1, role: 'business_owner', business_id: 1 })
     useLocaleStore.setState({ locale: 'ru' })
-    vi.mocked(api.get).mockImplementation(answer as any)
+    vi.mocked(api.get).mockImplementation(answer as typeof api.get)
   })
 
   it('finance: system categories by code, salary payouts by source', async () => {
