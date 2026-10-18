@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { useQueryClient, type UseQueryResult } from '@tanstack/react-query'
-import { HiOutlinePaperAirplane, HiOutlineSparkles, HiOutlineX } from 'react-icons/hi'
+import { HiOutlineMicrophone, HiOutlinePaperAirplane, HiOutlineSparkles, HiOutlineStop, HiOutlineTrash, HiOutlineX } from 'react-icons/hi'
 import api from '../../api/client'
 import {
   apiErrorCode, apiErrorMessage, apiErrorStatus, apiIsNetworkError, apiRetryAfter, apiValidationCodes,
 } from '../../api/errors'
-import type { AssistantExecuteOut, AssistantPlanOut, AssistantStatusOut } from '../../api/types'
+import type { AssistantExecuteOut, AssistantPlanOut, AssistantStatusOut, AssistantTranscribeOut } from '../../api/types'
 import { assistantT, type AssistantGender, type AssistantKey } from '../../i18n/assistant'
 import { useLocaleStore } from '../../store/localeStore'
 import { ASSISTANT_STATUS_KEY, formatDay, refreshAfterAssistant } from '../../hooks/useAssistant'
-import { useCountdown } from '../../hooks/useCountdown'
+import { minutesSeconds, useCountdown } from '../../hooks/useCountdown'
+import { MAX_RECORDING_SECONDS, useVoiceRecorder, type VoiceProblem } from '../../hooks/useVoiceRecorder'
 import PlanCard from './PlanCard'
 import { confirmable, type PlanEntry, type PlanPhase, type Say } from './plan'
 
@@ -17,6 +18,20 @@ const MAX_REQUEST_LENGTH = 2000
 // when a 503 ai_busy somehow comes without Retry-After
 const DEFAULT_BUSY_SECONDS = 10
 const AUDIO_CODES: AssistantKey[] = ['audio_type_not_supported', 'audio_empty', 'audio_too_large']
+// same cap as the API
+const MAX_AUDIO_BYTES = 5 * 1024 * 1024
+const VOICE_PROBLEMS: Record<VoiceProblem, AssistantKey> = {
+  unsupported: 'voiceUnsupported',
+  denied: 'voiceDenied',
+  failed: 'voiceFailed',
+  empty: 'voiceEmpty',
+  audio_too_large: 'audio_too_large',
+}
+
+function audioFileName(type: string): string {
+  const ext = type.includes('mp4') ? 'mp4' : type.includes('ogg') ? 'ogg' : type.includes('mpeg') ? 'mp3' : type.includes('wav') ? 'wav' : 'webm'
+  return `voice.${ext}`
+}
 
 type Entry =
   | { id: number; kind: 'user'; text: string }
@@ -45,6 +60,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   const [busy, setBusy] = useState<{ until: number; fromModel: boolean } | null>(null)
   const [limitUntil, setLimitUntil] = useState<number | null>(null)
   const [notConfigured, setNotConfigured] = useState(false)
+  const [transcribing, setTranscribing] = useState(false)
   const nextId = useRef(1)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -58,7 +74,6 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   const ready = !!data && !off
   const limitReached = (!!data && data.used >= data.limit) || (limitUntil !== null && Date.now() < limitUntil)
   const resetsAt = data?.resets_at ?? (limitUntil ? new Date(limitUntil).toISOString() : null)
-  const canSend = !!text.trim() && !sending && busySeconds === 0 && !limitReached
 
   const add = useCallback((entry: NewEntry) => {
     const id = nextId.current++
@@ -104,6 +119,41 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
     const audio = AUDIO_CODES.find((c) => apiValidationCodes(err).includes(c))
     notice(audio ? say(audio) : apiErrorMessage(err, say('requestFailed')))
   }, [notice, queryClient, say])
+
+  // the heard text goes into the input for the user to check, it's never sent from here
+  const upload = async (audio: Blob) => {
+    if (audio.size > MAX_AUDIO_BYTES) {
+      voice.setProblem('audio_too_large')
+      return
+    }
+    const form = new FormData()
+    form.append('file', audio, audioFileName(audio.type))
+    setTranscribing(true)
+    try {
+      const { data: heard } = await api.post<AssistantTranscribeOut>('/assistant/transcribe', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      const words = heard.text.trim()
+      if (!words) voice.setProblem('empty')
+      else {
+        setText((current) => (current.trim() ? `${current.trimEnd()} ${words}` : words).slice(0, MAX_REQUEST_LENGTH))
+        inputRef.current?.focus()
+      }
+      queryClient.invalidateQueries({ queryKey: ASSISTANT_STATUS_KEY })
+    } catch (err) {
+      handleError(err)
+    } finally {
+      setTranscribing(false)
+    }
+  }
+  const voice = useVoiceRecorder(upload)
+  const { discard: discardVoice } = voice
+  useEffect(() => {
+    if (!open) discardVoice()
+  }, [open, discardVoice])
+
+  const canSend = !!text.trim() && !sending && busySeconds === 0 && !limitReached && !voice.recording && !transcribing
+  const micDisabled = sending || transcribing || busySeconds > 0 || limitReached
 
   const send = async () => {
     const typed = text.trim()
@@ -271,6 +321,36 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
                 {say('busy', { seconds: busySeconds })}
               </p>
             )}
+            {voice.recording && (
+              <div className="mb-2 flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800 dark:bg-red-900/30 dark:text-red-200">
+                <span className="h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-red-600" aria-hidden="true" />
+                <span role="timer" className="min-w-0 flex-1">
+                  {say('voiceRecording', { time: minutesSeconds(voice.seconds), max: minutesSeconds(MAX_RECORDING_SECONDS) })}
+                </span>
+                <button
+                  type="button"
+                  onClick={voice.discard}
+                  aria-label={say('voiceDiscard')}
+                  className="rounded-lg p-2 text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-red-200 dark:hover:bg-red-900/50"
+                >
+                  <HiOutlineTrash className="h-5 w-5" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={voice.stop}
+                  className="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  <HiOutlineStop className="h-5 w-5" aria-hidden="true" />
+                  {say('voiceStop')}
+                </button>
+              </div>
+            )}
+            {transcribing && <p role="status" className="mb-2 text-sm text-gray-600 dark:text-gray-300">{say('voiceTranscribing')}</p>}
+            {voice.problem && (
+              <p role="alert" className="mb-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800 dark:bg-red-900/30 dark:text-red-200">
+                {say(VOICE_PROBLEMS[voice.problem])}
+              </p>
+            )}
             <div className="flex items-end gap-2">
               <textarea
                 ref={inputRef}
@@ -284,6 +364,17 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
                 rows={2}
                 className="min-h-[44px] min-w-0 flex-1 resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
               />
+              {data.voice_enabled && !voice.recording && (
+                <button
+                  type="button"
+                  onClick={() => void voice.start()}
+                  disabled={micDisabled}
+                  aria-label={say('voiceStart')}
+                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                >
+                  <HiOutlineMicrophone className="h-5 w-5" aria-hidden="true" />
+                </button>
+              )}
               <button
                 type="submit"
                 disabled={!canSend}
