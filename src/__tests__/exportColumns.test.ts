@@ -27,4 +27,10 @@ describe('export columns', () => {
     ])
     expect(csv.split('\n')).toEqual(['"Name","Price"', '"Shampoo ""Pro""","12.50"', '"Gel","-"'])
   })
+
+  // Inventory's quantity column and Finance's description column read other fields of the row
+  it('gives format() the row in csv too', () => {
+    const csv = convertToCSV(rows, [{ key: 'price', label: 'Price', format: (price, row) => `${price ?? 0} ${row?.unit}` }])
+    expect(csv.split('\n')).toEqual(['"Price"', '"12.5 ml"', '"0 pcs"'])
+  })
 })

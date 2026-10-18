@@ -1,4 +1,4 @@
-import { cellValue, type ExportColumn } from './columns'
+import { cellText, type ExportColumn } from './columns'
 
 
 
@@ -75,9 +75,7 @@ export function convertToCSV<T extends object>(
   const rows = data.map((item) => {
     return columns
       .map((col) => {
-        const format = col.format as ((value: unknown) => string) | undefined
-        const value = cellValue(item, col)
-        const formattedValue = format ? format(value) : value ?? ''
+        const formattedValue = cellText(item, col) ?? ''
         const escaped = String(formattedValue).replace(/"/g, '""')
         return `"${escaped}"`
       })
