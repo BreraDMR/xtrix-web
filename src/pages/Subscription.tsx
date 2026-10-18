@@ -201,6 +201,8 @@ export default function Subscription() {
   const isCurrentPlan = (plan: SubscriptionPlan) =>
     subscription?.status === 'active' && !subscription.is_trial && subscription.plan_id === plan.id
 
+  const planById = (id: number) => plans?.find((plan) => plan.id === id)
+
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return '-'
     return new Date(dateString).toLocaleDateString()
@@ -372,7 +374,10 @@ export default function Subscription() {
                 key={plan.id}
                 className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200"
               >
-                <h3 className="text-lg font-semibold mb-2">{plan.name}</h3>
+                <h3 className="text-lg font-semibold mb-2">{labels.planName(plan)}</h3>
+                {labels.planFeatures(plan) && (
+                  <p className="mb-3 text-sm text-gray-600">{labels.planFeatures(plan)}</p>
+                )}
                 <div className="mb-4">
                   <span className="text-3xl font-bold">{plan.price}€</span>
                   <span className="text-gray-600">{t('subscription.per_month')}</span>
@@ -455,7 +460,7 @@ export default function Subscription() {
                   .map((sub: Subscription) => (
                     <tr key={sub.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {t('subscription.plan_number')} #{sub.plan_id}
+                        {planById(sub.plan_id) ? labels.planName(planById(sub.plan_id)) : `${t('subscription.plan_number')} #${sub.plan_id}`}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span

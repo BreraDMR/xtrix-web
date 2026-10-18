@@ -11,31 +11,21 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
 import { dayEnd, dayNoon, dayStart, today } from '../utils/dates'
+import { useLabels } from '../i18n/labels'
+import type { Schema } from '../api/types'
 
-interface Expense {
-  id: number
-  amount: number
-  currency: string
-  description?: string
-  expense_date: string
-  payment_method: string
-  category?: {
-    id: number
-    name: string
-    color?: string
-  }
-}
-
-interface ExpenseCategory {
-  id: number
-  name: string
-  type: string
-  color?: string
-  is_system: boolean
-}
+// system categories and automatic expenses come with codes (category.code, source) we translate
+type Expense = Schema<'ExpenseOut'>
+type ExpenseCategory = Schema<'ExpenseCategoryOut'>
 
 export default function Finance() {
   const { t } = useTranslation()
+  const labels = useLabels()
+  const expenseText = (expense: Expense) => {
+    const source = labels.expenseSource(expense.source)
+    if (source) return expense.description ? `${source}: ${expense.description}` : source
+    return expense.description || '-'
+  }
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
   const currency = useBusinessCurrency()
@@ -161,7 +151,7 @@ export default function Finance() {
               <option value="">{t('finance.all_categories')}</option>
               {categories?.map((cat: ExpenseCategory) => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.name}
+                  {labels.expenseCategory(cat)}
                 </option>
               ))}
             </select>
@@ -342,7 +332,7 @@ export default function Finance() {
                     className="w-4 h-4 rounded"
                     style={{ backgroundColor: item.color || '#6B7280' }}
                   />
-                  <span className="font-medium">{item.category_name}</span>
+                  <span className="font-medium">{labels.expenseCategory({ code: item.category_code, name: item.category_name })}</span>
                 </div>
                 <span className="font-bold text-red-600">{formatCurrency(item.total, currency)}</span>
               </div>
@@ -360,8 +350,8 @@ export default function Finance() {
               data={expenses}
               columns={[
                 { key: 'expense_date', label: t('finance.date'), format: (val) => new Date(val).toLocaleDateString() },
-                { key: 'category', label: t('finance.category'), format: (val) => val?.name || '-' },
-                { key: 'description', label: t('finance.description') },
+                { key: 'category', label: t('finance.category'), format: (val) => labels.expenseCategory(val) || '-' },
+                { key: 'description', label: t('finance.description'), format: (_val, row) => (row ? expenseText(row) : '-') },
                 { key: 'amount', label: t('finance.amount'), format: (val, row) => `${val.toFixed(2)} ${row?.currency || ''}` },
                 { key: 'payment_method', label: t('finance.payment_method') },
               ]}
@@ -407,14 +397,14 @@ export default function Finance() {
                             className="w-3 h-3 rounded"
                             style={{ backgroundColor: expense.category.color || '#6B7280' }}
                           />
-                          <span className="text-sm text-gray-900">{expense.category.name}</span>
+                          <span className="text-sm text-gray-900">{labels.expenseCategory(expense.category)}</span>
                         </div>
                       ) : (
                         <span className="text-sm text-gray-500">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {expense.description || '-'}
+                      {expenseText(expense)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
                       {expense.amount.toFixed(2)} {expense.currency}
@@ -470,6 +460,7 @@ function ExpenseForm({
   onSuccess: () => void
 }) {
   const { t } = useTranslation()
+  const labels = useLabels()
   const { user } = useAuthStore()
 
   const [formData, setFormData] = useState({
@@ -632,7 +623,7 @@ function ExpenseForm({
                 <option value="">{t('finance.no_category')}</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
-                    {cat.name}
+                    {labels.expenseCategory(cat)}
                   </option>
                 ))}
               </select>

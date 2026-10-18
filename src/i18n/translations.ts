@@ -4,6 +4,35 @@ export type TranslationKey =
   | 'validation.commission'
   | 'validation.salary'
   | 'validation.price'
+  | 'unit.pcs'
+  | 'unit.ml'
+  | 'unit.l'
+  | 'unit.g'
+  | 'unit.kg'
+  | 'unit.m'
+  | 'unit.pack'
+  | 'expenseCategory.rent'
+  | 'expenseCategory.salaries'
+  | 'expenseCategory.stock_purchase'
+  | 'expenseCategory.marketing'
+  | 'expenseCategory.utilities'
+  | 'expenseCategory.subscriptions'
+  | 'expenseCategory.other'
+  | 'expenseSource.salary_payment'
+  | 'plan.admin_up_to_3_employees'
+  | 'plan.admin_up_to_7_employees'
+  | 'plan.admin_up_to_15_employees'
+  | 'plan.admin_unlimited_monthly'
+  | 'plan.admin_unlimited_yearly'
+  | 'plan.solo_basic'
+  | 'plan.solo_pro'
+  | 'plan.features.admin_up_to_3_employees'
+  | 'plan.features.admin_up_to_7_employees'
+  | 'plan.features.admin_up_to_15_employees'
+  | 'plan.features.admin_unlimited_monthly'
+  | 'plan.features.admin_unlimited_yearly'
+  | 'plan.features.solo_basic'
+  | 'plan.features.solo_pro'
   | 'clientForm.existsPhone'
   | 'clientForm.existsEmail'
   | 'clientForm.existsNameBirth'
@@ -128,7 +157,6 @@ export type TranslationKey =
   | 'dashboard.remaining'
   | 'dashboard.today'
   | 'dashboard.versus'
-  | 'inventory.defaultUnit'
   | 'inventory.businessRequired'
   | 'inventory.createError'
 
@@ -871,6 +899,35 @@ export type TranslationKey =
   | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  "unit.pcs": {"en": "pcs", "ru": "шт", "cz": "ks"},
+  "unit.ml": {"en": "ml", "ru": "мл", "cz": "ml"},
+  "unit.l": {"en": "l", "ru": "л", "cz": "l"},
+  "unit.g": {"en": "g", "ru": "г", "cz": "g"},
+  "unit.kg": {"en": "kg", "ru": "кг", "cz": "kg"},
+  "unit.m": {"en": "m", "ru": "м", "cz": "m"},
+  "unit.pack": {"en": "pack", "ru": "уп.", "cz": "bal."},
+  "expenseCategory.rent": {"en": "Rent", "ru": "Аренда", "cz": "Nájem"},
+  "expenseCategory.salaries": {"en": "Salaries", "ru": "Зарплаты", "cz": "Mzdy"},
+  "expenseCategory.stock_purchase": {"en": "Stock purchase", "ru": "Закупка товаров", "cz": "Nákup zboží"},
+  "expenseCategory.marketing": {"en": "Marketing", "ru": "Маркетинг", "cz": "Marketing"},
+  "expenseCategory.utilities": {"en": "Utilities", "ru": "Коммунальные услуги", "cz": "Energie a služby"},
+  "expenseCategory.subscriptions": {"en": "Services / Subscriptions", "ru": "Сервисы / Подписки", "cz": "Služby / Předplatné"},
+  "expenseCategory.other": {"en": "Other", "ru": "Прочее", "cz": "Ostatní"},
+  "expenseSource.salary_payment": {"en": "Salary payment", "ru": "Выплата зарплаты", "cz": "Výplata mzdy"},
+  "plan.admin_up_to_3_employees": {"en": "Business: up to 3 employees", "ru": "Бизнес: до 3 сотрудников", "cz": "Firma: až 3 zaměstnanci"},
+  "plan.admin_up_to_7_employees": {"en": "Business: up to 7 employees", "ru": "Бизнес: до 7 сотрудников", "cz": "Firma: až 7 zaměstnanců"},
+  "plan.admin_up_to_15_employees": {"en": "Business: up to 15 employees", "ru": "Бизнес: до 15 сотрудников", "cz": "Firma: až 15 zaměstnanců"},
+  "plan.admin_unlimited_monthly": {"en": "Business: unlimited (monthly)", "ru": "Бизнес: без ограничений (помесячно)", "cz": "Firma: neomezeně (měsíčně)"},
+  "plan.admin_unlimited_yearly": {"en": "Business: unlimited (yearly)", "ru": "Бизнес: без ограничений (за год)", "cz": "Firma: neomezeně (ročně)"},
+  "plan.solo_basic": {"en": "Solo Basic", "ru": "Solo Basic", "cz": "Solo Basic"},
+  "plan.solo_pro": {"en": "Solo Pro", "ru": "Solo Pro", "cz": "Solo Pro"},
+  "plan.features.admin_up_to_3_employees": {"en": "Up to 3 employees, all features", "ru": "До 3 сотрудников, все функции", "cz": "Až 3 zaměstnanci, všechny funkce"},
+  "plan.features.admin_up_to_7_employees": {"en": "Up to 7 employees, all features", "ru": "До 7 сотрудников, все функции", "cz": "Až 7 zaměstnanců, všechny funkce"},
+  "plan.features.admin_up_to_15_employees": {"en": "Up to 15 employees, all features", "ru": "До 15 сотрудников, все функции", "cz": "Až 15 zaměstnanců, všechny funkce"},
+  "plan.features.admin_unlimited_monthly": {"en": "Unlimited employees, monthly billing, all features", "ru": "Без ограничений по сотрудникам, оплата помесячно, все функции", "cz": "Neomezeně zaměstnanců, měsíční platba, všechny funkce"},
+  "plan.features.admin_unlimited_yearly": {"en": "Unlimited employees, yearly billing with bonus months, all features", "ru": "Без ограничений по сотрудникам, оплата за год с бонусными месяцами, все функции", "cz": "Neomezeně zaměstnanců, roční platba s bonusovými měsíci, všechny funkce"},
+  "plan.features.solo_basic": {"en": "Schedule, online booking, clients", "ru": "Расписание, онлайн-запись, клиенты", "cz": "Rozvrh, online rezervace, klienti"},
+  "plan.features.solo_pro": {"en": "Everything in Basic + reminders, reports, marketing", "ru": "Всё из Basic + напоминания, отчёты, маркетинг", "cz": "Vše z Basic + připomínky, přehledy, marketing"},
   "clientForm.existsPhone": {"en": "A client with this phone number is already in your list.", "ru": "Клиент с этим номером телефона уже есть в вашем списке.", "cz": "Klient s tímto telefonním číslem už ve vašem seznamu je."},
   "clientForm.existsEmail": {"en": "A client with this email is already in your list.", "ru": "Клиент с этим email уже есть в вашем списке.", "cz": "Klient s tímto e-mailem už ve vašem seznamu je."},
   "clientForm.existsNameBirth": {"en": "A client with this name and date of birth is already in your list.", "ru": "Клиент с таким именем и датой рождения уже есть в вашем списке.", "cz": "Klient s tímto jménem a datem narození už ve vašem seznamu je."},
@@ -1001,7 +1058,6 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "dashboard.remaining": {"en": "Remaining", "ru": "Остальные", "cz": "Ostatní"},
   "dashboard.today": {"en": "Today", "ru": "Сегодня", "cz": "Dnes"},
   "dashboard.versus": {"en": "vs", "ru": "и", "cz": "a"},
-  "inventory.defaultUnit": {"en": "pcs", "ru": "шт", "cz": "ks"},
   "inventory.businessRequired": {"en": "Business ID not found. Please ensure you have a business assigned.", "ru": "Для работы со складом нужен бизнес.", "cz": "Pro správu skladu potřebujete přiřazený podnik."},
   "inventory.createError": {"en": "Failed to create product. Please try again.", "ru": "Не удалось создать товар. Попробуйте ещё раз.", "cz": "Produkt se nepodařilo vytvořit. Zkuste to znovu."},
 

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import Subscription from '../pages/Subscription'
 import api from '../api/client'
 import { apiError, renderWithProviders, resetStores, routes, signIn } from '../test/render'
+import { useLocaleStore } from '../store/localeStore'
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn() } }))
 
@@ -81,5 +82,18 @@ describe('Subscription', () => {
     expect(subscribe).toBeEnabled()
     await userEvent.click(subscribe)
     expect(api.post).toHaveBeenCalledWith('/subscriptions/checkout/create-session', null, { params: { plan_id: 1 } })
+  })
+
+  it('names plans and their features by code in the UI language', async () => {
+    useLocaleStore.setState({ locale: 'ru' })
+    vi.mocked(api.get).mockImplementation(routes({
+      '/subscriptions/me': null,
+      '/subscriptions/trial/status': { is_trial: false },
+      '/subscriptions/plans?active_only=true': [{ ...plan, code: 'solo_basic', name: 'Solo Basic', features: 'Schedule, online booking, clients' }],
+      '/subscriptions/history': [],
+    }) as any)
+    renderWithProviders(<Subscription />)
+    expect(await screen.findByText('Расписание, онлайн-запись, клиенты')).toBeInTheDocument()
+    expect(screen.queryByText('Schedule, online booking, clients')).not.toBeInTheDocument()
   })
 })

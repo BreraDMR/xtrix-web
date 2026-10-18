@@ -10,6 +10,7 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
 import { today } from '../utils/dates'
+import { UNIT_CODES, useLabels } from '../i18n/labels'
 
 interface Product {
   id: number
@@ -30,6 +31,7 @@ interface Product {
 
 export default function Inventory() {
   const { t } = useTranslation()
+  const labels = useLabels()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
   const currency = useBusinessCurrency()
@@ -206,8 +208,8 @@ export default function Inventory() {
                 { key: 'name', label: t('inventory.name') },
                 { key: 'description', label: 'Description' },
                 { key: 'category', label: t('inventory.category') },
-                { key: 'quantity', label: t('inventory.quantity'), format: (val, row) => `${val} ${row?.unit || ''}` },
-                { key: 'min_quantity', label: t('inventory.min_quantity'), format: (val, row) => `${val} ${row?.unit || ''}` },
+                { key: 'quantity', label: t('inventory.quantity'), format: (val, row) => `${val} ${labels.unit(row?.unit)}` },
+                { key: 'min_quantity', label: t('inventory.min_quantity'), format: (val, row) => `${val} ${labels.unit(row?.unit)}` },
                 { key: 'price_per_unit', label: t('inventory.price'), format: (val) => val ? formatCurrency(val, currency) : '-' },
                 { key: 'barcode', label: 'Barcode' },
                 { key: 'supplier', label: 'Supplier' },
@@ -284,7 +286,7 @@ export default function Inventory() {
                         product.quantity <= product.min_quantity ? 'text-red-600' : 'text-gray-900'
                       }`}
                     >
-                      {product.quantity} {product.unit}
+                      {product.quantity} {labels.unit(product.unit)}
                     </span>
                     {product.quantity <= product.min_quantity && (
                       <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
@@ -292,12 +294,12 @@ export default function Inventory() {
                       </span>
                     )}
                     <div className="text-xs text-gray-500 lg:hidden">
-                      {t('inventory.min_quantity')}: {product.min_quantity} {product.unit}
+                      {t('inventory.min_quantity')}: {product.min_quantity} {labels.unit(product.unit)}
                     </div>
                   </div>
                 </td>
                 <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                  {product.min_quantity} {product.unit}
+                  {product.min_quantity} {labels.unit(product.unit)}
                 </td>
                 <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                   {product.price_per_unit ? formatCurrency(product.price_per_unit, currency) : '-'}
@@ -418,6 +420,10 @@ function ProductForm({
   isLoading?: boolean
 }) {
   const { t } = useTranslation()
+  const labels = useLabels()
+  // older products may have a unit typed by hand - keep it selectable
+  const unitOptions: string[] = [...UNIT_CODES]
+  if (product?.unit && !unitOptions.includes(product.unit)) unitOptions.push(product.unit)
   const [formData, setFormData] = useState<Partial<Product>>({
     name: product?.name || '',
     description: product?.description || '',
@@ -495,17 +501,20 @@ function ProductForm({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="product-unit" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('inventory.unit')} *
               </label>
-              <input
-                type="text"
+              <select
+                id="product-unit"
                 value={formData.unit}
-                placeholder={t('inventory.defaultUnit')}
                 onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"
                 required
-              />
+              >
+                {unitOptions.map((code) => (
+                  <option key={code} value={code}>{labels.unit(code)}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

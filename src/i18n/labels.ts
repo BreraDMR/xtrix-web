@@ -44,6 +44,33 @@ const TRANSACTION_STATUS: Record<string, TranslationKey> = {
   refunded: 'subscription.transaction.refunded',
 }
 
+// product units: the API defaults to pcs, anything else may be free text from the user
+export const UNIT_CODES = ['pcs', 'ml', 'l', 'g', 'kg', 'm', 'pack'] as const
+const UNIT: Record<string, TranslationKey> = Object.fromEntries(UNIT_CODES.map(code => [code, `unit.${code}` as TranslationKey]))
+
+const EXPENSE_CATEGORY: Record<string, TranslationKey> = {
+  rent: 'expenseCategory.rent',
+  salaries: 'expenseCategory.salaries',
+  stock_purchase: 'expenseCategory.stock_purchase',
+  marketing: 'expenseCategory.marketing',
+  utilities: 'expenseCategory.utilities',
+  subscriptions: 'expenseCategory.subscriptions',
+  other: 'expenseCategory.other',
+}
+
+const EXPENSE_SOURCE: Record<string, TranslationKey> = {
+  salary_payment: 'expenseSource.salary_payment',
+}
+
+const PLAN_CODES = [
+  'admin_up_to_3_employees', 'admin_up_to_7_employees', 'admin_up_to_15_employees',
+  'admin_unlimited_monthly', 'admin_unlimited_yearly', 'solo_basic', 'solo_pro',
+]
+const PLAN: Record<string, TranslationKey> = Object.fromEntries(PLAN_CODES.map(code => [code, `plan.${code}` as TranslationKey]))
+const PLAN_FEATURES: Record<string, TranslationKey> = Object.fromEntries(PLAN_CODES.map(code => [code, `plan.features.${code}` as TranslationKey]))
+
+type Named = { code?: string | null; name: string }
+
 export function useLabels() {
   const { t } = useTranslation()
   const pick = (map: Record<string, TranslationKey>) => (code?: string | null) =>
@@ -55,5 +82,14 @@ export function useLabels() {
     visitStatus: pick(VISIT_STATUS),
     subscriptionStatus: pick(SUBSCRIPTION_STATUS),
     transactionStatus: pick(TRANSACTION_STATUS),
+    unit: pick(UNIT),
+    expenseSource: pick(EXPENSE_SOURCE),
+    // system categories and plans carry a code, user-made ones only have their name
+    expenseCategory: (category?: Named | null) =>
+      category ? (category.code && EXPENSE_CATEGORY[category.code] ? t(EXPENSE_CATEGORY[category.code]) : category.name) : '',
+    planName: (plan?: Named | null) =>
+      plan ? (plan.code && PLAN[plan.code] ? t(PLAN[plan.code]) : plan.name) : '',
+    planFeatures: (plan?: { code?: string | null; features?: string | null } | null) =>
+      plan ? (plan.code && PLAN_FEATURES[plan.code] ? t(PLAN_FEATURES[plan.code]) : plan.features || '') : '',
   }
 }
