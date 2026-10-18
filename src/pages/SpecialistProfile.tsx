@@ -5,6 +5,7 @@ import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation, getTranslatedSpecialistType } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
+import { useLabels } from '../i18n/labels'
 
 interface SpecialistProfileData {
   id: number
@@ -29,6 +30,7 @@ interface SpecialistProfileData {
 
 export default function SpecialistProfile() {
   const { t, locale } = useTranslation()
+  const labels = useLabels()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
@@ -59,7 +61,7 @@ export default function SpecialistProfile() {
       await api.put('/specialist-profiles/me', formData)
       queryClient.invalidateQueries({ queryKey: ['specialist-profile'] })
       setIsEditing(false)
-    } catch (err: any) {
+    } catch (err) {
       setError(apiErrorMessage(err, 'Failed to update profile'))
     } finally {
       setLoading(false)
@@ -159,7 +161,7 @@ export default function SpecialistProfile() {
               </label>
               <p className="text-gray-900">
                 {formData.specialist_category
-                  ? t(`category.${formData.specialist_category}` as any)
+                  ? labels.specialistCategory(formData.specialist_category)
                   : '-'}
               </p>
             </div>
@@ -285,7 +287,7 @@ export default function SpecialistProfile() {
               ) : (
                 <p className="text-gray-900">
                   {formData.business_type
-                    ? t(`businessType.${formData.business_type}` as any)
+                    ? labels.businessType(formData.business_type)
                     : '-'}
                 </p>
               )}

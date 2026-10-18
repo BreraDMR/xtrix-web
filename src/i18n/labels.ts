@@ -22,6 +22,12 @@ const BUSINESS_TYPE: Record<string, TranslationKey> = {
   rehab_center: 'businessType.rehabCenter',
 }
 
+const SPECIALIST_CATEGORY: Record<string, TranslationKey> = {
+  beauty: 'category.beauty',
+  wellness: 'category.wellness',
+  healthcare: 'category.healthcare',
+}
+
 const VISIT_STATUS: Record<string, TranslationKey> = {
   planned: 'visits.planned',
   in_progress: 'visits.inProgress',
@@ -79,6 +85,7 @@ export function useLabels() {
   return {
     role: pick(ROLE),
     businessType: pick(BUSINESS_TYPE),
+    specialistCategory: pick(SPECIALIST_CATEGORY),
     visitStatus: pick(VISIT_STATUS),
     subscriptionStatus: pick(SUBSCRIPTION_STATUS),
     transactionStatus: pick(TRANSACTION_STATUS),
