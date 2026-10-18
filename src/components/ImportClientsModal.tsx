@@ -5,6 +5,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 import { apiClientExists, apiErrorMessage } from '../api/errors'
 import * as XLSX from 'xlsx'
+import type { ClientOut, ClientPage } from '../api/types'
 
 interface ImportClientsModalProps {
   isOpen: boolean
@@ -46,10 +47,10 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
 
   const loadExistingClients = async () => {
     try {
-      const { data } = await api.get('/clients/')
+      const { data } = await api.get<ClientPage | ClientOut[]>('/clients/')
       const clients = Array.isArray(data) ? data : data?.items || []
       const phoneEmailSet = new Set<string>()
-      clients.forEach((client: any) => {
+      clients.forEach((client) => {
         if (client.contact_phone) {
           phoneEmailSet.add(`phone:${client.contact_phone}`)
         }
@@ -183,14 +184,14 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
       const workbook = XLSX.read(arrayBuffer, { type: 'array' })
       const firstSheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[firstSheetName]
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as any[][]
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as unknown[][]
 
       if (jsonData.length === 0) {
         alert(t('import.emptyFile'))
         return
       }
 
-      const headers = jsonData[0].map((h: any) => String(h).toLowerCase().trim())
+      const headers = jsonData[0].map((h) => String(h).toLowerCase().trim())
       const nameColIndex = headers.findIndex((h: string) =>
         ['имя', 'name', 'фио', 'full name', 'full_name'].includes(h)
       )
@@ -273,7 +274,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
           contact_email: client.contact_email?.trim() || undefined,
         })
         result.success++
-      } catch (error: any) {
+      } catch (error) {
         result.skipped++
         const duplicate = apiClientExists(error)
         if (duplicate) {

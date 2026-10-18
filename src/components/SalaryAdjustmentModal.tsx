@@ -4,6 +4,9 @@ import { HiX } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 
+// the API takes any string here, these are the ones the screen offers
+type AdjustmentType = 'bonus' | 'penalty' | 'overtime' | 'allowance' | 'deduction'
+
 interface SalaryAdjustmentModalProps {
   isOpen: boolean
   onClose: () => void
@@ -19,7 +22,7 @@ export default function SalaryAdjustmentModal({
 }: SalaryAdjustmentModalProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const [type, setType] = useState<'bonus' | 'penalty' | 'overtime' | 'allowance' | 'deduction'>('bonus')
+  const [type, setType] = useState<AdjustmentType>('bonus')
   const [amount, setAmount] = useState<string>('')
   const [description, setDescription] = useState<string>('')
 
@@ -97,7 +100,7 @@ export default function SalaryAdjustmentModal({
             </label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as any)}
+              onChange={(e) => setType(e.target.value as AdjustmentType)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required
             >
@@ -162,7 +165,7 @@ export default function SalaryAdjustmentModal({
               }`}
             >
               {createMutation.isPending
-                ? (t('common.saving' as any))
+                ? (t('common.saving'))
                 : t('common.save')}
             </button>
           </div>

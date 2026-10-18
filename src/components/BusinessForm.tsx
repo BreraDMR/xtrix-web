@@ -7,6 +7,7 @@ import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useLabels } from '../i18n/labels'
 import type { BusinessType } from '../api/types'
+import { withoutBlanks } from '../utils/payload'
 
 // same order as the API enum
 const BUSINESS_TYPES: BusinessType[] = ['salon', 'clinic', 'medical', 'dental', 'hospital', 'individual']
@@ -80,12 +81,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
     setLoading(true)
 
     try {
-      const businessData: any = { ...formData }
-      Object.keys(businessData).forEach(key => {
-        if (businessData[key] === '' || businessData[key] === undefined) {
-          delete businessData[key]
-        }
-      })
+      const businessData = withoutBlanks(formData)
 
       if (businessId) {
         await api.put(`/businesses/${businessId}`, businessData)
@@ -93,7 +89,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
         await api.post('/businesses/', businessData)
       }
       onSuccess()
-    } catch (error: any) {
+    } catch (error) {
       const { fields, general } = apiFormErrors(error, BUSINESS_FIELDS, t('business.saveError'))
       setFieldErrors(fields)
       setFormError(general)

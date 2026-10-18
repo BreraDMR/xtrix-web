@@ -16,3 +16,13 @@ export type VisitOut = Schema<'VisitOut'>
 export type BusinessOut = Schema<'BusinessOut'>
 export type BusinessType = BusinessOut['business_type']
 export type ClientLoyaltyBalance = Schema<'ClientLoyaltyBalance'>
+export type ClientPage = Schema<'PaginatedResponse_ClientOut_'>
+export type SalaryPaymentCreate = Schema<'SalaryPaymentCreate'>
+export type ServiceOut = Schema<'ServiceOut'>
+export type ServicePage = Schema<'PaginatedResponse_ServiceOut_'>
+// the contract only says "list of dicts" for ServiceOut.specialists; this is what GET /services/{id} puts there
+export type ServiceSpecialist = { id: number; full_name: string; email?: string | null; phone?: string | null }
+export const serviceSpecialists = (service: ServiceOut): ServiceSpecialist[] =>
+  (service.specialists ?? []) as ServiceSpecialist[]
+export type EmployeeOut = Schema<'EmployeeOut'>
+export type UserPage = Schema<'PaginatedResponse_UserOut_'>

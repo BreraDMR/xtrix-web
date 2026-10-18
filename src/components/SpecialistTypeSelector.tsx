@@ -38,7 +38,7 @@ export default function SpecialistTypeSelector({
       setLoading(true)
       const { data } = await api.get('/specialist-profiles/types')
       setTypesData(data)
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to load specialist types:', err)
       setError('Failed to load specialist types')
     } finally {

@@ -9,9 +9,10 @@ import 'react-calendar/dist/Calendar.css'
 import VisitForm from './VisitForm'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
+import type { VisitOut } from '../api/types'
 
 interface SimpleCalendarProps {
-  visits: any[]
+  visits: VisitOut[]
   onRefresh: () => void
 }
 
@@ -27,7 +28,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
 
   const visitsByDate = useMemo(() => {
-    const grouped: Record<string, any[]> = {}
+    const grouped: Record<string, VisitOut[]> = {}
     visits.forEach((visit) => {
       const dateKey = format(new Date(visit.date_start), 'yyyy-MM-dd')
       if (!grouped[dateKey]) {
@@ -49,7 +50,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     setShowForm(true)
   }
 
-  const handleVisitClick = (visit: any) => {
+  const handleVisitClick = (visit: VisitOut) => {
     setEditingVisitId(visit.id)
     setShowForm(true)
   }

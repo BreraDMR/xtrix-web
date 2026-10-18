@@ -6,6 +6,7 @@ import api from '../api/client'
 import { formatCurrency } from '../utils/currency'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { dayNoon, today } from '../utils/dates'
+import type { SalaryPaymentCreate } from '../api/types'
 
 interface SalaryPaymentModalProps {
   isOpen: boolean
@@ -29,8 +30,8 @@ export default function SalaryPaymentModal({
   const [paymentDate, setPaymentDate] = useState<string>(
     today()
   )
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'transfer' | 'other'>('cash')
-  const [status, setStatus] = useState<'completed' | 'pending' | 'failed'>('completed')
+  const [paymentMethod, setPaymentMethod] = useState<SalaryPaymentCreate['payment_method']>('cash')
+  const [status, setStatus] = useState<SalaryPaymentCreate['status']>('completed')
   const [notes, setNotes] = useState<string>('')
 
   const createMutation = useMutation({
@@ -150,7 +151,7 @@ export default function SalaryPaymentModal({
             </label>
             <select
               value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value as any)}
+              onChange={(e) => setPaymentMethod(e.target.value as SalaryPaymentCreate['payment_method'])}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required
             >
@@ -167,7 +168,7 @@ export default function SalaryPaymentModal({
             </label>
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value as any)}
+              onChange={(e) => setStatus(e.target.value as SalaryPaymentCreate['status'])}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required
             >
@@ -205,7 +206,7 @@ export default function SalaryPaymentModal({
               className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50"
             >
               {createMutation.isPending
-                ? (t('common.saving' as any))
+                ? (t('common.saving'))
                 : t('common.save')}
             </button>
           </div>

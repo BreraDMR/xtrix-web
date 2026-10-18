@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import FormError from './FormError'
 import { apiErrorMessage, apiErrorStatus, apiFormErrors } from '../api/errors'
-import type { ClientOut, Schema } from '../api/types'
+import { serviceSpecialists, type ClientLoyaltyBalance, type ClientOut, type Schema, type ServiceOut, type ServicePage, type ServiceSpecialist } from '../api/types'
 import { useAuthStore } from '../store/authStore'
 import LoadingSpinner from './LoadingSpinner'
 import { useTranslation } from '../hooks/useTranslation'
@@ -51,8 +51,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [savedWithLoyaltyError, setSavedWithLoyaltyError] = useState(false)
   const visitSaved = useRef(false)
   const [clients, setClients] = useState<ClientOut[]>([])
-  const [services, setServices] = useState<any[]>([])
-  const [availableSpecialists, setAvailableSpecialists] = useState<any[]>([])
+  const [services, setServices] = useState<ServiceOut[]>([])
+  const [availableSpecialists, setAvailableSpecialists] = useState<ServiceSpecialist[]>([])
   const [clientSearchQuery, setClientSearchQuery] = useState('')
   const [selectedClient, setSelectedClient] = useState<SelectedClient | null>(null)
   const [nameMatches, setNameMatches] = useState<ClientOut[]>([])
@@ -83,12 +83,10 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     queryFn: async () => {
       if (!currentClientId) return null
       try {
-        const { data } = await api.get(`/loyalty/balance/${currentClientId}`)
+        const { data } = await api.get<ClientLoyaltyBalance>(`/loyalty/balance/${currentClientId}`)
         return data
-      } catch (error: any) {
-        if (error.response?.status === 404) {
-          return null
-        }
+      } catch {
+        // no balance yet (404) or no loyalty program - just don't offer points
         return null
       }
     },
@@ -184,8 +182,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   const loadServices = async () => {
     try {
-      const { data } = await api.get('/services/')
-      const items = Array.isArray(data) ? data : (data?.items || data?.data || [])
+      const { data } = await api.get<ServicePage | ServiceOut[]>('/services/')
+      const items = Array.isArray(data) ? data : (data?.items || [])
       setServices(items)
     } catch (error) {
       console.error('Failed to load services:', error)
@@ -203,9 +201,10 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       
       if (data.service_id) {
         try {
-          const { data: serviceDetails } = await api.get(`/services/${data.service_id}`)
-          if (serviceDetails.specialists && serviceDetails.specialists.length > 0) {
-            setAvailableSpecialists(serviceDetails.specialists)
+          const { data: serviceDetails } = await api.get<ServiceOut>(`/services/${data.service_id}`)
+          const specialists = serviceSpecialists(serviceDetails)
+          if (specialists.length > 0) {
+            setAvailableSpecialists(specialists)
           }
         } catch (error) {
           console.error('Failed to load service specialists:', error)
@@ -254,17 +253,19 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
     if (selectedService) {
       try {
-        const { data: serviceDetails } = await api.get(`/services/${selectedServiceId}`)
-        if (serviceDetails.specialists && serviceDetails.specialists.length > 0) {
-          setAvailableSpecialists(serviceDetails.specialists)
-          if (!serviceDetails.specialists.find((s: any) => s.id === formData.specialist_id)) {
-            updates.specialist_id = serviceDetails.specialists[0].id
+        const { data: serviceDetails } = await api.get<ServiceOut>(`/services/${selectedServiceId}`)
+        const specialists = serviceSpecialists(serviceDetails)
+        if (specialists.length > 0) {
+          setAvailableSpecialists(specialists)
+          if (!specialists.find((s) => s.id === formData.specialist_id)) {
+            updates.specialist_id = specialists[0].id
           }
         } else {
+          // ServiceOut has no specialist object, only the id - the name stays empty here
           setAvailableSpecialists([{
             id: selectedService.specialist_id,
-            full_name: selectedService.specialist?.full_name || '',
-            email: selectedService.specialist?.email || '',
+            full_name: '',
+            email: '',
           }])
           updates.specialist_id = selectedService.specialist_id
         }
@@ -272,8 +273,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         console.error('Failed to load service specialists:', error)
         setAvailableSpecialists([{
           id: selectedService.specialist_id,
-          full_name: selectedService.specialist?.full_name || '',
-          email: selectedService.specialist?.email || '',
+          full_name: '',
+          email: '',
         }])
         updates.specialist_id = selectedService.specialist_id
       }
@@ -366,7 +367,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             cashback_to_use: cashbackToUse > 0 ? cashbackToUse : undefined,
             visit_id: savedVisitId,
           }, { params: { client_id: currentClientId } })
-        } catch (error: any) {
+        } catch (error) {
           console.error('Error using loyalty points:', error)
           setFormError(apiErrorMessage(error, t('visits.loyaltyError')))
           setSavedWithLoyaltyError(true)
@@ -375,7 +376,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       }
       
       onSuccess()
-    } catch (error: any) {
+    } catch (error) {
       const { fields, general } = apiFormErrors(error, VISIT_FIELDS, t('visits.saveError'))
       setFieldErrors(fields)
       setFormError(general)

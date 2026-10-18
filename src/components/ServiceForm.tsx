@@ -5,6 +5,7 @@ import FormError from './FormError'
 import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
+import type { EmployeeOut, ServiceOut, UserOut, UserPage } from '../api/types'
 
 interface ServiceFormProps {
   serviceId?: number
@@ -63,24 +64,24 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     setLoadingSpecialists(true)
     const self: Specialist[] = currentUser ? [{ id: currentUser.id, full_name: currentUser.full_name, email: '' }] : []
     try {
-      const { data: employeesData } = await api.get('/employees/', { params: { is_active: true } })
+      const { data: employeesData } = await api.get<EmployeeOut[]>('/employees/', { params: { is_active: true } })
       const employees = Array.isArray(employeesData) ? employeesData : []
       
-      const { data: usersData } = await api.get('/users/', { params: { role: 'specialist' } })
+      const { data: usersData } = await api.get<UserPage | UserOut[]>('/users/', { params: { role: 'specialist' } })
       const allUsers = Array.isArray(usersData) 
         ? usersData 
-        : (usersData?.items || usersData?.data || [])
+        : (usersData?.items || [])
       
-      const employeeUserIds = new Set(employees.map((emp: any) => emp.employee_user_id))
-      const allSpecialists = allUsers.filter((u: any) => 
+      const employeeUserIds = new Set(employees.map((emp) => emp.employee_user_id))
+      const allSpecialists = allUsers.filter((u) => 
         u.role === 'specialist' || employeeUserIds.has(u.id)
       )
       
-      setAvailableSpecialists([...self, ...allSpecialists.filter((u: any) => u.id !== currentUser?.id).map((u: any) => ({
+      setAvailableSpecialists([...self, ...allSpecialists.filter((u) => u.id !== currentUser?.id).map((u) => ({
         id: u.id,
-        full_name: u.full_name || u.employee_user?.full_name || '',
-        email: u.email || u.employee_user?.email || '',
-        phone: u.phone || u.employee_user?.phone,
+        full_name: u.full_name || '',
+        email: u.email || '',
+        phone: u.phone ?? undefined,
       }))])
     } catch (error) {
       console.error('Failed to load specialists:', error)
@@ -92,11 +93,11 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
 
   const loadService = async () => {
     try {
-      const { data } = await api.get(`/services/${serviceId}`)
+      const { data } = await api.get<ServiceOut>(`/services/${serviceId}`)
       setFormData({
         ...data,
         specialist_ids: data.specialist_ids || [data.specialist_id],
-      })
+      } as ServiceData)
     } catch (error) {
       console.error('Failed to load service:', error)
     }
@@ -115,7 +116,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     setLoading(true)
 
     try {
-      const payload: any = {
+      const payload: ServiceData = {
         ...formData,
         specialist_ids: (formData.specialist_ids || []).filter(id => id !== formData.specialist_id),
       }
@@ -126,7 +127,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
         await api.post('/services/', payload)
       }
       onSuccess()
-    } catch (error: any) {
+    } catch (error) {
       const { fields, general } = apiFormErrors(error, SERVICE_FIELDS, t('serviceForm.saveError'))
       setFieldErrors(fields)
       setFormError(general)

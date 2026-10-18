@@ -6,6 +6,7 @@ import LoadingSpinner from './LoadingSpinner'
 import FormField from './FormField'
 import FormError from './FormError'
 import { validateEmail, validatePhone, validateRequired } from '../utils/validation'
+import { withoutBlanks } from '../utils/payload'
 import type { ClientLanguage } from '../api/types'
 import type { TranslationKey } from '../i18n/translations'
 
@@ -115,7 +116,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
     setExisting(null)
 
     try {
-      const clientData: any = {
+      const clientData = withoutBlanks({
         full_name: formData.full_name,
         birth_date: formData.birth_date || undefined,
         gender: formData.gender || undefined,
@@ -124,12 +125,6 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
         location_lat: formData.location_lat || undefined,
         location_lon: formData.location_lon || undefined,
         language: formData.language,
-      }
-      
-      Object.keys(clientData).forEach(key => {
-        if (clientData[key] === undefined || clientData[key] === '') {
-          delete clientData[key]
-        }
       })
       
       if (clientId) {
@@ -140,7 +135,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
       
       
       onSuccess()
-    } catch (error: any) {
+    } catch (error) {
       const duplicate = apiClientExists(error)
       if (duplicate) {
         setExisting({

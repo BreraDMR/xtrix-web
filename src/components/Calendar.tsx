@@ -7,9 +7,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import VisitForm from './VisitForm'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
+import type { VisitOut } from '../api/types'
 
 interface CalendarProps {
-  visits: any[]
+  visits: VisitOut[]
   onRefresh: () => void
 }
 
@@ -26,7 +27,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
 
   const visitsByDate = useMemo(() => {
-    const grouped: Record<string, any[]> = {}
+    const grouped: Record<string, VisitOut[]> = {}
     visits.forEach((visit) => {
       const dateKey = format(new Date(visit.date_start), 'yyyy-MM-dd')
       if (!grouped[dateKey]) {
