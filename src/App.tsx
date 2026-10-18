@@ -1,6 +1,5 @@
-import React from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useAuthStore } from './store/authStore'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import PrivateRoute from './components/PrivateRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
@@ -20,48 +19,6 @@ import Analytics from './pages/Analytics'
 import Loyalty from './pages/Loyalty'
 import Settings from './pages/Settings'
 import Layout from './components/Layout'
-
-function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const initialToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
-  const [isAuthenticated, setIsAuthenticated] = React.useState(!!initialToken)
-  
-  React.useEffect(() => {
-    if (typeof window === 'undefined') {
-      setIsAuthenticated(false)
-      return
-    }
-    
-    const token = localStorage.getItem('auth_token')
-    const hasToken = !!token
-    
-    if (!hasToken) {
-      setIsAuthenticated(false)
-      return
-    }
-    
-    setIsAuthenticated(true)
-    
-    const storeToken = useAuthStore.getState().token
-    if (!storeToken || storeToken !== token) {
-      const userStr = localStorage.getItem('auth_user')
-      let user = null
-      try {
-        user = userStr ? JSON.parse(userStr) : null
-      } catch {}
-      if (user) {
-        useAuthStore.getState().setAuth(token, user)
-      } else {
-        useAuthStore.setState({ token })
-      }
-    }
-  }, [])
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-  
-  return <>{children}</>
-}
 
 function App() {
   return (

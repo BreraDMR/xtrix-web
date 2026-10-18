@@ -1,29 +1,28 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
-import { logger } from '../utils/logger'
 
 export default function Login() {
   const { t } = useTranslation()
   const location = useLocation()
+  const navigate = useNavigate()
+  const requestedPath = new URLSearchParams(location.search).get('returnTo') || '/'
+  // only paths inside the app, never //host or a loop back to login
+  const returnTo = /^\/(?!\/)/.test(requestedPath) && !requestedPath.includes('\\') && !/^\/(login|register)([/?#]|$)/.test(requestedPath) ? requestedPath : '/'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { setAuth } = useAuthStore()
+  const { setAuth, startSession } = useAuthStore()
   
   useEffect(() => {
-    const localToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
-    if (localToken) {
-      logger.log('[Login] Already authenticated, redirecting to home')
-      window.location.href = '/'
-    }
-  }, [])
+    if (useAuthStore.getState().token && useAuthStore.getState().user) navigate(returnTo, { replace: true })
+  }, [navigate, returnTo])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,45 +31,15 @@ export default function Login() {
 
     try {
       const { data } = await api.post('/users/login', { email, password })
-      logger.log('[Login] Login successful, received tokens', { hasToken: !!data.access_token })
-      
-      if (!data.access_token) {
-        throw new Error('No access token received')
-      }
-      
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('auth_token', data.access_token)
-        logger.log('[Login] Token saved to localStorage')
-      }
-      
-      setAuth(data.access_token, { id: 0, full_name: '', role: '' })
-      logger.log('[Login] Token saved to store')
-      
-      await new Promise(resolve => setTimeout(resolve, 200))
-      
-      try {
-        const userRes = await api.get('/users/me')
-        console.log('[Login] User info fetched:', userRes.data)
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('auth_user', JSON.stringify(userRes.data))
-        }
-        setAuth(data.access_token, userRes.data)
-      } catch (err: any) {
-        console.warn('[Login] Could not fetch user info:', err)
-        const fallbackUser = { id: 0, full_name: email, role: 'admin' }
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('auth_user', JSON.stringify(fallbackUser))
-        }
-        setAuth(data.access_token, fallbackUser)
-      }
-      
-      logger.log('[Login] Login successful, redirecting to home...')
-      
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 100)
+      if (!data.access_token) throw new Error('No access token received')
+      startSession(data.access_token, data.refresh_token)
+      const { data: user } = await api.get('/users/me')
+      const token = useAuthStore.getState().token
+      if (!token) throw new Error('Session expired')
+      setAuth(token, user)
+      navigate(returnTo, { replace: true })
     } catch (err: any) {
-      console.error('Login error:', err)
+      useAuthStore.getState().logout()
       const errorMessage = apiErrorMessage(err, t('login.failed'))
       setError(errorMessage)
     } finally {

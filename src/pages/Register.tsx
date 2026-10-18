@@ -30,15 +30,11 @@ export default function Register() {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { setAuth } = useAuthStore()
+  const { setAuth, startSession } = useAuthStore()
 
   useEffect(() => {
-    const localToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
-    if (localToken) {
-      logger.log('[Register] Already authenticated, redirecting to home')
-      window.location.href = '/'
-    }
-  }, [])
+    if (useAuthStore.getState().token && useAuthStore.getState().user) navigate('/', { replace: true })
+  }, [navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -85,7 +81,7 @@ export default function Register() {
         userDataPayload.specialist_type = formData.specialist_type
       }
 
-      const { data: userData } = await api.post('/users/', userDataPayload)
+      await api.post('/users/', userDataPayload)
 
       accountCreated = true
       logger.log('[Register] User created successfully')
@@ -100,36 +96,15 @@ export default function Register() {
         throw new Error('No access token received')
       }
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('auth_token', loginData.access_token)
-        logger.log('[Register] Token saved to localStorage')
-      }
-
-      setAuth(loginData.access_token, { id: 0, full_name: formData.full_name, role: formData.role })
-      logger.log('[Register] Token saved to store')
-
-      try {
-        const userRes = await api.get('/users/me')
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('auth_user', JSON.stringify(userRes.data))
-        }
-        setAuth(loginData.access_token, userRes.data)
-      } catch (err: any) {
-        console.warn('[Register] Could not fetch user info:', err)
-        const fallbackUser = { id: userData.id || 0, full_name: formData.full_name, role: formData.role }
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('auth_user', JSON.stringify(fallbackUser))
-        }
-        setAuth(loginData.access_token, fallbackUser)
-      }
-
-      logger.log('[Register] Registration successful, redirecting to home...')
-
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 100)
+      startSession(loginData.access_token, loginData.refresh_token)
+      const { data: user } = await api.get('/users/me')
+      const token = useAuthStore.getState().token
+      if (!token) throw new Error('Session expired')
+      setAuth(token, user)
+      navigate('/', { replace: true })
     } catch (err: any) {
       if (accountCreated) {
+        useAuthStore.getState().logout()
         navigate('/login', { replace: true, state: { accountCreated: true } })
         return
       }

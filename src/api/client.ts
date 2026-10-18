@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { isAxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '../store/authStore'
 import { useLocaleStore } from '../store/localeStore'
 
@@ -14,61 +14,76 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  let token = useAuthStore.getState().token
-  if (!token && typeof window !== 'undefined') {
-    token = localStorage.getItem('auth_token')
-    if (token) {
-      const userStr = localStorage.getItem('auth_user')
-      let user = null
-      try {
-        user = userStr ? JSON.parse(userStr) : null
-      } catch {}
-      if (user) {
-        useAuthStore.getState().setAuth(token, user)
-      } else {
-        useAuthStore.setState({ token })
-      }
-    }
-  }
-  
+  const token = useAuthStore.getState().token
   const locale = useLocaleStore.getState().locale || navigator.language.split('-')[0] || 'en'
-  
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
   config.headers['Accept-Language'] = locale
-  
+
   return config
 })
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      const localStorageToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
-      
-      if (!localStorageToken) {
-        useAuthStore.getState().logout()
-      } else {
-        const userStr = localStorage.getItem('auth_user')
-        let user = null
-        try {
-          user = userStr ? JSON.parse(userStr) : null
-        } catch {}
-        if (user) {
-          useAuthStore.getState().setAuth(localStorageToken, user)
-        } else {
-          useAuthStore.setState({ token: localStorageToken })
-        }
-        return Promise.reject(error)
-      }
-      
-      window.location.href = '/login'
+// Access tokens are short-lived. On a 401 we swap the refresh token for a new pair and
+// repeat the request once. Parallel 401s share one refresh call: the server revokes the
+// old refresh token on use, so a second call with it would end the session.
+let refreshing: Promise<string> | null = null
+
+function refreshSession(): Promise<string> {
+  refreshing ??= rotateTokens().finally(() => { refreshing = null })
+  return refreshing
+}
+
+async function rotateTokens(): Promise<string> {
+  const store = useAuthStore.getState()
+  const refreshToken = localStorage.getItem('auth_refresh_token')
+  if (!refreshToken) {
+    store.logout()
+    throw new Error('Session expired')
+  }
+  try {
+    const { data } = await api.post('/users/refresh', { refresh_token: refreshToken })
+    if (!data?.access_token || !data?.refresh_token) throw new Error('Invalid token response')
+    // logged out (or in as someone else) while this was in flight - don't bring it back
+    if (localStorage.getItem('auth_refresh_token') !== refreshToken) throw new Error('Session changed')
+    localStorage.setItem('auth_refresh_token', data.refresh_token)
+    store.setToken(data.access_token)
+    return data.access_token
+  } catch (error) {
+    // another tab may have rotated the same refresh token a moment earlier
+    const latestRefresh = localStorage.getItem('auth_refresh_token')
+    const latestAccess = localStorage.getItem('auth_token')
+    if (latestRefresh && latestRefresh !== refreshToken && latestAccess) {
+      store.setToken(latestAccess)
+      return latestAccess
     }
-    return Promise.reject(error)
+    // 429, 5xx or no network: the session may still be fine, try again on the next request
+    const status = isAxiosError(error) ? error.response?.status : undefined
+    if (status === 401 || status === 403 || !isAxiosError(error)) store.logout()
+    throw error
+  }
+}
+
+const AUTH_ENDPOINT = /^\/?users\/(login|refresh|logout)\/?$/
+
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    const config = error.config as (InternalAxiosRequestConfig & { sessionRetried?: boolean }) | undefined
+    const sentAuth = config?.headers?.Authorization
+    if (error.response?.status !== 401 || !config || !sentAuth || AUTH_ENDPOINT.test(config.url || '')) throw error
+    if (config.sessionRetried) {
+      // a token we just got is refused too, so the session is over (deactivated, logout-all...)
+      useAuthStore.getState().logout()
+      throw error
+    }
+    config.sessionRetried = true
+    const current = useAuthStore.getState().token
+    // a slow request can come back with a token that has already been replaced
+    if (!current || sentAuth === `Bearer ${current}`) await refreshSession()
+    return api(config)
   }
 )
 
 export default api
-
-
