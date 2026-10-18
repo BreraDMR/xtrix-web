@@ -94,6 +94,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
   const loadService = async () => {
     try {
       const { data } = await api.get<ServiceOut>(`/services/${serviceId}`)
+      // the API allows a null price/duration, the form doesn't - a null shows up empty and the form asks for it on save
       setFormData({
         ...data,
         specialist_ids: data.specialist_ids || [data.specialist_id],
