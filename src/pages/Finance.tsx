@@ -1,4 +1,3 @@
-import { format, startOfDay, endOfDay } from 'date-fns'
 import QueryError from '../components/QueryError'
 import { useState, FormEvent } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -11,6 +10,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
+import { dayEnd, dayNoon, dayStart, today } from '../utils/dates'
 
 interface Expense {
   id: number
@@ -42,11 +42,11 @@ export default function Finance() {
   
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const now = new Date()
-    return format(new Date(now.getFullYear(), now.getMonth(), 1), 'yyyy-MM-dd')
+    return today(new Date(now.getFullYear(), now.getMonth(), 1))
   })
   const [dateTo, setDateTo] = useState<string>(() => {
     const now = new Date()
-    return format(new Date(now.getFullYear(), now.getMonth() + 1, 0), 'yyyy-MM-dd')
+    return today(new Date(now.getFullYear(), now.getMonth() + 1, 0))
   })
   
   const [showAddExpense, setShowAddExpense] = useState(false)
@@ -57,8 +57,8 @@ export default function Finance() {
     queryFn: async () => {
       const { data } = await api.get('/expenses/reports/profit', {
         params: {
-          date_from: dateFrom ? startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString() : undefined,
-          date_to: dateTo ? endOfDay(new Date(dateTo + 'T00:00:00')).toISOString() : undefined,
+          date_from: dateFrom ? dayStart(dateFrom) : undefined,
+          date_to: dateTo ? dayEnd(dateTo) : undefined,
         },
       })
       return data
@@ -70,8 +70,8 @@ export default function Finance() {
     queryFn: async () => {
       const params = new URLSearchParams()
       if (selectedCategory) params.append('category_id', selectedCategory.toString())
-      if (dateFrom) params.append('date_from', startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString())
-      if (dateTo) params.append('date_to', endOfDay(new Date(dateTo + 'T00:00:00')).toISOString())
+      if (dateFrom) params.append('date_from', dayStart(dateFrom))
+      if (dateTo) params.append('date_to', dayEnd(dateTo))
       params.append('per_page', '100')
       const { data } = await api.get(`/expenses/?${params.toString()}`)
       return data
@@ -91,8 +91,8 @@ export default function Finance() {
     queryFn: async () => {
       const { data } = await api.get('/analytics/payments/statistics', {
         params: {
-          date_from: dateFrom ? startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString() : undefined,
-          date_to: dateTo ? endOfDay(new Date(dateTo + 'T00:00:00')).toISOString() : undefined,
+          date_from: dateFrom ? dayStart(dateFrom) : undefined,
+          date_to: dateTo ? dayEnd(dateTo) : undefined,
         },
       })
       return data
@@ -208,7 +208,7 @@ export default function Finance() {
                   { key: 'Count', label: 'Count' },
                   { key: 'Percentage', label: 'Percentage' },
                 ]}
-                filename={`payments-statistics-${format(new Date(), 'yyyy-MM-dd')}`}
+                filename={`payments-statistics-${today()}`}
                 title={t('export.payments')}
                 reportTypes={[t('export.payments')]}
                 includeCharts={true}
@@ -365,7 +365,7 @@ export default function Finance() {
                 { key: 'amount', label: t('finance.amount'), format: (val, row) => `${val.toFixed(2)} ${row?.currency || ''}` },
                 { key: 'payment_method', label: t('finance.payment_method') },
               ]}
-              filename={`expenses-${format(new Date(), 'yyyy-MM-dd')}`}
+              filename={`expenses-${today()}`}
               title={t('export.expensesReport')}
               reportTypes={[t('export.expensesReport')]}
               dataType={(dateFrom || dateTo || selectedCategory) ? 'filtered' : 'all'}
@@ -476,7 +476,7 @@ function ExpenseForm({
     amount: '',
     currency: 'EUR',
     description: '',
-    expense_date: format(new Date(), 'yyyy-MM-dd'),
+    expense_date: today(),
     payment_method: 'other',
     category_id: '',
   })
@@ -548,7 +548,7 @@ function ExpenseForm({
       amount: parseFloat(formData.amount),
       currency: formData.currency,
       description: formData.description || undefined,
-      expense_date: new Date(formData.expense_date + 'T12:00:00').toISOString(),
+      expense_date: dayNoon(formData.expense_date),
       payment_method: formData.payment_method,
       category_id: formData.category_id ? parseInt(formData.category_id) : undefined,
     }

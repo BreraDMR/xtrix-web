@@ -1,4 +1,3 @@
-import { format, startOfDay, endOfDay } from 'date-fns'
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { HiX, HiDownload } from 'react-icons/hi'
@@ -9,6 +8,7 @@ import ExportModal from './ExportModal'
 import LoadingSpinner from './LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
+import { dayEnd, dayStart, today } from '../utils/dates'
 
 interface ClientPersonalReportModalProps {
   isOpen: boolean
@@ -26,10 +26,10 @@ export default function ClientPersonalReportModal({
   const currency = useBusinessCurrency()
   const [selectedReportType, setSelectedReportType] = useState<string>('profile')
   const [dateFrom, setDateFrom] = useState<string>(
-    format(new Date(new Date().getFullYear(), new Date().getMonth(), 1), 'yyyy-MM-dd')
+    today(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
   )
   const [dateTo, setDateTo] = useState<string>(
-    format(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), 'yyyy-MM-dd')
+    today(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))
   )
   const [showExportModal, setShowExportModal] = useState(false)
 
@@ -47,8 +47,8 @@ export default function ClientPersonalReportModal({
     queryFn: async () => {
       const params = new URLSearchParams()
       params.append('client_id', clientId.toString())
-      if (dateFrom) params.append('date_from', startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString())
-      if (dateTo) params.append('date_to', endOfDay(new Date(dateTo + 'T00:00:00')).toISOString())
+      if (dateFrom) params.append('date_from', dayStart(dateFrom))
+      if (dateTo) params.append('date_to', dayEnd(dateTo))
       const { data } = await api.get(`/visits/?${params.toString()}`)
       return Array.isArray(data) ? data : data?.items || []
     },
@@ -296,7 +296,7 @@ export default function ClientPersonalReportModal({
           onClose={() => setShowExportModal(false)}
           data={exportData}
           columns={columns}
-          filename={`client-${clientId}-${selectedReportType}-${format(new Date(), 'yyyy-MM-dd')}`}
+          filename={`client-${clientId}-${selectedReportType}-${today()}`}
           title={`${t('export.personalReport')} - ${client?.full_name || ''} - ${selectedReportType}`}
           reportTypes={[]}
         />

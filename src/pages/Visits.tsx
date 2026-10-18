@@ -1,7 +1,7 @@
 import QueryError from '../components/QueryError'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { format, isAfter, isBefore, startOfDay, endOfDay } from 'date-fns'
+import { format, isAfter, isBefore, parseISO, startOfDay, endOfDay } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { cs } from 'date-fns/locale'
 import { enUS } from 'date-fns/locale'
@@ -19,6 +19,7 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { sortData, SortConfig } from '../utils/table'
 import type { VisitOut, ClientOut } from '../api/types'
+import { today } from '../utils/dates'
 
 type Visit = VisitOut & { client_name?: string }
 
@@ -79,12 +80,12 @@ export default function Visits() {
       
       let matchesDate = true
       if (dateFrom) {
-        const fromDate = startOfDay(new Date(dateFrom))
+        const fromDate = startOfDay(parseISO(dateFrom))
         const visitDate = new Date(visit.date_start)
         matchesDate = matchesDate && !isBefore(visitDate, fromDate)
       }
       if (dateTo) {
-        const toDate = endOfDay(new Date(dateTo))
+        const toDate = endOfDay(parseISO(dateTo))
         const visitDate = new Date(visit.date_start)
         matchesDate = matchesDate && !isAfter(visitDate, toDate)
       }
@@ -182,7 +183,7 @@ export default function Visits() {
                   { key: 'status', label: t('visits.status'), format: (val) => getStatusTranslation(val) },
                   { key: 'price', label: t('visits.price'), format: (val) => val ? formatCurrency(val, currency) : '-' },
                 ]}
-                filename={`visits-${new Date().toISOString().split('T')[0]}`}
+                filename={`visits-${today()}`}
                 title={t('export.visitsReport')}
                 reportTypes={[t('export.visitsReport')]}
                 dataType={searchQuery || statusFilter || dateFrom || dateTo ? 'filtered' : 'all'}

@@ -13,6 +13,7 @@ import { useAuthStore } from '../store/authStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { sortData, SortConfig } from '../utils/table'
+import { today } from '../utils/dates'
 
 interface Employee {
   id: number
@@ -205,7 +206,7 @@ export default function Employees() {
                 { key: 'is_active', label: t('employees.status'), format: (val) => val ? t('employees.active') : t('employees.inactive') },
                 { key: 'hired_at', label: t('employees.hired_at'), format: (val) => val ? new Date(val).toLocaleDateString() : '-' },
               ]}
-              filename={`employees-${new Date().toISOString().split('T')[0]}`}
+              filename={`employees-${today()}`}
               title={t('export.employeesReport')}
               reportTypes={[t('export.employeesReport')]}
               dataType={searchQuery ? 'filtered' : 'all'}

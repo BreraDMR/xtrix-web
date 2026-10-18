@@ -11,6 +11,7 @@ import SalaryAdjustmentModal from '../components/SalaryAdjustmentModal'
 import SalaryPaymentModal from '../components/SalaryPaymentModal'
 import EditEmployeeSalaryModal from '../components/EditEmployeeSalaryModal'
 import { HiPlus, HiTrash, HiCheckCircle, HiXCircle, HiExclamationCircle, HiPencil } from 'react-icons/hi'
+import { dayEnd, dayStart } from '../utils/dates'
 
 interface SalaryAdjustment {
   id: number
@@ -133,8 +134,8 @@ export default function EmployeeSalary() {
       const { data: result } = await api.post(
         `/employees/${employeeId}/salary/calculate`,
         {
-          period_start: new Date(data.period_start + 'T00:00:00').toISOString(),
-          period_end: new Date(data.period_end + 'T23:59:59').toISOString(),
+          period_start: dayStart(data.period_start),
+          period_end: dayEnd(data.period_end),
           notes: data.notes || undefined,
         }
       )

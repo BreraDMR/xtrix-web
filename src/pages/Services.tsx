@@ -12,6 +12,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { sortData, SortConfig } from '../utils/table'
+import { today } from '../utils/dates'
 
 export default function Services() {
   const { t } = useTranslation()
@@ -145,7 +146,7 @@ interface Service {
                   { key: 'price', label: t('services.price'), format: (val) => formatCurrency(val, currency) },
                   { key: 'is_active', label: t('services.status'), format: (val) => val ? t('services.active') : t('services.inactive') },
                 ]}
-                  filename={`services-${new Date().toISOString().split('T')[0]}`}
+                  filename={`services-${today()}`}
                   title={t('export.servicesReport')}
                   reportTypes={[t('export.servicesReport')]}
                   dataType={searchQuery || activeFilter ? 'filtered' : 'all'}

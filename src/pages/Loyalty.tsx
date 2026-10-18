@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LoyaltyAnalytics from './LoyaltyAnalytics'
+import { showDay } from '../utils/dates'
 
 type TabType = 'program' | 'levels' | 'promotions' | 'transactions' | 'analytics'
 
@@ -915,7 +916,7 @@ export default function Loyalty() {
                         <div>
                           <h3 className="text-lg font-bold text-gray-900">{promotion.name}</h3>
                           <p className="text-sm text-gray-600">
-                            {new Date(promotion.start_date).toLocaleDateString()} - {new Date(promotion.end_date).toLocaleDateString()}
+                            {showDay(promotion.start_date)} - {showDay(promotion.end_date)}
                           </p>
                           <p className={`text-sm mt-1 ${promotion.is_active ? 'text-green-600' : 'text-gray-500'}`}>
                             {promotion.is_active ? 'Active' : 'Inactive'}

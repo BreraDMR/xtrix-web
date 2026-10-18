@@ -1,4 +1,3 @@
-import { format } from 'date-fns'
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { HiX } from 'react-icons/hi'
@@ -6,6 +5,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 import { formatCurrency } from '../utils/currency'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { dayNoon, today } from '../utils/dates'
 
 interface SalaryPaymentModalProps {
   isOpen: boolean
@@ -27,7 +27,7 @@ export default function SalaryPaymentModal({
   const queryClient = useQueryClient()
   const [amount, setAmount] = useState<string>('')
   const [paymentDate, setPaymentDate] = useState<string>(
-    format(new Date(), 'yyyy-MM-dd')
+    today()
   )
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'transfer' | 'other'>('cash')
   const [status, setStatus] = useState<'completed' | 'pending' | 'failed'>('completed')
@@ -58,7 +58,7 @@ export default function SalaryPaymentModal({
 
   const handleClose = () => {
     setAmount('')
-    setPaymentDate(format(new Date(), 'yyyy-MM-dd'))
+    setPaymentDate(today())
     setPaymentMethod('cash')
     setStatus('completed')
     setNotes('')
@@ -80,7 +80,7 @@ export default function SalaryPaymentModal({
 
     createMutation.mutate({
       amount: numAmount,
-      payment_date: new Date(paymentDate + 'T12:00:00').toISOString(),
+      payment_date: dayNoon(paymentDate),
       payment_method: paymentMethod,
       status,
       notes: notes.trim() || undefined,

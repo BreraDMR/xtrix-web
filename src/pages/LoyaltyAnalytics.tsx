@@ -1,4 +1,3 @@
-import { format, startOfDay, endOfDay } from 'date-fns'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
@@ -6,25 +5,26 @@ import api from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
+import { dayEnd, dayStart, today } from '../utils/dates'
 
 export default function LoyaltyAnalytics() {
   const { t } = useTranslation()
   const currency = useBusinessCurrency()
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const now = new Date()
-    return format(new Date(now.getFullYear(), now.getMonth() - 1, 1), 'yyyy-MM-dd')
+    return today(new Date(now.getFullYear(), now.getMonth() - 1, 1))
   })
   const [dateTo, setDateTo] = useState<string>(() => {
     const now = new Date()
-    return format(new Date(now.getFullYear(), now.getMonth() + 1, 0), 'yyyy-MM-dd')
+    return today(new Date(now.getFullYear(), now.getMonth() + 1, 0))
   })
 
   const { data: statistics, isLoading: isLoadingStats } = useQuery({
     queryKey: ['loyalty-statistics', dateFrom, dateTo],
     queryFn: async () => {
       const params = new URLSearchParams()
-      if (dateFrom) params.append('date_from', startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString())
-      if (dateTo) params.append('date_to', endOfDay(new Date(dateTo + 'T00:00:00')).toISOString())
+      if (dateFrom) params.append('date_from', dayStart(dateFrom))
+      if (dateTo) params.append('date_to', dayEnd(dateTo))
       const { data } = await api.get(`/loyalty/analytics/statistics?${params.toString()}`)
       return data
     },
@@ -50,8 +50,8 @@ export default function LoyaltyAnalytics() {
     queryKey: ['loyalty-promotion-effectiveness', dateFrom, dateTo],
     queryFn: async () => {
       const params = new URLSearchParams()
-      if (dateFrom) params.append('date_from', startOfDay(new Date(dateFrom + 'T00:00:00')).toISOString())
-      if (dateTo) params.append('date_to', endOfDay(new Date(dateTo + 'T00:00:00')).toISOString())
+      if (dateFrom) params.append('date_from', dayStart(dateFrom))
+      if (dateTo) params.append('date_to', dayEnd(dateTo))
       const { data } = await api.get(`/loyalty/analytics/promotion-effectiveness?${params.toString()}`)
       return data
     },

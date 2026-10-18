@@ -16,6 +16,7 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { sortData, SortConfig } from '../utils/table'
 import type { ClientOut } from '../api/types'
+import { showDay, today } from '../utils/dates'
 
 type Client = ClientOut
 
@@ -214,9 +215,9 @@ export default function Clients() {
                     { key: 'contact_phone', label: t('clients.phone') },
                     { key: 'contact_email', label: t('clients.email') },
                     { key: 'gender', label: 'Gender' },
-                    { key: 'birth_date', label: 'Date of Birth', format: (val) => val ? new Date(val).toLocaleDateString() : '-' },
+                    { key: 'birth_date', label: 'Date of Birth', format: (val) => showDay(val) },
                   ]}
-                  filename={`clients-${new Date().toISOString().split('T')[0]}`}
+                  filename={`clients-${today()}`}
                   title={t('export.clientReport')}
                   reportTypes={[
                     t('export.clientProfile'),

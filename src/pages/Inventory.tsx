@@ -9,6 +9,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
+import { today } from '../utils/dates'
 
 interface Product {
   id: number
@@ -212,7 +213,7 @@ export default function Inventory() {
                 { key: 'supplier', label: 'Supplier' },
                 { key: 'is_active', label: 'Status', format: (val) => val ? 'Active' : 'Inactive' },
               ]}
-              filename={`inventory-${new Date().toISOString().split('T')[0]}`}
+              filename={`inventory-${today()}`}
               title={t('export.inventoryReport')}
               reportTypes={[
                 t('export.stockRemaining'),
