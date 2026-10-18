@@ -84,10 +84,7 @@ test.describe('login and logout', () => {
     await expect(page).toHaveURL(/\/login$/)
   })
 
-  // TODO: fails on this branch - the 401 from /users/login hits the global 401 handler, which
-  // reloads /login and the message is gone. Drop test.fail() once the error stays on screen.
   test('wrong password shows an error and keeps you on the login page', async ({ page, request }) => {
-    test.fail()
     const owner = await newOwner(request)
     await loginThroughForm(page, owner.email, 'Not!The-Pass-77')
     await expect(page.getByText('Invalid credentials')).toBeVisible()

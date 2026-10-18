@@ -12,9 +12,7 @@ test('solo specialist sees the trial and the plans on the billing page', async (
   await expect(page.getByRole('button', { name: 'Subscribe' }).first()).toBeVisible()
 })
 
-// TODO: the menu offers "Billing" to owners, the API gives them a plan (seed: subscription_a),
-// but the page only says "not required for your role". Enable once the page shows it.
-test.fixme('business owner sees their plan on the billing page', async ({ page }) => {
+test('business owner sees their plan on the billing page', async ({ page }) => {
   await openAs(page, seedUser('owner_a'), '/subscription')
   await expect(page.getByRole('heading', { name: 'Current Subscription' })).toBeVisible()
 })
