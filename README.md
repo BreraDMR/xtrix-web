@@ -11,6 +11,8 @@ React 18, TypeScript, Vite, Tailwind CSS, TanStack Query, Zustand.
 
 ## Local setup
 
+Use Node.js 22.12 or later.
+
 1. `npm ci`
 2. Start the API (see the xtrix-api README, `docker compose up` is the quickest).
 3. `npm run dev` - the app runs on http://localhost:3000

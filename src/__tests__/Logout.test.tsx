@@ -28,9 +28,9 @@ beforeEach(() => {
 it('the logout button goes to a plain login page, with no way back to the last page', async () => {
   useAuthStore.getState().setAuth('saved', { id: 7, full_name: 'Jane', role: 'business_owner' })
   vi.mocked(api.get).mockResolvedValue({ data: {} })
-  // same router flags as the app: route changes are transitions, the store update is not
+  // Router transitions and the auth store update must agree about the logout destination.
   render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
-    <MemoryRouter initialEntries={['/clients']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <MemoryRouter initialEntries={['/clients']}>
       <Routes>
         <Route path="/login" element={<Where />} />
         <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>

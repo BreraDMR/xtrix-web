@@ -1,4 +1,5 @@
-import { defineConfig, loadEnv } from 'vite'
+import { loadEnv } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
@@ -35,9 +36,7 @@ export default defineConfig(({ command, mode }) => {
       // Node 25+ ships its own localStorage global (undefined without a file) and it
       // shadows the jsdom one, so turn it off for the test workers
       pool: 'forks',
-      poolOptions: {
-        forks: { execArgv: nodeMajor >= 25 ? ['--no-experimental-webstorage'] : [] },
-      },
+      execArgv: nodeMajor >= 25 ? ['--no-experimental-webstorage'] : [],
     },
   }
 })

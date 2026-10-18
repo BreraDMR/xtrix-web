@@ -1,6 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/* Keep the existing form and separator defaults when upgrading Tailwind. */
+@layer base {
+  *, ::before, ::after {
+    border-color: var(--color-gray-200);
+  }
+  input:where(:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file'])),
+  select, textarea {
+    background-color: white;
+  }
+  .dark input:where(:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file'])),
+  .dark select, .dark textarea {
+    background-color: var(--color-gray-700);
+  }
+}
 
 @layer utilities {
   @keyframes slide-up {
@@ -159,6 +173,7 @@ select option {
     margin-bottom: 0.125rem;
     color: #6b7280;
     font-size: 0.75rem;
+    line-height: 1.25rem;
     font-weight: 600;
   }
 }

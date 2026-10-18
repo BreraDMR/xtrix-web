@@ -202,7 +202,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                 await navigator.clipboard.writeText(generatedPassword)
                 setPasswordCopied(true)
                 setTimeout(() => setPasswordCopied(false), 2000)
-              } catch (err) {
+              } catch {
                 const input = document.createElement('input')
                 input.value = generatedPassword
                 document.body.appendChild(input)
