@@ -344,6 +344,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/assistant/execute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Run a saved plan once, as the current user */
+        post: operations["execute_plan_assistant_execute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assistant/plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Turn a request into a plan to confirm (nothing is changed yet) */
+        post: operations["make_plan_assistant_plan_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assistant/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Is the assistant on, and how much is left */
+        get: operations["get_status_assistant_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/assistant/transcribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Speech to text for the assistant input (not planned automatically) */
+        post: operations["transcribe_assistant_transcribe_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/audit/": {
         parameters: {
             query?: never;
@@ -2354,6 +2422,64 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * ActionDisplay
+         * @description Read-only preview resolved by the server within the user's own data; empty for anything else.
+         *     Never phones, e-mails, birth dates or medical data.
+         */
+        ActionDisplay: {
+            /** Client Name */
+            client_name?: string | null;
+            /** End Time */
+            end_time?: string | null;
+            /** Note */
+            note?: string | null;
+            /** Service Name */
+            service_name?: string | null;
+            /** Specialist Name */
+            specialist_name?: string | null;
+            /** Start Time */
+            start_time?: string | null;
+        };
+        /** ActionErrorOut */
+        ActionErrorOut: {
+            /** Code */
+            code: string;
+            /** Message */
+            message: string;
+            /** Status */
+            status: number;
+        };
+        /** ActionResultOut */
+        ActionResultOut: {
+            /** Action */
+            action: string;
+            /** Data */
+            data: {
+                [key: string]: unknown;
+            };
+            error?: components["schemas"]["ActionErrorOut"] | null;
+            /** Index */
+            index: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "done" | "failed" | "skipped";
+        };
+        /** AddNotePlanned */
+        AddNotePlanned: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            action: "add_note";
+            display?: components["schemas"]["ActionDisplay"];
+            /** Text */
+            text: string;
+            /** Visit Id */
+            visit_id: number;
+        };
         /** AnonymousBenchmarksResponse */
         AnonymousBenchmarksResponse: {
             /** Available */
@@ -2372,6 +2498,44 @@ export interface components {
             business_type?: string | null;
             /** Reason */
             reason?: string | null;
+        };
+        /** AssistantPersonaOut */
+        AssistantPersonaOut: {
+            /**
+             * Gender
+             * @enum {string}
+             */
+            gender: "female" | "male" | "neuter";
+            /** Is Default */
+            is_default: boolean;
+            /** Name */
+            name: string;
+        };
+        /** AssistantStatusOut */
+        AssistantStatusOut: {
+            assistant: components["schemas"]["AssistantPersonaOut"];
+            /**
+             * Enabled
+             * @description A model provider is configured, so /assistant/plan can work
+             */
+            enabled: boolean;
+            /**
+             * Limit
+             * @description Assistant requests per calendar month (UTC) for whoever pays
+             */
+            limit: number;
+            /**
+             * Resets At
+             * Format: date-time
+             */
+            resets_at: string;
+            /** Used */
+            used: number;
+            /**
+             * Voice Enabled
+             * @description A speech provider is configured, so /assistant/transcribe can work
+             */
+            voice_enabled: boolean;
         };
         /** AuditLogOut */
         AuditLogOut: {
@@ -2456,6 +2620,14 @@ export interface components {
             reason?: string | null;
             /** Start */
             start?: string | null;
+        };
+        /** Body_transcribe_assistant_transcribe_post */
+        Body_transcribe_assistant_transcribe_post: {
+            /**
+             * File
+             * @description audio/webm, audio/ogg, audio/mp4, audio/mpeg or audio/wav, up to 5 MB
+             */
+            file: string;
         };
         /** BusinessCreate */
         BusinessCreate: {
@@ -2561,6 +2733,17 @@ export interface components {
              * @description Period start
              */
             period_start: string;
+        };
+        /** CancelVisitPlanned */
+        CancelVisitPlanned: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            action: "cancel_visit";
+            display?: components["schemas"]["ActionDisplay"];
+            /** Visit Id */
+            visit_id: number;
         };
         /** ClientCreate */
         ClientCreate: {
@@ -2785,6 +2968,54 @@ export interface components {
             cohort_table: components["schemas"]["CohortData"][];
             /** Total Cohorts */
             total_cohorts: number;
+        };
+        /** CreateClientPlanned */
+        CreateClientPlanned: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            action: "create_client";
+            /** Birth Date */
+            birth_date?: string | null;
+            /** Contact Email */
+            contact_email?: string | null;
+            /** Contact Phone */
+            contact_phone?: string | null;
+            display?: components["schemas"]["ActionDisplay"];
+            /** Full Name */
+            full_name: string;
+            /** Gender */
+            gender?: ("male" | "female" | "other") | null;
+            /** Language */
+            language?: ("en" | "ru" | "cz") | null;
+            /** Ref */
+            ref?: string | null;
+        };
+        /** CreateVisitPlanned */
+        CreateVisitPlanned: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            action: "create_visit";
+            /** Client Id */
+            client_id?: number | null;
+            /** Client Ref */
+            client_ref?: string | null;
+            display?: components["schemas"]["ActionDisplay"];
+            /** Duration Minutes */
+            duration_minutes?: number | null;
+            /** Note */
+            note?: string | null;
+            /** Service Id */
+            service_id?: number | null;
+            /** Slot Ref */
+            slot_ref?: string | null;
+            /** Specialist Id */
+            specialist_id?: number | null;
+            /** Start */
+            start?: string | null;
         };
         /** EmployeeCreate */
         EmployeeCreate: {
@@ -3026,6 +3257,22 @@ export interface components {
             /** Position */
             position?: string | null;
         };
+        /** ExecuteOut */
+        ExecuteOut: {
+            /** Done Count */
+            done_count: number;
+            /** Failed Index */
+            failed_index?: number | null;
+            /** Ok */
+            ok: boolean;
+            /** Results */
+            results: components["schemas"]["ActionResultOut"][];
+        };
+        /** ExecuteRequest */
+        ExecuteRequest: {
+            /** Plan Id */
+            plan_id: string;
+        };
         /** ExpenseCategoryCreate */
         ExpenseCategoryCreate: {
             /** Business Id */
@@ -3217,6 +3464,47 @@ export interface components {
             }[];
             /** Total Revenue */
             total_revenue: number;
+        };
+        /** FindClientPlanned */
+        FindClientPlanned: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            action: "find_client";
+            display?: components["schemas"]["ActionDisplay"];
+            /** Email */
+            email?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Phone */
+            phone?: string | null;
+            /** Ref */
+            ref?: string | null;
+        };
+        /** FindFreeSlotPlanned */
+        FindFreeSlotPlanned: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            action: "find_free_slot";
+            /**
+             * Days Ahead
+             * @default 7
+             */
+            days_ahead: number;
+            display?: components["schemas"]["ActionDisplay"];
+            /** Duration Minutes */
+            duration_minutes?: number | null;
+            /** Not Before */
+            not_before?: string | null;
+            /** Ref */
+            ref?: string | null;
+            /** Service Id */
+            service_id?: number | null;
+            /** Specialist Id */
+            specialist_id?: number | null;
         };
         /** ForecastData */
         ForecastData: {
@@ -3939,6 +4227,33 @@ export interface components {
             /** Total Payments */
             total_payments: number;
         };
+        /** PlanOut */
+        PlanOut: {
+            /** Actions */
+            actions: (components["schemas"]["FindClientPlanned"] | components["schemas"]["CreateClientPlanned"] | components["schemas"]["UpdateClientPlanned"] | components["schemas"]["FindFreeSlotPlanned"] | components["schemas"]["CreateVisitPlanned"] | components["schemas"]["RescheduleVisitPlanned"] | components["schemas"]["CancelVisitPlanned"] | components["schemas"]["AddNotePlanned"])[];
+            assistant: components["schemas"]["AssistantPersonaOut"];
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Plan Id */
+            plan_id: string;
+            /** Questions */
+            questions: string[];
+            /** Summary */
+            summary: string;
+        };
+        /** PlanRequest */
+        PlanRequest: {
+            /**
+             * Locale
+             * @description Language of the answer; Accept-Language when left out
+             */
+            locale?: ("en" | "ru" | "cz") | null;
+            /** Text */
+            text: string;
+        };
         /** PointsUsageTrendItem */
         PointsUsageTrendItem: {
             /** Cashback Earned */
@@ -4282,6 +4597,21 @@ export interface components {
             report_type: "financial" | "visits" | "services" | "clients";
             /** Specialist Id */
             specialist_id?: number | null;
+        };
+        /** RescheduleVisitPlanned */
+        RescheduleVisitPlanned: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            action: "reschedule_visit";
+            display?: components["schemas"]["ActionDisplay"];
+            /** Slot Ref */
+            slot_ref?: string | null;
+            /** Start */
+            start?: string | null;
+            /** Visit Id */
+            visit_id: number;
         };
         /** RetentionMetricsResponse */
         RetentionMetricsResponse: {
@@ -5279,6 +5609,11 @@ export interface components {
              */
             updated_at: string;
         };
+        /** TranscribeOut */
+        TranscribeOut: {
+            /** Text */
+            text: string;
+        };
         /** TrendsAnalysisResponse */
         TrendsAnalysisResponse: {
             /** Change */
@@ -5320,6 +5655,31 @@ export interface components {
              * @description 6-digit TOTP code
              */
             token: string;
+        };
+        /** UpdateClientPlanned */
+        UpdateClientPlanned: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            action: "update_client";
+            /** Birth Date */
+            birth_date?: string | null;
+            /** Client Id */
+            client_id?: number | null;
+            /** Client Ref */
+            client_ref?: string | null;
+            /** Contact Email */
+            contact_email?: string | null;
+            /** Contact Phone */
+            contact_phone?: string | null;
+            display?: components["schemas"]["ActionDisplay"];
+            /** Full Name */
+            full_name?: string | null;
+            /** Gender */
+            gender?: ("male" | "female" | "other") | null;
+            /** Language */
+            language?: ("en" | "ru" | "cz") | null;
         };
         /** UsePointsRequest */
         UsePointsRequest: {
@@ -6410,6 +6770,177 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
+            };
+        };
+    };
+    execute_plan_assistant_execute_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExecuteRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExecuteOut"];
+                };
+            };
+            /** @description plan_not_found: unknown, someone else's, expired or already run */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    make_plan_assistant_plan_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Monthly assistant limit used up (code ai_limit_reached), Retry-After = seconds to the next month; or too many requests a minute */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ai_busy (all provider slots resting, Retry-After), ai_not_configured or ai_unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_status_assistant_status_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantStatusOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    transcribe_assistant_transcribe_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_transcribe_assistant_transcribe_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TranscribeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Monthly assistant limit used up (code ai_limit_reached), Retry-After = seconds to the next month; or too many requests a minute */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description ai_busy (all provider slots resting, Retry-After), ai_not_configured or ai_unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
