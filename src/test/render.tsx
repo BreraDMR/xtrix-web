@@ -29,14 +29,15 @@ export function resetStores() {
 }
 
 // an error the way the API sends it: { error: { message, status_code, detail? } }
-export function apiError(status: number, message: string, detail?: unknown) {
+export function apiError(status: number, message: string, detail?: unknown,
+  { headers = {}, type }: { headers?: Record<string, string>; type?: string } = {}) {
   const config = { headers: new AxiosHeaders() } as InternalAxiosRequestConfig
   return new AxiosError(message, String(status), config, null, {
     status,
     statusText: '',
-    headers: {},
+    headers,
     config,
-    data: { error: { message, status_code: status, ...(detail ? { detail } : {}) } },
+    data: { error: { message, status_code: status, ...(detail ? { detail } : {}), ...(type ? { type } : {}) } },
   })
 }
 

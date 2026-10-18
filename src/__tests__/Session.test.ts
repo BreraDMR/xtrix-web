@@ -85,6 +85,17 @@ describe('session refresh', () => {
     expect(localStorage.getItem('auth_refresh_token')).toBe('other-refresh')
   })
 
+  it('keeps the session on a 403 (wrong QR PIN) or a 429, without refreshing', async () => {
+    for (const status of [403, 429]) {
+      const adapter = vi.fn(async (config: InternalAxiosRequestConfig) => fail(config, status))
+      api.defaults.adapter = adapter
+      await expect(api.post('/clients/qr-code/access', { pin: '0000' })).rejects.toThrow('Failed')
+      expect(adapter).toHaveBeenCalledTimes(1)
+      expect(useAuthStore.getState().token).toBe('expired')
+      expect(localStorage.getItem('auth_refresh_token')).toBe('refresh')
+    }
+  })
+
   it('does not refresh for a request sent without a token', async () => {
     useAuthStore.getState().logout()
     const adapter = vi.fn(async (config: InternalAxiosRequestConfig) => fail(config, 401))

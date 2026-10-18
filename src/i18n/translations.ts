@@ -4,6 +4,53 @@ export type TranslationKey =
   | 'validation.commission'
   | 'validation.salary'
   | 'validation.price'
+  | 'errors.tooManyRequests'
+  | 'errors.tooManyRequestsLater'
+  | 'errors.loginThrottled'
+  | 'errors.loginThrottledLater'
+  | 'errors.notFound'
+  | 'errors.methodNotAllowed'
+  | 'time.seconds'
+  | 'time.minutes'
+  | 'validation.code.missing'
+  | 'validation.code.empty'
+  | 'validation.code.string_too_short'
+  | 'validation.code.string_too_long'
+  | 'validation.code.greater_than_equal'
+  | 'validation.code.greater_than'
+  | 'validation.code.less_than_equal'
+  | 'validation.code.less_than'
+  | 'validation.code.number'
+  | 'validation.code.date'
+  | 'validation.code.date_out_of_range'
+  | 'validation.code.invalid_time_range'
+  | 'validation.code.end_before_start'
+  | 'validation.code.weak_password'
+  | 'validation.code.invalid_phone'
+  | 'validation.code.invalid_email'
+  | 'validation.code.invalid_birth_date'
+  | 'validation.code.invalid_currency'
+  | 'validation.code.invalid_timezone'
+  | 'validation.code.invalid_choice'
+  | 'validation.code.payment_method_required'
+  | 'validation.code.string_type'
+  | 'validation.code.bool'
+  | 'field.full_name'
+  | 'field.name'
+  | 'field.email'
+  | 'field.phone'
+  | 'field.password'
+  | 'field.birth_date'
+  | 'field.date_start'
+  | 'field.date_end'
+  | 'field.price'
+  | 'field.amount'
+  | 'field.quantity'
+  | 'field.base_salary'
+  | 'field.commission_rate'
+  | 'field.currency'
+  | 'field.duration_minutes'
+  | 'field.unit'
   | 'pagination.previous'
   | 'pagination.next'
   | 'pagination.range'
@@ -813,6 +860,53 @@ export type TranslationKey =
   | 'common.error_saving'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  "errors.tooManyRequests": {"en": "Too many requests. Try again in {wait}.", "ru": "Слишком много запросов. Повторите через {wait}.", "cz": "Příliš mnoho požadavků. Zkuste to znovu za {wait}."},
+  "errors.tooManyRequestsLater": {"en": "Too many requests. Try again a bit later.", "ru": "Слишком много запросов. Повторите чуть позже.", "cz": "Příliš mnoho požadavků. Zkuste to o něco později."},
+  "errors.loginThrottled": {"en": "Too many failed sign-in attempts. Try again in {wait}.", "ru": "Слишком много неудачных попыток входа. Повторите через {wait}.", "cz": "Příliš mnoho neúspěšných pokusů o přihlášení. Zkuste to znovu za {wait}."},
+  "errors.loginThrottledLater": {"en": "Too many failed sign-in attempts. Try again a bit later.", "ru": "Слишком много неудачных попыток входа. Повторите чуть позже.", "cz": "Příliš mnoho neúspěšných pokusů o přihlášení. Zkuste to o něco později."},
+  "errors.notFound": {"en": "Not found.", "ru": "Не найдено.", "cz": "Nenalezeno."},
+  "errors.methodNotAllowed": {"en": "This action is not supported.", "ru": "Это действие не поддерживается.", "cz": "Tato akce není podporována."},
+  "time.seconds": {"en": "{n} s", "ru": "{n} с", "cz": "{n} s"},
+  "time.minutes": {"en": "{n} min", "ru": "{n} мин", "cz": "{n} min"},
+  "validation.code.missing": {"en": "Required field", "ru": "Обязательное поле", "cz": "Povinné pole"},
+  "validation.code.empty": {"en": "This field can't be empty", "ru": "Поле не может быть пустым", "cz": "Pole nesmí být prázdné"},
+  "validation.code.string_too_short": {"en": "At least {min_length} characters", "ru": "Минимальная длина — {min_length}", "cz": "Minimální délka je {min_length}"},
+  "validation.code.string_too_long": {"en": "At most {max_length} characters", "ru": "Максимальная длина — {max_length}", "cz": "Maximální délka je {max_length}"},
+  "validation.code.greater_than_equal": {"en": "Must be at least {ge}", "ru": "Должно быть не меньше {ge}", "cz": "Musí být alespoň {ge}"},
+  "validation.code.greater_than": {"en": "Must be more than {gt}", "ru": "Должно быть больше {gt}", "cz": "Musí být větší než {gt}"},
+  "validation.code.less_than_equal": {"en": "Must be at most {le}", "ru": "Должно быть не больше {le}", "cz": "Musí být nejvýše {le}"},
+  "validation.code.less_than": {"en": "Must be less than {lt}", "ru": "Должно быть меньше {lt}", "cz": "Musí být menší než {lt}"},
+  "validation.code.number": {"en": "Enter a number", "ru": "Введите число", "cz": "Zadejte číslo"},
+  "validation.code.date": {"en": "Enter a valid date", "ru": "Введите корректную дату", "cz": "Zadejte platné datum"},
+  "validation.code.date_out_of_range": {"en": "Date must be between {min} and {max}", "ru": "Дата должна быть между {min} и {max}", "cz": "Datum musí být mezi {min} a {max}"},
+  "validation.code.invalid_time_range": {"en": "The end must be after the start and the visit no longer than 24 hours", "ru": "Конец должен быть позже начала, а визит не длиннее 24 часов", "cz": "Konec musí být po začátku a návštěva nejdéle 24 hodin"},
+  "validation.code.end_before_start": {"en": "The end date can't be before the start date", "ru": "Дата окончания не может быть раньше даты начала", "cz": "Datum konce nemůže být před datem začátku"},
+  "validation.code.weak_password": {"en": "Password is too weak: use 8+ characters with upper and lower case letters, a digit and a symbol", "ru": "Слабый пароль: нужно от 8 символов, заглавные и строчные буквы, цифра и спецсимвол", "cz": "Slabé heslo: alespoň 8 znaků, velká i malá písmena, číslice a speciální znak"},
+  "validation.code.invalid_phone": {"en": "Invalid phone number, use the international format like +420123456789", "ru": "Неверный номер телефона, используйте международный формат, например +420123456789", "cz": "Neplatné telefonní číslo, použijte mezinárodní formát, např. +420123456789"},
+  "validation.code.invalid_email": {"en": "Invalid email address", "ru": "Неверный адрес email", "cz": "Neplatná e-mailová adresa"},
+  "validation.code.invalid_birth_date": {"en": "Invalid date of birth", "ru": "Неверная дата рождения", "cz": "Neplatné datum narození"},
+  "validation.code.invalid_currency": {"en": "Unknown currency, use an ISO code like EUR or CZK", "ru": "Неизвестная валюта, используйте ISO-код, например EUR или CZK", "cz": "Neznámá měna, použijte kód ISO, např. EUR nebo CZK"},
+  "validation.code.invalid_timezone": {"en": "Unknown time zone", "ru": "Неизвестный часовой пояс", "cz": "Neznámé časové pásmo"},
+  "validation.code.invalid_choice": {"en": "Choose one of: {allowed}", "ru": "Выберите одно из: {allowed}", "cz": "Vyberte jednu z možností: {allowed}"},
+  "validation.code.payment_method_required": {"en": "Choose a payment method for a completed paid visit", "ru": "Выберите способ оплаты для завершённого платного визита", "cz": "U dokončené placené návštěvy vyberte způsob platby"},
+  "validation.code.string_type": {"en": "Enter text", "ru": "Введите текст", "cz": "Zadejte text"},
+  "validation.code.bool": {"en": "Choose yes or no", "ru": "Выберите да или нет", "cz": "Vyberte ano nebo ne"},
+  "field.full_name": {"en": "Name", "ru": "Имя", "cz": "Jméno"},
+  "field.name": {"en": "Name", "ru": "Название", "cz": "Název"},
+  "field.email": {"en": "Email", "ru": "Email", "cz": "E-mail"},
+  "field.phone": {"en": "Phone", "ru": "Телефон", "cz": "Telefon"},
+  "field.password": {"en": "Password", "ru": "Пароль", "cz": "Heslo"},
+  "field.birth_date": {"en": "Date of birth", "ru": "Дата рождения", "cz": "Datum narození"},
+  "field.date_start": {"en": "Start", "ru": "Начало", "cz": "Začátek"},
+  "field.date_end": {"en": "End", "ru": "Конец", "cz": "Konec"},
+  "field.price": {"en": "Price", "ru": "Цена", "cz": "Cena"},
+  "field.amount": {"en": "Amount", "ru": "Сумма", "cz": "Částka"},
+  "field.quantity": {"en": "Quantity", "ru": "Количество", "cz": "Množství"},
+  "field.base_salary": {"en": "Base salary", "ru": "Оклад", "cz": "Základní mzda"},
+  "field.commission_rate": {"en": "Commission", "ru": "Комиссия", "cz": "Provize"},
+  "field.currency": {"en": "Currency", "ru": "Валюта", "cz": "Měna"},
+  "field.duration_minutes": {"en": "Duration", "ru": "Длительность", "cz": "Délka"},
+  "field.unit": {"en": "Unit", "ru": "Единица", "cz": "Jednotka"},
   "validation.price": {"en": "Price must be zero or greater", "ru": "Цена должна быть не меньше нуля", "cz": "Cena musí být nezáporná"},
   "validation.salary": {"en": "Salary must be between 0 and 100000000", "ru": "Зарплата должна быть от 0 до 100000000", "cz": "Mzda musí být v rozmezí 0 až 100000000"},
   "validation.commission": {"en": "Commission must be between 0 and 100", "ru": "Комиссия должна быть от 0 до 100", "cz": "Provize musí být v rozmezí 0 až 100"},
