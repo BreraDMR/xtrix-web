@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { useMyBusiness } from '../hooks/useMyBusiness'
 import QueryError from '../components/QueryError'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
@@ -13,6 +15,10 @@ import { HiOutlineChartBar, HiOutlineUsers, HiOutlineCalendar } from 'react-icon
 export default function Dashboard() {
   const { t } = useTranslation()
   const currency = useBusinessCurrency()
+  const { user, token } = useAuthStore()
+  const business = useMyBusiness(!!user)
+  const isOwner = user?.role === 'business_owner'
+  const canLoad = !!token && (!isOwner || !!business.data)
   
   const { data: profitData, isLoading: isLoadingProfit, isError: queryError0, refetch: retryQuery0 } = useQuery({
     queryKey: ['profit-current-month'],
@@ -26,7 +32,7 @@ export default function Dashboard() {
       return data
     },
     retry: false,
-    enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
+    enabled: canLoad,
   })
 
   const { data: visitStats, isLoading: isLoadingVisitStats, isError: queryError1, refetch: retryQuery1 } = useQuery({
@@ -36,7 +42,7 @@ export default function Dashboard() {
       return data
     },
     retry: false,
-    enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
+    enabled: canLoad,
   })
 
   const { data: clientStats, isLoading: isLoadingClientStats, isError: queryError2, refetch: retryQuery2 } = useQuery({
@@ -46,8 +52,17 @@ export default function Dashboard() {
       return data
     },
     retry: false,
-    enabled: !!useAuthStore.getState().token || !!localStorage.getItem('auth_token'),
+    enabled: canLoad,
   })
+
+  if (isOwner && business.isPending) return <LoadingSpinner size="lg" />
+  if (isOwner && business.isError) return <QueryError retry={() => { void business.refetch() }} />
+  if (isOwner && business.data === null) return (
+    <div className="rounded-xl border border-gray-200 bg-white p-6">
+      <h1 className="mb-4 text-2xl font-bold">{t('business.title')}</h1>
+      <Link to="/business" className="text-blue-700 underline">{t('business.create')}</Link>
+    </div>
+  )
 
   if (queryError0 || queryError1 || queryError2) return <QueryError retry={() => { void retryQuery0(); void retryQuery1(); void retryQuery2() }} />
 
