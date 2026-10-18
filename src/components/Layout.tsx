@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { signOut } from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
 import { useSyncUiLanguage } from '../hooks/useUiLanguage'
 import { 
@@ -19,7 +20,7 @@ import {
 } from 'react-icons/hi'
 
 export default function Layout() {
-  const { user, logout } = useAuthStore()
+  const { user } = useAuthStore()
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -42,7 +43,7 @@ export default function Layout() {
   }, [location.pathname])
 
   const handleLogout = () => {
-    logout()
+    signOut()
     navigate('/login', { replace: true })
   }
 

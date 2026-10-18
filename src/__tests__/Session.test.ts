@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AxiosError, type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios'
-import api from '../api/client'
+import api, { signOut } from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import { resetStores } from '../test/render'
 
@@ -130,5 +130,45 @@ describe('session in other tabs', () => {
     localStorage.setItem('auth_token', 'renewed')
     storageEvent('auth_token')
     expect(useAuthStore.getState()).toMatchObject({ token: 'renewed', user })
+  })
+})
+
+describe('sign out', () => {
+  beforeEach(() => { resetStores(); useAuthStore.getState().setAuth('access', user); localStorage.setItem('auth_refresh_token', 'refresh') })
+  afterEach(() => { api.defaults.adapter = originalAdapter })
+
+  it('revokes the refresh token on the server and clears the session right away', async () => {
+    const sent: InternalAxiosRequestConfig[] = []
+    let answer: () => void = () => {}
+    api.defaults.adapter = config => {
+      sent.push(config)
+      return new Promise(resolve => { answer = () => resolve(ok(config, { message: 'ok' })) })
+    }
+    signOut()
+    // no waiting for the server
+    expect(useAuthStore.getState()).toMatchObject({ token: null, user: null })
+    expect(localStorage.getItem('auth_refresh_token')).toBeNull()
+    await vi.waitFor(() => expect(sent).toHaveLength(1))
+    expect(sent[0].url).toBe('/users/logout')
+    expect(JSON.parse(sent[0].data)).toEqual({ refresh_token: 'refresh' })
+    expect(sent[0].headers.Authorization).toBe('Bearer access')
+    answer()
+  })
+
+  it('still signs out locally when the server call fails', async () => {
+    const adapter = vi.fn(async (config: InternalAxiosRequestConfig) => fail(config, 401))
+    api.defaults.adapter = adapter
+    signOut()
+    await vi.waitFor(() => expect(adapter).toHaveBeenCalledTimes(1))
+    expect(useAuthStore.getState().token).toBeNull()
+  })
+
+  it('skips the server call without a refresh token', () => {
+    localStorage.removeItem('auth_refresh_token')
+    const adapter = vi.fn()
+    api.defaults.adapter = adapter
+    signOut()
+    expect(adapter).not.toHaveBeenCalled()
+    expect(useAuthStore.getState().token).toBeNull()
   })
 })

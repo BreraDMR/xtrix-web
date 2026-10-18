@@ -86,4 +86,16 @@ api.interceptors.response.use(
   }
 )
 
+// Logout button: tell the server to revoke our refresh token, but don't make the user wait
+// for it (or get stuck if it fails) - the local session is cleared right away.
+export function signOut() {
+  const token = useAuthStore.getState().token
+  const refreshToken = localStorage.getItem('auth_refresh_token')
+  useAuthStore.getState().logout()
+  if (!refreshToken) return
+  api.post('/users/logout', { refresh_token: refreshToken }, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  }).catch(() => {})
+}
+
 export default api
