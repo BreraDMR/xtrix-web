@@ -5,8 +5,9 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorMessage, apiErrorStatus } from '../api/errors'
+import { apiErrorStatus, apiFormErrors } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
+import FormError from '../components/FormError'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
@@ -453,6 +454,9 @@ export default function Finance() {
   )
 }
 
+// fields the form shows, API errors for these go right under them
+const EXPENSE_FIELDS = ['amount', 'expense_date'] as const
+
 function ExpenseForm({
   categories,
   onCancel,
@@ -476,6 +480,7 @@ function ExpenseForm({
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [formError, setFormError] = useState('')
 
   const { data: userBusiness } = useQuery({
     queryKey: ['user-business'],
@@ -514,8 +519,9 @@ function ExpenseForm({
       onSuccess()
     },
     onError: (error) => {
-      const errorMessage = apiErrorMessage(error, 'Failed to create expense')
-      alert(errorMessage)
+      const { fields, general } = apiFormErrors(error, EXPENSE_FIELDS, t('common.error_saving'))
+      setErrors(fields)
+      setFormError(general)
     },
   })
 
@@ -537,6 +543,7 @@ function ExpenseForm({
     }
 
     setErrors({})
+    setFormError('')
 
     const expenseData = {
       amount: parseFloat(formData.amount),
@@ -561,6 +568,7 @@ function ExpenseForm({
       >
         <h3 className="text-lg font-semibold mb-4">{t('finance.add_expense')}</h3>
         <form onSubmit={handleSubmit}>
+          {formError && <div role="alert" className="mb-4"><FormError message={formError} /></div>}
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
