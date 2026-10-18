@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { apiClientExists, apiErrorMessage, apiFormErrors, apiErrorStatus, apiRetryAfter, apiValidationErrors } from '../api/errors'
-import { AxiosError } from 'axios'
+import {
+  apiClientExists, apiErrorCode, apiErrorMessage, apiFormErrors, apiErrorStatus, apiIsNetworkError, apiRetryAfter,
+  apiValidationCodes, apiValidationErrors,
+} from '../api/errors'
+import { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from 'axios'
 import { apiError, resetStores } from '../test/render'
 import { useLocaleStore } from '../store/localeStore'
 
@@ -107,6 +110,24 @@ describe('API errors', () => {
     const err = apiError(409, 'This client is already in your list', { code: 'client_exists', existing_client_id: 17, matched_by: 'phone' })
     expect(apiClientExists(err)).toEqual({ existingClientId: 17, matchedBy: 'phone' })
     expect(apiClientExists(apiError(409, 'This time is already booked'))).toBeUndefined()
+  })
+
+  it('reads the error code and the validation codes', () => {
+    expect(apiErrorCode(apiError(503, 'Busy', { code: 'ai_busy', retry_after: 5 }))).toBe('ai_busy')
+    expect(apiErrorCode(apiError(500, 'boom'))).toBeUndefined()
+    expect(apiErrorCode(new Error('x'))).toBeUndefined()
+    const audio = apiError(422, 'Validation failed', {
+      validation_errors: [{ field: 'body -> file', message: 'too big', code: 'audio_too_large' }, { field: 'body -> x', message: 'm' }],
+    })
+    expect(apiValidationCodes(audio)).toEqual(['audio_too_large'])
+    expect(apiValidationCodes(new Error('x'))).toEqual([])
+  })
+
+  it('tells a request that got no answer from an error answer', () => {
+    const config = { headers: new AxiosHeaders() } as InternalAxiosRequestConfig
+    expect(apiIsNetworkError(new AxiosError('Network Error', 'ERR_NETWORK', config, {}))).toBe(true)
+    expect(apiIsNetworkError(apiError(503, 'Busy'))).toBe(false)
+    expect(apiIsNetworkError(new Error('x'))).toBe(false)
   })
 
   it('falls back for anything that is not an API error', () => {

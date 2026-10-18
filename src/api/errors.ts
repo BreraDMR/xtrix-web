@@ -69,6 +69,17 @@ export function apiRetryAfter(err: unknown): number | undefined {
   return Number.isFinite(date) ? Math.max(0, Math.ceil((date - Date.now()) / 1000)) : undefined
 }
 
+// detail.code of an error, e.g. "ai_busy" or "plan_not_found"
+export function apiErrorCode(err: unknown): string | undefined {
+  const code = errorObject(err)?.detail?.code
+  return typeof code === 'string' ? code : undefined
+}
+
+// no answer at all: offline, DNS, CORS, the server is down
+export function apiIsNetworkError(err: unknown): boolean {
+  return axios.isAxiosError(err) && !err.response
+}
+
 // POST /clients/ with a phone or email we already have -> 409 pointing at that client
 export function apiClientExists(err: unknown): { existingClientId: number; matchedBy?: string } | undefined {
   const detail = errorObject(err)?.detail
@@ -159,6 +170,10 @@ export function validationMessage(item: ApiValidationError): string {
 
 function validationItems(err: unknown): ApiValidationError[] {
   return errorObject(err)?.detail?.validation_errors ?? []
+}
+
+export function apiValidationCodes(err: unknown): string[] {
+  return validationItems(err).flatMap((item) => (item.code ? [item.code] : []))
 }
 
 export function apiValidationErrors(err: unknown): Record<string, string> {
