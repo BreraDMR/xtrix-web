@@ -16,4 +16,16 @@ module.exports = {
     'no-empty': ['error', { allowEmptyCatch: true }],
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
   },
+  overrides: [
+    {
+      // app code runs in the browser; e2e/ and the config files run in Node and keep process
+      files: ['src/**/*.{ts,tsx}'],
+      rules: {
+        'no-restricted-globals': ['error', {
+          name: 'process',
+          message: 'There is no process in the browser, use import.meta.env (VITE_*) instead.',
+        }],
+      },
+    },
+  ],
 }
