@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/authStore'
 import { resetStores } from '../test/render'
 
 const originalAdapter = api.defaults.adapter
-const user = { id: 1, role: 'specialist', full_name: 'Jane' }
+const user = { id: 1, role: 'specialist', full_name: 'Jane', business_id: null, employer_id: null }
 
 function fail(config: InternalAxiosRequestConfig, status: number): never {
   throw new AxiosError('Failed', String(status), config, null, { config, status, statusText: '', headers: {}, data: {} })
@@ -130,6 +130,12 @@ describe('session in other tabs', () => {
     localStorage.setItem('auth_token', 'renewed')
     storageEvent('auth_token')
     expect(useAuthStore.getState()).toMatchObject({ token: 'renewed', user })
+  })
+
+  it('drops a saved user from before /users/me had business_id, so it gets loaded again', () => {
+    localStorage.setItem('auth_user', JSON.stringify({ id: 1, role: 'specialist', full_name: 'Jane' }))
+    storageEvent('auth_user')
+    expect(useAuthStore.getState()).toMatchObject({ token: 'token', user: null })
   })
 })
 

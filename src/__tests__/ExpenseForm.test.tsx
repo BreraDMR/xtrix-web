@@ -35,6 +35,19 @@ describe('expense form errors', () => {
     expect(within(form).queryByRole('alert')).not.toBeInTheDocument()
   })
 
+  it('books the expense to the business from the session', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: { id: 1 } })
+    await submitExpense()
+    await vi.waitFor(() => expect(api.post).toHaveBeenCalledWith('/expenses/', expect.objectContaining({ amount: 25, business_id: 1 })))
+  })
+
+  it('asks for a business first when the session has none', async () => {
+    signIn({ id: 1, role: 'business_owner', business_id: null })
+    const form = await submitExpense()
+    expect(await within(form).findByRole('alert')).toHaveTextContent('Create your business first')
+    expect(api.post).not.toHaveBeenCalled()
+  })
+
   it('shows anything else above the form', async () => {
     vi.mocked(api.post).mockRejectedValue(apiError(400, 'Category belongs to another business'))
     const form = await submitExpense()

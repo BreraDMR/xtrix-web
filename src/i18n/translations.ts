@@ -163,6 +163,7 @@ export type TranslationKey =
   | 'dashboard.today'
   | 'dashboard.versus'
   | 'inventory.businessRequired'
+  | 'finance.businessRequired'
   | 'inventory.createError'
 
   | 'common.loadError'
@@ -1067,7 +1068,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "dashboard.remaining": {"en": "Remaining", "ru": "Остальные", "cz": "Ostatní"},
   "dashboard.today": {"en": "Today", "ru": "Сегодня", "cz": "Dnes"},
   "dashboard.versus": {"en": "vs", "ru": "и", "cz": "a"},
-  "inventory.businessRequired": {"en": "Business ID not found. Please ensure you have a business assigned.", "ru": "Для работы со складом нужен бизнес.", "cz": "Pro správu skladu potřebujete přiřazený podnik."},
+  "inventory.businessRequired": {"en": "Create your business first, the stock belongs to it.", "ru": "Сначала создайте бизнес, склад привязан к нему.", "cz": "Nejprve vytvořte firmu, sklad k ní patří."},
+  "finance.businessRequired": {"en": "Create your business first, expenses belong to it.", "ru": "Сначала создайте бизнес, расходы привязаны к нему.", "cz": "Nejprve vytvořte firmu, výdaje k ní patří."},
   "inventory.createError": {"en": "Failed to create product. Please try again.", "ru": "Не удалось создать товар. Попробуйте ещё раз.", "cz": "Produkt se nepodařilo vytvořit. Zkuste to znovu."},
 
   'common.save': { en: 'Save', ru: 'Сохранить', cz: 'Uložit' },

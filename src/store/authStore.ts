@@ -17,7 +17,10 @@ interface AuthState {
 function savedUser(): SessionUser | null {
   try {
     const userStr = localStorage.getItem('auth_user')
-    return userStr ? JSON.parse(userStr) : null
+    const user = userStr ? JSON.parse(userStr) : null
+    // saved before /users/me had business_id/employer_id - forget it, PrivateRoute loads a fresh one
+    if (!user || !('business_id' in user) || !('employer_id' in user)) return null
+    return user
   } catch {
     return null
   }

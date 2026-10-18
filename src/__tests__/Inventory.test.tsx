@@ -61,6 +61,25 @@ describe('Inventory product form errors', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Quantity is locked')
   })
 
+  it('creates the product in the business from the session', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: { id: 4 } })
+    renderWithProviders(<Inventory />)
+    await userEvent.click(await screen.findByRole('button', { name: /add product/i }))
+    await userEvent.type(within(document.querySelector('form')!).getAllByRole('textbox')[0], 'Gel')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/products/', expect.objectContaining({ name: 'Gel', business_id: 1 })))
+  })
+
+  it('asks for a business first when the session has none', async () => {
+    signIn({ id: 1, role: 'business_owner', business_id: null })
+    renderWithProviders(<Inventory />)
+    await userEvent.click(await screen.findByRole('button', { name: /add product/i }))
+    await userEvent.type(within(document.querySelector('form')!).getAllByRole('textbox')[0], 'Gel')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Create your business first')
+    expect(api.post).not.toHaveBeenCalled()
+  })
+
   it('asks for a name under the field instead of an alert', async () => {
     renderWithProviders(<Inventory />)
     await userEvent.click(await screen.findByRole('button', { name: /add product/i }))

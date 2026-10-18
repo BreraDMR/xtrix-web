@@ -19,7 +19,7 @@ export function renderWithProviders(ui: ReactElement, { router = true } = {}) {
   return { queryClient, ...result }
 }
 
-export function signIn(user: { id: number; role: string; full_name?: string; business_id?: number | null }) {
+export function signIn(user: { id: number; role: string; full_name?: string; business_id?: number | null; employer_id?: number | null }) {
   useAuthStore.setState({ token: 'test-token', user: { full_name: 'Test User', ...user } })
 }
 

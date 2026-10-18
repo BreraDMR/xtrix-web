@@ -30,24 +30,9 @@ export default function Subscription() {
   // checkout answered 403: the API counts us as staff even if we couldn't tell up front
   const [checkoutForbidden, setCheckoutForbidden] = useState(false)
 
-  // The owner pays for the whole team. /users/me doesn't say whether a specialist works for
-  // someone, so look for their staff record; 404 means a solo specialist who pays for themselves.
-  const { data: staffRecord, isLoading: staffLoading } = useQuery<{ is_active?: boolean } | null>({
-    queryKey: ['my-staff-record', user?.id],
-    queryFn: async () => {
-      try {
-        const { data } = await api.get(`/employees/by-user/${user!.id}`)
-        return data
-      } catch (err) {
-        if (apiErrorStatus(err) === 404) return null
-        throw err
-      }
-    },
-    enabled: user?.role === 'specialist' && !user.employer_id,
-    retry: false,
-  })
-  const isStaff = user?.role === 'employee' || !!user?.employer_id || !!staffRecord?.is_active || checkoutForbidden
-  const isPayer = !isStaff && !staffLoading && (user?.role === 'admin' || user?.role === 'business_owner' || user?.role === 'specialist')
+  // The owner pays for the whole team; /users/me gives employer_id for anyone on someone's staff.
+  const isStaff = user?.role === 'employee' || !!user?.employer_id || checkoutForbidden
+  const isPayer = !isStaff && (user?.role === 'admin' || user?.role === 'business_owner' || user?.role === 'specialist')
 
   const { data: subscription, isLoading: subscriptionLoading } = useQuery<Subscription | null>({
     queryKey: ['subscription'],
@@ -199,7 +184,7 @@ export default function Subscription() {
     enabled: isPayer,
   })
 
-  if (subscriptionLoading || plansLoading || staffLoading) {
+  if (subscriptionLoading || plansLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <LoadingSpinner size="lg" />

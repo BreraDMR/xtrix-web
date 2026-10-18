@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorMessage, apiErrorStatus } from '../api/errors'
+import { apiErrorMessage } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import FormError from '../components/FormError'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
@@ -58,51 +58,19 @@ export default function Inventory() {
   const products: Product[] = productsResponse?.items || []
   const lowStockProducts = products.filter(p => p.quantity <= p.min_quantity)
   
-  const { data: userBusiness } = useQuery({
-    queryKey: ['user-business'],
-    queryFn: async () => {
-      try {
-        const { data } = await api.get('/businesses/me')
-        console.log('User business fetched:', data)
-        return data
-      } catch (error) {
-        console.error('Error fetching user business:', error)
-        if (apiErrorStatus(error) === 404) {
-          return null
-        }
-        throw error
-      }
-    },
-    enabled: !!user,
-    retry: false,
-  })
-
   const createMutation = useMutation({
     mutationFn: async (product: Partial<Product>) => {
-      let businessId = user?.business_id
-      
-      if (!businessId && userBusiness?.id) {
-        businessId = userBusiness.id
-        console.log('Using business_id from API:', businessId)
-      }
-      
-      if (!businessId) {
-        console.error('Business ID not found. User:', user, 'UserBusiness:', userBusiness)
-        throw new Error(t('inventory.businessRequired'))
-      }
-      
-      console.log('Creating product with data:', { ...product, business_id: businessId })
+      // /users/me gives the business, staff get their employer's
+      const businessId = user?.business_id
+      if (!businessId) throw new Error(t('inventory.businessRequired'))
       try {
         const { data } = await api.post('/products/', {
           ...product,
           business_id: businessId,
         })
-        console.log('Product created successfully:', data)
         return data
       } catch (error) {
-        console.error('Error creating product:', error)
-        const errorMessage = apiErrorMessage(error, t('inventory.createError'))
-        throw new Error(errorMessage)
+        throw new Error(apiErrorMessage(error, t('inventory.createError')))
       }
     },
     onSuccess: () => {

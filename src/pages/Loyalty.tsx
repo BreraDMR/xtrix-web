@@ -187,23 +187,6 @@ export default function Loyalty() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<TabType>('program')
 
-  const { data: userBusiness } = useQuery({
-    queryKey: ['user-business'],
-    queryFn: async () => {
-      try {
-        const { data } = await api.get('/businesses/me')
-        return data
-      } catch (error) {
-        if (apiErrorStatus(error) === 404) {
-          return null
-        }
-        throw error
-      }
-    },
-    enabled: !!user,
-    retry: false,
-  })
-  
   const isAdmin = user?.role === 'admin' || user?.role === 'business_owner'
   
   const tabs: { id: TabType; label: string }[] = [
@@ -363,10 +346,7 @@ export default function Loyalty() {
     setProgramError('')
     const formData = new FormData(e.currentTarget)
     
-    let businessId = user?.business_id
-    if (!businessId && userBusiness?.id) {
-      businessId = userBusiness.id
-    }
+    const businessId = user?.business_id
     if (!businessId) {
       setProgramError(t('loyalty.businessRequired'))
       return

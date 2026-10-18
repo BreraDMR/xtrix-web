@@ -29,9 +29,11 @@ describe('loyalty program form errors', () => {
 
   it('shows what the API said when saving fails', async () => {
     signIn({ id: 1, role: 'business_owner', business_id: 1 })
-    vi.mocked(api.get).mockImplementation(routes({ '/businesses/me': { id: 1, currency: 'EUR' } }))
+    vi.mocked(api.get).mockImplementation(routes({}))
     vi.mocked(api.post).mockRejectedValue(apiError(400, 'Program already exists'))
     await openProgramForm()
     expect(await screen.findByRole('alert')).toHaveTextContent('Program already exists')
+    expect(api.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ business_id: 1 }))
+    expect(vi.mocked(api.get).mock.calls.map((c) => c[0])).not.toContain('/businesses/me')
   })
 })

@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiErrorStatus, apiFormErrors } from '../api/errors'
+import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import FormError from '../components/FormError'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
@@ -482,33 +482,8 @@ function ExpenseForm({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [formError, setFormError] = useState('')
 
-  const { data: userBusiness } = useQuery({
-    queryKey: ['user-business'],
-    queryFn: async () => {
-      try {
-        const { data } = await api.get('/businesses/me')
-        return data
-      } catch (error) {
-        if (apiErrorStatus(error) === 404) {
-          return null
-        }
-        throw error
-      }
-    },
-    enabled: !!user,
-    retry: false,
-  })
-
   const createMutation = useMutation({
-    mutationFn: async (expense: NewExpense) => {
-      let businessId = user?.business_id
-      if (!businessId && userBusiness?.id) {
-        businessId = userBusiness.id
-      }
-      if (!businessId) {
-        throw new Error('Business ID not found')
-      }
-
+    mutationFn: async ({ businessId, ...expense }: NewExpense & { businessId: number }) => {
       const { data } = await api.post('/expenses/', {
         ...expense,
         business_id: businessId,
@@ -544,8 +519,15 @@ function ExpenseForm({
 
     setErrors({})
     setFormError('')
+    // /users/me gives the business, staff get their employer's
+    const businessId = user?.business_id
+    if (!businessId) {
+      setFormError(t('finance.businessRequired'))
+      return
+    }
 
     const expenseData = {
+      businessId,
       amount: parseFloat(formData.amount),
       currency: formData.currency,
       description: formData.description || undefined,

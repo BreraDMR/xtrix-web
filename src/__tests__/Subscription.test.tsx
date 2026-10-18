@@ -118,20 +118,21 @@ describe('Subscription', () => {
   })
 
   it.each([
-    ['an employee', { id: 8, role: 'employee' }, {}],
-    ['a specialist on the owner\'s staff', { id: 8, role: 'specialist' }, { '/employees/by-user/8': { id: 2, employee_user_id: 8, business_owner_id: 5, is_active: true } }],
-  ])('tells %s the owner pays, with no pay buttons', async (_who, user, extra) => {
+    ['an employee', { id: 8, role: 'employee' }],
+    ['a specialist on the owner\'s staff', { id: 8, role: 'specialist', employer_id: 5, business_id: 1 }],
+  ])('tells %s the owner pays, with no pay buttons', async (_who, user) => {
     signIn(user)
     vi.mocked(api.get).mockImplementation(routes({
       '/subscriptions/trial/status': { is_trial: false, has_access: true },
       '/subscriptions/plans?active_only=true': [plan],
-      ...extra,
     }))
     renderWithProviders(<Subscription />)
 
     expect(await screen.findByText(/paid by the business owner/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /subscribe/i })).not.toBeInTheDocument()
     expect(api.get).not.toHaveBeenCalledWith('/subscriptions/me')
+    // /users/me says who employs them, no extra lookup
+    expect(vi.mocked(api.get).mock.calls.map((c) => c[0])).not.toContain('/employees/by-user/8')
   })
 
   it('warns staff when the owner\'s subscription has lapsed', async () => {
@@ -148,6 +149,8 @@ describe('Subscription', () => {
     vi.mocked(api.post).mockRejectedValue(apiError(403, 'Not allowed'))
     renderWithProviders(<Subscription />)
     await userEvent.click(await screen.findByRole('button', { name: /^subscribe$/i }))
+    // a solo specialist by /users/me, nothing else to look up
+    expect(vi.mocked(api.get).mock.calls.map((c) => c[0])).not.toContain('/employees/by-user/7')
     expect(await screen.findByText(/paid by the business owner/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /subscribe/i })).not.toBeInTheDocument()
   })

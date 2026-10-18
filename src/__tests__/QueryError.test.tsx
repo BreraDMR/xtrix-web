@@ -39,3 +39,12 @@ it.each([Visits, Employees, Services, Inventory, Finance, Dashboard])('shows fai
   expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
   expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument()
 })
+
+it.each([
+  ['a solo specialist', { employer_id: null }, true],
+  ['a specialist on staff', { employer_id: 5, business_id: 1 }, false],
+])('shows the subscription link to %s by employer_id from /users/me', (_who, extra, shown) => {
+  signIn({ id: 1, role: 'specialist', ...extra })
+  renderWithProviders(<Layout />)
+  expect(screen.queryAllByRole('link', { name: 'Billing' }).length > 0).toBe(shown)
+})
