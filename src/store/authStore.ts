@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 
-type SessionUser = { id: number; full_name: string; role: string; employer_id?: number | null; business_id?: number | null }
+export type SessionUser = { id: number; full_name: string; role: string; employer_id?: number | null; business_id?: number | null }
 
 interface AuthState {
   token: string | null
   user: SessionUser | null
-  setAuth: (token: string, user: any) => void
+  setAuth: (token: string, user: SessionUser) => void
   // fresh tokens from login/signup; the user is loaded right after from /users/me
   startSession: (accessToken: string, refreshToken?: string | null) => void
   setToken: (token: string) => void
