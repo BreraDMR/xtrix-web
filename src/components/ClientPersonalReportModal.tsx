@@ -8,7 +8,8 @@ import ExportModal from './ExportModal'
 import LoadingSpinner from './LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
-import { dayEnd, dayStart, today } from '../utils/dates'
+import { dayEnd, dayStart, showDay, today } from '../utils/dates'
+import type { ClientLoyaltyBalance, ClientOut, VisitOut } from '../api/types'
 
 // one line of the report: column title -> cell
 type ReportRow = Record<string, string | number>
@@ -39,7 +40,7 @@ export default function ClientPersonalReportModal({
   const { data: client, isLoading: isLoadingClient } = useQuery({
     queryKey: ['client', clientId],
     queryFn: async () => {
-      const { data } = await api.get(`/clients/${clientId}`)
+      const { data } = await api.get<ClientOut>(`/clients/${clientId}`)
       return data
     },
     enabled: isOpen && clientId > 0,
@@ -52,7 +53,7 @@ export default function ClientPersonalReportModal({
       params.append('client_id', clientId.toString())
       if (dateFrom) params.append('date_from', dayStart(dateFrom))
       if (dateTo) params.append('date_to', dayEnd(dateTo))
-      const { data } = await api.get(`/visits/?${params.toString()}`)
+      const { data } = await api.get<VisitOut[] | { items?: VisitOut[] }>(`/visits/?${params.toString()}`)
       return Array.isArray(data) ? data : data?.items || []
     },
     enabled: isOpen && clientId > 0 && (selectedReportType === 'visits' || selectedReportType === 'finance'),
@@ -62,7 +63,7 @@ export default function ClientPersonalReportModal({
     queryKey: ['client-loyalty-balance', clientId],
     queryFn: async () => {
       try {
-        const { data } = await api.get(`/loyalty/balance/${clientId}`)
+        const { data } = await api.get<ClientLoyaltyBalance>(`/loyalty/balance/${clientId}`)
         return data
       } catch {
         return null
@@ -96,13 +97,8 @@ export default function ClientPersonalReportModal({
             'Name': client.full_name || '-',
             'Phone': client.contact_phone || '-',
             'Email': client.contact_email || '-',
-            'Date of Birth': client.date_of_birth
-              ? new Date(client.date_of_birth).toLocaleDateString()
-              : '-',
+            'Date of Birth': showDay(client.birth_date),
             'Gender': client.gender || '-',
-            'Notes': client.notes || '-',
-            'Allergies': client.allergies || '-',
-            'Chronic Diseases': client.chronic_diseases || '-',
           },
         ]
       case 'contacts':
@@ -114,7 +110,7 @@ export default function ClientPersonalReportModal({
           },
         ]
       case 'visits':
-        return (visits || []).map((visit: any) => ({
+        return (visits || []).map((visit) => ({
           [t('visits.date')]: new Date(visit.date_start).toLocaleDateString(),
           [t('visits.service')]: visit.service_name || '-',
           [t('visits.status')]: visitStatus(visit.status) || '-',
@@ -123,13 +119,13 @@ export default function ClientPersonalReportModal({
         }))
       case 'finance': {
         const totalSpent = (visits || [])
-          .filter((v: any) => v.status === 'completed')
-          .reduce((sum: number, v: any) => sum + (v.price || 0), 0)
+          .filter((v) => v.status === 'completed')
+          .reduce((sum, v) => sum + (v.price || 0), 0)
         return [
           {
             [t('export.period')]: `${new Date(dateFrom).toLocaleDateString()} - ${new Date(dateTo).toLocaleDateString()}`,
             'Total Visits': (visits || []).length,
-            'Completed': (visits || []).filter((v: any) => v.status === 'completed').length,
+            'Completed': (visits || []).filter((v) => v.status === 'completed').length,
             'Total Revenue': formatCurrency(totalSpent, currency),
             [t('loyalty.points')]: loyaltyBalance?.points || 0,
             [t('loyalty.cashback')]: loyaltyBalance?.cashback ? formatCurrency(loyaltyBalance.cashback, currency) : '-',
