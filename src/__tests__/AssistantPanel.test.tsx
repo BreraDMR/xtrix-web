@@ -149,6 +149,30 @@ describe('focus and keyboard', () => {
     expect(launcher()).toHaveFocus()
   })
 
+  it('keeps Tab inside the panel when it covers the whole screen (phone)', async () => {
+    const matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })
+    Object.defineProperty(window, 'matchMedia', { value: matchMedia, configurable: true, writable: true })
+    try {
+      renderWithProviders(<AssistantLauncher />)
+      const panel = await openPanel()
+      expect(panel).toHaveAttribute('aria-modal', 'true')
+      const box = await input()
+      await waitFor(() => expect(box).toHaveFocus())
+      await userEvent.tab()
+      expect(within(panel).getByRole('button', { name: 'Close' })).toHaveFocus()
+      await userEvent.tab({ shift: true })
+      expect(box).toHaveFocus()
+    } finally {
+      Object.defineProperty(window, 'matchMedia', { value: undefined, configurable: true, writable: true })
+    }
+  })
+
+  it('leaves the page usable next to the side panel on a wide screen', async () => {
+    renderWithProviders(<AssistantLauncher />)
+    const panel = await openPanel()
+    expect(panel).not.toHaveAttribute('aria-modal')
+  })
+
   it('closes with the close button too', async () => {
     renderWithProviders(<AssistantLauncher />)
     const panel = await openPanel()

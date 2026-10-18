@@ -39,6 +39,22 @@ type Entry =
   | PlanEntry
 type NewEntry = Entry extends infer E ? (E extends Entry ? Omit<E, 'id'> : never) : never
 
+// below Tailwind's sm the panel covers the whole screen and acts as a modal
+const PHONE = '(max-width: 639px)'
+const FOCUSABLE = 'button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+
+function useFullScreen(): boolean {
+  const [full, setFull] = useState(() => typeof window.matchMedia === 'function' && window.matchMedia(PHONE).matches)
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
+    const media = window.matchMedia(PHONE)
+    const update = () => setFull(media.matches)
+    media.addEventListener?.('change', update)
+    return () => media.removeEventListener?.('change', update)
+  }, [])
+  return full
+}
+
 interface AssistantPanelProps {
   open: boolean
   onClose: () => void
@@ -65,6 +81,8 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const logRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const fullScreen = useFullScreen()
   const titleId = useId()
   const hintId = useId()
 
@@ -214,6 +232,21 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
     if (event.key === 'Escape') {
       event.stopPropagation()
       onClose()
+      return
+    }
+    // full screen there's nothing to see behind the panel, so Tab goes round inside it
+    if (event.key === 'Tab' && fullScreen && panelRef.current) {
+      const items = Array.from(panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE))
+      if (!items.length) return
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
     }
   }
 
@@ -226,7 +259,9 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
 
   return (
     <div
+      ref={panelRef}
       role="dialog"
+      aria-modal={fullScreen || undefined}
       aria-labelledby={titleId}
       hidden={!open}
       onKeyDown={onKeyDown}
