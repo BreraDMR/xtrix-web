@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen, waitFor } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Subscription from '../pages/Subscription'
 import api from '../api/client'
@@ -37,6 +37,37 @@ describe('Subscription', () => {
     await screen.findByText(/no.*plans/i)
     expect(container.querySelector('details')).toBeNull()
     expect(screen.queryByText(/Отладочная информация/)).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ['en', '/ month', '/ year'],
+    ['ru', '/ месяц', '/ год'],
+    ['cz', '/ měsíc', '/ rok'],
+  ] as const)('labels monthly and annual prices by period in %s', async (locale, monthlyLabel, yearlyLabel) => {
+    useLocaleStore.setState({ locale })
+    signIn({ id: 5, role: 'business_owner', business_id: 1 })
+    const plans = [
+      { ...plan, id: 1, code: 'admin_unlimited_monthly', period_days: 30, price: 129 },
+      { ...plan, id: 2, code: 'admin_unlimited_yearly', period_days: 365, price: 1248 },
+      { ...plan, id: 3, code: 'admin_custom', period_days: 364, price: 999 },
+      { ...plan, id: 4, code: 'admin_custom_leap', period_days: 366, price: 1249 },
+    ]
+    vi.mocked(api.get).mockImplementation(routes({
+      '/subscriptions/me': null,
+      '/subscriptions/trial/status': { is_trial: false, has_access: false },
+      '/subscriptions/plans?active_only=true': plans,
+      '/subscriptions/history': [],
+    }))
+    renderWithProviders(<Subscription />)
+    for (const [price, label, otherLabel] of [
+      [129, monthlyLabel, yearlyLabel], [1248, yearlyLabel, monthlyLabel],
+      [999, monthlyLabel, yearlyLabel], [1249, yearlyLabel, monthlyLabel],
+    ] as const) {
+      const amount = await screen.findByText(`${price}€`)
+      const priceLine = within(amount.parentElement!)
+      expect(priceLine.getByText(label)).toBeInTheDocument()
+      expect(priceLine.queryByText(otherLabel)).not.toBeInTheDocument()
+    }
   })
 
   it('does not create a subscription itself when Stripe is down', async () => {

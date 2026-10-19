@@ -744,6 +744,7 @@ export type TranslationKey =
   | 'subscription.trial_period_active'
   | 'subscription.period_ends'
   | 'subscription.per_month'
+  | 'subscription.per_year'
   | 'subscription.period_days'
   | 'subscription.plan_label'
   | 'subscription.created_label'
@@ -1780,6 +1781,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'subscription.trial_period_active': { en: 'Active', ru: 'Активен', cz: 'Aktivní' },
   'subscription.period_ends': { en: 'Period Ends', ru: 'Период заканчивается', cz: 'Období končí' },
   'subscription.per_month': { en: '/ month', ru: ' / месяц', cz: ' / měsíc' },
+  'subscription.per_year': { en: '/ year', ru: ' / год', cz: ' / rok' },
   'subscription.period_days': { en: 'Period', ru: 'Период', cz: 'Období' },
   'subscription.plan_label': { en: 'Plan', ru: 'План', cz: 'Plán' },
   'subscription.created_label': { en: 'Created', ru: 'Создано', cz: 'Vytvořeno' },

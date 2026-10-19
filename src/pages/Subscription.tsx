@@ -399,7 +399,7 @@ export default function Subscription() {
                 )}
                 <div className="mb-4">
                   <span className="text-3xl font-bold">{plan.price}€</span>
-                  <span className="text-gray-600 dark:text-gray-400">{t('subscription.per_month')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t(plan.period_days >= 365 ? 'subscription.per_year' : 'subscription.per_month')}</span>
                 </div>
                 <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
                   <p>{t('subscription.period_days')}: {plan.period_days} {t('common.days')}</p>
