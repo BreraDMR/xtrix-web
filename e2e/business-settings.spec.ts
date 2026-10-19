@@ -14,14 +14,14 @@ test('owner without a business creates one, then renames it', async ({ page, req
   await field(page, /^Business Name/).fill('Studio Linden')
   await field(page, /^Business Type/).selectOption('salon')
   await page.getByRole('button', { name: 'Create Business' }).click()
-  await expect(page.getByText('Studio Linden')).toBeVisible()
+  await expect(page.getByRole('main').getByText('Studio Linden', { exact: true })).toBeVisible()
 
   await page.getByRole('button', { name: 'Edit Business' }).click()
   await waitForFormData(page)
   await expect(field(page, /^Business Name/)).toHaveValue('Studio Linden')
   await field(page, /^Business Name/).fill('Studio Linden & Co')
   await page.getByRole('button', { name: 'Update Business' }).click()
-  await expect(page.getByText('Studio Linden & Co')).toBeVisible()
+  await expect(page.getByRole('main').getByText('Studio Linden & Co', { exact: true })).toBeVisible()
 
   // the business shows up in the menu now that the user has one
   await page.reload()

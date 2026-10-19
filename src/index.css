@@ -73,7 +73,7 @@ body {
 }
 
 .dark body {
-  background-color: var(--workspace-ink, #1d1d1f);
+  background-color: var(--workspace-bg, #161618);
   color: var(--workspace-ink, #f5f5f7);
 }
 
