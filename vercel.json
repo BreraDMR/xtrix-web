@@ -44,5 +44,11 @@
         }
       ]
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "*": false,
+      "staging": true
+    }
+  }
 }

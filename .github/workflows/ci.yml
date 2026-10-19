@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, staging, develop]
   pull_request:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # the contract lives in xtrix-api; the web client on develop follows the API's develop
+      # Each environment validates the contract from the same API branch.
       - name: Fetch the API contract
         run: curl -fsSL "https://raw.githubusercontent.com/BreraDMR/xtrix-api/${{ github.base_ref || github.ref_name }}/openapi.json" -o "$RUNNER_TEMP/openapi.json"
       - name: scripts/check.sh

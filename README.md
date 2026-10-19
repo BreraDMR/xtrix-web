@@ -67,3 +67,11 @@ running the same command after `npx playwright install chromium`.
 ## License
 
 Proprietary. All rights reserved.
+
+## Release branches
+
+`feature/*` work is integrated into `develop`. Checked changes are promoted to `staging`, which serves
+the public demo. `main` is reserved for reviewed releases and is not connected to a production site yet.
+The API must reach the matching branch before this client: CI fetches its OpenAPI contract by branch.
+The existing Vercel demo project uses `staging` as its production branch; that Vercel label describes
+this demo project's public deployment, not the future production CRM.
