@@ -1,32 +1,38 @@
-import React, { useState, useEffect } from 'react'
+import { useEffect, useRef, useState, type ComponentType } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { signOut } from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
 import { useSyncUiLanguage } from '../hooks/useUiLanguage'
+import { useMyBusiness } from '../hooks/useMyBusiness'
 import AssistantLauncher from './assistant/AssistantLauncher'
-import { 
-  HiOutlineViewGrid, 
-  HiOutlineUsers, 
-  HiOutlineOfficeBuilding, 
-  HiOutlineCalendar,
-  HiOutlinePaperClip,
-  HiOutlineCurrencyDollar,
-  HiOutlineShoppingCart,
-  HiOutlineChartBar,
-  HiOutlineHeart,
-  HiOutlineCog,
-  HiOutlineBriefcase,
-  HiOutlineDocumentText
+import {
+  HiOutlineViewGrid, HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineCalendar,
+  HiOutlinePaperClip, HiOutlineCurrencyDollar, HiOutlineShoppingCart, HiOutlineChartBar,
+  HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
+  HiOutlineMenuAlt2, HiOutlineX, HiOutlineChevronRight,
 } from 'react-icons/hi'
+
+const icons: Record<string, ComponentType<{ className?: string }>> = {
+  '/': HiOutlineViewGrid, '/clients': HiOutlineUsers, '/visits': HiOutlineOfficeBuilding,
+  '/calendar': HiOutlineCalendar, '/services': HiOutlinePaperClip, '/inventory': HiOutlineShoppingCart,
+  '/finance': HiOutlineCurrencyDollar, '/analytics': HiOutlineChartBar, '/loyalty': HiOutlineHeart,
+  '/employees': HiOutlineUsers, '/business': HiOutlineBriefcase, '/subscription': HiOutlineDocumentText,
+  '/my-salary': HiOutlineCurrencyDollar, '/settings': HiOutlineCog,
+}
 
 export default function Layout() {
   const { user } = useAuthStore()
+  const { data: business } = useMyBusiness(!!user)
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [offline, setOffline] = useState(!navigator.onLine)
+  const sidebar = useRef<HTMLElement>(null)
+  const menuButton = useRef<HTMLButtonElement>(null)
+  useSyncUiLanguage()
+
   useEffect(() => {
     const online = () => setOffline(false)
     const offline = () => setOffline(true)
@@ -37,241 +43,106 @@ export default function Layout() {
       window.removeEventListener('offline', offline)
     }
   }, [])
-  useSyncUiLanguage()
 
+  useEffect(() => setIsMobileMenuOpen(false), [location.pathname])
   useEffect(() => {
-    setIsMobileMenuOpen(false)
-  }, [location.pathname])
-
-  const handleLogout = () => {
-    signOut()
-    navigate('/login', { replace: true })
-  }
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
-
-  const getIcon = (path: string) => {
-    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-      '/': HiOutlineViewGrid,
-      '/clients': HiOutlineUsers,
-      '/visits': HiOutlineOfficeBuilding,
-      '/calendar': HiOutlineCalendar,
-      '/services': HiOutlinePaperClip,
-      '/inventory': HiOutlineShoppingCart,
-      '/finance': HiOutlineCurrencyDollar,
-      '/analytics': HiOutlineChartBar,
-      '/loyalty': HiOutlineHeart,
-      '/employees': HiOutlineUsers,
-      '/business': HiOutlineBriefcase,
-      '/subscription': HiOutlineDocumentText,
-      '/my-salary': HiOutlineCurrencyDollar,
-      '/settings': HiOutlineCog,
+    if (!isMobileMenuOpen) return
+    const trigger = menuButton.current
+    const oldOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const controls = () => Array.from(sidebar.current?.querySelectorAll<HTMLElement>('a,button') || [])
+      .filter((el) => el.getClientRects().length > 0)
+    controls()[0]?.focus()
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false)
+      if (event.key !== 'Tab') return
+      const nodes = controls()
+      const first = nodes[0]
+      const last = nodes[nodes.length - 1]
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
     }
-    return iconMap[path] || null
-  }
+    document.addEventListener('keydown', keydown)
+    return () => {
+      document.body.style.overflow = oldOverflow
+      document.removeEventListener('keydown', keydown)
+      trigger?.focus()
+    }
+  }, [isMobileMenuOpen])
 
+  const managesBusiness = user?.role === 'admin' || user?.role === 'business_owner'
   const primaryItems = [
-    { path: '/', label: t('nav.dashboard') },
-    { path: '/clients', label: t('nav.clients') },
-    { path: '/visits', label: t('nav.visits') },
-    { path: '/calendar', label: t('nav.calendar') },
+    { path: '/', label: t('nav.dashboard') }, { path: '/clients', label: t('nav.clients') },
+    { path: '/visits', label: t('nav.visits') }, { path: '/calendar', label: t('nav.calendar') },
     { path: '/services', label: t('nav.services') },
-    ...(user?.role === 'admin' || user?.role === 'business_owner'
-      ? [
-          { path: '/inventory', label: t('nav.inventory') },
-          { path: '/finance', label: t('nav.finance') },
-        ]
-      : []),
+    ...(managesBusiness ? [{ path: '/inventory', label: t('nav.inventory') }, { path: '/finance', label: t('nav.finance') }] : []),
   ]
-
-  const manageItems = [
-    ...(user?.role === 'admin' || user?.role === 'business_owner'
-      ? [
-          { path: '/analytics', label: t('nav.analytics') },
-          { path: '/loyalty', label: t('nav.loyalty') },
-          { path: '/employees', label: t('nav.employees') },
-        ]
-      : []),
-  ]
-
+  const manageItems = managesBusiness ? [
+    { path: '/analytics', label: t('nav.analytics') }, { path: '/loyalty', label: t('nav.loyalty') },
+    { path: '/employees', label: t('nav.employees') },
+  ] : []
   const systemItems = [
-    ...(user?.role === 'admin' || user?.role === 'business_owner'
-      ? [{ path: '/business', label: t('nav.business') }]
-      : []),
-    ...(user?.role === 'admin' || user?.role === 'business_owner' || (user?.role === 'specialist' && !user?.employer_id)
-      ? [{ path: '/subscription', label: t('nav.subscription') }]
-      : []),
-    ...((user?.role === 'employee' || user?.role === 'specialist')
-      ? [{ path: '/my-salary', label: t('nav.my_salary') }]
-      : []),
+    ...(managesBusiness ? [{ path: '/business', label: t('nav.business') }] : []),
+    ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/subscription', label: t('nav.subscription') }] : []),
+    ...(user?.role === 'employee' || user?.role === 'specialist' ? [{ path: '/my-salary', label: t('nav.my_salary') }] : []),
     { path: '/settings', label: t('nav.settings') },
   ]
+  const active = [...primaryItems, ...manageItems, ...systemItems].find(({ path }) =>
+    path === '/' ? location.pathname === path : location.pathname === path || location.pathname.startsWith(path + '/'))
+  const workspaceName = business?.name || t('nav.business')
+  const initials = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
+  const links = (items: { path: string; label: string }[]) => items.map(({ path, label }) => {
+    const Icon = icons[path]
+    const selected = path === '/' ? location.pathname === path : location.pathname === path || location.pathname.startsWith(path + '/')
+    return <Link key={path} to={path} className="crm-navlink" aria-current={selected ? 'page' : undefined}
+      onClick={() => setIsMobileMenuOpen(false)}>
+      <Icon className="h-[18px] w-[18px] shrink-0" /><span className="truncate">{label}</span>
+    </Link>
+  })
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
-      {}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {}
-      <aside
-        className={`w-64 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 flex flex-col fixed h-screen z-50 transition-transform duration-300 ease-in-out border-r border-gray-200 dark:border-gray-700 overflow-hidden ${
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}
-      >
-        {}
-        <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <div className="flex items-center justify-center flex-1">
-            <div className="w-10 h-10 bg-purple-600 dark:bg-purple-500 rounded flex items-center justify-center">
-              <span className="text-xl font-bold text-white">X</span>
-            </div>
-          </div>
-          {}
-          <button
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="lg:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            aria-label="Close menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    <div className="crm-app min-h-screen">
+      {isMobileMenuOpen && <button className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[3px] lg:hidden"
+        aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)} />}
+      <aside ref={sidebar} id="workspace-navigation" role={isMobileMenuOpen ? 'dialog' : undefined}
+        aria-modal={isMobileMenuOpen || undefined} aria-label={t('nav.primary')}
+        className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex w-[228px] flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+        <div className="flex h-[90px] shrink-0 items-center gap-3 px-8">
+          <Link to="/" aria-label="Xtrix" className="flex items-center gap-2.5">
+            <span className="grid h-8 w-8 place-items-center rounded-[11px] bg-gray-900 text-[25px] font-medium leading-none text-white dark:bg-white dark:text-gray-900">x</span>
+            <span className="text-[25px] font-semibold tracking-[-1.2px]">Xtrix</span>
+          </Link>
+          <button className="ml-auto p-1 text-gray-500 lg:hidden" aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)}><HiOutlineX className="h-5 w-5" /></button>
         </div>
-
-        {}
-        <nav 
-          className="flex-1 overflow-y-auto py-4 overscroll-contain"
-          style={{
-            WebkitOverflowScrolling: 'touch',
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#cbd5e1 transparent',
-          }}
-        >
-          {}
-          {primaryItems.length > 0 && (
-            <>
-              <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider sticky top-0 bg-white dark:bg-gray-800 z-10">{t('nav.primary')}</div>
-              {primaryItems.map((item) => {
-                const Icon = getIcon(item.path)
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 touch-manipulation ${
-                      location.pathname === item.path
-                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600'
-                    }`}
-                  >
-                    {Icon && <Icon className="w-5 h-5 mr-3 flex-shrink-0" />}
-                    <span className="truncate">{item.label}</span>
-                  </Link>
-                )
-              })}
-            </>
-          )}
-
-          {}
-          {manageItems.length > 0 && (
-            <>
-              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider sticky top-0 bg-white dark:bg-gray-800 z-10">{t('nav.manage')}</div>
-              {manageItems.map((item) => {
-                const Icon = getIcon(item.path)
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 touch-manipulation ${
-                      location.pathname === item.path
-                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600'
-                    }`}
-                  >
-                    {Icon && <Icon className="w-5 h-5 mr-3 flex-shrink-0" />}
-                    <span className="truncate">{item.label}</span>
-                  </Link>
-                )
-              })}
-            </>
-          )}
-
-          {}
-          {systemItems.length > 0 && (
-            <>
-              <div className="px-4 py-2 mt-4 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider sticky top-0 bg-white dark:bg-gray-800 z-10">{t('nav.system')}</div>
-              {systemItems.map((item) => {
-                const Icon = getIcon(item.path)
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center px-4 py-3 text-sm font-medium transition-all rounded-lg mx-2 touch-manipulation ${
-                      location.pathname === item.path
-                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600'
-                    }`}
-                  >
-                    {Icon && <Icon className="w-5 h-5 mr-3 flex-shrink-0" />}
-                    <span className="truncate">{item.label}</span>
-                  </Link>
-                )
-              })}
-            </>
-          )}
-          
-          {}
-          <div className="h-4 lg:h-8"></div>
+        <div className="mx-[18px] mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-gray-200 bg-white px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gray-100 text-[11px] font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(workspaceName)}</span>
+          <div className="min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
+        </div>
+        <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5">
+          <div className="crm-navlabel">{t('nav.primary')}</div>{links(primaryItems)}
+          {manageItems.length > 0 && <><div className="crm-navlabel">{t('nav.manage')}</div>{links(manageItems)}</>}
+          <div className="crm-navlabel">{t('nav.system')}</div>{links(systemItems)}
         </nav>
       </aside>
-
-      {}
-      <div className="min-w-0 flex-1 lg:ml-64 flex flex-col w-full lg:w-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-        {}
-        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 h-16 flex items-center justify-between px-4 sm:px-6">
-          {}
-          <button
-            onClick={toggleMobileMenu}
-            className="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-
-          <div className="flex-1"></div>
-          <div className="flex items-center space-x-2 sm:space-x-4">
+      <div className="flex min-h-screen min-w-0 flex-col lg:ml-[228px]">
+        <header className="crm-header flex h-16 shrink-0 items-center justify-between gap-3 px-5 lg:h-[76px] lg:px-11">
+          <div className="flex min-w-0 items-center gap-3">
+            <button ref={menuButton} className="-ml-1 p-1 text-gray-600 lg:hidden dark:text-gray-300"
+              aria-label={t('nav.primary')} aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen((open) => !open)}><HiOutlineMenuAlt2 className="h-5 w-5" /></button>
+            <div className="hidden min-w-0 items-center gap-2 text-xs text-gray-500 sm:flex"><span className="max-w-40 truncate">{workspaceName}</span><HiOutlineChevronRight className="h-3 w-3" /><span className="truncate text-gray-800 dark:text-gray-200">{active?.label}</span></div>
+          </div>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             <AssistantLauncher />
-            <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-              <div className="w-8 h-8 bg-primary-600 dark:bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                {user?.full_name?.charAt(0).toUpperCase() || 'U'}
-              </div>
-              <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-200">{user?.full_name || 'User'}</span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="px-2 sm:px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all font-medium"
-            >
-              {t('nav.logout')}
-            </button>
+            <div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-[11px] font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(user?.full_name || 'U')}</span><span className="hidden max-w-40 truncate text-xs sm:inline">{user?.full_name}</span></div>
+            <button className="rounded-lg px-2 py-2 text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20" onClick={() => { signOut(); navigate('/login', { replace: true }) }}>{t('nav.logout')}</button>
           </div>
         </header>
-
-        {}
-        <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-6 animate-fade-in">
-          {offline && <div role="status" className="mb-4 rounded bg-amber-100 p-3 text-amber-900">{t('common.offline')}</div>}
+        <main className="mx-auto w-full min-w-0 max-w-[1540px] flex-1 p-5 pt-8 lg:p-11">
+          {offline && <div role="status" className="mb-5 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-900/20 dark:text-amber-100">{t('common.offline')}</div>}
           <Outlet />
         </main>
       </div>
     </div>
   )
 }
-
