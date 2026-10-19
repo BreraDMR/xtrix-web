@@ -1,3 +1,4 @@
+import Card from '../ui/Card'
 import { Link } from 'react-router-dom'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import QueryError from '../components/QueryError'
@@ -19,7 +20,7 @@ export default function Dashboard() {
   const business = useMyBusiness(!!user)
   const isOwner = user?.role === 'business_owner'
   const canLoad = !!token && (!isOwner || !!business.data)
-  
+
   const { data: profitData, isLoading: isLoadingProfit, isError: queryError0, refetch: retryQuery0 } = useQuery({
     queryKey: ['profit-current-month'],
     queryFn: async () => {
@@ -27,7 +28,7 @@ export default function Dashboard() {
       if (!token) {
         throw new Error('Not authenticated')
       }
-      
+
       const { data } = await api.get('/expenses/reports/profit')
       return data
     },
@@ -58,26 +59,27 @@ export default function Dashboard() {
   if (isOwner && business.isPending) return <LoadingSpinner size="lg" />
   if (isOwner && business.isError) return <QueryError retry={() => { void business.refetch() }} />
   if (isOwner && business.data === null) return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+    <Card className="p-5 sm:p-6">
       <h1 className="mb-4 text-2xl font-bold">{t('business.title')}</h1>
       <Link to="/business" className="text-blue-700 underline">{t('business.create')}</Link>
-    </div>
+    </Card>
   )
 
   if (queryError0 || queryError1 || queryError2) return <QueryError retry={() => { void retryQuery0(); void retryQuery1(); void retryQuery2() }} />
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 dark:text-gray-100">{t('dashboard.title')}</h1>
-        <p className="text-gray-600 dark:text-gray-400">{t('dashboard.subtitle')}</p>
+      <div className="page-toolbar">
+        <div>
+          <h1 className="page-title">{t('dashboard.title')}</h1>
+          <p className="page-subtitle">{t('dashboard.subtitle')}</p>
+        </div>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {}
-        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('dashboard.monthlyProfit')}</h3>
+            <h3 className="text-[13px] font-medium text-[var(--workspace-muted)]">{t('dashboard.monthlyProfit')}</h3>
           </div>
           {isLoadingProfit ? (
             <div className="flex items-center justify-center py-4">
@@ -90,57 +92,53 @@ export default function Dashboard() {
               description={t('dashboard.noProfitData')}
             />
           ) : (
-            <p className={`text-3xl font-bold ${(profitData?.profit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`text-3xl font-semibold tracking-tight tabular-nums ${(profitData?.profit || 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
               {formatCurrency(profitData?.profit, currency)}
             </p>
           )}
-          <p className="text-sm text-gray-500 mt-2 dark:text-gray-400">{t('dashboard.thisMonth')}</p>
-        </div>
+          <p className="text-xs text-[var(--workspace-muted)] mt-3">{t('dashboard.thisMonth')}</p>
+        </Card>
 
-        {}
-        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('dashboard.monthlyRevenue')}</h3>
+            <h3 className="text-[13px] font-medium text-[var(--workspace-muted)]">{t('dashboard.monthlyRevenue')}</h3>
           </div>
           {isLoadingProfit ? (
             <div className="flex items-center justify-center py-4">
               <LoadingSpinner size="md" />
             </div>
           ) : profitData === null || profitData === undefined ? (
-            <p className="text-3xl font-bold text-green-600">{formatCurrency(0, currency)}</p>
+            <p className="text-3xl font-semibold tracking-tight tabular-nums text-emerald-600 dark:text-emerald-400">{formatCurrency(0, currency)}</p>
           ) : (
-            <p className="text-3xl font-bold text-green-600">
+            <p className="text-3xl font-semibold tracking-tight tabular-nums text-emerald-600 dark:text-emerald-400">
               {formatCurrency(profitData?.revenue, currency)}
             </p>
           )}
-          <p className="text-sm text-gray-500 mt-2 dark:text-gray-400">{t('dashboard.thisMonth')}</p>
-        </div>
+          <p className="text-xs text-[var(--workspace-muted)] mt-3">{t('dashboard.thisMonth')}</p>
+        </Card>
 
-        {}
-        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('dashboard.monthlyExpenses')}</h3>
+            <h3 className="text-[13px] font-medium text-[var(--workspace-muted)]">{t('dashboard.monthlyExpenses')}</h3>
           </div>
           {isLoadingProfit ? (
             <div className="flex items-center justify-center py-4">
               <LoadingSpinner size="md" />
             </div>
           ) : profitData === null || profitData === undefined ? (
-            <p className="text-3xl font-bold text-red-600">{formatCurrency(0, currency)}</p>
+            <p className="text-3xl font-semibold tracking-tight tabular-nums text-rose-600 dark:text-rose-400">{formatCurrency(0, currency)}</p>
           ) : (
-            <p className="text-3xl font-bold text-red-600">
+            <p className="text-3xl font-semibold tracking-tight tabular-nums text-rose-600 dark:text-rose-400">
               {formatCurrency(profitData?.expenses, currency)}
             </p>
           )}
-          <p className="text-sm text-gray-500 mt-2 dark:text-gray-400">{t('dashboard.thisMonth')}</p>
-        </div>
+          <p className="text-xs text-[var(--workspace-muted)] mt-3">{t('dashboard.thisMonth')}</p>
+        </Card>
       </div>
 
-      {}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {}
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4 dark:text-gray-300">{t('dashboard.reservations')}</h3>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 mb-5">
+        <Card className="p-5 sm:p-6">
+          <h3 className="text-[15px] font-semibold text-[var(--workspace-ink)] mb-5">{t('dashboard.reservations')}</h3>
           {isLoadingVisitStats ? (
             <div className="flex items-center justify-center py-8">
               <LoadingSpinner size="md" />
@@ -152,8 +150,8 @@ export default function Dashboard() {
               description={t('dashboard.noVisitsDescription')}
             />
           ) : (
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
+            <div className="flex flex-col 2xl:flex-row items-center justify-between gap-4">
+              <div className="w-full min-w-0 flex-1">
                 <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
@@ -169,15 +167,15 @@ export default function Dashboard() {
                       startAngle={90}
                       endAngle={-270}
                     >
-                      <Cell fill="#8B5CF6" />
-                      <Cell fill="#E5E7EB" />
+                      <Cell fill="#007aff" />
+                      <Cell fill="var(--workspace-line)" />
                     </Pie>
                     <text
                       x="50%"
                       y="50%"
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="text-2xl font-bold fill-purple-600"
+                      className="text-2xl font-bold fill-[var(--workspace-accent)]"
                     >
                       {(visitStats?.total_visits || 0) > 0
                         ? `${Math.round(((visitStats?.visits_by_status?.completed || 0) / (visitStats?.total_visits || 1)) * 100)}%`
@@ -188,7 +186,7 @@ export default function Dashboard() {
                       y="60%"
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="text-sm fill-gray-600"
+                      className="text-sm fill-[var(--workspace-muted)]"
                     >
                       {visitStats?.visits_by_status?.completed || 0}/{visitStats?.total_visits || 0} {t('dashboard.completedVisits').toLowerCase()}
                     </text>
@@ -197,23 +195,22 @@ export default function Dashboard() {
               </div>
               <div className="ml-4 space-y-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-purple-600"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.completedVisits')}</span>
+                  <div className="w-3 h-3 rounded bg-[var(--workspace-accent)]"></div>
+                  <span className="text-sm text-[var(--workspace-muted)]">{t('dashboard.completedVisits')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded bg-gray-300 dark:bg-gray-600"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.remaining')}</span>
+                  <span className="text-sm text-[var(--workspace-muted)]">{t('dashboard.remaining')}</span>
                 </div>
               </div>
             </div>
           )}
-        </div>
+        </Card>
 
-        {}
-        <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <Card className="p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('dashboard.quickStatus')}</h3>
-            <span className="text-xs text-gray-500 dark:text-gray-400">{t('dashboard.today')}</span>
+            <h3 className="text-[13px] font-medium text-[var(--workspace-muted)]">{t('dashboard.quickStatus')}</h3>
+            <span className="text-xs text-[var(--workspace-muted)]">{t('dashboard.today')}</span>
           </div>
           {isLoadingClientStats ? (
             <div className="flex items-center justify-center py-8">
@@ -226,36 +223,34 @@ export default function Dashboard() {
               description={t('dashboard.noClientsDescription')}
             />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.totalClients')}</span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
+                <span className="text-sm text-[var(--workspace-muted)]">{t('dashboard.totalClients')}</span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[var(--workspace-bg)] text-[var(--workspace-ink)]">
                   {clientStats?.total_clients || 0}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.newClients')}</span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
+                <span className="text-sm text-[var(--workspace-muted)]">{t('dashboard.newClients')}</span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[var(--workspace-bg)] text-[var(--workspace-ink)]">
                   {clientStats?.new_clients ?? 0}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.averageSpending')}</span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700">
+                <span className="text-sm text-[var(--workspace-muted)]">{t('dashboard.averageSpending')}</span>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[var(--workspace-bg)] text-[var(--workspace-ink)]">
                   {formatCurrency(clientStats?.average_spending || 0, currency)}
                 </span>
               </div>
             </div>
           )}
-        </div>
+        </Card>
       </div>
 
-      {}
       {profitData && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {}
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4 dark:text-gray-300">{t('dashboard.monthlyRevenue')} {t('dashboard.versus')} {t('dashboard.monthlyExpenses')}</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+            <Card className="p-5 sm:p-6">
+            <h3 className="text-[15px] font-semibold text-[var(--workspace-ink)] mb-5">{t('dashboard.monthlyRevenue')} {t('dashboard.versus')} {t('dashboard.monthlyExpenses')}</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
@@ -277,11 +272,10 @@ export default function Dashboard() {
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
 
-          {}
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4 dark:text-gray-300">{t('dashboard.profitMargin')}</h3>
+            <Card className="p-5 sm:p-6">
+            <h3 className="text-[15px] font-semibold text-[var(--workspace-ink)] mb-5">{t('dashboard.profitMargin')}</h3>
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <div className="flex justify-between text-sm text-gray-600 mb-1 dark:text-gray-400">
@@ -296,7 +290,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>
