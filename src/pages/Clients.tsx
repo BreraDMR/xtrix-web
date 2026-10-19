@@ -1,10 +1,13 @@
+import Button from '../ui/Button'
+import Input from '../ui/Input'
+import Select from '../ui/Select'
+import Card from '../ui/Card'
 import QueryError from '../components/QueryError'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
 import ClientForm from '../components/ClientForm'
-import SearchBar from '../components/SearchBar'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
@@ -93,23 +96,23 @@ export default function Clients() {
 
   const filteredClients = useMemo(() => {
     if (!clients) return []
-    
+
     let filtered = clients.filter((client) => {
       const matchesSearch =
         searchQuery === '' ||
         client.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         client.contact_phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         client.contact_email?.toLowerCase().includes(searchQuery.toLowerCase())
-      
+
       const matchesGender = genderFilter === null || client.gender === genderFilter
-      
+
       return matchesSearch && matchesGender
     })
-    
+
     if (sortConfig.key && sortConfig.direction) {
       filtered = sortData(filtered, sortConfig)
     }
-    
+
     return filtered
   }, [clients, searchQuery, genderFilter, sortConfig])
 
@@ -161,26 +164,29 @@ export default function Clients() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('clients.title')}</h1>
+      <div className="page-toolbar">
+        <div className="flex items-center gap-3">
+          <h1 className="page-title">{t('clients.title')}</h1>
+          <span className="rounded-full border border-[var(--workspace-line)] px-3 py-1 text-sm tabular-nums text-[var(--workspace-muted)]">{clients?.length ?? 0}</span>
+        </div>
         {!showForm && (
-          <div className="flex gap-2">
-            <button
+          <div className="page-actions">
+            <Button
               onClick={() => setShowImportModal(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center gap-2"
+              variant="secondary"
             >
               <HiUpload className="w-4 h-4" />
               {t('import.title')}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 setEditingId(undefined)
                 setShowForm(true)
               }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+              variant="primary"
             >
               {t('clients.addClient')}
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -189,25 +195,33 @@ export default function Clients() {
         <div className="mb-6 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div className="flex-1 w-full sm:max-w-md">
-              <SearchBar
+              <Input
+                type="search"
+                aria-label={t('clients.searchPlaceholder')}
                 placeholder={t('clients.searchPlaceholder')}
-                onSearch={setSearchQuery}
+                value={searchQuery}
+                onChange={(event) => {
+                  setSearchQuery(event.target.value)
+                  setCurrentPage(1)
+                }}
+                className="w-full"
               />
             </div>
-            <div className="flex gap-4 items-center">
-              <select
+            <div className="flex flex-wrap gap-3 items-center">
+              <Select
+                aria-label={t('clientForm.gender')}
                 value={genderFilter || ''}
                 onChange={(e) => {
                   setGenderFilter(e.target.value || null)
                   setCurrentPage(1)
                 }}
-                className="px-4 py-2 border rounded-md"
+                className="w-full sm:w-auto"
               >
                 <option value="">{t('clients.allGenders')}</option>
                 <option value="male">{t('clients.male')}</option>
                 <option value="female">{t('clients.female')}</option>
                 <option value="other">{t('clients.other')}</option>
-              </select>
+              </Select>
               {filteredClients.length > 0 && (
                 <ExportButton
                   data={filteredClients}
@@ -215,8 +229,8 @@ export default function Clients() {
                     { key: 'full_name', label: t('clients.name') },
                     { key: 'contact_phone', label: t('clients.phone') },
                     { key: 'contact_email', label: t('clients.email') },
-                    { key: 'gender', label: 'Gender' },
-                    { key: 'birth_date', label: 'Date of Birth', format: (val) => showDay(val) },
+                    { key: 'gender', label: t('clientForm.gender') },
+                    { key: 'birth_date', label: t('clientForm.birthDate'), format: (val) => showDay(val) },
                   ]}
                   filename={`clients-${today()}`}
                   title={t('export.clientReport')}
@@ -229,23 +243,22 @@ export default function Clients() {
                 />
               )}
               {(searchQuery || genderFilter) && (
-                <button
+                <Button
                   onClick={() => {
                     setSearchQuery('')
                     setGenderFilter(null)
                     setCurrentPage(1)
                   }}
-                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                  variant="quiet"
                 >
                   {t('clients.clearFilters')}
-                </button>
+                </Button>
               )}
             </div>
           </div>
         </div>
       )}
 
-      {}
       {clientReportId && (
         <ClientPersonalReportModal
           isOpen={!!clientReportId}
@@ -254,7 +267,6 @@ export default function Clients() {
         />
       )}
 
-      {}
       {showImportModal && (
         <ImportClientsModal
           isOpen={showImportModal}
@@ -267,7 +279,7 @@ export default function Clients() {
       )}
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
+        <Card className="p-5 sm:p-6">
           <ClientForm
             key={editingId ?? 'new'}
             clientId={editingId}
@@ -278,12 +290,12 @@ export default function Clients() {
               setEditingId(undefined)
             }}
           />
-        </div>
+        </Card>
       ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden dark:bg-gray-800">
+      <Card className="overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900">
+          <table className="min-w-full divide-y divide-[var(--workspace-line)]">
+            <thead className="bg-[var(--workspace-bg)]">
               <tr>
                 <TableSortHeader
                   columnKey="full_name"
@@ -314,22 +326,25 @@ export default function Clients() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+            <tbody className="divide-y divide-[var(--workspace-line)]">
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-[var(--workspace-muted)]">
                     {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((client) => (
-                <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                <tr key={client.id} className="hover:bg-[var(--workspace-bg)]">
                   <td className="px-2 sm:px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
-                    <div className="flex flex-col">
-                      <span>{client.full_name}</span>
+                    <div className="flex items-center gap-3">
+                      <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">{client.full_name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toLocaleUpperCase()}</span>
+                      <div className="flex min-w-0 flex-col">
+                        <span>{client.full_name}</span>
                       <span className="text-xs text-gray-500 sm:hidden mt-1 dark:text-gray-400">
                         {client.contact_phone || '-'}
                       </span>
+                      </div>
                     </div>
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell dark:text-gray-400">
@@ -341,22 +356,22 @@ export default function Clients() {
                   <td className="px-2 sm:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell dark:text-gray-400">
                     <ClientLoyaltyBalance clientId={client.id} />
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-[var(--workspace-muted)]">
                     <div className="flex items-center gap-3">
-                      <button
+                      <Button
                         onClick={() => handleEdit(client.id)}
-                        className="text-blue-600 hover:text-blue-800 font-medium"
+                        variant="quiet"
                       >
                         {t('common.edit')}
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => setClientReportId(client.id)}
-                        className="text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
+                        variant="quiet"
                         title={t('export.personalReport')}
                       >
                         <HiPrinter className="w-4 h-4" />
                         <span className="hidden sm:inline">{t('common.print')}</span>
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -365,17 +380,19 @@ export default function Clients() {
             </tbody>
           </table>
         </div>
-        {totalPages > 1 && (
+        {totalPages > 1 ? (
           <TablePagination
             currentPage={currentPage}
             totalPages={totalPages}
             totalItems={totalItems}
             perPage={perPage}
             onPageChange={setCurrentPage}
-            onPerPageChange={setPerPage}
+            onPerPageChange={(value) => { setPerPage(value); setCurrentPage(1) }}
           />
+        ) : (
+          <p className="border-t border-[var(--workspace-line)] px-6 py-4 text-xs text-[var(--workspace-muted)]">{t('pagination.range').replace('{start}', String(totalItems ? 1 : 0)).replace('{end}', String(totalItems)).replace('{total}', String(totalItems))}</p>
         )}
-      </div>
+      </Card>
       )}
     </div>
   )
