@@ -1,3 +1,7 @@
+import Button from '../ui/Button'
+import Input from '../ui/Input'
+import Select from '../ui/Select'
+import Card from '../ui/Card'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
@@ -39,8 +43,8 @@ const DATE_FORMATS: Option<'date_format'>[] = [
 ]
 
 const TIME_FORMATS: Option<'time_format'>[] = [
-  { value: '24h', label: '24 hour (14:30)' },
-  { value: '12h', label: '12 hour (2:30 PM)' },
+  { value: '24h', label: '24h (14:30)' },
+  { value: '12h', label: '12h (2:30 PM)' },
 ]
 
 const EXPORT_FORMATS: Option<'export_format'>[] = [
@@ -126,61 +130,64 @@ export default function Settings() {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('settings.title')}</h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{t('settings.subtitle')}</p>
+      <div className="page-toolbar">
+        <div>
+          <h1 className="page-title">{t('settings.title')}</h1>
+          <p className="page-subtitle">{t('settings.subtitle')}</p>
+        </div>
       </div>
 
-      <div className="space-y-6">
-        {}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.language')}</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.language_description')}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-2">
+        <Card className="p-5 sm:p-6">
+          <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.language')}</h2>
+          <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.language_description')}</p>
+          <div className="grid grid-cols-3 gap-3">
             {languages.map((lang) => (
-              <button
+              <Button
+                variant="secondary"
                 key={lang.code}
+                aria-pressed={locale === lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
-                className={`px-4 py-3 rounded-lg border-2 transition-all text-left ${
+                className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-xl border transition-colors text-left ${
                   locale === lang.code
-                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400 text-blue-900 dark:text-blue-100'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    ? 'border-[var(--workspace-accent)] bg-blue-50 dark:bg-blue-900/20 text-[var(--workspace-ink)]'
+                    : 'border-[var(--workspace-line)] hover:bg-[var(--workspace-bg)] text-[var(--workspace-ink)]'
                 }`}
               >
                 <div className="font-medium">{lang.native}</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">{lang.label}</div>
-              </button>
+              </Button>
             ))}
           </div>
-        </div>
+        </Card>
 
-        {}
         {business && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.currency')}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.currency_description')}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+        <Card className="p-5 sm:p-6">
+            <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.currency')}</h2>
+            <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.currency_description')}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {CURRENCIES.map((currency) => (
-                <button
+                <Button
+                  variant="secondary"
                   key={currency}
+                  aria-pressed={currentCurrency === currency}
                   onClick={() => handleCurrencyChange(currency)}
                   disabled={updateCurrencyMutation.isPending}
-                  className={`px-4 py-3 rounded-lg border-2 transition-all text-left ${
+                  className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-xl border transition-colors text-left ${
                     currentCurrency === currency
-                      ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400 text-blue-900 dark:text-blue-100'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                      ? 'border-[var(--workspace-accent)] bg-blue-50 dark:bg-blue-900/20 text-[var(--workspace-ink)]'
+                      : 'border-[var(--workspace-line)] hover:bg-[var(--workspace-bg)] text-[var(--workspace-ink)]'
                   } ${updateCurrencyMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <div className="font-medium flex items-center gap-2">
+                  <div className="font-medium flex items-center justify-center gap-2">
                     <span>{getCurrencySymbol(currency)}</span>
                     <span>{currency}</span>
                   </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t(`settings.currency_${currency.toLowerCase()}` as TranslationKey)}</div>
-                </button>
+                  <div className="text-sm text-[var(--workspace-muted)] mt-1">{t(`settings.currency_${currency.toLowerCase()}` as TranslationKey)}</div>
+                </Button>
               ))}
             </div>
             {updateCurrencyMutation.isPending && (
-              <div className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="mt-4 flex items-center gap-2 text-sm text-[var(--workspace-muted)]">
                 <LoadingSpinner size="sm" />
                 <span>{t('settings.saving')}</span>
               </div>
@@ -191,107 +198,115 @@ export default function Settings() {
             {updateCurrencyMutation.isError && (
               <div className="mt-4 text-sm text-red-600 dark:text-red-400">{t('settings.error_saving')}</div>
             )}
-          </div>
+          </Card>
         )}
 
-        {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.theme')}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.theme_description')}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <Card className="p-5 sm:p-6">
+            <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.theme')}</h2>
+            <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.theme_description')}</p>
+            <div className="grid grid-cols-3 gap-3">
               {THEMES.map((theme) => (
-                <button
+                <Button
+                  variant="secondary"
                   key={theme.value}
+                  aria-pressed={preferences.theme === theme.value}
                   onClick={() => handlePreferenceChange('theme', theme.value)}
                   disabled={updatePreferencesMutation.isPending}
-                  className={`px-4 py-3 rounded-lg border-2 transition-all text-left ${
+                  className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-xl border transition-colors text-left ${
                     preferences.theme === theme.value
-                      ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400 text-blue-900 dark:text-blue-100'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                      ? 'border-[var(--workspace-accent)] bg-blue-50 dark:bg-blue-900/20 text-[var(--workspace-ink)]'
+                      : 'border-[var(--workspace-line)] hover:bg-[var(--workspace-bg)] text-[var(--workspace-ink)]'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <div className="font-medium">{t(`settings.theme_${theme.value}` as TranslationKey)}</div>
-                </button>
+                  <div aria-hidden="true" className={`mb-3 h-16 overflow-hidden rounded-lg border border-[var(--workspace-line)] p-2 ${theme.value === 'dark' ? 'bg-[#232326]' : theme.value === 'system' ? 'bg-gradient-to-r from-[#f5f5f7] from-50% to-[#232326] to-50%' : 'bg-[#f5f5f7]'}`}>
+                    <div className="flex h-full gap-2"><div className="w-1/4 rounded bg-blue-400/25" /><div className="flex-1 space-y-2 py-1"><div className="h-1.5 w-3/4 rounded bg-blue-400/50" /><div className="h-1.5 rounded bg-gray-400/30" /><div className="h-1.5 w-1/2 rounded bg-gray-400/30" /></div></div>
+                  </div>
+                  <div className="text-center text-sm font-medium">{t(`settings.theme_${theme.value}` as TranslationKey)}</div>
+                </Button>
               ))}
             </div>
-          </div>
+          </Card>
         )}
 
-        {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.timezone')}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.timezone_description')}</p>
-            <select
+        <Card className="p-5 sm:p-6">
+            <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.timezone')}</h2>
+            <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.timezone_description')}</p>
+            <Select
+              aria-label={t('settings.timezone')}
               value={preferences.timezone || 'UTC'}
               onChange={(e) => handlePreferenceChange('timezone', e.target.value)}
               disabled={updatePreferencesMutation.isPending}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full"
             >
               {TIMEZONES.map((tz) => (
                 <option key={tz.value} value={tz.value}>
                   {tz.label}
                 </option>
               ))}
-            </select>
-          </div>
+            </Select>
+          </Card>
         )}
 
-        {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.date_time_format')}</h2>
+        <Card className="p-5 sm:p-6">
+            <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.date_time_format')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('settings.date_format')}</label>
-                <select
+                <label className="block text-sm font-medium text-[var(--workspace-ink)] mb-2">{t('settings.date_format')}</label>
+                <Select
+                  aria-label={t('settings.date_format')}
                   value={preferences.date_format || 'DD/MM/YYYY'}
                   onChange={(e) => handlePreferenceChange('date_format', e.target.value as Option<'date_format'>['value'])}
                   disabled={updatePreferencesMutation.isPending}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full"
                 >
                   {DATE_FORMATS.map((fmt) => (
                     <option key={fmt.value} value={fmt.value}>
                       {fmt.label}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('settings.time_format')}</label>
-                <select
+                <label className="block text-sm font-medium text-[var(--workspace-ink)] mb-2">{t('settings.time_format')}</label>
+                <Select
+                  aria-label={t('settings.time_format')}
                   value={preferences.time_format || '24h'}
                   onChange={(e) => handlePreferenceChange('time_format', e.target.value as Option<'time_format'>['value'])}
                   disabled={updatePreferencesMutation.isPending}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full"
                 >
                   {TIME_FORMATS.map((fmt) => (
                     <option key={fmt.value} value={fmt.value}>
                       {fmt.label}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
             </div>
-          </div>
+          </Card>
         )}
 
-        {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.notifications')}</h2>
+        <Card className="p-5 sm:p-6">
+            <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.notifications')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings.email_notifications')}</label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{t('settings.email_notifications_description')}</p>
+                  <label className="text-sm font-medium text-[var(--workspace-ink)]">{t('settings.email_notifications')}</label>
+                  <p className="text-xs text-[var(--workspace-muted)]">{t('settings.email_notifications_description')}</p>
                 </div>
                 <button
+                  type="button"
+                  role="switch"
+                  aria-label={t('settings.email_notifications')}
+                  aria-checked={preferences.email_notifications}
                   onClick={() => handlePreferenceChange('email_notifications', !preferences.email_notifications)}
                   disabled={updatePreferencesMutation.isPending}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.email_notifications ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
+                    preferences.email_notifications ? 'bg-[var(--workspace-accent)]' : 'bg-gray-300 dark:bg-gray-600'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <span
@@ -303,14 +318,18 @@ export default function Settings() {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings.push_notifications')}</label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{t('settings.push_notifications_description')}</p>
+                  <label className="text-sm font-medium text-[var(--workspace-ink)]">{t('settings.push_notifications')}</label>
+                  <p className="text-xs text-[var(--workspace-muted)]">{t('settings.push_notifications_description')}</p>
                 </div>
                 <button
+                  type="button"
+                  role="switch"
+                  aria-label={t('settings.push_notifications')}
+                  aria-checked={preferences.push_notifications}
                   onClick={() => handlePreferenceChange('push_notifications', !preferences.push_notifications)}
                   disabled={updatePreferencesMutation.isPending}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.push_notifications ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
+                    preferences.push_notifications ? 'bg-[var(--workspace-accent)]' : 'bg-gray-300 dark:bg-gray-600'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <span
@@ -321,24 +340,27 @@ export default function Settings() {
                 </button>
               </div>
             </div>
-          </div>
+          </Card>
         )}
 
-        {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.auto_save')}</h2>
+        <Card className="p-5 sm:p-6">
+            <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.auto_save')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('settings.auto_save_enabled')}</label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{t('settings.auto_save_description')}</p>
+                  <label className="text-sm font-medium text-[var(--workspace-ink)]">{t('settings.auto_save_enabled')}</label>
+                  <p className="text-xs text-[var(--workspace-muted)]">{t('settings.auto_save_description')}</p>
                 </div>
                 <button
+                  type="button"
+                  role="switch"
+                  aria-label={t('settings.auto_save_enabled')}
+                  aria-checked={preferences.auto_save_enabled}
                   onClick={() => handlePreferenceChange('auto_save_enabled', !preferences.auto_save_enabled)}
                   disabled={updatePreferencesMutation.isPending}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.auto_save_enabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'
+                    preferences.auto_save_enabled ? 'bg-[var(--workspace-accent)]' : 'bg-gray-300 dark:bg-gray-600'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <span
@@ -350,46 +372,47 @@ export default function Settings() {
               </div>
               {preferences.auto_save_enabled && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--workspace-ink)] mb-2">
                     {t('settings.auto_save_interval')} ({t('settings.seconds')})
                   </label>
-                  <input
+                  <Input
                     type="number"
+                    aria-label={t('settings.auto_save_interval')}
                     min="5"
                     max="300"
                     value={preferences.auto_save_interval}
                     onChange={(e) => handlePreferenceChange('auto_save_interval', parseInt(e.target.value))}
                     disabled={updatePreferencesMutation.isPending}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full"
                   />
                 </div>
               )}
             </div>
-          </div>
+          </Card>
         )}
 
-        {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.export_format')}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.export_format_description')}</p>
-            <select
+        <Card className="p-5 sm:p-6">
+            <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.export_format')}</h2>
+            <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.export_format_description')}</p>
+            <Select
+              aria-label={t('settings.export_format')}
               value={preferences.export_format || 'csv'}
               onChange={(e) => handlePreferenceChange('export_format', e.target.value as Option<'export_format'>['value'])}
               disabled={updatePreferencesMutation.isPending}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full"
             >
               {EXPORT_FORMATS.map((fmt) => (
                 <option key={fmt.value} value={fmt.value}>
                   {fmt.label}
                 </option>
               ))}
-            </select>
-          </div>
+            </Select>
+          </Card>
         )}
 
         {updatePreferencesMutation.isPending && (
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex items-center justify-center gap-2 text-sm text-[var(--workspace-muted)]">
             <LoadingSpinner size="sm" />
             <span>{t('settings.saving')}</span>
           </div>
