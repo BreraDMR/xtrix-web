@@ -123,13 +123,13 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-5 py-16 dark:bg-gray-900">
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />
       </div>
-      <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-xl shadow-2xl animate-fade-in">
+      <div className="ui-card max-w-md w-full space-y-8 p-8 sm:p-10">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Xtrix</h2>
+          <h2 className="text-4xl font-semibold tracking-[-1.5px] text-gray-900 dark:text-white mb-3">Xtrix</h2>
           <p className="text-gray-600 dark:text-gray-300">{t('register.title')}</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
