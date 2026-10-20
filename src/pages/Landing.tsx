@@ -6,6 +6,7 @@ import PublicHeader from '../components/marketing/PublicHeader'
 import Features from '../components/marketing/Features'
 import ProductTour from '../components/marketing/ProductTour'
 import FAQ from '../components/marketing/FAQ'
+import PublicFooter from '../components/marketing/PublicFooter'
 import {
   HiOutlineCalendar,
   HiOutlineCheckCircle,
@@ -157,6 +158,9 @@ export default function Landing() {
 
       {/* FAQ Section */}
       <FAQ />
+
+      {/* Footer */}
+      <PublicFooter />
     </div>
   )
 }
