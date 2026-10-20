@@ -7,6 +7,7 @@ import { apiErrorMessage, apiErrorStatus, apiFormErrors } from '../api/errors'
 import type { ClientLoyaltyBalance, ClientOut, Schema, ServiceOut, ServicePage, ServiceSpecialistOut } from '../api/types'
 import { useAuthStore } from '../store/authStore'
 import LoadingSpinner from './LoadingSpinner'
+import QuestionnaireAnswers from './clients/QuestionnaireAnswers'
 import { useTranslation } from '../hooks/useTranslation'
 
 interface VisitFormProps {
@@ -711,6 +712,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         />
         {fieldErrors.note && <FormError message={fieldErrors.note} />}
       </div>
+
+      {visitId && <QuestionnaireAnswers visitId={visitId} />}
 
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button

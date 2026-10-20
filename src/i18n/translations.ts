@@ -1290,6 +1290,11 @@ export type TranslationKey =
   | 'questionnairePage.error.tooLarge'
   | 'questionnairePage.error.unexpected'
   | 'questionnairePage.error.generic'
+  | 'questionnaireAnswers.title'
+  | 'questionnaireAnswers.version'
+  | 'questionnaireAnswers.submittedAt'
+  | 'questionnaireAnswers.noAccess'
+  | 'questionnaireAnswers.loadError'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -3049,6 +3054,20 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     en: 'Check this answer.',
     ru: 'Проверьте этот ответ.',
     cz: 'Zkontrolujte tuto odpověď.',
+  },
+
+  'questionnaireAnswers.title': { en: 'Questionnaire', ru: 'Анкета', cz: 'Dotazník' },
+  'questionnaireAnswers.version': { en: 'Version', ru: 'Версия', cz: 'Verze' },
+  'questionnaireAnswers.submittedAt': { en: 'Completed', ru: 'Заполнена', cz: 'Vyplněno' },
+  'questionnaireAnswers.noAccess': {
+    en: 'You do not have access to this questionnaire.',
+    ru: 'Нет доступа к этой анкете.',
+    cz: 'K tomuto dotazníku nemáte přístup.',
+  },
+  'questionnaireAnswers.loadError': {
+    en: 'Could not load the questionnaire answers.',
+    ru: 'Не удалось загрузить ответы анкеты.',
+    cz: 'Odpovědi z dotazníku se nepodařilo načíst.',
   },
 }
 

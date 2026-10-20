@@ -71,6 +71,7 @@ export type QuestionnaireVersionOut = Schema<'QuestionnaireVersionOut'>
 export type QuestionnaireFormOut = Schema<'QuestionnaireFormOut'>
 export type QuestionnaireAnswersIn = Schema<'QuestionnaireAnswersIn'>
 export type QuestionnaireSubmittedOut = Schema<'QuestionnaireSubmittedOut'>
+export type QuestionnaireAnswersOut = Schema<'QuestionnaireAnswersOut'>
 export type QuestionnaireField = QuestionnaireTemplateOut['fields'][number]
 export type QuestionnaireFieldType = QuestionnaireField['type']
 export type QuestionnaireOption = Schema<'QuestionnaireOption'>
