@@ -1259,6 +1259,37 @@ export type TranslationKey =
   | 'questionnaireEditor.errorMaxSelected'
   | 'questionnaireEditor.errorFieldsRequired'
   | 'questionnaireEditor.errorPlainText'
+  | 'questionnairePage.title'
+  | 'questionnairePage.linkUnavailableTitle'
+  | 'questionnairePage.linkUnavailableText'
+  | 'questionnairePage.version'
+  | 'questionnairePage.validUntil'
+  | 'questionnairePage.draftHint'
+  | 'questionnairePage.required'
+  | 'questionnairePage.yes'
+  | 'questionnairePage.no'
+  | 'questionnairePage.maxSelected'
+  | 'questionnairePage.textPlaceholder'
+  | 'questionnairePage.submit'
+  | 'questionnairePage.submitting'
+  | 'questionnairePage.submitError'
+  | 'questionnairePage.checkAnswers'
+  | 'questionnairePage.savedTitle'
+  | 'questionnairePage.savedText'
+  | 'questionnairePage.alreadySubmittedTitle'
+  | 'questionnairePage.alreadySubmittedText'
+  | 'questionnairePage.sentAt'
+  | 'questionnairePage.error.required'
+  | 'questionnairePage.error.tooLong'
+  | 'questionnairePage.error.invalidText'
+  | 'questionnairePage.error.expectedText'
+  | 'questionnairePage.error.invalidOption'
+  | 'questionnairePage.error.tooMany'
+  | 'questionnairePage.error.duplicate'
+  | 'questionnairePage.error.expectedBoolean'
+  | 'questionnairePage.error.tooLarge'
+  | 'questionnairePage.error.unexpected'
+  | 'questionnairePage.error.generic'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -2918,6 +2949,106 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     en: 'Use plain text without < or >.',
     ru: 'Используйте обычный текст без < и >.',
     cz: 'Použijte prostý text bez < a >.',
+  },
+
+  'questionnairePage.title': { en: 'Questionnaire', ru: 'Анкета', cz: 'Dotazník' },
+  'questionnairePage.linkUnavailableTitle': {
+    en: 'This link is unavailable',
+    ru: 'Эта ссылка недоступна',
+    cz: 'Tento odkaz není dostupný',
+  },
+  'questionnairePage.linkUnavailableText': {
+    en: 'The link may have expired or already been used. Ask the business for a new one.',
+    ru: 'Ссылка могла устареть или уже использоваться. Попросите салон прислать новую.',
+    cz: 'Odkaz mohl vypršet nebo už byl použit. Požádejte firmu o nový.',
+  },
+  'questionnairePage.version': { en: 'Version', ru: 'Версия', cz: 'Verze' },
+  'questionnairePage.validUntil': { en: 'Valid until', ru: 'Действует до', cz: 'Platný do' },
+  'questionnairePage.draftHint': {
+    en: 'Answers are kept in this browser tab until you send them.',
+    ru: 'Ответы сохраняются в этой вкладке браузера до отправки.',
+    cz: 'Odpovědi se v této kartě prohlížeče ukládají do odeslání.',
+  },
+  'questionnairePage.required': { en: 'Required', ru: 'Обязательный', cz: 'Povinné' },
+  'questionnairePage.yes': { en: 'Yes', ru: 'Да', cz: 'Ano' },
+  'questionnairePage.no': { en: 'No', ru: 'Нет', cz: 'Ne' },
+  'questionnairePage.maxSelected': { en: 'Choose no more than', ru: 'Выберите не более', cz: 'Vyberte nejvýše' },
+  'questionnairePage.textPlaceholder': { en: 'Your answer', ru: 'Ваш ответ', cz: 'Vaše odpověď' },
+  'questionnairePage.submit': { en: 'Send answers', ru: 'Отправить ответы', cz: 'Odeslat odpovědi' },
+  'questionnairePage.submitting': { en: 'Sending...', ru: 'Отправка...', cz: 'Odesílání...' },
+  'questionnairePage.submitError': {
+    en: 'Could not send the answers.',
+    ru: 'Не удалось отправить ответы.',
+    cz: 'Odpovědi se nepodařilo odeslat.',
+  },
+  'questionnairePage.checkAnswers': {
+    en: 'Check the marked answers.',
+    ru: 'Проверьте отмеченные ответы.',
+    cz: 'Zkontrolujte označené odpovědi.',
+  },
+  'questionnairePage.savedTitle': { en: 'Thank you', ru: 'Спасибо', cz: 'Děkujeme' },
+  'questionnairePage.savedText': {
+    en: 'Your answers were sent to the business.',
+    ru: 'Ваши ответы отправлены салону.',
+    cz: 'Vaše odpovědi byly firmě odeslány.',
+  },
+  'questionnairePage.alreadySubmittedTitle': { en: 'Already submitted', ru: 'Уже отправлено', cz: 'Již odesláno' },
+  'questionnairePage.alreadySubmittedText': {
+    en: 'This questionnaire has already been answered. You can close this page.',
+    ru: 'Эта анкета уже заполнена. Страницу можно закрыть.',
+    cz: 'Tento dotazník už byl vyplněn. Stránku můžete zavřít.',
+  },
+  'questionnairePage.sentAt': { en: 'Sent', ru: 'Отправлено', cz: 'Odesláno' },
+  'questionnairePage.error.required': {
+    en: 'Answer this question.',
+    ru: 'Ответьте на этот вопрос.',
+    cz: 'Odpovězte na tuto otázku.',
+  },
+  'questionnairePage.error.tooLong': {
+    en: 'The answer is too long.',
+    ru: 'Ответ слишком длинный.',
+    cz: 'Odpověď je příliš dlouhá.',
+  },
+  'questionnairePage.error.invalidText': {
+    en: 'Use plain text without control characters.',
+    ru: 'Используйте обычный текст без управляющих символов.',
+    cz: 'Použijte prostý text bez řídicích znaků.',
+  },
+  'questionnairePage.error.expectedText': { en: 'Enter text.', ru: 'Введите текст.', cz: 'Zadejte text.' },
+  'questionnairePage.error.invalidOption': {
+    en: 'Choose one of the offered options.',
+    ru: 'Выберите один из предложенных вариантов.',
+    cz: 'Vyberte jednu z nabízených možností.',
+  },
+  'questionnairePage.error.tooMany': {
+    en: 'Too many options selected.',
+    ru: 'Выбрано слишком много вариантов.',
+    cz: 'Vybráno příliš mnoho možností.',
+  },
+  'questionnairePage.error.duplicate': {
+    en: 'The same option is selected twice.',
+    ru: 'Один вариант выбран дважды.',
+    cz: 'Stejná možnost je vybrána dvakrát.',
+  },
+  'questionnairePage.error.expectedBoolean': {
+    en: 'Choose yes or no.',
+    ru: 'Выберите «да» или «нет».',
+    cz: 'Vyberte ano nebo ne.',
+  },
+  'questionnairePage.error.tooLarge': {
+    en: 'The answers are too long.',
+    ru: 'Ответы слишком длинные.',
+    cz: 'Odpovědi jsou příliš dlouhé.',
+  },
+  'questionnairePage.error.unexpected': {
+    en: 'This answer format is not supported.',
+    ru: 'Этот формат ответа не поддерживается.',
+    cz: 'Tento formát odpovědi není podporován.',
+  },
+  'questionnairePage.error.generic': {
+    en: 'Check this answer.',
+    ru: 'Проверьте этот ответ.',
+    cz: 'Zkontrolujte tuto odpověď.',
   },
 }
 
