@@ -11565,8 +11565,9 @@ export interface operations {
     };
     create_checkout_session_subscriptions_checkout_create_session_post: {
         parameters: {
-            query: {
-                plan_id: number;
+            query?: {
+                plan_id?: number | null;
+                offer_code?: string | null;
             };
             header?: {
                 "Accept-Language"?: string | null;
