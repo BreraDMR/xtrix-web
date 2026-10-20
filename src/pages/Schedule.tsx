@@ -6,12 +6,13 @@ import Card from '../ui/Card'
 import Select from '../ui/Select'
 import LoadingSpinner from '../components/LoadingSpinner'
 import WeeklyEditor from '../components/schedules/WeeklyEditor'
+import DateExceptions from '../components/schedules/DateExceptions'
 import { useAuthStore } from '../store/authStore'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import { useTranslation } from '../hooks/useTranslation'
 import type { TranslationKey } from '../i18n/translations'
 
-type Tab = 'weekly'
+type Tab = 'weekly' | 'exceptions'
 
 interface EmployeeRow {
   employee_user_id: number
@@ -20,6 +21,7 @@ interface EmployeeRow {
 
 const TABS: { id: Tab; label: TranslationKey }[] = [
   { id: 'weekly', label: 'schedule.tab.weekly' },
+  { id: 'exceptions', label: 'schedule.tab.exceptions' },
 ]
 
 export default function Schedule() {
@@ -119,6 +121,9 @@ export default function Schedule() {
       )}
       {!businessLoading && activeId !== undefined && tab === 'weekly' && (
         <WeeklyEditor key={`weekly-${activeId}`} specialistId={activeId} />
+      )}
+      {!businessLoading && activeId !== undefined && tab === 'exceptions' && (
+        <DateExceptions key={`exceptions-${activeId}`} specialistId={activeId} timeZone={timeZone} />
       )}
     </div>
   )
