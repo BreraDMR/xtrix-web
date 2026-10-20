@@ -7,7 +7,7 @@ import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import CheckoutReturn from '../components/CheckoutReturn'
 import { useLabels } from '../i18n/labels'
-import type { Schema } from '../api/types'
+import type { Schema, EntitlementsUsageOut } from '../api/types'
 
 type Subscription = Schema<'SubscriptionOut'>
 type SubscriptionPlan = Schema<'SubscriptionPlanOut'>
@@ -48,6 +48,14 @@ export default function Subscription() {
     queryKey: ['trial-status'],
     queryFn: async () => {
       const { data } = await api.get('/subscriptions/trial/status')
+      return data
+    },
+  })
+
+  const { data: usageData } = useQuery<EntitlementsUsageOut>({
+    queryKey: ['subscription-usage'],
+    queryFn: async () => {
+      const { data } = await api.get<EntitlementsUsageOut>('/subscriptions/usage')
       return data
     },
   })
@@ -247,6 +255,84 @@ export default function Subscription() {
         {t('subscription.title')}
       </h1>
       <CheckoutReturn />
+
+      {/* Usage and Entitlements */}
+      {usageData && (
+        <div className="mb-8 bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">
+              {t('subscription.usage_title')}
+            </h2>
+            <span className="text-xs font-mono bg-slate-100 dark:bg-slate-700 px-2.5 py-1 rounded text-slate-600 dark:text-slate-300">
+              {usageData.period}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* CRM active clients */}
+            <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/50">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
+                  {t('subscription.crm_usage')}
+                </span>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                    usageData.crm.is_within_limit
+                      ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300'
+                      : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                  }`}
+                >
+                  {usageData.crm.is_within_limit
+                    ? t('subscription.within_limit')
+                    : t('subscription.limit_exceeded')}
+                </span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                {usageData.crm.active_clients}
+                <span className="text-sm font-normal text-slate-500 ml-1">
+                  / {usageData.crm.limit ?? '∞'}
+                </span>
+              </div>
+              {usageData.crm.offer_code && (
+                <div className="text-xs text-slate-500 mt-1">
+                  Тариф: {usageData.crm.offer_code}
+                </div>
+              )}
+            </div>
+
+            {/* AI Sasha daily requests */}
+            <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/50">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
+                  {t('subscription.ai_usage')}
+                </span>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                    usageData.ai.is_within_limit
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                      : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                  }`}
+                >
+                  {usageData.ai.is_within_limit
+                    ? t('subscription.within_limit')
+                    : t('subscription.limit_exceeded')}
+                </span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                {usageData.ai.daily_requests_used}
+                <span className="text-sm font-normal text-slate-500 ml-1">
+                  / {usageData.ai.daily_requests_limit ?? 20}
+                </span>
+              </div>
+              {usageData.ai.offer_code && (
+                <div className="text-xs text-slate-500 mt-1">
+                  Продукт: {usageData.ai.offer_code}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
 
       {}

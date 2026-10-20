@@ -706,6 +706,11 @@ export type TranslationKey =
   | 'finance.total'
   | 'finance.payment_other'
   | 'subscription.title'
+  | 'subscription.usage_title'
+  | 'subscription.crm_usage'
+  | 'subscription.ai_usage'
+  | 'subscription.within_limit'
+  | 'subscription.limit_exceeded'
   | 'subscription.notRequired'
   | 'subscription.currentSubscription'
   | 'subscription.trialActive'
@@ -1814,6 +1819,11 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'finance.total': { en: 'Total', ru: 'Итого', cz: 'Celkem' },
   
   'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },
+  'subscription.usage_title': { en: 'Plan Usage and Entitlements', ru: 'Использование тарифа и лимиты', cz: 'Využití tarifu a limity' },
+  'subscription.crm_usage': { en: 'CRM: Active Clients', ru: 'CRM: активные клиенты', cz: 'CRM: aktivní klienti' },
+  'subscription.ai_usage': { en: 'AI Sasha: Daily Requests', ru: 'ИИ Сашенька: запросы за сегодня', cz: 'AI Sašenka: dnešní dotazy' },
+  'subscription.within_limit': { en: 'Within limit', ru: 'В пределах тарифа', cz: 'V rámci limitu' },
+  'subscription.limit_exceeded': { en: 'Limit reached', ru: 'Лимит исчерпан', cz: 'Limit vyčerpán' },
   'subscription.notRequired': { en: 'Subscription is not required for your role', ru: 'Подписка не требуется для вашей роли', cz: 'Předplatné není vyžadováno pro vaši roli' },
   'subscription.currentSubscription': { en: 'Current Subscription', ru: 'Текущая подписка', cz: 'Aktuální předplatné' },
   'subscription.trialActive': { en: 'Trial period is active', ru: 'Пробный период активен', cz: 'Zkušební období je aktivní' },
