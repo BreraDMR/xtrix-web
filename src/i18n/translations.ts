@@ -49,6 +49,15 @@ export type TranslationKey =
   | 'login.twoFactorCode'
   | 'login.twoFactorWrong'
   | 'login.twoFactorBack'
+  | 'login.forgotPassword'
+  | 'forgot.subtitle'
+  | 'forgot.email'
+  | 'forgot.submit'
+  | 'forgot.sending'
+  | 'forgot.successTitle'
+  | 'forgot.success'
+  | 'forgot.backToLogin'
+  | 'forgot.failed'
   | 'errors.tooManyRequests'
   | 'errors.tooManyRequestsLater'
   | 'errors.loginThrottled'
@@ -1849,6 +1858,27 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'login.dontHaveAccount': { en: "Don't have an account?", ru: 'Нет аккаунта?', cz: 'Nemáte účet?' },
   'login.signUp': { en: 'Sign up', ru: 'Зарегистрироваться', cz: 'Registrovat se' },
   'login.failed': { en: 'Login failed', ru: 'Ошибка входа', cz: 'Přihlášení se nezdařilo' },
+  'login.forgotPassword': { en: 'Forgot password?', ru: 'Забыли пароль?', cz: 'Zapomněli jste heslo?' },
+  'forgot.subtitle': {
+    en: 'Enter your email and we will send a reset link if an account exists.',
+    ru: 'Укажите email — мы отправим ссылку для сброса, если аккаунт существует.',
+    cz: 'Zadejte e-mail a pokud účet existuje, pošleme odkaz pro obnovení.',
+  },
+  'forgot.email': { en: 'Email', ru: 'Email', cz: 'Email' },
+  'forgot.submit': { en: 'Send reset link', ru: 'Отправить ссылку', cz: 'Odeslat odkaz' },
+  'forgot.sending': { en: 'Sending...', ru: 'Отправка...', cz: 'Odesílání...' },
+  'forgot.successTitle': { en: 'Check your email', ru: 'Проверьте почту', cz: 'Zkontrolujte e-mail' },
+  'forgot.success': {
+    en: 'If an account with this email exists, a reset link has been sent. The link is valid for 30 minutes.',
+    ru: 'Если аккаунт с таким email существует, ссылка для сброса отправлена. Ссылка действует 30 минут.',
+    cz: 'Pokud účet s tímto e-mailem existuje, odkaz pro obnovení byl odeslán. Odkaz je platný 30 minut.',
+  },
+  'forgot.backToLogin': { en: 'Back to sign in', ru: 'Вернуться ко входу', cz: 'Zpět k přihlášení' },
+  'forgot.failed': {
+    en: 'Could not send the reset link. Try again later.',
+    ru: 'Не удалось отправить ссылку для сброса. Попробуйте позже.',
+    cz: 'Odkaz pro obnovení se nepodařilo odeslat. Zkuste to později.',
+  },
   
   'dashboard.title': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },
   'dashboard.subtitle': { en: 'Overview of your business', ru: 'Обзор вашего бизнеса', cz: 'Přehled vašeho podnikání' },

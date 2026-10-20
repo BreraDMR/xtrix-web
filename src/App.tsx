@@ -3,6 +3,7 @@ import { useTheme } from './hooks/useTheme'
 import PrivateRoute from './components/PrivateRoute'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
@@ -37,6 +38,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/booking/:slug" element={<BookingPage />} />
         <Route path="/manage" element={<ManageBookingPage />} />
