@@ -1193,6 +1193,72 @@ export type TranslationKey =
   | 'schedule.buffers.before'
   | 'schedule.buffers.after'
   | 'schedule.buffers.empty'
+  | 'nav.questionnaires'
+  | 'questionnaires.title'
+  | 'questionnaires.new'
+  | 'questionnaires.emptyTitle'
+  | 'questionnaires.emptyDescription'
+  | 'questionnaires.fieldsCount'
+  | 'questionnaires.service'
+  | 'questionnaires.status'
+  | 'questionnaires.updated'
+  | 'questionnaires.publishedVersion'
+  | 'questionnaires.draftOnly'
+  | 'questionnaires.noService'
+  | 'questionnaires.businessRequired'
+  | 'questionnaires.noAccess'
+  | 'questionnaires.untitled'
+  | 'questionnaires.emptyFields'
+  | 'questionnaires.backToList'
+  | 'questionnaireEditor.createTitle'
+  | 'questionnaireEditor.editTitle'
+  | 'questionnaireEditor.name'
+  | 'questionnaireEditor.namePlaceholder'
+  | 'questionnaireEditor.description'
+  | 'questionnaireEditor.descriptionPlaceholder'
+  | 'questionnaireEditor.service'
+  | 'questionnaireEditor.serviceHint'
+  | 'questionnaireEditor.fields'
+  | 'questionnaireEditor.fieldsHint'
+  | 'questionnaireEditor.add'
+  | 'questionnaireEditor.type'
+  | 'questionnaireEditor.label'
+  | 'questionnaireEditor.labelPlaceholder'
+  | 'questionnaireEditor.fieldHint'
+  | 'questionnaireEditor.fieldHintPlaceholder'
+  | 'questionnaireEditor.required'
+  | 'questionnaireEditor.options'
+  | 'questionnaireEditor.optionsHint'
+  | 'questionnaireEditor.maxSelected'
+  | 'questionnaireEditor.maxSelectedHint'
+  | 'questionnaireEditor.moveUp'
+  | 'questionnaireEditor.moveDown'
+  | 'questionnaireEditor.remove'
+  | 'questionnaireEditor.keyHint'
+  | 'questionnaireEditor.preview'
+  | 'questionnaireEditor.hidePreview'
+  | 'questionnaireEditor.previewTitle'
+  | 'questionnaireEditor.noFields'
+  | 'questionnaireEditor.type.text'
+  | 'questionnaireEditor.type.long_text'
+  | 'questionnaireEditor.type.single_choice'
+  | 'questionnaireEditor.type.multi_choice'
+  | 'questionnaireEditor.type.boolean'
+  | 'questionnaireEditor.answerPlaceholder'
+  | 'questionnaireEditor.saveDraft'
+  | 'questionnaireEditor.publish'
+  | 'questionnaireEditor.publishing'
+  | 'questionnaireEditor.saved'
+  | 'questionnaireEditor.saveError'
+  | 'questionnaireEditor.publishError'
+  | 'questionnaireEditor.errorName'
+  | 'questionnaireEditor.errorLabel'
+  | 'questionnaireEditor.errorOptionsCount'
+  | 'questionnaireEditor.errorOptionsDuplicate'
+  | 'questionnaireEditor.errorOptionLong'
+  | 'questionnaireEditor.errorMaxSelected'
+  | 'questionnaireEditor.errorFieldsRequired'
+  | 'questionnaireEditor.errorPlainText'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -2697,6 +2763,162 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'schedule.buffers.before': { en: 'Before, min', ru: 'До, мин', cz: 'Před, min' },
   'schedule.buffers.after': { en: 'After, min', ru: 'После, мин', cz: 'Po, min' },
   'schedule.buffers.empty': { en: 'No services yet.', ru: 'Услуг пока нет.', cz: 'Zatím žádné služby.' },
+
+  'nav.questionnaires': { en: 'Questionnaires', ru: 'Анкеты', cz: 'Dotazníky' },
+  'questionnaires.title': { en: 'Questionnaires', ru: 'Анкеты', cz: 'Dotazníky' },
+  'questionnaires.new': { en: 'New questionnaire', ru: 'Новая анкета', cz: 'Nový dotazník' },
+  'questionnaires.emptyTitle': { en: 'No questionnaires yet', ru: 'Анкет пока нет', cz: 'Zatím žádné dotazníky' },
+  'questionnaires.emptyDescription': {
+    en: 'Ask guests a few questions before their visit. You choose the questions.',
+    ru: 'Задайте гостям несколько вопросов перед визитом. Вопросы выбираете вы.',
+    cz: 'Položte hostům několik otázek před návštěvou. Otázky volíte vy.',
+  },
+  'questionnaires.fieldsCount': { en: 'Fields', ru: 'Поля', cz: 'Pole' },
+  'questionnaires.service': { en: 'Service', ru: 'Услуга', cz: 'Služba' },
+  'questionnaires.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'questionnaires.updated': { en: 'Updated', ru: 'Обновлено', cz: 'Aktualizováno' },
+  'questionnaires.publishedVersion': { en: 'Published version', ru: 'Опубликованная версия', cz: 'Publikovaná verze' },
+  'questionnaires.draftOnly': { en: 'Draft only', ru: 'Только черновик', cz: 'Pouze koncept' },
+  'questionnaires.noService': { en: 'No service', ru: 'Без услуги', cz: 'Bez služby' },
+  'questionnaires.businessRequired': {
+    en: 'Create your business first, questionnaires belong to it.',
+    ru: 'Сначала создайте бизнес, анкеты привязаны к нему.',
+    cz: 'Nejprve vytvořte firmu, dotazníky k ní patří.',
+  },
+  'questionnaires.noAccess': {
+    en: 'Only the business owner can manage questionnaires.',
+    ru: 'Управлять анкетами может только владелец бизнеса.',
+    cz: 'Dotazníky může spravovat pouze majitel firmy.',
+  },
+  'questionnaires.untitled': { en: 'Untitled questionnaire', ru: 'Анкета без названия', cz: 'Dotazník bez názvu' },
+  'questionnaires.emptyFields': {
+    en: 'No fields yet. Add at least one before publishing.',
+    ru: 'Полей пока нет. Добавьте хотя бы одно перед публикацией.',
+    cz: 'Zatím žádná pole. Před publikováním přidejte alespoň jedno.',
+  },
+  'questionnaires.backToList': { en: 'Back to list', ru: 'К списку', cz: 'Zpět na seznam' },
+
+  'questionnaireEditor.createTitle': { en: 'New questionnaire', ru: 'Новая анкета', cz: 'Nový dotazník' },
+  'questionnaireEditor.editTitle': { en: 'Edit questionnaire', ru: 'Редактирование анкеты', cz: 'Úprava dotazníku' },
+  'questionnaireEditor.name': { en: 'Name', ru: 'Название', cz: 'Název' },
+  'questionnaireEditor.namePlaceholder': {
+    en: 'e.g. Before your first visit',
+    ru: 'например, Перед первым визитом',
+    cz: 'např. Před první návštěvou',
+  },
+  'questionnaireEditor.description': { en: 'Description', ru: 'Описание', cz: 'Popis' },
+  'questionnaireEditor.descriptionPlaceholder': {
+    en: 'Optional note for guests',
+    ru: 'Необязательное пояснение для гостей',
+    cz: 'Volitelná poznámka pro hosty',
+  },
+  'questionnaireEditor.service': { en: 'Service', ru: 'Услуга', cz: 'Služba' },
+  'questionnaireEditor.serviceHint': {
+    en: 'Applied when you publish; it decides which visits can use this questionnaire.',
+    ru: 'Применяется при публикации и определяет, для каких визитов доступна анкета.',
+    cz: 'Použije se při publikování a určuje, pro které návštěvy je dotazník dostupný.',
+  },
+  'questionnaireEditor.fields': { en: 'Fields', ru: 'Поля', cz: 'Pole' },
+  'questionnaireEditor.fieldsHint': {
+    en: 'Guests see the questions in this order.',
+    ru: 'Гости видят вопросы в этом порядке.',
+    cz: 'Hosté vidí otázky v tomto pořadí.',
+  },
+  'questionnaireEditor.add': { en: 'Add field', ru: 'Добавить поле', cz: 'Přidat pole' },
+  'questionnaireEditor.type': { en: 'Type', ru: 'Тип', cz: 'Typ' },
+  'questionnaireEditor.label': { en: 'Question', ru: 'Вопрос', cz: 'Otázka' },
+  'questionnaireEditor.labelPlaceholder': {
+    en: 'What should the guest answer?',
+    ru: 'Что должен ответить гость?',
+    cz: 'Co má host odpovědět?',
+  },
+  'questionnaireEditor.fieldHint': { en: 'Hint', ru: 'Подсказка', cz: 'Nápověda' },
+  'questionnaireEditor.fieldHintPlaceholder': {
+    en: 'Optional explanation',
+    ru: 'Необязательное пояснение',
+    cz: 'Volitelné vysvětlení',
+  },
+  'questionnaireEditor.required': { en: 'Required', ru: 'Обязательный', cz: 'Povinné' },
+  'questionnaireEditor.options': { en: 'Options', ru: 'Варианты', cz: 'Možnosti' },
+  'questionnaireEditor.optionsHint': {
+    en: 'One option per line, at least two.',
+    ru: 'По одному варианту в строке, минимум два.',
+    cz: 'Jedna možnost na řádek, alespoň dvě.',
+  },
+  'questionnaireEditor.maxSelected': { en: 'Max choices', ru: 'Максимум выборов', cz: 'Maximálně voleb' },
+  'questionnaireEditor.maxSelectedHint': {
+    en: 'Leave empty for no limit',
+    ru: 'Оставьте пустым без ограничения',
+    cz: 'Nechte prázdné bez omezení',
+  },
+  'questionnaireEditor.moveUp': { en: 'Move up', ru: 'Вверх', cz: 'Nahoru' },
+  'questionnaireEditor.moveDown': { en: 'Move down', ru: 'Вниз', cz: 'Dolů' },
+  'questionnaireEditor.remove': { en: 'Remove field', ru: 'Удалить поле', cz: 'Odebrat pole' },
+  'questionnaireEditor.keyHint': { en: 'Answer key', ru: 'Ключ ответа', cz: 'Klíč odpovědi' },
+  'questionnaireEditor.preview': { en: 'Preview', ru: 'Предпросмотр', cz: 'Náhled' },
+  'questionnaireEditor.hidePreview': { en: 'Hide preview', ru: 'Скрыть предпросмотр', cz: 'Skrýt náhled' },
+  'questionnaireEditor.previewTitle': { en: 'Guest preview', ru: 'Предпросмотр для гостя', cz: 'Náhled pro hosta' },
+  'questionnaireEditor.noFields': {
+    en: 'Add a field to see the preview.',
+    ru: 'Добавьте поле, чтобы увидеть предпросмотр.',
+    cz: 'Přidejte pole pro zobrazení náhledu.',
+  },
+  'questionnaireEditor.type.text': { en: 'Short text', ru: 'Короткий текст', cz: 'Krátký text' },
+  'questionnaireEditor.type.long_text': { en: 'Long text', ru: 'Длинный текст', cz: 'Dlouhý text' },
+  'questionnaireEditor.type.single_choice': { en: 'One option', ru: 'Один вариант', cz: 'Jedna možnost' },
+  'questionnaireEditor.type.multi_choice': { en: 'Several options', ru: 'Несколько вариантов', cz: 'Několik možností' },
+  'questionnaireEditor.type.boolean': { en: 'Yes / no', ru: 'Да / нет', cz: 'Ano / ne' },
+  'questionnaireEditor.answerPlaceholder': { en: 'Guest answer', ru: 'Ответ гостя', cz: 'Odpověď hosta' },
+  'questionnaireEditor.saveDraft': { en: 'Save draft', ru: 'Сохранить черновик', cz: 'Uložit koncept' },
+  'questionnaireEditor.publish': { en: 'Publish', ru: 'Опубликовать', cz: 'Publikovat' },
+  'questionnaireEditor.publishing': { en: 'Publishing...', ru: 'Публикация...', cz: 'Publikování...' },
+  'questionnaireEditor.saved': { en: 'Draft saved.', ru: 'Черновик сохранён.', cz: 'Koncept uložen.' },
+  'questionnaireEditor.saveError': {
+    en: 'Could not save the questionnaire.',
+    ru: 'Не удалось сохранить анкету.',
+    cz: 'Dotazník se nepodařilo uložit.',
+  },
+  'questionnaireEditor.publishError': {
+    en: 'Could not publish the questionnaire.',
+    ru: 'Не удалось опубликовать анкету.',
+    cz: 'Dotazník se nepodařilo publikovat.',
+  },
+  'questionnaireEditor.errorName': { en: 'Give the questionnaire a name.', ru: 'Укажите название анкеты.', cz: 'Zadejte název dotazníku.' },
+  'questionnaireEditor.errorLabel': {
+    en: 'Every field needs a question.',
+    ru: 'У каждого поля должен быть вопрос.',
+    cz: 'Každé pole potřebuje otázku.',
+  },
+  'questionnaireEditor.errorOptionsCount': {
+    en: 'Add between 2 and 20 options.',
+    ru: 'Добавьте от 2 до 20 вариантов.',
+    cz: 'Přidejte 2 až 20 možností.',
+  },
+  'questionnaireEditor.errorOptionsDuplicate': {
+    en: 'Options must be different.',
+    ru: 'Варианты не должны повторяться.',
+    cz: 'Možnosti se nesmí opakovat.',
+  },
+  'questionnaireEditor.errorOptionLong': {
+    en: 'An option is too long.',
+    ru: 'Один из вариантов слишком длинный.',
+    cz: 'Některá možnost je příliš dlouhá.',
+  },
+  'questionnaireEditor.errorMaxSelected': {
+    en: 'The limit must be between 1 and the number of options.',
+    ru: 'Ограничение должно быть от 1 до числа вариантов.',
+    cz: 'Limit musí být mezi 1 a počtem možností.',
+  },
+  'questionnaireEditor.errorFieldsRequired': {
+    en: 'Add at least one field before publishing.',
+    ru: 'Добавьте хотя бы одно поле перед публикацией.',
+    cz: 'Před publikováním přidejte alespoň jedno pole.',
+  },
+  'questionnaireEditor.errorPlainText': {
+    en: 'Use plain text without < or >.',
+    ru: 'Используйте обычный текст без < и >.',
+    cz: 'Použijte prostý text bez < a >.',
+  },
 }
 
 export default translations

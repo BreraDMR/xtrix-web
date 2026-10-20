@@ -11,13 +11,14 @@ import {
   HiOutlineViewGrid, HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineCalendar,
   HiOutlinePaperClip, HiOutlineCurrencyDollar, HiOutlineShoppingCart, HiOutlineChartBar,
   HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
-  HiOutlineClock, HiOutlineMenuAlt2, HiOutlineX, HiOutlineChevronRight, HiOutlineChevronLeft,
+  HiOutlineClock, HiOutlineClipboardList, HiOutlineMenuAlt2, HiOutlineX,
+  HiOutlineChevronRight, HiOutlineChevronLeft,
 } from 'react-icons/hi'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
   '/app': HiOutlineViewGrid, '/app/clients': HiOutlineUsers, '/app/visits': HiOutlineOfficeBuilding,
   '/app/calendar': HiOutlineCalendar, '/app/schedules': HiOutlineClock, '/app/services': HiOutlinePaperClip,
-  '/app/inventory': HiOutlineShoppingCart,
+  '/app/questionnaires': HiOutlineClipboardList, '/app/inventory': HiOutlineShoppingCart,
   '/app/finance': HiOutlineCurrencyDollar, '/app/analytics': HiOutlineChartBar, '/app/loyalty': HiOutlineHeart,
   '/app/employees': HiOutlineUsers, '/app/business': HiOutlineBriefcase, '/app/subscription': HiOutlineDocumentText,
   '/app/my-salary': HiOutlineCurrencyDollar, '/app/settings': HiOutlineCog,
@@ -75,11 +76,13 @@ export default function Layout() {
 
   const managesBusiness = user?.role === 'admin' || user?.role === 'business_owner'
   const managesSchedule = managesBusiness || user?.role === 'specialist'
+  const managesQuestionnaires = managesBusiness || (user?.role === 'specialist' && !user.employer_id)
   const primaryItems = [
     { path: '/app', label: t('nav.dashboard') }, { path: '/app/clients', label: t('nav.clients') },
     { path: '/app/visits', label: t('nav.visits') }, { path: '/app/calendar', label: t('nav.calendar') },
     ...(managesSchedule ? [{ path: '/app/schedules', label: t('nav.schedule') }] : []),
     { path: '/app/services', label: t('nav.services') },
+    ...(managesQuestionnaires ? [{ path: '/app/questionnaires', label: t('nav.questionnaires') }] : []),
     ...(managesBusiness ? [{ path: '/app/inventory', label: t('nav.inventory') }, { path: '/app/finance', label: t('nav.finance') }] : []),
   ]
   const manageItems = managesBusiness ? [

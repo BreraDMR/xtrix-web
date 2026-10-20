@@ -568,6 +568,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/businesses/me/questionnaires/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List questionnaire drafts */
+        get: operations["list_questionnaires_businesses_me_questionnaires__get"];
+        put?: never;
+        /** Create a questionnaire draft */
+        post: operations["create_questionnaire_businesses_me_questionnaires__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/questionnaires/{template_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a questionnaire draft */
+        get: operations["get_questionnaire_businesses_me_questionnaires__template_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit a questionnaire draft */
+        patch: operations["update_questionnaire_businesses_me_questionnaires__template_id__patch"];
+        trace?: never;
+    };
+    "/businesses/me/questionnaires/{template_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish a questionnaire version and bind it to a service */
+        post: operations["publish_questionnaire_businesses_me_questionnaires__template_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/businesses/{business_id}": {
         parameters: {
             query?: never;
@@ -1754,6 +1807,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/public/questionnaires": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Load a questionnaire by its guest token */
+        get: operations["get_questionnaire_public_questionnaires_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/questionnaires/answers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit answers with a guest token */
+        post: operations["submit_questionnaire_public_questionnaires_answers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/questionnaires/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reserve a private upload for a questionnaire */
+        post: operations["create_attachment_public_questionnaires_attachments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/questionnaires/attachments/{attachment_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm that a reserved upload reached private storage */
+        post: operations["complete_attachment_public_questionnaires_attachments__attachment_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/schedules/blocks": {
         parameters: {
             query?: never;
@@ -2694,6 +2815,57 @@ export interface paths {
         post?: never;
         /** Delete Visit */
         delete: operations["delete_visit_visits__visit_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visits/{visit_id}/questionnaire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read a visit's questionnaire answers */
+        get: operations["get_visit_questionnaire_visits__visit_id__questionnaire_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visits/{visit_id}/questionnaire-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Issue a one-visit questionnaire link */
+        post: operations["create_questionnaire_token_visits__visit_id__questionnaire_token_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visits/{visit_id}/questionnaire/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List a visit's questionnaire files with permission-checked links */
+        get: operations["list_visit_attachments_visits__visit_id__questionnaire_attachments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -5369,6 +5541,323 @@ export interface components {
              * @description URL to access client history
              */
             qr_code_url: string;
+        };
+        /** QuestionnaireAnswersIn */
+        QuestionnaireAnswersIn: {
+            /** Answers */
+            answers: {
+                [key: string]: unknown;
+            };
+        };
+        /** QuestionnaireAnswersOut */
+        QuestionnaireAnswersOut: {
+            /** Answers */
+            answers: {
+                [key: string]: unknown;
+            };
+            /** Description */
+            description?: string | null;
+            /** Fields */
+            fields: (components["schemas"]["QuestionnaireTextField"] | components["schemas"]["QuestionnaireLongTextField"] | components["schemas"]["QuestionnaireSingleChoiceField"] | components["schemas"]["QuestionnaireMultiChoiceField"] | components["schemas"]["QuestionnaireBooleanField"])[];
+            /** Name */
+            name: string;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /** Version */
+            version: number;
+        };
+        /** QuestionnaireAttachmentCreate */
+        QuestionnaireAttachmentCreate: {
+            /** Content Type */
+            content_type: string;
+            /** Filename */
+            filename: string;
+            /** Size Bytes */
+            size_bytes: number;
+        };
+        /** QuestionnaireAttachmentOut */
+        QuestionnaireAttachmentOut: {
+            /** Content Type */
+            content_type: string;
+            /** Filename */
+            filename: string;
+            /** Id */
+            id: number;
+            /** Size Bytes */
+            size_bytes: number;
+            /** Uploaded At */
+            uploaded_at?: string | null;
+            /** Url */
+            url?: string | null;
+        };
+        /** QuestionnaireAttachmentUploadOut */
+        QuestionnaireAttachmentUploadOut: {
+            /** Attachment Id */
+            attachment_id: number;
+            /** Upload Fields */
+            upload_fields: {
+                [key: string]: string;
+            };
+            /** Upload Url */
+            upload_url: string;
+        };
+        /** QuestionnaireBooleanField */
+        QuestionnaireBooleanField: {
+            /** Description */
+            description?: string | null;
+            /**
+             * Key
+             * @description Stable key used in answers; lowercase letters, digits and underscores
+             */
+            key: string;
+            /** Label */
+            label: string;
+            /**
+             * Required
+             * @default false
+             */
+            required: boolean;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "boolean";
+        };
+        /** QuestionnaireFormOut */
+        QuestionnaireFormOut: {
+            /** Description */
+            description?: string | null;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Fields */
+            fields: (components["schemas"]["QuestionnaireTextField"] | components["schemas"]["QuestionnaireLongTextField"] | components["schemas"]["QuestionnaireSingleChoiceField"] | components["schemas"]["QuestionnaireMultiChoiceField"] | components["schemas"]["QuestionnaireBooleanField"])[];
+            /** Name */
+            name: string;
+            /** Submitted At */
+            submitted_at?: string | null;
+            /** Version */
+            version: number;
+        };
+        /** QuestionnaireLongTextField */
+        QuestionnaireLongTextField: {
+            /** Description */
+            description?: string | null;
+            /**
+             * Key
+             * @description Stable key used in answers; lowercase letters, digits and underscores
+             */
+            key: string;
+            /** Label */
+            label: string;
+            /**
+             * Max Length
+             * @default 2000
+             */
+            max_length: number;
+            /**
+             * Required
+             * @default false
+             */
+            required: boolean;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "long_text";
+        };
+        /** QuestionnaireMultiChoiceField */
+        QuestionnaireMultiChoiceField: {
+            /** Description */
+            description?: string | null;
+            /**
+             * Key
+             * @description Stable key used in answers; lowercase letters, digits and underscores
+             */
+            key: string;
+            /** Label */
+            label: string;
+            /** Max Selected */
+            max_selected?: number | null;
+            /** Options */
+            options: components["schemas"]["QuestionnaireOption"][];
+            /**
+             * Required
+             * @default false
+             */
+            required: boolean;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "multi_choice";
+        };
+        /** QuestionnaireOption */
+        QuestionnaireOption: {
+            /** Label */
+            label: string;
+            /**
+             * Value
+             * @description Stable option value used in answers
+             */
+            value: string;
+        };
+        /** QuestionnairePublish */
+        QuestionnairePublish: {
+            /**
+             * Service Id
+             * @description Service to bind; omit to keep the current binding, null to unbind
+             */
+            service_id?: number | null;
+        };
+        /** QuestionnaireSingleChoiceField */
+        QuestionnaireSingleChoiceField: {
+            /** Description */
+            description?: string | null;
+            /**
+             * Key
+             * @description Stable key used in answers; lowercase letters, digits and underscores
+             */
+            key: string;
+            /** Label */
+            label: string;
+            /** Options */
+            options: components["schemas"]["QuestionnaireOption"][];
+            /**
+             * Required
+             * @default false
+             */
+            required: boolean;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "single_choice";
+        };
+        /** QuestionnaireSubmittedOut */
+        QuestionnaireSubmittedOut: {
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /** Version */
+            version: number;
+        };
+        /** QuestionnaireTemplateCreate */
+        QuestionnaireTemplateCreate: {
+            /** Description */
+            description?: string | null;
+            /** Fields */
+            fields: (components["schemas"]["QuestionnaireTextField"] | components["schemas"]["QuestionnaireLongTextField"] | components["schemas"]["QuestionnaireSingleChoiceField"] | components["schemas"]["QuestionnaireMultiChoiceField"] | components["schemas"]["QuestionnaireBooleanField"])[];
+            /** Name */
+            name: string;
+        };
+        /** QuestionnaireTemplateOut */
+        QuestionnaireTemplateOut: {
+            /** Description */
+            description?: string | null;
+            /** Fields */
+            fields: (components["schemas"]["QuestionnaireTextField"] | components["schemas"]["QuestionnaireLongTextField"] | components["schemas"]["QuestionnaireSingleChoiceField"] | components["schemas"]["QuestionnaireMultiChoiceField"] | components["schemas"]["QuestionnaireBooleanField"])[];
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /**
+             * Published Version
+             * @description Latest published version; the draft may differ from it
+             */
+            published_version?: number | null;
+            /** Service Id */
+            service_id?: number | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** QuestionnaireTemplateUpdate */
+        QuestionnaireTemplateUpdate: {
+            /** Description */
+            description?: string | null;
+            /** Fields */
+            fields?: (components["schemas"]["QuestionnaireTextField"] | components["schemas"]["QuestionnaireLongTextField"] | components["schemas"]["QuestionnaireSingleChoiceField"] | components["schemas"]["QuestionnaireMultiChoiceField"] | components["schemas"]["QuestionnaireBooleanField"])[] | null;
+            /** Name */
+            name?: string | null;
+        };
+        /** QuestionnaireTextField */
+        QuestionnaireTextField: {
+            /** Description */
+            description?: string | null;
+            /**
+             * Key
+             * @description Stable key used in answers; lowercase letters, digits and underscores
+             */
+            key: string;
+            /** Label */
+            label: string;
+            /**
+             * Max Length
+             * @default 255
+             */
+            max_length: number;
+            /**
+             * Required
+             * @default false
+             */
+            required: boolean;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "text";
+        };
+        /** QuestionnaireTokenOut */
+        QuestionnaireTokenOut: {
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Token
+             * @description Shown once; send it to the guest and never log it
+             */
+            token: string;
+            /** Version */
+            version: number;
+            /** Visit Id */
+            visit_id: number;
+        };
+        /** QuestionnaireVersionOut */
+        QuestionnaireVersionOut: {
+            /** Description */
+            description?: string | null;
+            /** Fields */
+            fields: (components["schemas"]["QuestionnaireTextField"] | components["schemas"]["QuestionnaireLongTextField"] | components["schemas"]["QuestionnaireSingleChoiceField"] | components["schemas"]["QuestionnaireMultiChoiceField"] | components["schemas"]["QuestionnaireBooleanField"])[];
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /**
+             * Published At
+             * Format: date-time
+             */
+            published_at: string;
+            /**
+             * Service Id
+             * @description Template binding after publishing
+             */
+            service_id?: number | null;
+            /** Template Id */
+            template_id: number;
+            /** Version */
+            version: number;
         };
         /** ReportExportRequest */
         ReportExportRequest: {
@@ -8236,6 +8725,179 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicBookingSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_questionnaires_businesses_me_questionnaires__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireTemplateOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_questionnaire_businesses_me_questionnaires__post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionnaireTemplateCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireTemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_questionnaire_businesses_me_questionnaires__template_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                template_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireTemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_questionnaire_businesses_me_questionnaires__template_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                template_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionnaireTemplateUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireTemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_questionnaire_businesses_me_questionnaires__template_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                template_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["QuestionnairePublish"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireVersionOut"];
                 };
             };
             /** @description Validation Error */
@@ -11543,6 +12205,144 @@ export interface operations {
             };
         };
     };
+    get_questionnaire_public_questionnaires_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Questionnaire-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireFormOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_questionnaire_public_questionnaires_answers_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Questionnaire-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionnaireAnswersIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireSubmittedOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_attachment_public_questionnaires_attachments_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Questionnaire-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionnaireAttachmentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireAttachmentUploadOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_attachment_public_questionnaires_attachments__attachment_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Questionnaire-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                attachment_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireAttachmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_blocks_schedules_blocks_get: {
         parameters: {
             query: {
@@ -14003,6 +14803,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_visit_questionnaire_visits__visit_id__questionnaire_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireAnswersOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_questionnaire_token_visits__visit_id__questionnaire_token_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireTokenOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_visit_attachments_visits__visit_id__questionnaire_attachments_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionnaireAttachmentOut"][];
                 };
             };
             /** @description Validation Error */
