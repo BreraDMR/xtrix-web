@@ -146,13 +146,26 @@ function BookingSuccess({ booking, onNew }: { booking: PublicBookingOut; onNew: 
         </div>
       </dl>
 
-      <button
-        type="button"
-        onClick={onNew}
-        className="mt-5 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
-      >
-        {t('booking.newBooking')}
-      </button>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        {booking.manage_token && (
+          <a
+            href={`/manage#token=${encodeURIComponent(booking.manage_token)}`}
+            className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          >
+            {t('booking.manageLink')}
+          </a>
+        )}
+        <button
+          type="button"
+          onClick={onNew}
+          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
+        >
+          {t('booking.newBooking')}
+        </button>
+      </div>
+      {booking.manage_token && (
+        <p className="mt-3 text-xs text-slate-500 dark:text-gray-400">{t('booking.manageHint')}</p>
+      )}
     </section>
   )
 }

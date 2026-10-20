@@ -205,6 +205,8 @@ export type TranslationKey =
   | 'booking.successText'
   | 'booking.bookingNumber'
   | 'booking.newBooking'
+  | 'booking.manageLink'
+  | 'booking.manageHint'
   | 'validation.code.invalid_assistant_name'
   | 'field.assistant_name'
   | 'field.assistant_gender'
@@ -1259,6 +1261,43 @@ export type TranslationKey =
   | 'questionnaireEditor.errorMaxSelected'
   | 'questionnaireEditor.errorFieldsRequired'
   | 'questionnaireEditor.errorPlainText'
+  | 'bookingManage.title'
+  | 'bookingManage.unavailableTitle'
+  | 'bookingManage.unavailableText'
+  | 'bookingManage.loadError'
+  | 'bookingManage.actions'
+  | 'bookingManage.confirmedAt'
+  | 'bookingManage.confirm'
+  | 'bookingManage.confirming'
+  | 'bookingManage.confirmed'
+  | 'bookingManage.confirmError'
+  | 'bookingManage.reschedule'
+  | 'bookingManage.rescheduleTitle'
+  | 'bookingManage.newTime'
+  | 'bookingManage.newTimeHint'
+  | 'bookingManage.salonTime'
+  | 'bookingManage.submitReschedule'
+  | 'bookingManage.rescheduling'
+  | 'bookingManage.rescheduled'
+  | 'bookingManage.rescheduleError'
+  | 'bookingManage.cancel'
+  | 'bookingManage.cancelQuestion'
+  | 'bookingManage.cancelKeep'
+  | 'bookingManage.cancelConfirm'
+  | 'bookingManage.cancelling'
+  | 'bookingManage.cancelled'
+  | 'bookingManage.cancelError'
+  | 'bookingManage.cutoffNote'
+  | 'bookingManage.cutoffReached'
+  | 'bookingManage.started'
+  | 'bookingManage.linkValidUntil'
+  | 'bookingManage.error.timeRequired'
+  | 'bookingManage.error.sameTime'
+  | 'bookingManage.error.timePast'
+  | 'bookingManage.status.planned'
+  | 'bookingManage.status.completed'
+  | 'bookingManage.status.cancelled'
+  | 'bookingManage.status.in_progress'
   | 'questionnairePage.title'
   | 'questionnairePage.linkUnavailableTitle'
   | 'questionnairePage.linkUnavailableText'
@@ -1504,6 +1543,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.successText": {"en": "The salon will contact you using the details you left. No email confirmation is sent automatically.", "ru": "Салон свяжется с вами по оставленным контактам. Письмо-подтверждение автоматически не отправляется.", "cz": "Salon vás bude kontaktovat na uvedené údaje. Potvrzovací e-mail se automaticky neposílá."},
   "booking.bookingNumber": {"en": "Booking number", "ru": "Номер записи", "cz": "Číslo rezervace"},
   "booking.newBooking": {"en": "Book another time", "ru": "Записаться ещё раз", "cz": "Rezervovat další termín"},
+  "booking.manageLink": {"en": "Manage this booking", "ru": "Управление записью", "cz": "Spravovat rezervaci"},
+  "booking.manageHint": {"en": "Save this link: you can confirm, reschedule or cancel the visit there.", "ru": "Сохраните ссылку: по ней можно подтвердить, перенести или отменить визит.", "cz": "Uložte si odkaz: můžete tam návštěvu potvrdit, přeložit nebo zrušit."},
   "validation.code.invalid_assistant_name": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
   "field.assistant_name": {"en": "Assistant name", "ru": "Имя помощника", "cz": "Jméno asistenta"},
   "field.assistant_gender": {"en": "Assistant gender", "ru": "Род помощника", "cz": "Rod asistenta"},
@@ -2955,6 +2996,120 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     ru: 'Используйте обычный текст без < и >.',
     cz: 'Použijte prostý text bez < a >.',
   },
+
+  'bookingManage.title': { en: 'Manage booking', ru: 'Управление записью', cz: 'Správa rezervace' },
+  'bookingManage.unavailableTitle': {
+    en: 'This booking link is unavailable',
+    ru: 'Эта ссылка на запись недоступна',
+    cz: 'Tento odkaz na rezervaci není dostupný',
+  },
+  'bookingManage.unavailableText': {
+    en: 'The link may have expired or the booking was removed. Contact the business for help.',
+    ru: 'Ссылка могла устареть или запись удалена. Свяжитесь с салоном.',
+    cz: 'Odkaz mohl vypršet nebo byla rezervace odstraněna. Kontaktujte firmu.',
+  },
+  'bookingManage.loadError': {
+    en: 'Could not load the booking.',
+    ru: 'Не удалось загрузить запись.',
+    cz: 'Rezervaci se nepodařilo načíst.',
+  },
+  'bookingManage.actions': { en: 'What would you like to do?', ru: 'Что хотите сделать?', cz: 'Co chcete udělat?' },
+  'bookingManage.confirmedAt': { en: 'Confirmed', ru: 'Подтверждено', cz: 'Potvrzeno' },
+  'bookingManage.confirm': { en: 'Confirm booking', ru: 'Подтвердить запись', cz: 'Potvrdit rezervaci' },
+  'bookingManage.confirming': { en: 'Confirming...', ru: 'Подтверждаем...', cz: 'Potvrzuji...' },
+  'bookingManage.confirmed': {
+    en: 'Your booking is confirmed.',
+    ru: 'Запись подтверждена.',
+    cz: 'Rezervace je potvrzena.',
+  },
+  'bookingManage.confirmError': {
+    en: 'Could not confirm the booking.',
+    ru: 'Не удалось подтвердить запись.',
+    cz: 'Rezervaci se nepodařilo potvrdit.',
+  },
+  'bookingManage.reschedule': { en: 'Reschedule', ru: 'Перенести', cz: 'Přeložit' },
+  'bookingManage.rescheduleTitle': {
+    en: 'Choose a new time',
+    ru: 'Выберите новое время',
+    cz: 'Vyberte nový čas',
+  },
+  'bookingManage.newTime': {
+    en: 'New date and time (your local time)',
+    ru: 'Новая дата и время (по вашему времени)',
+    cz: 'Nové datum a čas (váš místní čas)',
+  },
+  'bookingManage.newTimeHint': {
+    en: 'Availability is checked when you save. If the time is taken, the current booking stays unchanged.',
+    ru: 'Доступность проверится при сохранении. Если время занято, текущая запись не изменится.',
+    cz: 'Dostupnost se ověří při uložení. Pokud je čas obsazený, stávající rezervace zůstane nezměněná.',
+  },
+  'bookingManage.salonTime': { en: 'Salon time', ru: 'Время салона', cz: 'Čas salonu' },
+  'bookingManage.submitReschedule': { en: 'Move booking', ru: 'Перенести запись', cz: 'Přeložit rezervaci' },
+  'bookingManage.rescheduling': { en: 'Moving...', ru: 'Переносим...', cz: 'Překládám...' },
+  'bookingManage.rescheduled': {
+    en: 'Your booking has been moved.',
+    ru: 'Запись перенесена.',
+    cz: 'Rezervace byla přeložena.',
+  },
+  'bookingManage.rescheduleError': {
+    en: 'Could not move the booking.',
+    ru: 'Не удалось перенести запись.',
+    cz: 'Rezervaci se nepodařilo přeložit.',
+  },
+  'bookingManage.cancel': { en: 'Cancel booking', ru: 'Отменить запись', cz: 'Zrušit rezervaci' },
+  'bookingManage.cancelQuestion': {
+    en: 'Cancel this booking? The time will be released and cannot be restored.',
+    ru: 'Отменить эту запись? Время освободится, восстановить его не получится.',
+    cz: 'Zrušit tuto rezervaci? Čas se uvolní a již jej nebude možné obnovit.',
+  },
+  'bookingManage.cancelKeep': { en: 'Keep booking', ru: 'Оставить запись', cz: 'Ponechat rezervaci' },
+  'bookingManage.cancelConfirm': { en: 'Yes, cancel', ru: 'Да, отменить', cz: 'Ano, zrušit' },
+  'bookingManage.cancelling': { en: 'Cancelling...', ru: 'Отменяем...', cz: 'Ruším...' },
+  'bookingManage.cancelled': { en: 'The booking is cancelled.', ru: 'Запись отменена.', cz: 'Rezervace je zrušena.' },
+  'bookingManage.cancelError': {
+    en: 'Could not cancel the booking.',
+    ru: 'Не удалось отменить запись.',
+    cz: 'Rezervaci se nepodařilo zrušit.',
+  },
+  'bookingManage.cutoffNote': {
+    en: 'Online rescheduling and cancellation are available until 24 hours before the visit.',
+    ru: 'Онлайн-перенос и отмена доступны не позднее чем за 24 часа до визита.',
+    cz: 'Online přeložení a zrušení je možné nejpozději 24 hodin před návštěvou.',
+  },
+  'bookingManage.cutoffReached': {
+    en: 'Online rescheduling and cancellation are closed less than 24 hours before the visit. Contact the business.',
+    ru: 'Онлайн-перенос и отмена закрыты менее чем за 24 часа до визита. Свяжитесь с салоном.',
+    cz: 'Online přeložení a zrušení je uzavřeno méně než 24 hodin před návštěvou. Kontaktujte firmu.',
+  },
+  'bookingManage.started': {
+    en: 'This visit has already started.',
+    ru: 'Этот визит уже начался.',
+    cz: 'Tato návštěva již začala.',
+  },
+  'bookingManage.linkValidUntil': {
+    en: 'This link is valid until',
+    ru: 'Ссылка действует до',
+    cz: 'Odkaz je platný do',
+  },
+  'bookingManage.error.timeRequired': {
+    en: 'Choose a new date and time.',
+    ru: 'Выберите новую дату и время.',
+    cz: 'Vyberte nové datum a čas.',
+  },
+  'bookingManage.error.sameTime': {
+    en: 'This is already the booked time. Choose another one.',
+    ru: 'Это уже текущее время записи. Выберите другое.',
+    cz: 'Toto je již rezervovaný čas. Vyberte jiný.',
+  },
+  'bookingManage.error.timePast': {
+    en: 'Choose a time in the future.',
+    ru: 'Выберите время в будущем.',
+    cz: 'Vyberte čas v budoucnosti.',
+  },
+  'bookingManage.status.planned': { en: 'Planned', ru: 'Запланирован', cz: 'Naplánováno' },
+  'bookingManage.status.completed': { en: 'Completed', ru: 'Завершён', cz: 'Dokončeno' },
+  'bookingManage.status.cancelled': { en: 'Cancelled', ru: 'Отменён', cz: 'Zrušeno' },
+  'bookingManage.status.in_progress': { en: 'In progress', ru: 'Идёт', cz: 'Probíhá' },
 
   'questionnairePage.title': { en: 'Questionnaire', ru: 'Анкета', cz: 'Dotazník' },
   'questionnairePage.linkUnavailableTitle': {

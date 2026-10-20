@@ -1719,6 +1719,83 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/public/booking-management": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read a booking by its guest token */
+        get: operations["get_managed_booking_public_booking_management_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/booking-management/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel a booking by its guest token
+         * @description Cancelling twice returns the already cancelled booking without a second event; the status change and the visit event are committed together.
+         */
+        post: operations["cancel_managed_booking_public_booking_management_cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/booking-management/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm a booking by its guest token
+         * @description Repeating the call keeps the first confirmation and returns the same booking.
+         */
+        post: operations["confirm_managed_booking_public_booking_management_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/booking-management/reschedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Move a booking to another available slot
+         * @description The visit keeps its service and master. The target is checked against the same availability rules as public booking while both rows are locked; on a conflict the old time stays unchanged. Repeating the request for the time already stored returns the booking without a second move or event.
+         */
+        post: operations["reschedule_managed_booking_public_booking_management_reschedule_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/public/booking/{slug}": {
         parameters: {
             query?: never;
@@ -5386,6 +5463,46 @@ export interface components {
              */
             start: string;
         };
+        /** PublicBookingManageOut */
+        PublicBookingManageOut: {
+            /** Booking Id */
+            booking_id: number;
+            /** Business Address */
+            business_address?: string | null;
+            /** Business Name */
+            business_name: string;
+            /** Business Phone */
+            business_phone?: string | null;
+            /** Confirmed At */
+            confirmed_at?: string | null;
+            /** Currency */
+            currency: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /** Price */
+            price?: number | null;
+            /** Service Name */
+            service_name: string;
+            /** Staff Name */
+            staff_name: string;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /** Status */
+            status: string;
+            /** Timezone */
+            timezone: string;
+            /**
+             * Token Expires At
+             * Format: date-time
+             */
+            token_expires_at: string;
+        };
         /** PublicBookingOut */
         PublicBookingOut: {
             /** Currency */
@@ -5397,6 +5514,11 @@ export interface components {
             end: string;
             /** Id */
             id: number;
+            /**
+             * Manage Token
+             * @description One-time management token for this booking; put it in a link fragment and never log it
+             */
+            manage_token?: string | null;
             /** Price */
             price?: number | null;
             /** Service Name */
@@ -5414,6 +5536,14 @@ export interface components {
             status: string;
             /** Timezone */
             timezone: string;
+        };
+        /** PublicBookingRescheduleIn */
+        PublicBookingRescheduleIn: {
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
         };
         /** PublicBookingSettingsOut */
         PublicBookingSettingsOut: {
@@ -7336,6 +7466,8 @@ export interface components {
         };
         /** VisitOut */
         VisitOut: {
+            /** Client Confirmed At */
+            client_confirmed_at?: string | null;
             /** Client Id */
             client_id: number;
             /**
@@ -12016,6 +12148,138 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_managed_booking_public_booking_management_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Booking-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicBookingManageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_managed_booking_public_booking_management_cancel_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Booking-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicBookingManageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_managed_booking_public_booking_management_confirm_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Booking-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicBookingManageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reschedule_managed_booking_public_booking_management_reschedule_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Booking-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublicBookingRescheduleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicBookingManageOut"];
                 };
             };
             /** @description Validation Error */
