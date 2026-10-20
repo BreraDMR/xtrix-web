@@ -20,6 +20,7 @@ import Finance from './pages/Finance'
 import Analytics from './pages/Analytics'
 import Loyalty from './pages/Loyalty'
 import Settings from './pages/Settings'
+import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 import { LegacyRedirect, ParameterizedLegacyRedirect } from './utils/routing'
 
@@ -82,6 +83,9 @@ function App() {
           <Route path="subscription" element={<Subscription />} />
           <Route path="settings" element={<Settings />} />
         </Route>
+
+        {/* 404 handler */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )
