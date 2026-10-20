@@ -49,7 +49,7 @@ export default function ContextHint({ hint, onAction, to }: ContextHintProps) {
           <p className="font-medium">{t(copy.title)}</p>
           <p className="mt-0.5 text-sm text-[var(--workspace-muted)]">{t(copy.body)}</p>
           {update.isError && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(update.error)}</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(update.error, t('onboarding.error.save'))}</p>
           )}
         </div>
       </div>

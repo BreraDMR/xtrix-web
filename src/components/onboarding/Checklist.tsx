@@ -114,7 +114,7 @@ export default function Checklist() {
       </ol>
 
       {update.isError && (
-        <p className="mt-3 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(update.error)}</p>
+        <p className="mt-3 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(update.error, t('onboarding.error.save'))}</p>
       )}
     </Card>
   )

@@ -34,7 +34,7 @@ export default function Welcome() {
         <div className="min-w-0">
           <h2 className="text-xl font-semibold tracking-tight">{copy.title}</h2>
           <p className="mt-1.5 max-w-2xl text-sm text-[var(--workspace-muted)]">{copy.body}</p>
-          {update.isError && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(update.error)}</p>}
+          {update.isError && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(update.error, t('onboarding.error.save'))}</p>}
         </div>
         <div className="flex shrink-0 items-center gap-3">
           <Link to={to} className="ui-button ui-button-primary" onClick={() => update.mutate({ welcome_dismissed: true })}>
