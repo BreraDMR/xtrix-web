@@ -925,6 +925,66 @@ export type TranslationKey =
   | 'common.actions'
   | 'common.required_field'
   | 'common.error_saving'
+  | 'landing.hero.title'
+  | 'landing.hero.subtitle'
+  | 'landing.hero.badge'
+  | 'landing.hero.cta_start'
+  | 'landing.hero.cta_login'
+  | 'landing.hero.cta_app'
+  | 'landing.hero.preview_title'
+  | 'landing.hero.preview_slot1'
+  | 'landing.hero.preview_slot2'
+  | 'landing.features.title'
+  | 'landing.features.subtitle'
+  | 'landing.features.booking_title'
+  | 'landing.features.booking_desc'
+  | 'landing.features.calendar_title'
+  | 'landing.features.calendar_desc'
+  | 'landing.features.clients_title'
+  | 'landing.features.clients_desc'
+  | 'landing.features.assistant_title'
+  | 'landing.features.assistant_desc'
+  | 'landing.features.analytics_title'
+  | 'landing.features.analytics_desc'
+  | 'landing.features.finance_title'
+  | 'landing.features.finance_desc'
+  | 'landing.tour.title'
+  | 'landing.tour.subtitle'
+  | 'landing.tour.calendar_tab'
+  | 'landing.tour.clients_tab'
+  | 'landing.tour.assistant_tab'
+  | 'landing.tour.step1_title'
+  | 'landing.tour.step1_desc'
+  | 'landing.tour.step2_title'
+  | 'landing.tour.step2_desc'
+  | 'landing.tour.step3_title'
+  | 'landing.tour.step3_desc'
+  | 'landing.faq.title'
+  | 'landing.faq.subtitle'
+  | 'landing.faq.q1'
+  | 'landing.faq.a1'
+  | 'landing.faq.q2'
+  | 'landing.faq.a2'
+  | 'landing.faq.q3'
+  | 'landing.faq.a3'
+  | 'landing.faq.q4'
+  | 'landing.faq.a4'
+  | 'landing.faq.q5'
+  | 'landing.faq.a5'
+  | 'landing.nav.features'
+  | 'landing.nav.tour'
+  | 'landing.nav.faq'
+  | 'landing.nav.pricing'
+  | 'landing.nav.contact'
+  | 'landing.footer.rights'
+  | 'landing.footer.privacy'
+  | 'landing.footer.terms'
+  | 'landing.footer.status_preview'
+  | 'landing.footer.contact_support'
+  | 'notfound.title'
+  | 'notfound.subtitle'
+  | 'notfound.to_home'
+  | 'notfound.to_app'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -1877,6 +1937,313 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.loadError': { en: 'Unable to load data', ru: 'Не удалось загрузить данные', cz: 'Data se nepodařilo načíst' },
   'common.retry': { en: 'Retry', ru: 'Повторить', cz: 'Zkusit znovu' },
   'common.offline': { en: 'No internet connection', ru: 'Нет подключения к сети', cz: 'Bez připojení k internetu' },
+
+  'landing.hero.title': {
+    en: 'Smart CRM & AI Assistant for Salons and Masters',
+    ru: 'Умная CRM и AI-ассистент для салонов и мастеров',
+    cz: 'Chytré CRM a AI asistent pro salony a mistry',
+  },
+  'landing.hero.subtitle': {
+    en: 'Streamline client booking, schedules, analytics, and assistant tasks in one clean workspace.',
+    ru: 'Онлайн-запись, расписание мастеров, клиентская база и ассистент Сашенька в едином рабочем пространстве.',
+    cz: 'Online rezervace, rozvrh mistrů, klientská databáze a asistentka v jednom pracovním prostoru.',
+  },
+  'landing.hero.badge': {
+    en: 'All-in-one workspace for beauty businesses',
+    ru: 'Единая платформа для бьюти-бизнеса',
+    cz: 'Jednotná platforma pro beauty podnikání',
+  },
+  'landing.hero.cta_start': {
+    en: 'Try for free',
+    ru: 'Попробовать бесплатно',
+    cz: 'Vyzkoušet zdarma',
+  },
+  'landing.hero.cta_login': {
+    en: 'Log in',
+    ru: 'Войти',
+    cz: 'Přihlásit se',
+  },
+  'landing.hero.cta_app': {
+    en: 'Open CRM',
+    ru: 'Открыть CRM',
+    cz: 'Otevřít CRM',
+  },
+  'landing.hero.preview_title': {
+    en: 'Real-time schedule overview',
+    ru: 'Обзор расписания в реальном времени',
+    cz: 'Přehled rozvrhu v reálném čase',
+  },
+  'landing.hero.preview_slot1': {
+    en: 'Hair styling & care · Anna · 10:00',
+    ru: 'Стрижка и уход · Анна · 10:00',
+    cz: 'Střih a péče · Anna · 10:00',
+  },
+  'landing.hero.preview_slot2': {
+    en: 'Manicure · Elena · 11:30',
+    ru: 'Маникюр · Елена · 11:30',
+    cz: 'Manikúra · Elena · 11:30',
+  },
+
+  'landing.features.title': {
+    en: 'Everything your salon needs to operate smoothly',
+    ru: 'Всё необходимое для чёткой работы салона',
+    cz: 'Vše potřebné pro hladký provoz salonu',
+  },
+  'landing.features.subtitle': {
+    en: 'Key tools designed specifically for beauty specialists and salon managers.',
+    ru: 'Ключевые инструменты, созданные специально для мастеров красоты и руководителей.',
+    cz: 'Klíčové nástroje navržené přímo pro specialisty krásy a vedoucí salonů.',
+  },
+  'landing.features.booking_title': {
+    en: 'Direct Online Booking',
+    ru: 'Прямая онлайн-запись',
+    cz: 'Přímá online rezervace',
+  },
+  'landing.features.booking_desc': {
+    en: 'Provide clients with a clean booking link to select services and available time slots.',
+    ru: 'Удобная ссылка для записи клиентов с выбором мастера, услуги и свободного времени.',
+    cz: 'Pohodlný odkaz pro rezervaci klientů s výběrem mistra, služby a volného času.',
+  },
+  'landing.features.calendar_title': {
+    en: 'Master Schedule Grid',
+    ru: 'Журнал расписания мастеров',
+    cz: 'Rozvrh a kalendář mistrů',
+  },
+  'landing.features.calendar_desc': {
+    en: 'Visual day and week views showing appointments, buffers, and specialist shifts.',
+    ru: 'Наглядная сетка дня и недели с визитами, перерывами и рабочими сменами специалистов.',
+    cz: 'Přehledná mřížka dne a týdne s návštěvami, přestávkami a směnami specialistů.',
+  },
+  'landing.features.clients_title': {
+    en: 'Client History & Profiles',
+    ru: 'Клиентская база и история',
+    cz: 'Klientská databáze a historie',
+  },
+  'landing.features.clients_desc': {
+    en: 'Keep complete visit history, contact preferences, loyalty balances, and service notes.',
+    ru: 'Хранение истории визитов, контактных данных, баланса лояльности и персональных заметок.',
+    cz: 'Ukládání historie návštěv, kontaktních údajů, věrnostního zůstatku a poznámek.',
+  },
+  'landing.features.assistant_title': {
+    en: 'AI Assistant Sashenka',
+    ru: 'AI-ассистент Сашенька',
+    cz: 'AI asistentka Sašenka',
+  },
+  'landing.features.assistant_desc': {
+    en: 'Ask questions about schedule, client history, or routine tasks with natural dialogue.',
+    ru: 'Диалог на естественном языке для быстрых справок по расписанию, визитам и задачам.',
+    cz: 'Přirozený dialog pro rychlé dotazy na rozvrh, návštěvy a provozní úkoly.',
+  },
+  'landing.features.analytics_title': {
+    en: 'Actionable Analytics',
+    ru: 'Понятная аналитика',
+    cz: 'Přehledná analytika',
+  },
+  'landing.features.analytics_desc': {
+    en: 'Track revenue, visit dynamics, popular services, and employee productivity.',
+    ru: 'Отслеживание выручки, динамики записей, популярных услуг и загрузки сотрудников.',
+    cz: 'Sledování tržeb, dynamiky návštěv, oblíbených služeb a vytížení personálu.',
+  },
+  'landing.features.finance_title': {
+    en: 'Finance & Salary Accounting',
+    ru: 'Финансы и расчёт зарплат',
+    cz: 'Finance a výpočet mezd',
+  },
+  'landing.features.finance_desc': {
+    en: 'Transparent expense tracking, master commission rates, and salary calculation.',
+    ru: 'Учёт расходов, прозрачный расчёт комиссий мастеров и заработной платы.',
+    cz: 'Evidence výdajů, transparentní výpočet provizí mistrů a mezd.',
+  },
+
+  'landing.tour.title': {
+    en: 'A closer look at the actual interface',
+    ru: 'Реальный интерфейс системы',
+    cz: 'Skutečné rozhraní systému',
+  },
+  'landing.tour.subtitle': {
+    en: 'Clean, focused, and responsive — built for high-speed salon operation.',
+    ru: 'Лаконичный, быстрый и отзывчивый — создан для удобной повседневной работы.',
+    cz: 'Jednoduchý, rychlý a responzivní — vytvořen pro pohodlnou každodenní práci.',
+  },
+  'landing.tour.calendar_tab': {
+    en: 'Calendar & Visits',
+    ru: 'Календарь и визиты',
+    cz: 'Kalendář a návštěvy',
+  },
+  'landing.tour.clients_tab': {
+    en: 'Clients & Cards',
+    ru: 'Клиенты и карточки',
+    cz: 'Klienti a karty',
+  },
+  'landing.tour.assistant_tab': {
+    en: 'Assistant Chat',
+    ru: 'Чат ассистента',
+    cz: 'Chat asistentky',
+  },
+  'landing.tour.step1_title': {
+    en: 'Interactive timetable grid',
+    ru: 'Интерактивная сетка расписания',
+    cz: 'Interaktivní mřížka rozvrhu',
+  },
+  'landing.tour.step1_desc': {
+    en: 'Instant slot selection, status indicators, and drag-and-drop support.',
+    ru: 'Мгновенный выбор свободного времени, статусы визитов и быстрое редактирование.',
+    cz: 'Okamžitý výběr volného času, stavy návštěv a rychlá úprava.',
+  },
+  'landing.tour.step2_title': {
+    en: 'Comprehensive client profiles',
+    ru: 'Подробная карточка клиента',
+    cz: 'Podrobná karta klienta',
+  },
+  'landing.tour.step2_desc': {
+    en: 'Search by phone or name, review past visits, tags, and preferences.',
+    ru: 'Быстрый поиск по имени или телефону, история процедур, теги и предпочтения.',
+    cz: 'Rychlé hledání podle jména nebo telefonu, historie procedur a preference.',
+  },
+  'landing.tour.step3_title': {
+    en: 'Voice & text assistant dialogs',
+    ru: 'Голосовые и текстовые диалоги',
+    cz: 'Hlasové a textové dialogy s asistentem',
+  },
+  'landing.tour.step3_desc': {
+    en: 'Get quick answers about today’s schedule without navigating multiple menus.',
+    ru: 'Быстрый ответ о расписании на сегодня без долгих поисков по меню.',
+    cz: 'Rychlá odpověď o rozvrhu na dnešek bez zdlouhavého hledání v menu.',
+  },
+
+  'landing.faq.title': {
+    en: 'Frequently Asked Questions',
+    ru: 'Часто задаваемые вопросы',
+    cz: 'Často kladené otázky',
+  },
+  'landing.faq.subtitle': {
+    en: 'Clear answers about start, trials, pricing, and your salon data.',
+    ru: 'Ответы о начале работы, пробном периоде, тарифах и безопасности данных.',
+    cz: 'Jasné odpovědi o začátku práce, zkušebním období, tarifech a bezpečnosti dat.',
+  },
+  'landing.faq.q1': {
+    en: 'How does the free trial work?',
+    ru: 'Как работает бесплатный пробный период?',
+    cz: 'Jak funguje bezplatné zkušební období?',
+  },
+  'landing.faq.a1': {
+    en: 'New salons and specialists receive a 7-day CRM trial without needing a bank card. All core features are accessible immediately.',
+    ru: 'Новые салоны и мастера получают 7 дней пробного периода CRM без привязки банковской карты. Все основные функции доступны сразу.',
+    cz: 'Nové salony a mistři získávají 7 dní zkušebního období CRM bez nutnosti zadávat platební kartu. Všechny klíčové funkce jsou ihned k dispozici.',
+  },
+  'landing.faq.q2': {
+    en: 'Can solo specialists use Xtrix without hiring employees?',
+    ru: 'Может ли частный специалист работать без сотрудников?',
+    cz: 'Může soukromý specialista pracovat bez zaměstnanců?',
+  },
+  'landing.faq.a2': {
+    en: 'Yes, Xtrix is fully adapted for solo practitioners who manage their own bookings, clients, and services.',
+    ru: 'Да, Xtrix полностью адаптирован для индивидуальной работы мастера со своими клиентами, услугами и расписанием.',
+    cz: 'Ano, Xtrix je plně přizpůsoben pro samostatnou práci mistra s vlastními klienty, službami a rozvrhem.',
+  },
+  'landing.faq.q3': {
+    en: 'How are client data and privacy protected?',
+    ru: 'Как защищены данные клиентов и салона?',
+    cz: 'Jak jsou chráněna data klientů a salonu?',
+  },
+  'landing.faq.a3': {
+    en: 'Each business operates in complete tenant isolation. Client databases and sensitive records are never shared or mixed across businesses.',
+    ru: 'Каждый салон изолирован в собственном контуре безопасности. Данные клиентов и записи строго защищены и не передаются третьим лицам.',
+    cz: 'Každý salon funguje v izolovaném bezpečnostním kontextu. Klientská data nejsou nikdy sdílena ani míchána.',
+  },
+  'landing.faq.q4': {
+    en: 'What happens after the trial ends?',
+    ru: 'Что происходит после завершения пробного периода?',
+    cz: 'Co se stane po skončení zkušebního období?',
+  },
+  'landing.faq.a4': {
+    en: 'Your data is securely preserved. You can log in, view historical records, and activate a subscription when ready.',
+    ru: 'Данные сохраняются в целости. Вы можете входить в кабинет, просматривать историю и подключить подходящий тариф в любое время.',
+    cz: 'Vaše data zůstávají bezpečně uložena. Můžete se přihlásit, prohlížet historii a aktivovat předplatné kdykoliv.',
+  },
+  'landing.faq.q5': {
+    en: 'Can I export my data at any time?',
+    ru: 'Можно ли выгрузить свои данные?',
+    cz: 'Lze kdykoliv exportovat data?',
+  },
+  'landing.faq.a5': {
+    en: 'Yes, you can export client lists, appointments, and financial reports directly from your dashboard.',
+    ru: 'Да, выгрузка клиентской базы, визитов и финансовых отчётов доступна в панели управления.',
+    cz: 'Ano, export klientské databáze, návštěv a finančních přehledů je dostupný v administraci.',
+  },
+
+  'landing.nav.features': {
+    en: 'Features',
+    ru: 'Возможности',
+    cz: 'Funkce',
+  },
+  'landing.nav.tour': {
+    en: 'Interface',
+    ru: 'Интерфейс',
+    cz: 'Rozhraní',
+  },
+  'landing.nav.faq': {
+    en: 'FAQ',
+    ru: 'Вопросы',
+    cz: 'Časté dotazy',
+  },
+  'landing.nav.pricing': {
+    en: 'Pricing',
+    ru: 'Тарифы',
+    cz: 'Ceník',
+  },
+  'landing.nav.contact': {
+    en: 'Contact',
+    ru: 'Контакты',
+    cz: 'Kontakt',
+  },
+
+  'landing.footer.rights': {
+    en: 'All rights reserved.',
+    ru: 'Все права защищены.',
+    cz: 'Všechna práva vyhrazena.',
+  },
+  'landing.footer.privacy': {
+    en: 'Privacy Policy',
+    ru: 'Политика конфиденциальности',
+    cz: 'Zásady ochrany osobních údajů',
+  },
+  'landing.footer.terms': {
+    en: 'Terms of Service',
+    ru: 'Условия использования',
+    cz: 'Obchodní podmínky',
+  },
+  'landing.footer.status_preview': {
+    en: 'Legal documentation preview',
+    ru: 'Предварительный просмотр документов',
+    cz: 'Náhled právní dokumentace',
+  },
+  'landing.footer.contact_support': {
+    en: 'Support & Questions',
+    ru: 'Поддержка и вопросы',
+    cz: 'Podpora a dotazy',
+  },
+
+  'notfound.title': {
+    en: 'Page not found',
+    ru: 'Страница не найдена',
+    cz: 'Stránka nebyla nalezena',
+  },
+  'notfound.subtitle': {
+    en: 'The requested page does not exist or has been moved.',
+    ru: 'Запрошенная страница не существует или была перемещена.',
+    cz: 'Požadovaná stránka neexistuje nebo byla přesunuta.',
+  },
+  'notfound.to_home': {
+    en: 'Go to Homepage',
+    ru: 'На главную страницу',
+    cz: 'Na hlavní stránku',
+  },
+  'notfound.to_app': {
+    en: 'Go to CRM Workspace',
+    ru: 'В рабочее пространство CRM',
+    cz: 'Do pracovního prostoru CRM',
+  },
 }
 
 export default translations
