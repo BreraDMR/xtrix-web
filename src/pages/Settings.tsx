@@ -2,9 +2,13 @@ import Button from '../ui/Button'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Card from '../ui/Card'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
+import { useUpdateOnboarding } from '../hooks/useOnboarding'
+import { apiErrorMessage } from '../api/errors'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { MY_BUSINESS_KEY, useMyBusiness } from '../hooks/useMyBusiness'
 import { useAuthStore } from '../store/authStore'
@@ -70,6 +74,10 @@ export default function Settings() {
   const { data: business, isLoading: isLoadingBusiness } = useMyBusiness(!!user)
 
   const { data: preferences, isLoading: isLoadingPreferences } = usePreferences(!!user)
+
+  const navigate = useNavigate()
+  const updateOnboarding = useUpdateOnboarding()
+  const [onboardingSaved, setOnboardingSaved] = useState(false)
 
   const updateCurrencyMutation = useMutation({
     mutationFn: async (currency: Currency) => {
@@ -158,6 +166,45 @@ export default function Settings() {
               </Button>
             ))}
           </div>
+        </Card>
+
+        <Card className="p-5 sm:p-6">
+          <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('onboarding.settings.title')}</h2>
+          <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('onboarding.settings.description')}</p>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setOnboardingSaved(false)
+                updateOnboarding.mutate(
+                  { tour_completed: false, tour_dismissed: false, welcome_dismissed: true },
+                  { onSuccess: () => { setOnboardingSaved(true); navigate('/app') } },
+                )
+              }}
+              disabled={updateOnboarding.isPending}
+            >
+              {t('onboarding.settings.showTour')}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setOnboardingSaved(false)
+                updateOnboarding.mutate(
+                  { checklist_dismissed: false, welcome_dismissed: true, dismissed_hints: [] },
+                  { onSuccess: () => setOnboardingSaved(true) },
+                )
+              }}
+              disabled={updateOnboarding.isPending}
+            >
+              {t('onboarding.settings.showChecklist')}
+            </Button>
+          </div>
+          {onboardingSaved && (
+            <p className="mt-3 text-sm text-green-600 dark:text-green-400">{t('onboarding.settings.saved')}</p>
+          )}
+          {updateOnboarding.isError && (
+            <p className="mt-3 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(updateOnboarding.error)}</p>
+          )}
         </Card>
 
         {business && (
