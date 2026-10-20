@@ -14,6 +14,7 @@ import { HiOutlineChartBar, HiOutlineUsers, HiOutlineCalendar } from 'react-icon
 import Welcome from '../components/onboarding/Welcome'
 import Checklist from '../components/onboarding/Checklist'
 import BusinessStep from '../components/onboarding/BusinessStep'
+import ServiceStep from '../components/onboarding/ServiceStep'
 
 export default function Dashboard() {
   const { t } = useTranslation()
@@ -80,6 +81,7 @@ export default function Dashboard() {
     <div className="animate-fade-in">
       <Welcome />
       <Checklist />
+      <ServiceStep />
       <div className="page-toolbar">
         <div>
           <h1 className="page-title">{t('dashboard.title')}</h1>

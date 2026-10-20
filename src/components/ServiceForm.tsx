@@ -11,6 +11,7 @@ interface ServiceFormProps {
   serviceId?: number
   onSuccess: () => void
   onCancel: () => void
+  draftKey?: string
 }
 
 interface ServiceData {
@@ -32,7 +33,29 @@ interface Specialist {
 
 const SERVICE_FIELDS = ['name', 'duration_minutes', 'price', 'specialist_id', 'description']
 
-export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceFormProps) {
+function readServiceDraft(key?: string): Partial<ServiceData> | null {
+  if (!key) return null
+  try {
+    const raw = sessionStorage.getItem(key)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as Partial<ServiceData>
+    if (!parsed || typeof parsed !== 'object') return null
+    const draft: Partial<ServiceData> = {}
+    if (typeof parsed.name === 'string') draft.name = parsed.name
+    if (typeof parsed.duration_minutes === 'number' && Number.isFinite(parsed.duration_minutes)) {
+      draft.duration_minutes = parsed.duration_minutes
+    }
+    if (typeof parsed.price === 'number' && Number.isFinite(parsed.price)) draft.price = parsed.price
+    if (typeof parsed.description === 'string') draft.description = parsed.description
+    if (typeof parsed.is_active === 'boolean') draft.is_active = parsed.is_active
+    if (typeof parsed.specialist_id === 'number') draft.specialist_id = parsed.specialist_id
+    return Object.keys(draft).length > 0 ? draft : null
+  } catch {
+    return null
+  }
+}
+
+export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }: ServiceFormProps) {
   const { t } = useTranslation()
   const { user: currentUser } = useAuthStore()
   const submitting = useRef(false)
@@ -41,13 +64,17 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [availableSpecialists, setAvailableSpecialists] = useState<Specialist[]>([])
   const [loadingSpecialists, setLoadingSpecialists] = useState(false)
-  const [formData, setFormData] = useState<ServiceData>({
-    name: '',
-    duration_minutes: 60,
-    price: 0,
-    is_active: true,
-    specialist_id: currentUser?.id || 1,
-    specialist_ids: [],
+  const [formData, setFormData] = useState<ServiceData>(() => {
+    const draft = serviceId ? null : readServiceDraft(draftKey)
+    return {
+      name: '',
+      duration_minutes: 60,
+      price: 0,
+      is_active: true,
+      specialist_id: currentUser?.id || 1,
+      specialist_ids: currentUser?.id ? [currentUser.id] : [],
+      ...draft,
+    }
   })
 
   useEffect(() => {
@@ -59,6 +86,16 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
   }, [serviceId, currentUser])
+
+  useEffect(() => {
+    if (serviceId || !draftKey) return
+    // private windows may reject storage, the form still works without a draft
+    try {
+      sessionStorage.setItem(draftKey, JSON.stringify(formData))
+    } catch {
+      // ignore
+    }
+  }, [draftKey, formData, serviceId])
 
   const loadAvailableSpecialists = async () => {
     setLoadingSpecialists(true)
@@ -137,6 +174,13 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel }: ServiceF
         await api.put(`/services/${serviceId}`, payload)
       } else {
         await api.post('/services/', payload)
+        if (draftKey) {
+          try {
+            sessionStorage.removeItem(draftKey)
+          } catch {
+            // ignore
+          }
+        }
       }
       onSuccess()
     } catch (error) {
