@@ -109,14 +109,14 @@ export default function Layout() {
       <aside ref={sidebar} id="workspace-navigation" role={isMobileMenuOpen ? 'dialog' : undefined}
         aria-modal={isMobileMenuOpen || undefined} aria-label={t('nav.primary')}
         className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="crm-brand flex h-[90px] shrink-0 items-center gap-3 px-8">
+        <div className="crm-brand flex h-[90px] shrink-0 items-center gap-3">
           <Link to="/" aria-label="Xtrix" className="flex items-center gap-2.5">
             <span className="grid h-8 w-8 place-items-center rounded-[11px] bg-gray-900 text-[25px] font-medium leading-none text-white dark:bg-white dark:text-gray-900">x</span>
             <span className="crm-navtext text-[25px] font-semibold tracking-[-1.2px]">Xtrix</span>
           </Link>
           <button className="ml-auto p-1 text-gray-500 lg:hidden" aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)}><HiOutlineX className="h-5 w-5" /></button>
         </div>
-        <div title={workspaceName} className="crm-business mx-[18px] mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-gray-200 bg-white px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
+        <div title={workspaceName} className="crm-business mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gray-100 text-[11px] font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(workspaceName)}</span>
           <div className="crm-navtext min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
         </div>
