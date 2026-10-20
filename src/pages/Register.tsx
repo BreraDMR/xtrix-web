@@ -131,6 +131,18 @@ export default function Register() {
         <div className="text-center">
           <h2 className="text-4xl font-semibold tracking-[-1.5px] text-gray-900 dark:text-white mb-3">Xtrix</h2>
           <p className="text-gray-600 dark:text-gray-300">{t('register.title')}</p>
+          <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/80 p-3.5 text-left text-xs text-blue-950 dark:border-blue-900/50 dark:bg-blue-950/40 dark:text-blue-200">
+            <div className="font-semibold flex items-center gap-1.5 text-blue-800 dark:text-blue-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
+              {t('register.trial_badge')}
+            </div>
+            <p className="mt-1 leading-relaxed text-slate-600 dark:text-slate-300">
+              {t('register.trial_desc')}
+            </p>
+            <p className="mt-1.5 pt-1.5 border-t border-blue-100 dark:border-blue-900/40 text-[11px] text-slate-500 dark:text-slate-400">
+              {t('register.ai_bonus')}
+            </p>
+          </div>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

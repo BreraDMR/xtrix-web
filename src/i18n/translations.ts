@@ -309,6 +309,9 @@ export type TranslationKey =
   | 'businessType.barbershop'
   | 'businessType.rehabCenter'
   | 'register.title'
+  | 'register.trial_badge'
+  | 'register.trial_desc'
+  | 'register.ai_bonus'
   | 'register.fullName'
   | 'register.email'
   | 'register.phone'
@@ -1321,6 +1324,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'businessType.rehabCenter': { en: 'Rehabilitation Center', ru: 'Реабилитационный центр', cz: 'Rehabilitační centrum' },
   
   'register.title': { en: 'Create your account', ru: 'Создайте свой аккаунт', cz: 'Vytvořte si účet' },
+  'register.trial_badge': { en: '7 days CRM trial · No credit card required', ru: '7 дней CRM без карты · Без скрытых списаний', cz: '7 dní CRM zdarma · Bez platební karty' },
+  'register.trial_desc': { en: 'Full access to appointments, schedules, and clients. No payment card needed to start.', ru: 'Полный доступ к онлайн-записи, графику и базе клиентов на 7 дней. Карта не требуется.', cz: 'Plný přístup k online rezervacím, rozvrhu a klientům na 7 dní. Karta není potřeba.' },
+  'register.ai_bonus': { en: 'AI Assistant Sasha: 20 daily requests included for evaluation (D01).', ru: 'ИИ ассистент Сашенька: 20 запросов в день включены в пробный пакет (D01).', cz: 'AI asistentka Sašenka: 20 dotazů denně v rámci zkušebního balíčku (D01).' },
   'register.fullName': { en: 'Full Name', ru: 'Полное имя', cz: 'Celé jméno' },
   'register.email': { en: 'Email', ru: 'Email', cz: 'Email' },
   'register.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
