@@ -5,6 +5,7 @@ import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
+import DeliveryLog from '../components/notifications/DeliveryLog'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
 import { useMyBusiness } from '../hooks/useMyBusiness'
@@ -302,6 +303,8 @@ export default function NotificationSettings() {
           </div>
         )}
       </section>
+
+      <DeliveryLog />
     </div>
   )
 }

@@ -1329,6 +1329,33 @@ export type TranslationKey =
   | 'notifications.testSubject'
   | 'notifications.testPreview'
   | 'notifications.testError'
+  | 'notifications.delivery.title'
+  | 'notifications.delivery.description'
+  | 'notifications.delivery.empty'
+  | 'notifications.delivery.recipient'
+  | 'notifications.delivery.attempts'
+  | 'notifications.delivery.error'
+  | 'notifications.delivery.retry'
+  | 'notifications.delivery.retrying'
+  | 'notifications.delivery.retryQueued'
+  | 'notifications.delivery.retryError'
+  | 'notifications.delivery.statusFilter'
+  | 'notifications.delivery.allStatuses'
+  | 'notifications.delivery.page'
+  | 'notifications.delivery.previous'
+  | 'notifications.delivery.next'
+  | 'notifications.delivery.loadError'
+  | 'notifications.delivery.kind.created'
+  | 'notifications.delivery.kind.changed'
+  | 'notifications.delivery.kind.cancelled'
+  | 'notifications.delivery.kind.reminder'
+  | 'notifications.delivery.status.pending'
+  | 'notifications.delivery.status.processing'
+  | 'notifications.delivery.status.sent'
+  | 'notifications.delivery.status.captured'
+  | 'notifications.delivery.status.skipped'
+  | 'notifications.delivery.status.failed'
+  | 'notifications.delivery.status.cancelled'
   | 'questionnairePage.title'
   | 'questionnairePage.linkUnavailableTitle'
   | 'questionnairePage.linkUnavailableText'
@@ -3233,6 +3260,73 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     ru: 'Не удалось выполнить проверку.',
     cz: 'Test se nepodařilo spustit.',
   },
+  'notifications.delivery.title': { en: 'Delivery log', ru: 'Журнал доставки', cz: 'Protokol doručení' },
+  'notifications.delivery.description': {
+    en: 'Recent messages and provider errors for this business.',
+    ru: 'Последние сообщения и ошибки провайдера по этому бизнесу.',
+    cz: 'Nedávné zprávy a chyby poskytovatele pro tento podnik.',
+  },
+  'notifications.delivery.empty': {
+    en: 'No deliveries yet.',
+    ru: 'Доставок пока нет.',
+    cz: 'Zatím žádná doručení.',
+  },
+  'notifications.delivery.recipient': { en: 'Recipient', ru: 'Получатель', cz: 'Příjemce' },
+  'notifications.delivery.attempts': { en: 'Attempts', ru: 'Попытки', cz: 'Pokusy' },
+  'notifications.delivery.error': { en: 'Error', ru: 'Ошибка', cz: 'Chyba' },
+  'notifications.delivery.retry': { en: 'Retry', ru: 'Повторить', cz: 'Zopakovat' },
+  'notifications.delivery.retrying': { en: 'Retrying...', ru: 'Повтор...', cz: 'Opakování...' },
+  'notifications.delivery.retryQueued': {
+    en: 'Retry queued. The worker will try again.',
+    ru: 'Повтор поставлен в очередь. Worker попробует снова.',
+    cz: 'Opakování zařazeno do fronty. Worker se pokusí znovu.',
+  },
+  'notifications.delivery.retryError': {
+    en: 'Could not retry this delivery.',
+    ru: 'Не удалось повторить эту доставку.',
+    cz: 'Toto doručení se nepodařilo zopakovat.',
+  },
+  'notifications.delivery.statusFilter': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'notifications.delivery.allStatuses': { en: 'All statuses', ru: 'Все статусы', cz: 'Všechny stavy' },
+  'notifications.delivery.page': { en: 'Page', ru: 'Страница', cz: 'Strana' },
+  'notifications.delivery.previous': { en: 'Previous', ru: 'Назад', cz: 'Předchozí' },
+  'notifications.delivery.next': { en: 'Next', ru: 'Вперёд', cz: 'Další' },
+  'notifications.delivery.loadError': {
+    en: 'Could not load the delivery log.',
+    ru: 'Не удалось загрузить журнал доставки.',
+    cz: 'Protokol doručení se nepodařilo načíst.',
+  },
+  'notifications.delivery.kind.created': {
+    en: 'Booking created',
+    ru: 'Запись создана',
+    cz: 'Rezervace vytvořena',
+  },
+  'notifications.delivery.kind.changed': {
+    en: 'Booking changed',
+    ru: 'Запись перенесена',
+    cz: 'Rezervace změněna',
+  },
+  'notifications.delivery.kind.cancelled': {
+    en: 'Booking cancelled',
+    ru: 'Запись отменена',
+    cz: 'Rezervace zrušena',
+  },
+  'notifications.delivery.kind.reminder': {
+    en: 'Reminder',
+    ru: 'Напоминание',
+    cz: 'Připomínka',
+  },
+  'notifications.delivery.status.pending': { en: 'Pending', ru: 'В очереди', cz: 'Čeká' },
+  'notifications.delivery.status.processing': { en: 'Sending', ru: 'Отправляется', cz: 'Odesílá se' },
+  'notifications.delivery.status.sent': { en: 'Sent', ru: 'Отправлено', cz: 'Odesláno' },
+  'notifications.delivery.status.captured': {
+    en: 'Captured (not sent)',
+    ru: 'Перехвачено (не отправлено)',
+    cz: 'Zachyceno (neodesláno)',
+  },
+  'notifications.delivery.status.skipped': { en: 'Skipped', ru: 'Пропущено', cz: 'Přeskočeno' },
+  'notifications.delivery.status.failed': { en: 'Failed', ru: 'Ошибка', cz: 'Selhalo' },
+  'notifications.delivery.status.cancelled': { en: 'Cancelled', ru: 'Отменено', cz: 'Zrušeno' },
 
   'questionnairePage.title': { en: 'Questionnaire', ru: 'Анкета', cz: 'Dotazník' },
   'questionnairePage.linkUnavailableTitle': {
