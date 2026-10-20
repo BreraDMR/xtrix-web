@@ -32,7 +32,7 @@ for (const language of ['en', 'ru', 'cz'] as const) {
       await expect(clients).toHaveAttribute('aria-current', 'page')
       await sidebar.getByRole('link', { name: 'Xtrix' }).focus()
       await page.keyboard.press('Enter')
-      await expect(page).toHaveURL(/\/$/)
+      await expect(page).toHaveURL(/\/app$/)
       await clients.click()
       await page.reload()
       await expect(page.getByRole('button', { name: text.expand })).toHaveAttribute('aria-expanded', 'false')
