@@ -4,17 +4,24 @@ import { addDays, format, parseISO } from 'date-fns'
 import api from '../api/client'
 import Calendar from '../components/Calendar'
 import SimpleCalendar from '../components/SimpleCalendar'
-import DayGrid, { zonedDayKey } from '../components/calendar/DayGrid'
+import { zonedDayKey } from '../components/calendar/DayGrid'
+import StaffColumns, { type StaffColumn } from '../components/calendar/StaffColumns'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
 import Button from '../ui/Button'
 import { useTranslation } from '../hooks/useTranslation'
 import { useMyBusiness } from '../hooks/useMyBusiness'
+import { useAuthStore } from '../store/authStore'
 import { zonedWallTimeToIso } from '../utils/dates'
 import ContextHint from '../components/onboarding/ContextHint'
 import type { ClientOut, VisitOut } from '../api/types'
 
 type CalendarView = 'day' | 'simple' | 'advanced'
+
+interface EmployeeRow {
+  employee_user_id: number
+  employee_user?: { full_name?: string; email?: string | null } | null
+}
 
 async function fetchVisitsInRange(from: string, to: string): Promise<VisitOut[]> {
   const items: VisitOut[] = []
@@ -35,6 +42,7 @@ async function fetchVisitsInRange(from: string, to: string): Promise<VisitOut[]>
 
 export default function CalendarPage() {
   const { t } = useTranslation()
+  const { user } = useAuthStore()
   const [view, setView] = useState<CalendarView>('day')
   const [day, setDay] = useState<Date>(() => {
     const value = new Date()
@@ -77,6 +85,33 @@ export default function CalendarPage() {
     },
     enabled: view === 'day',
   })
+
+  const managesStaff = user?.role === 'admin' || user?.role === 'business_owner'
+  const { data: employees } = useQuery<EmployeeRow[]>({
+    queryKey: ['employees', true],
+    queryFn: async () => {
+      const { data } = await api.get('/employees/', { params: { is_active: true } })
+      return Array.isArray(data) ? data : []
+    },
+    enabled: view === 'day' && managesStaff,
+  })
+
+  const staff = useMemo<StaffColumn[]>(() => {
+    if (!user) return []
+    const rows: StaffColumn[] = [{ id: user.id, name: user.full_name }]
+    if (managesStaff) {
+      for (const employee of employees ?? []) {
+        if (rows.some((row) => row.id === employee.employee_user_id)) continue
+        rows.push({
+          id: employee.employee_user_id,
+          name: employee.employee_user?.full_name
+            || employee.employee_user?.email
+            || `#${employee.employee_user_id}`,
+        })
+      }
+    }
+    return rows
+  }, [user, employees, managesStaff])
 
   const clientNames = useMemo(
     () => new Map((clients ?? []).map((client) => [client.id, client.full_name])),
@@ -150,9 +185,10 @@ export default function CalendarPage() {
               <LoadingSpinner size="lg" />
             </div>
           ) : (
-            <DayGrid
+            <StaffColumns
               day={day}
               visits={dayQuery.data ?? []}
+              staff={staff}
               timeZone={timeZone}
               clientNames={clientNames}
             />

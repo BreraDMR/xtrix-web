@@ -19,6 +19,9 @@ interface DayGridProps {
   onSelectVisit?: (visit: CalendarVisit) => void
   hourHeight?: number
   className?: string
+  showHeader?: boolean
+  showAxis?: boolean
+  contained?: boolean
 }
 
 interface DayEvent {
@@ -135,6 +138,24 @@ const STATUS_CLASS: Record<string, string> = {
 
 const statusClass = (status?: string | null): string => STATUS_CLASS[status ?? ''] ?? STATUS_CLASS.planned
 
+export function HourAxis({ hourHeight = DEFAULT_HOUR_HEIGHT }: { hourHeight?: number }) {
+  return (
+    <div className="relative h-full w-full" aria-hidden="true">
+      {Array.from({ length: HOURS_IN_DAY }, (_, hour) => (
+        <span
+          key={hour}
+          className={`absolute right-2 text-[11px] tabular-nums text-[var(--workspace-muted)] ${
+            hour === 0 ? '' : '-translate-y-1/2'
+          }`}
+          style={{ top: hour * hourHeight + (hour === 0 ? 2 : 0) }}
+        >
+          {minutesToHHMM(hour * 60)}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export default function DayGrid({
   day,
   visits,
@@ -143,6 +164,9 @@ export default function DayGrid({
   onSelectVisit,
   hourHeight = DEFAULT_HOUR_HEIGHT,
   className = '',
+  showHeader = true,
+  showAxis = true,
+  contained = true,
 }: DayGridProps) {
   const { t } = useTranslation()
   const locale = useLocaleStore((state) => state.locale)
@@ -155,42 +179,25 @@ export default function DayGrid({
   const title = format(parseISO(dayKey), 'EEEE, d MMMM', { locale: dateLocale })
   const events = useMemo(() => layoutDay(visits, dayKey, zone), [visits, dayKey, zone])
 
-  return (
-    <section aria-label={`${t('calendar.daySchedule')} ${title}`} className={className}>
-      <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-sm font-semibold text-[var(--workspace-ink)]">{title}</h3>
-        <span className="text-xs text-[var(--workspace-muted)]">
-          {events.length === 0 ? t('calendar.noVisits') : t('calendar.daySchedule')}
-        </span>
-      </div>
+  const body = (
+    <div className="flex" style={{ height: HOURS_IN_DAY * hourHeight }}>
+      {showAxis && (
+        <div className="w-14 shrink-0">
+          <HourAxis hourHeight={hourHeight} />
+        </div>
+      )}
 
-      <div className="max-h-[70vh] overflow-y-auto rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
-        <div className="flex" style={{ height: HOURS_IN_DAY * hourHeight }}>
-          <div className="relative w-14 shrink-0" aria-hidden="true">
-            {Array.from({ length: HOURS_IN_DAY }, (_, hour) => (
-              <span
-                key={hour}
-                className={`absolute right-2 text-[11px] tabular-nums text-[var(--workspace-muted)] ${
-                  hour === 0 ? '' : '-translate-y-1/2'
-                }`}
-                style={{ top: hour * hourHeight + (hour === 0 ? 2 : 0) }}
-              >
-                {minutesToHHMM(hour * 60)}
-              </span>
-            ))}
-          </div>
+      <div className={`relative flex-1 ${showAxis ? 'border-l border-[var(--workspace-line)]' : ''}`}>
+        {Array.from({ length: HOURS_IN_DAY }, (_, hour) => (
+          <div
+            key={hour}
+            aria-hidden="true"
+            className="absolute inset-x-0 border-t border-[var(--workspace-line)]"
+            style={{ top: hour * hourHeight }}
+          />
+        ))}
 
-          <div className="relative flex-1 border-l border-[var(--workspace-line)]">
-            {Array.from({ length: HOURS_IN_DAY }, (_, hour) => (
-              <div
-                key={hour}
-                aria-hidden="true"
-                className="absolute inset-x-0 border-t border-[var(--workspace-line)]"
-                style={{ top: hour * hourHeight }}
-              />
-            ))}
-
-            {events.map((event) => {
+        {events.map((event) => {
               const { visit } = event
               const clientName = clientNames?.get(visit.client_id) || visit.client_name
               const name = clientName || visit.service_name || `#${visit.id}`
@@ -240,10 +247,28 @@ export default function DayGrid({
                   <span className="block truncate text-[10px] leading-tight opacity-80">{detail}</span>
                 </button>
               )
-            })}
-          </div>
-        </div>
+        })}
       </div>
+    </div>
+  )
+
+  return (
+    <section aria-label={`${t('calendar.daySchedule')} ${title}`} className={className}>
+      {showHeader && (
+        <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+          <h3 className="text-sm font-semibold text-[var(--workspace-ink)]">{title}</h3>
+          <span className="text-xs text-[var(--workspace-muted)]">
+            {events.length === 0 ? t('calendar.noVisits') : t('calendar.daySchedule')}
+          </span>
+        </div>
+      )}
+      {contained ? (
+        <div className="max-h-[70vh] overflow-y-auto rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
+          {body}
+        </div>
+      ) : (
+        body
+      )}
     </section>
   )
 }

@@ -574,6 +574,8 @@ export type TranslationKey =
   | 'calendar.dayViewDescription'
   | 'calendar.daySchedule'
   | 'calendar.today'
+  | 'calendar.staffColumns'
+  | 'calendar.noStaff'
   | 'employees.title'
   | 'employees.add_employee'
   | 'employees.search_placeholder'
@@ -2033,6 +2035,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.dayViewDescription': { en: 'One day at a glance: time, client, price and status of every visit.', ru: 'Один день целиком: время, клиент, цена и статус каждого визита.', cz: 'Jeden den přehledně: čas, klient, cena a stav každé návštěvy.' },
   'calendar.daySchedule': { en: 'Daily schedule', ru: 'Расписание на день', cz: 'Denní rozvrh' },
   'calendar.today': { en: 'Today', ru: 'Сегодня', cz: 'Dnes' },
+  'calendar.staffColumns': { en: 'By specialist', ru: 'По мастерам', cz: 'Podle specialistů' },
+  'calendar.noStaff': { en: 'No specialists to show', ru: 'Нет мастеров для отображения', cz: 'Žádní specialisté k zobrazení' },
   
   'employees.title': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'employees.add_employee': { en: 'Add Employee', ru: 'Добавить сотрудника', cz: 'Přidat zaměstnance' },
