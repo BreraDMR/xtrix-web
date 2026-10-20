@@ -8,7 +8,9 @@
 #
 # The API dir is only read: alembic, uvicorn and the seed all run from a temp dir, so its
 # .env and logs/ are never touched.
+# libpq routing from the caller must not redirect migrations away from our container.
 set -euo pipefail
+unset PGHOSTADDR PGSERVICE PGSERVICEFILE
 cd "$(dirname "$0")/.."
 
 API_DIR=$(cd "${API_DIR:-../api}" && pwd)
@@ -56,15 +58,16 @@ wait_for() {
 }
 
 echo "==> postgres ($PG_CONTAINER on $PG_PORT)"
-pg_id=$(docker run -d --name "$PG_CONTAINER" -p "$PG_PORT:5432" \
+pg_id=$(docker create --name "$PG_CONTAINER" -p "127.0.0.1:$PG_PORT:5432" \
     -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=xtrix_e2e_test postgres:15)
+docker start "$pg_id" >/dev/null
 for _ in $(seq 1 60); do
-    docker exec "$PG_CONTAINER" pg_isready -U postgres -d xtrix_e2e_test >/dev/null 2>&1 && break
+    docker exec "$pg_id" pg_isready -U postgres -d xtrix_e2e_test >/dev/null 2>&1 && break
     sleep 1
 done
 # pg_isready says yes a moment before the init scripts finish and the server restarts
 sleep 2
-docker exec "$PG_CONTAINER" pg_isready -U postgres -d xtrix_e2e_test >/dev/null
+docker exec "$pg_id" pg_isready -U postgres -d xtrix_e2e_test >/dev/null
 
 export DATABASE_URL="postgresql://postgres:postgres@localhost:$PG_PORT/xtrix_e2e_test"
 export JWT_SECRET
