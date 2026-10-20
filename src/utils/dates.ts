@@ -15,3 +15,56 @@ export const localDay = (iso: string) => format(new Date(iso), 'yyyy-MM-dd')
 
 // date-only fields (birth date, promotion dates) carry no time zone, show the same day
 export const showDay = (day?: string | null) => (day ? parseISO(day).toLocaleDateString() : '-')
+
+const zonedParts = (value: Date, timeZone: string): Record<string, string> =>
+  Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }).formatToParts(value).map((part) => [part.type, part.value]),
+  )
+
+const zoneOffsetMs = (utcMs: number, timeZone: string): number => {
+  const parts = zonedParts(new Date(utcMs), timeZone)
+  const asUtc = Date.UTC(
+    Number(parts.year),
+    Number(parts.month) - 1,
+    Number(parts.day),
+    Number(parts.hour) % 24,
+    Number(parts.minute),
+    Number(parts.second),
+  )
+  return asUtc - utcMs
+}
+
+// the form collects a wall-clock time in the business time zone, the API stores UTC
+export function zonedWallTimeToIso(day: string, time: string, timeZone: string): string {
+  const [year, month, date] = day.split('-').map(Number)
+  const [hour, minute] = time.split(':').map(Number)
+  const wallAsUtc = Date.UTC(year, month - 1, date, hour, minute)
+  let utc = wallAsUtc - zoneOffsetMs(wallAsUtc, timeZone)
+  utc = wallAsUtc - zoneOffsetMs(utc, timeZone)
+  return new Date(utc).toISOString()
+}
+
+export function isoToZonedWallTime(iso: string, timeZone: string): { day: string; time: string } {
+  const parts = zonedParts(new Date(iso), timeZone)
+  return { day: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` }
+}
+
+export const showZonedDateTime = (iso: string, timeZone: string): string =>
+  new Intl.DateTimeFormat(undefined, { timeZone, dateStyle: 'medium', timeStyle: 'short' })
+    .format(new Date(iso))
+
+export const isValidTimeWindow = (start: string, end: string, minMinutes = 60): boolean => {
+  if (!start || !end) return false
+  const [startHour, startMinute] = start.split(':').map(Number)
+  const [endHour, endMinute] = end.split(':').map(Number)
+  return (endHour * 60 + endMinute) - (startHour * 60 + startMinute) >= minMinutes
+}

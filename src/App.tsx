@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
 import Visits from './pages/Visits'
 import CalendarPage from './pages/CalendarPage'
+import Schedule from './pages/Schedule'
 import Services from './pages/Services'
 import SpecialistProfile from './pages/SpecialistProfile'
 import Employees from './pages/Employees'
@@ -70,6 +71,7 @@ function App() {
           <Route path="clients" element={<Clients />} />
           <Route path="visits" element={<Visits />} />
           <Route path="calendar" element={<CalendarPage />} />
+          <Route path="schedules" element={<Schedule />} />
           <Route path="services" element={<Services />} />
           <Route path="profile" element={<SpecialistProfile />} />
           <Route path="employees" element={<Employees />} />

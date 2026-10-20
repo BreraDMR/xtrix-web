@@ -1069,6 +1069,66 @@ export type TranslationKey =
   | 'onboarding.settings.showChecklist'
   | 'onboarding.settings.saved'
   | 'onboarding.error.save'
+  | 'nav.schedule'
+  | 'schedule.title'
+  | 'schedule.subtitle'
+  | 'schedule.noAccess'
+  | 'schedule.specialist'
+  | 'schedule.timezone'
+  | 'schedule.tab.weekly'
+  | 'schedule.tab.exceptions'
+  | 'schedule.tab.rules'
+  | 'schedule.weekly.hint'
+  | 'schedule.weekday.mon'
+  | 'schedule.weekday.tue'
+  | 'schedule.weekday.wed'
+  | 'schedule.weekday.thu'
+  | 'schedule.weekday.fri'
+  | 'schedule.weekday.sat'
+  | 'schedule.weekday.sun'
+  | 'schedule.dayOff'
+  | 'schedule.addWindow'
+  | 'schedule.start'
+  | 'schedule.end'
+  | 'schedule.reason'
+  | 'schedule.reasonPlaceholder'
+  | 'schedule.confirmDelete'
+  | 'schedule.error.timeRange'
+  | 'schedule.error.bufferRange'
+  | 'schedule.error.horizonRange'
+  | 'schedule.error.leadRange'
+  | 'schedule.error.save'
+  | 'schedule.error.load'
+  | 'schedule.exceptions.hint'
+  | 'schedule.exceptions.title'
+  | 'schedule.exceptions.closed'
+  | 'schedule.exceptions.closedLabel'
+  | 'schedule.exceptions.day'
+  | 'schedule.exceptions.add'
+  | 'schedule.exceptions.update'
+  | 'schedule.exceptions.empty'
+  | 'schedule.blocks.title'
+  | 'schedule.blocks.hint'
+  | 'schedule.blocks.add'
+  | 'schedule.blocks.empty'
+  | 'schedule.rules.title'
+  | 'schedule.rules.hint'
+  | 'schedule.rules.noBusiness'
+  | 'schedule.rules.timezone'
+  | 'schedule.rules.timezoneHint'
+  | 'schedule.rules.horizon'
+  | 'schedule.rules.horizonHint'
+  | 'schedule.rules.lead'
+  | 'schedule.rules.leadHint'
+  | 'schedule.rules.readOnly'
+  | 'schedule.rules.save'
+  | 'schedule.rules.saved'
+  | 'schedule.buffers.title'
+  | 'schedule.buffers.hint'
+  | 'schedule.buffers.duration'
+  | 'schedule.buffers.before'
+  | 'schedule.buffers.after'
+  | 'schedule.buffers.empty'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -2448,6 +2508,67 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.settings.showChecklist': { en: 'Show checklist again', ru: 'Показать чеклист снова', cz: 'Zobrazit seznam znovu' },
   'onboarding.settings.saved': { en: 'Updated', ru: 'Обновлено', cz: 'Aktualizováno' },
   'onboarding.error.save': { en: 'Could not save the choice. Try again.', ru: 'Не удалось сохранить выбор. Попробуйте ещё раз.', cz: 'Volbu se nepodařilo uložit. Zkuste to znovu.' },
+
+  'nav.schedule': { en: 'Schedule', ru: 'График', cz: 'Rozvrh' },
+  'schedule.title': { en: 'Work schedule', ru: 'График работы', cz: 'Pracovní rozvrh' },
+  'schedule.subtitle': { en: 'Weekly hours, days off and booking rules for each master.', ru: 'Недельные часы, выходные и правила записи для каждого мастера.', cz: 'Týdenní hodiny, volné dny a pravidla rezervace pro každého mistra.' },
+  'schedule.noAccess': { en: 'Only the owner or a master can manage work schedules.', ru: 'Графиком могут управлять только владелец или мастер.', cz: 'Rozvrh mohou spravovat pouze majitel nebo mistr.' },
+  'schedule.specialist': { en: 'Master', ru: 'Мастер', cz: 'Mistr' },
+  'schedule.timezone': { en: 'Time zone', ru: 'Часовой пояс', cz: 'Časové pásmo' },
+  'schedule.tab.weekly': { en: 'Weekly hours', ru: 'Недельные часы', cz: 'Týdenní hodiny' },
+  'schedule.tab.exceptions': { en: 'Days off and blocks', ru: 'Выходные и блоки', cz: 'Volné dny a blokace' },
+  'schedule.tab.rules': { en: 'Booking rules', ru: 'Правила записи', cz: 'Pravidla rezervace' },
+  'schedule.weekly.hint': { en: 'Add one or more working windows per day. Times are shown in the business time zone.', ru: 'Добавьте одно или несколько рабочих окон на день. Время показано в часовом поясе бизнеса.', cz: 'Přidejte jedno nebo více pracovních oken na den. Časy jsou v časovém pásmu firmy.' },
+  'schedule.weekday.mon': { en: 'Monday', ru: 'Понедельник', cz: 'Pondělí' },
+  'schedule.weekday.tue': { en: 'Tuesday', ru: 'Вторник', cz: 'Úterý' },
+  'schedule.weekday.wed': { en: 'Wednesday', ru: 'Среда', cz: 'Středa' },
+  'schedule.weekday.thu': { en: 'Thursday', ru: 'Четверг', cz: 'Čtvrtek' },
+  'schedule.weekday.fri': { en: 'Friday', ru: 'Пятница', cz: 'Pátek' },
+  'schedule.weekday.sat': { en: 'Saturday', ru: 'Суббота', cz: 'Sobota' },
+  'schedule.weekday.sun': { en: 'Sunday', ru: 'Воскресенье', cz: 'Neděle' },
+  'schedule.dayOff': { en: 'Day off', ru: 'Выходной', cz: 'Volno' },
+  'schedule.addWindow': { en: 'Add hours', ru: 'Добавить часы', cz: 'Přidat hodiny' },
+  'schedule.start': { en: 'Start', ru: 'Начало', cz: 'Začátek' },
+  'schedule.end': { en: 'End', ru: 'Конец', cz: 'Konec' },
+  'schedule.reason': { en: 'Note', ru: 'Заметка', cz: 'Poznámka' },
+  'schedule.reasonPlaceholder': { en: 'e.g. vacation', ru: 'например, отпуск', cz: 'např. dovolená' },
+  'schedule.confirmDelete': { en: 'Confirm delete', ru: 'Подтвердить удаление', cz: 'Potvrdit smazání' },
+  'schedule.error.timeRange': { en: 'The end must be at least an hour after the start.', ru: 'Конец должен быть минимум на час позже начала.', cz: 'Konec musí být alespoň o hodinu po začátku.' },
+  'schedule.error.bufferRange': { en: 'Buffers must be whole minutes from 0 to 1440.', ru: 'Буферы — целые минуты от 0 до 1440.', cz: 'Buffery jsou celé minuty od 0 do 1440.' },
+  'schedule.error.horizonRange': { en: 'The horizon must be from 1 to 365 days.', ru: 'Горизонт должен быть от 1 до 365 дней.', cz: 'Horizont musí být 1 až 365 dní.' },
+  'schedule.error.leadRange': { en: 'Lead time must be from 0 to 10080 minutes.', ru: 'Время до записи должно быть от 0 до 10080 минут.', cz: 'Čas před rezervací musí být 0 až 10080 minut.' },
+  'schedule.error.save': { en: 'Could not save the changes. Try again.', ru: 'Не удалось сохранить изменения. Попробуйте ещё раз.', cz: 'Změny se nepodařilo uložit. Zkuste to znovu.' },
+  'schedule.error.load': { en: 'Could not load the schedule.', ru: 'Не удалось загрузить график.', cz: 'Rozvrh se nepodařilo načíst.' },
+  'schedule.exceptions.hint': { en: 'A day off or custom hours replace the weekly schedule for that date only.', ru: 'Выходной или свои часы заменяют недельный график только на эту дату.', cz: 'Volno nebo vlastní hodiny nahradí týdenní rozvrh pouze pro dané datum.' },
+  'schedule.exceptions.title': { en: 'Days off and vacations', ru: 'Выходные и отпуска', cz: 'Volné dny a dovolené' },
+  'schedule.exceptions.closed': { en: 'Close the whole day or set special working hours for one date.', ru: 'Закройте весь день или задайте особые часы на одну дату.', cz: 'Zavřete celý den nebo nastavte zvláštní hodiny pro jedno datum.' },
+  'schedule.exceptions.closedLabel': { en: 'Closed all day', ru: 'Закрыто весь день', cz: 'Zavřeno celý den' },
+  'schedule.exceptions.day': { en: 'Date', ru: 'Дата', cz: 'Datum' },
+  'schedule.exceptions.add': { en: 'Add day off', ru: 'Добавить выходной', cz: 'Přidat volný den' },
+  'schedule.exceptions.update': { en: 'Save day', ru: 'Сохранить день', cz: 'Uložit den' },
+  'schedule.exceptions.empty': { en: 'No exceptions yet.', ru: 'Исключений пока нет.', cz: 'Zatím žádné výjimky.' },
+  'schedule.blocks.title': { en: 'Breaks and personal blocks', ru: 'Перерывы и личные блоки', cz: 'Přestávky a osobní blokace' },
+  'schedule.blocks.hint': { en: 'Lunch, a doctor or anything else that must stay free. Times are converted from the business time zone.', ru: 'Обед, врач или другое личное время. Время пересчитывается из часового пояса бизнеса.', cz: 'Oběd, lékař nebo jiný osobní čas. Časy se převádějí z časového pásma firmy.' },
+  'schedule.blocks.add': { en: 'Add block', ru: 'Добавить блок', cz: 'Přidat blokaci' },
+  'schedule.blocks.empty': { en: 'No blocks yet.', ru: 'Блоков пока нет.', cz: 'Zatím žádné blokace.' },
+  'schedule.rules.title': { en: 'Booking rules', ru: 'Правила записи', cz: 'Pravidla rezervace' },
+  'schedule.rules.hint': { en: 'These rules only change online booking. Work windows, days off and existing visits stay as they are.', ru: 'Эти правила меняют только онлайн-запись. Рабочие окна, выходные и существующие визиты не меняются.', cz: 'Tato pravidla mění pouze online rezervace. Pracovní okna, volné dny a existující návštěvy zůstávají.' },
+  'schedule.rules.noBusiness': { en: 'Create a business first to set booking rules.', ru: 'Сначала создайте бизнес, чтобы настроить правила записи.', cz: 'Nejprve vytvořte firmu pro nastavení pravidel rezervace.' },
+  'schedule.rules.timezone': { en: 'Business time zone', ru: 'Часовой пояс бизнеса', cz: 'Časové pásmo firmy' },
+  'schedule.rules.timezoneHint': { en: 'IANA name, for example Europe/Prague', ru: 'IANA-название, например Europe/Prague', cz: 'Název IANA, například Europe/Prague' },
+  'schedule.rules.horizon': { en: 'Booking horizon, days', ru: 'Горизонт записи, дней', cz: 'Horizont rezervace, dny' },
+  'schedule.rules.horizonHint': { en: 'How far ahead clients can book', ru: 'На сколько дней вперёд можно записаться', cz: 'Jak daleko dopředu lze rezervovat' },
+  'schedule.rules.lead': { en: 'Minimum notice, minutes', ru: 'Минимум до записи, минут', cz: 'Minimální předstih, minuty' },
+  'schedule.rules.leadHint': { en: '0 means clients can book the next free slot', ru: '0 — можно записаться на ближайшее свободное время', cz: '0 znamená rezervaci nejbližšího volného termínu' },
+  'schedule.rules.readOnly': { en: 'Only the business owner can change these rules.', ru: 'Эти правила может менять только владелец бизнеса.', cz: 'Tato pravidla může měnit pouze majitel firmy.' },
+  'schedule.rules.save': { en: 'Save rules', ru: 'Сохранить правила', cz: 'Uložit pravidla' },
+  'schedule.rules.saved': { en: 'Rules saved.', ru: 'Правила сохранены.', cz: 'Pravidla uložena.' },
+  'schedule.buffers.title': { en: 'Service buffers', ru: 'Буферы услуг', cz: 'Buffery služeb' },
+  'schedule.buffers.hint': { en: 'Extra time around a visit for preparation and cleanup. The service duration stays unchanged.', ru: 'Дополнительное время вокруг визита на подготовку и уборку. Длительность услуги не меняется.', cz: 'Dodatečný čas kolem návštěvy na přípravu a úklid. Délka služby zůstává stejná.' },
+  'schedule.buffers.duration': { en: 'Service duration', ru: 'Длительность услуги', cz: 'Délka služby' },
+  'schedule.buffers.before': { en: 'Before, min', ru: 'До, мин', cz: 'Před, min' },
+  'schedule.buffers.after': { en: 'After, min', ru: 'После, мин', cz: 'Po, min' },
+  'schedule.buffers.empty': { en: 'No services yet.', ru: 'Услуг пока нет.', cz: 'Zatím žádné služby.' },
 }
 
 export default translations

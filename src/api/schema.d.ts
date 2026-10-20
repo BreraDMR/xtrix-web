@@ -1677,7 +1677,44 @@ export interface paths {
         /** Update Block */
         put: operations["update_block_schedules_blocks__block_id__put"];
         post?: never;
+        /** Delete Block */
+        delete: operations["delete_block_schedules_blocks__block_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedules/exceptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Schedule Exceptions */
+        get: operations["list_schedule_exceptions_schedules_exceptions_get"];
+        put?: never;
+        /** Create Schedule Exception */
+        post: operations["create_schedule_exception_schedules_exceptions_post"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedules/exceptions/{exception_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Schedule Exception */
+        put: operations["update_schedule_exception_schedules_exceptions__exception_id__put"];
+        post?: never;
+        /** Delete Schedule Exception */
+        delete: operations["delete_schedule_exception_schedules_exceptions__exception_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1712,7 +1749,8 @@ export interface paths {
         /** Update Work Schedule */
         put: operations["update_work_schedule_schedules_work__ws_id__put"];
         post?: never;
-        delete?: never;
+        /** Delete Work Schedule */
+        delete: operations["delete_work_schedule_schedules_work__ws_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2802,6 +2840,18 @@ export interface components {
             /** Address */
             address?: string | null;
             /**
+             * Booking Horizon Days
+             * @description How many days ahead clients can book
+             * @default 30
+             */
+            booking_horizon_days: number;
+            /**
+             * Booking Lead Time Minutes
+             * @description Minimum notice before a booking, minutes
+             * @default 0
+             */
+            booking_lead_time_minutes: number;
+            /**
              * Business Type
              * @enum {string}
              */
@@ -2820,6 +2870,12 @@ export interface components {
             name: string;
             /** Phone */
             phone?: string | null;
+            /**
+             * Timezone
+             * @description IANA timezone, e.g. Europe/Prague
+             * @default UTC
+             */
+            timezone: string;
         };
         /** BusinessOut */
         BusinessOut: {
@@ -2832,6 +2888,18 @@ export interface components {
             assistant_gender: string;
             /** Assistant Name */
             assistant_name?: string | null;
+            /**
+             * Booking Horizon Days
+             * @description How many days ahead clients can book
+             * @default 30
+             */
+            booking_horizon_days: number;
+            /**
+             * Booking Lead Time Minutes
+             * @description Minimum notice before a booking, minutes
+             * @default 0
+             */
+            booking_lead_time_minutes: number;
             /**
              * Business Type
              * @enum {string}
@@ -2854,6 +2922,12 @@ export interface components {
             name: string;
             /** Phone */
             phone?: string | null;
+            /**
+             * Timezone
+             * @description IANA timezone, e.g. Europe/Prague
+             * @default UTC
+             */
+            timezone: string;
         };
         /** BusinessUpdate */
         BusinessUpdate: {
@@ -2869,6 +2943,10 @@ export interface components {
              * @description Empty = default name for the interface language
              */
             assistant_name?: string | null;
+            /** Booking Horizon Days */
+            booking_horizon_days?: number | null;
+            /** Booking Lead Time Minutes */
+            booking_lead_time_minutes?: number | null;
             /** Business Type */
             business_type?: ("salon" | "clinic" | "medical" | "dental" | "hospital" | "individual") | null;
             /** Currency */
@@ -2881,6 +2959,11 @@ export interface components {
             name?: string | null;
             /** Phone */
             phone?: string | null;
+            /**
+             * Timezone
+             * @description IANA timezone
+             */
+            timezone?: string | null;
         };
         /** CalculateSalaryRequest */
         CalculateSalaryRequest: {
@@ -5505,6 +5588,63 @@ export interface components {
             /** Status */
             status?: ("completed" | "pending" | "failed") | null;
         };
+        /** ScheduleExceptionCreate */
+        ScheduleExceptionCreate: {
+            /** End Time */
+            end_time?: string | null;
+            /**
+             * Exception Date
+             * Format: date
+             */
+            exception_date: string;
+            /**
+             * Is Closed
+             * @default true
+             */
+            is_closed: boolean;
+            /** Reason */
+            reason?: string | null;
+            /** Specialist Id */
+            specialist_id: number;
+            /** Start Time */
+            start_time?: string | null;
+        };
+        /** ScheduleExceptionOut */
+        ScheduleExceptionOut: {
+            /** End Time */
+            end_time?: string | null;
+            /**
+             * Exception Date
+             * Format: date
+             */
+            exception_date: string;
+            /** Id */
+            id: number;
+            /**
+             * Is Closed
+             * @default true
+             */
+            is_closed: boolean;
+            /** Reason */
+            reason?: string | null;
+            /** Specialist Id */
+            specialist_id: number;
+            /** Start Time */
+            start_time?: string | null;
+        };
+        /** ScheduleExceptionUpdate */
+        ScheduleExceptionUpdate: {
+            /** End Time */
+            end_time?: string | null;
+            /** Exception Date */
+            exception_date?: string | null;
+            /** Is Closed */
+            is_closed?: boolean | null;
+            /** Reason */
+            reason?: string | null;
+            /** Start Time */
+            start_time?: string | null;
+        };
         /** ServiceAnalytics */
         ServiceAnalytics: {
             /** Average Price */
@@ -5534,6 +5674,18 @@ export interface components {
         /** ServiceCreate */
         ServiceCreate: {
             /**
+             * Buffer After Minutes
+             * @description Reserved time after the visit, minutes
+             * @default 0
+             */
+            buffer_after_minutes: number;
+            /**
+             * Buffer Before Minutes
+             * @description Reserved time before the visit, minutes
+             * @default 0
+             */
+            buffer_before_minutes: number;
+            /**
              * Category
              * @description Category of service: beauty, wellness, healthcare. If not provided, will be determined from specialist type.
              */
@@ -5561,6 +5713,18 @@ export interface components {
         };
         /** ServiceOut */
         ServiceOut: {
+            /**
+             * Buffer After Minutes
+             * @description Reserved time after the visit, minutes
+             * @default 0
+             */
+            buffer_after_minutes: number;
+            /**
+             * Buffer Before Minutes
+             * @description Reserved time before the visit, minutes
+             * @default 0
+             */
+            buffer_before_minutes: number;
             /**
              * Category
              * @description Category of service: beauty, wellness, healthcare. If not provided, will be determined from specialist type.
@@ -5609,6 +5773,16 @@ export interface components {
         };
         /** ServiceUpdate */
         ServiceUpdate: {
+            /**
+             * Buffer After Minutes
+             * @default 0
+             */
+            buffer_after_minutes: number;
+            /**
+             * Buffer Before Minutes
+             * @default 0
+             */
+            buffer_before_minutes: number;
             /** Category */
             category?: string | null;
             /** Description */
@@ -10973,6 +11147,179 @@ export interface operations {
             };
         };
     };
+    delete_block_schedules_blocks__block_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                block_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_schedule_exceptions_schedules_exceptions_get: {
+        parameters: {
+            query: {
+                specialist_id: number;
+                date_from?: string | null;
+                date_to?: string | null;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleExceptionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_schedule_exception_schedules_exceptions_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleExceptionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleExceptionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_schedule_exception_schedules_exceptions__exception_id__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                exception_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScheduleExceptionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleExceptionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_schedule_exception_schedules_exceptions__exception_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                exception_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_work_schedules_schedules_work_get: {
         parameters: {
             query: {
@@ -11065,6 +11412,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WorkScheduleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_work_schedule_schedules_work__ws_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                ws_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
