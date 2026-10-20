@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/authStore'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import Features from '../components/marketing/Features'
 import ProductTour from '../components/marketing/ProductTour'
+import FAQ from '../components/marketing/FAQ'
 import {
   HiOutlineCalendar,
   HiOutlineCheckCircle,
@@ -201,6 +202,9 @@ export default function Landing() {
 
       {/* Product Tour */}
       <ProductTour />
+
+      {/* FAQ Section */}
+      <FAQ />
     </div>
   )
 }
