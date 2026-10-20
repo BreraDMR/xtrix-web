@@ -10,6 +10,8 @@ const STEP_ROUTE: Partial<Record<OnboardingStepKey, string>> = {
   business: '/app/business',
   service: '/app/services',
   staff: '/app/employees',
+  schedule: '/app/schedules',
+  booking: '/app/business',
 }
 
 export default function Welcome() {
