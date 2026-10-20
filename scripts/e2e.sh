@@ -17,10 +17,11 @@ if [ -z "${API_PYTHON:-}" ]; then
 fi
 # everything on the API side runs from a temp dir, so a relative path would break there
 case "$API_PYTHON" in /*) ;; */*) API_PYTHON="$(pwd)/$API_PYTHON" ;; esac
-PG_CONTAINER=xtrix-e2e-pg
-PG_PORT=55470
-API_PORT=8170
-WEB_PORT=3170
+PG_CONTAINER=${E2E_PG_CONTAINER:-xtrix-e2e-pg}
+PG_PORT=${E2E_PG_PORT:-55470}
+API_PORT=${E2E_API_PORT:-8170}
+WEB_PORT=${E2E_WEB_PORT:-3170}
+pg_id=""
 
 for port in $PG_PORT $API_PORT $WEB_PORT; do
     if nc -z localhost "$port" 2>/dev/null; then
@@ -37,7 +38,7 @@ cleanup() {
     [ -n "$web_pid" ] && kill "$web_pid" 2>/dev/null || true
     [ -n "$api_pid" ] && kill "$api_pid" 2>/dev/null || true
     wait 2>/dev/null || true
-    docker rm -f "$PG_CONTAINER" >/dev/null 2>&1 || true
+    if [ -n "$pg_id" ]; then docker rm -f "$pg_id" >/dev/null 2>&1 || true; fi
     rm -rf "$tmp"
     exit $status
 }
@@ -55,18 +56,17 @@ wait_for() {
 }
 
 echo "==> postgres ($PG_CONTAINER on $PG_PORT)"
-docker rm -f "$PG_CONTAINER" >/dev/null 2>&1 || true
-docker run -d --name "$PG_CONTAINER" -p "$PG_PORT:5432" \
-    -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=xtrix_e2e postgres:15 >/dev/null
+pg_id=$(docker run -d --name "$PG_CONTAINER" -p "$PG_PORT:5432" \
+    -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=xtrix_e2e_test postgres:15)
 for _ in $(seq 1 60); do
-    docker exec "$PG_CONTAINER" pg_isready -U postgres -d xtrix_e2e >/dev/null 2>&1 && break
+    docker exec "$PG_CONTAINER" pg_isready -U postgres -d xtrix_e2e_test >/dev/null 2>&1 && break
     sleep 1
 done
 # pg_isready says yes a moment before the init scripts finish and the server restarts
 sleep 2
-docker exec "$PG_CONTAINER" pg_isready -U postgres -d xtrix_e2e >/dev/null
+docker exec "$PG_CONTAINER" pg_isready -U postgres -d xtrix_e2e_test >/dev/null
 
-export DATABASE_URL="postgresql://postgres:postgres@localhost:$PG_PORT/xtrix_e2e"
+export DATABASE_URL="postgresql://postgres:postgres@localhost:$PG_PORT/xtrix_e2e_test"
 export JWT_SECRET
 JWT_SECRET=$(openssl rand -hex 32)
 # nothing listens on port 1 - the API falls back to no cache / in-memory limits

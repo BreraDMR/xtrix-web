@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One command for "is everything green": contract, types, lint, tests, build.
 # The contract check compares src/api/schema.d.ts with the API's openapi.json -
-# OPENAPI_JSON if set, else ../api/openapi.json, skipped if neither exists.
+# OPENAPI_JSON if set, else ../api/openapi.json; a missing contract is an error.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -17,7 +17,8 @@ if [ -f "$SPEC" ]; then
         exit 1
     fi
 else
-    echo "==> no openapi.json at $SPEC, contract check skipped"
+    echo "Missing API contract at $SPEC - set OPENAPI_JSON to the paired API checkout." >&2
+    exit 1
 fi
 
 echo "==> tsc"
