@@ -97,7 +97,7 @@ export default function Layout() {
     const selected = path === '/' ? location.pathname === path : location.pathname === path || location.pathname.startsWith(path + '/')
     return <Link key={path} to={path} className="crm-navlink" aria-current={selected ? 'page' : undefined}
       onClick={() => setIsMobileMenuOpen(false)}>
-      <Icon className="h-[18px] w-[18px] shrink-0" /><span className="truncate">{label}</span>
+      <Icon className="h-[18px] w-[18px] shrink-0" /><span className="crm-navtext truncate">{label}</span>
     </Link>
   })
 
@@ -107,17 +107,17 @@ export default function Layout() {
         aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)} />}
       <aside ref={sidebar} id="workspace-navigation" role={isMobileMenuOpen ? 'dialog' : undefined}
         aria-modal={isMobileMenuOpen || undefined} aria-label={t('nav.primary')}
-        className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex w-[228px] flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="flex h-[90px] shrink-0 items-center gap-3 px-8">
+        className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+        <div className="crm-brand flex h-[90px] shrink-0 items-center gap-3 px-8">
           <Link to="/" aria-label="Xtrix" className="flex items-center gap-2.5">
             <span className="grid h-8 w-8 place-items-center rounded-[11px] bg-gray-900 text-[25px] font-medium leading-none text-white dark:bg-white dark:text-gray-900">x</span>
-            <span className="text-[25px] font-semibold tracking-[-1.2px]">Xtrix</span>
+            <span className="crm-navtext text-[25px] font-semibold tracking-[-1.2px]">Xtrix</span>
           </Link>
           <button className="ml-auto p-1 text-gray-500 lg:hidden" aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)}><HiOutlineX className="h-5 w-5" /></button>
         </div>
-        <div className="mx-[18px] mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-gray-200 bg-white px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
+        <div className="crm-business mx-[18px] mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-gray-200 bg-white px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gray-100 text-[11px] font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(workspaceName)}</span>
-          <div className="min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
+          <div className="crm-navtext min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
         </div>
         <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5">
           <div className="crm-navlabel">{t('nav.primary')}</div>{links(primaryItems)}
@@ -125,7 +125,7 @@ export default function Layout() {
           <div className="crm-navlabel">{t('nav.system')}</div>{links(systemItems)}
         </nav>
       </aside>
-      <div className="flex min-h-screen min-w-0 flex-col lg:ml-[228px]">
+      <div className="crm-workspace flex min-h-screen min-w-0 flex-col">
         <header className="crm-header flex h-16 shrink-0 items-center justify-between gap-3 px-5 lg:h-[76px] lg:px-11">
           <div className="flex min-w-0 items-center gap-3">
             <button className="hidden rounded-lg p-2 text-gray-600 lg:inline-flex dark:text-gray-300"

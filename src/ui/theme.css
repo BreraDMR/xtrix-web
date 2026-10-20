@@ -69,12 +69,23 @@
   .crm-app main :where(td) { border-color: var(--workspace-line); }
   .crm-app main :where(input,select,textarea):not([type='checkbox'],[type='radio'],[type='range'],[type='color']) { border-color: var(--workspace-line); }
   .crm-app main :where(input,select,textarea):focus { border-color: #007aff; }
-  .crm-sidebar { background: var(--workspace-sidebar); backdrop-filter: blur(24px); border-right: 1px solid var(--workspace-line); }
+  .crm-sidebar { width: 228px; background: var(--workspace-sidebar); backdrop-filter: blur(24px); border-right: 1px solid var(--workspace-line); }
   .crm-header { background: var(--workspace-sidebar); backdrop-filter: blur(24px); border-bottom: 1px solid var(--workspace-line); }
   .crm-navlink { display: flex; align-items: center; gap: 12px; padding: 11px 13px; margin: 3px 14px; border-radius: 10px; font-size: 13px; color: var(--workspace-muted); }
   .crm-navlink:hover { background: #007aff08; color: var(--workspace-ink); }
   .crm-navlink[aria-current='page'] { background: #007aff12; color: var(--workspace-accent); font-weight: 550; }
   .crm-navlabel { padding: 0 27px; margin: 22px 0 10px; font-size: 10px; text-transform: uppercase; letter-spacing: .085em; font-weight: 550; color: var(--workspace-muted); }
+  @media (min-width: 1024px) {
+    .crm-app { --navigation-width: 228px; }
+    .crm-app[data-sidebar-compact='true'] { --navigation-width: 76px; }
+    .crm-sidebar { width: var(--navigation-width); }
+    .crm-workspace { margin-left: var(--navigation-width); }
+    .crm-app[data-sidebar-compact='true'] .crm-brand { padding-inline: 22px; }
+    .crm-app[data-sidebar-compact='true'] .crm-business { margin-inline: 10px; padding: 12px; }
+    .crm-app[data-sidebar-compact='true'] .crm-navtext { display: none; }
+    .crm-app[data-sidebar-compact='true'] .crm-navlabel { height: 1px; padding: 0; margin: 18px 20px 10px; overflow: hidden; color: transparent; background: var(--workspace-line); }
+    .crm-app[data-sidebar-compact='true'] .crm-navlink { justify-content: center; margin-inline: 12px; padding-inline: 0; }
+  }
   @media (max-width: 767px) {
     .page-toolbar { align-items: flex-start; gap: 17px; flex-wrap: wrap; margin-bottom: 24px; }
     .page-actions { width: 100%; }
