@@ -149,6 +149,15 @@ export type TranslationKey =
   | 'booking.unavailableText'
   | 'booking.contacts'
   | 'booking.noAccount'
+  | 'booking.chooseService'
+  | 'booking.chooseMaster'
+  | 'booking.chooseTime'
+  | 'booking.anyMaster'
+  | 'booking.noStaff'
+  | 'booking.noSlots'
+  | 'booking.onlyFreeTimes'
+  | 'booking.timezone'
+  | 'booking.back'
   | 'validation.code.invalid_assistant_name'
   | 'field.assistant_name'
   | 'field.assistant_gender'
@@ -1290,6 +1299,15 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.unavailableText": {"en": "Check the address or contact the salon. If the salon sent you this link, online booking may be turned off.", "ru": "Проверьте адрес или свяжитесь с салоном. Если ссылку прислал салон, онлайн-запись может быть выключена.", "cz": "Zkontrolujte adresu nebo kontaktujte salon. Pokud vám odkaz poslal salon, online rezervace může být vypnutá."},
   "booking.contacts": {"en": "Contacts", "ru": "Контакты", "cz": "Kontakty"},
   "booking.noAccount": {"en": "No account needed", "ru": "Без регистрации и пароля", "cz": "Bez registrace a hesla"},
+  "booking.chooseService": {"en": "Choose a service", "ru": "Выберите услугу", "cz": "Vyberte službu"},
+  "booking.chooseMaster": {"en": "Choose a master", "ru": "Выберите мастера", "cz": "Vyberte specialistu"},
+  "booking.chooseTime": {"en": "Choose a date and time", "ru": "Выберите дату и время", "cz": "Vyberte datum a čas"},
+  "booking.anyMaster": {"en": "Any available master", "ru": "Любой свободный мастер", "cz": "Jakýkoli volný specialista"},
+  "booking.noStaff": {"en": "No masters are available for this service right now.", "ru": "Для этой услуги сейчас нет доступных мастеров.", "cz": "Pro tuto službu nyní nejsou dostupní žádní specialisté."},
+  "booking.noSlots": {"en": "No free times in the next two weeks.", "ru": "В ближайшие две недели свободных окон нет.", "cz": "V příštích dvou týdnech nejsou volné termíny."},
+  "booking.onlyFreeTimes": {"en": "Only free times are shown.", "ru": "Показаны только свободные окна.", "cz": "Zobrazeny jsou pouze volné termíny."},
+  "booking.timezone": {"en": "Salon time zone", "ru": "Часовой пояс салона", "cz": "Časové pásmo salonu"},
+  "booking.back": {"en": "Back", "ru": "Назад", "cz": "Zpět"},
   "validation.code.invalid_assistant_name": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
   "field.assistant_name": {"en": "Assistant name", "ru": "Имя помощника", "cz": "Jméno asistenta"},
   "field.assistant_gender": {"en": "Assistant gender", "ru": "Род помощника", "cz": "Rod asistenta"},
