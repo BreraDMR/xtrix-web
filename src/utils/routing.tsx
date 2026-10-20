@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { useLocation, useParams, Navigate } from 'react-router-dom'
 
 const LEGACY_CRM_ROUTES = [
