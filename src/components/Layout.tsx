@@ -5,6 +5,7 @@ import { signOut } from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
 import { useSyncUiLanguage } from '../hooks/useUiLanguage'
 import { useMyBusiness } from '../hooks/useMyBusiness'
+import { useSidebarPreference } from '../hooks/useSidebarPreference'
 import AssistantLauncher from './assistant/AssistantLauncher'
 import {
   HiOutlineViewGrid, HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineCalendar,
@@ -28,7 +29,7 @@ export default function Layout() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isCompact, setIsCompact] = useState(false)
+  const [isCompact, setIsCompact] = useSidebarPreference()
   const [offline, setOffline] = useState(!navigator.onLine)
   const sidebar = useRef<HTMLElement>(null)
   const menuButton = useRef<HTMLButtonElement>(null)

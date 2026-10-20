@@ -66,3 +66,30 @@ it('keeps icon links named, titled and marked as current in compact mode', async
   await userEvent.keyboard('{Enter}')
   expect(screen.getByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
 })
+
+it('restores the selected menu density after a remount', async () => {
+  const view = renderLayout()
+  await userEvent.click(screen.getByRole('button', { name: 'Collapse menu' }))
+  view.unmount()
+  renderLayout()
+  expect(screen.getByRole('button', { name: 'Expand menu' })).toHaveAttribute('aria-expanded', 'false')
+})
+
+it('ignores an invalid saved menu density', () => {
+  localStorage.setItem('xtrix.sidebar.compact', '{broken')
+  renderLayout()
+  expect(screen.getByRole('button', { name: 'Collapse menu' })).toHaveAttribute('aria-expanded', 'true')
+})
+
+it('can toggle when browser storage cannot be read or written', async () => {
+  const get = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('storage blocked') })
+  const set = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('storage blocked') })
+  try {
+    renderLayout()
+    await userEvent.click(screen.getByRole('button', { name: 'Collapse menu' }))
+    expect(screen.getByRole('button', { name: 'Expand menu' })).toHaveAttribute('aria-expanded', 'false')
+  } finally {
+    get.mockRestore()
+    set.mockRestore()
+  }
+})
