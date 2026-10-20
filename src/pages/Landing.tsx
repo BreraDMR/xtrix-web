@@ -3,6 +3,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import Features from '../components/marketing/Features'
+import ProductTour from '../components/marketing/ProductTour'
 import {
   HiOutlineCalendar,
   HiOutlineCheckCircle,
@@ -197,6 +198,9 @@ export default function Landing() {
 
       {/* Features Section */}
       <Features />
+
+      {/* Product Tour */}
+      <ProductTour />
     </div>
   )
 }
