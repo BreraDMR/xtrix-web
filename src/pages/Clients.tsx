@@ -4,7 +4,8 @@ import Select from '../ui/Select'
 import Card from '../ui/Card'
 import QueryError from '../components/QueryError'
 import ContextHint from '../components/onboarding/ContextHint'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
@@ -75,17 +76,44 @@ function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
 
 export default function Clients() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const perPageOptions = [10, 20, 50, 100]
 
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
-  const [searchQuery, setSearchQuery] = useState('')
-  const [genderFilter, setGenderFilter] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
+  const [genderFilter, setGenderFilter] = useState<string | null>(() => searchParams.get('gender'))
   const [sortConfig, setSortConfig] = useState<SortConfig<Client>>({ key: null, direction: null })
-  const [currentPage, setCurrentPage] = useState(1)
-  const [perPage, setPerPage] = useState(20)
+  const [currentPage, setCurrentPage] = useState(() => {
+    const page = Number(searchParams.get('page'))
+    return Number.isInteger(page) && page > 0 ? page : 1
+  })
+  const [perPage, setPerPage] = useState(() => {
+    const value = Number(searchParams.get('per_page'))
+    return perPageOptions.includes(value) ? value : 20
+  })
   const [clientReportId, setClientReportId] = useState<number | null>(null)
   const [showImportModal, setShowImportModal] = useState(false)
   const queryClient = useQueryClient()
+
+  useEffect(() => {
+    const next = new URLSearchParams()
+    if (searchQuery) next.set('q', searchQuery)
+    if (genderFilter) next.set('gender', genderFilter)
+    if (currentPage > 1) next.set('page', String(currentPage))
+    if (perPage !== 20) next.set('per_page', String(perPage))
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true })
+    }
+  }, [searchQuery, genderFilter, currentPage, perPage, searchParams, setSearchParams])
+
+  const openWorkspace = (id: number) => {
+    navigate(`/app/clients/${id}`, {
+      state: { from: `${location.pathname}${location.search}` },
+    })
+  }
 
   const { data: clients, isLoading, isError, refetch } = useQuery<Client[]>({
     queryKey: ['clients'],
@@ -369,6 +397,12 @@ export default function Clients() {
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-[var(--workspace-muted)]">
                     <div className="flex items-center gap-3">
+                      <Button
+                        onClick={() => openWorkspace(client.id)}
+                        variant="quiet"
+                      >
+                        {t('clients.open')}
+                      </Button>
                       <Button
                         onClick={() => handleEdit(client.id)}
                         variant="quiet"

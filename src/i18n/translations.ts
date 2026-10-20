@@ -499,6 +499,38 @@ export type TranslationKey =
   | 'clients.name'
   | 'clients.phone'
   | 'clients.email'
+  | 'clients.open'
+  | 'clientWorkspace.back'
+  | 'clientWorkspace.totalVisits'
+  | 'clientWorkspace.completedVisits'
+  | 'clientWorkspace.cancelledVisits'
+  | 'clientWorkspace.paidTotal'
+  | 'clientWorkspace.nextVisit'
+  | 'clientWorkspace.noUpcoming'
+  | 'clientWorkspace.history'
+  | 'clientWorkspace.noVisits'
+  | 'clientWorkspace.details'
+  | 'clientWorkspace.hideDetails'
+  | 'clientWorkspace.questionnaire'
+  | 'clientWorkspace.noQuestionnaire'
+  | 'clientWorkspace.attachments'
+  | 'clientWorkspace.noAttachments'
+  | 'clientWorkspace.notes'
+  | 'clientWorkspace.noNotes'
+  | 'clientWorkspace.notePlaceholder'
+  | 'clientWorkspace.addNote'
+  | 'clientWorkspace.deleteNoteConfirm'
+  | 'clientWorkspace.noteError'
+  | 'clientWorkspace.tags'
+  | 'clientWorkspace.noTags'
+  | 'clientWorkspace.tagPlaceholder'
+  | 'clientWorkspace.addTag'
+  | 'clientWorkspace.preferences'
+  | 'clientWorkspace.preferencesPlaceholder'
+  | 'clientWorkspace.saveProfile'
+  | 'clientWorkspace.profileError'
+  | 'clientWorkspace.forbidden'
+  | 'clientWorkspace.dataUnavailable'
   | 'services.title'
   | 'services.addService'
   | 'services.searchPlaceholder'
@@ -1970,6 +2002,38 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'clients.name': { en: 'Name', ru: 'Имя', cz: 'Jméno' },
   'clients.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
   'clients.email': { en: 'Email', ru: 'Email', cz: 'Email' },
+  'clients.open': { en: 'Open', ru: 'Открыть', cz: 'Otevřít' },
+  'clientWorkspace.back': { en: 'Back to clients', ru: 'К списку клиентов', cz: 'Zpět na klienty' },
+  'clientWorkspace.totalVisits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'clientWorkspace.completedVisits': { en: 'Completed', ru: 'Завершено', cz: 'Dokončeno' },
+  'clientWorkspace.cancelledVisits': { en: 'Cancelled', ru: 'Отменено', cz: 'Zrušeno' },
+  'clientWorkspace.paidTotal': { en: 'Paid', ru: 'Оплачено', cz: 'Zaplaceno' },
+  'clientWorkspace.nextVisit': { en: 'Next visit', ru: 'Ближайший визит', cz: 'Nejbližší návštěva' },
+  'clientWorkspace.noUpcoming': { en: 'No upcoming visits', ru: 'Ближайших визитов нет', cz: 'Žádná nadcházející návštěva' },
+  'clientWorkspace.history': { en: 'Visit history', ru: 'История визитов', cz: 'Historie návštěv' },
+  'clientWorkspace.noVisits': { en: 'No visits yet', ru: 'Визитов пока нет', cz: 'Zatím žádné návštěvy' },
+  'clientWorkspace.details': { en: 'Details', ru: 'Подробнее', cz: 'Podrobnosti' },
+  'clientWorkspace.hideDetails': { en: 'Hide', ru: 'Скрыть', cz: 'Skrýt' },
+  'clientWorkspace.questionnaire': { en: 'Questionnaire', ru: 'Анкета', cz: 'Dotazník' },
+  'clientWorkspace.noQuestionnaire': { en: 'No questionnaire filled in', ru: 'Анкета не заполнена', cz: 'Dotazník není vyplněn' },
+  'clientWorkspace.attachments': { en: 'Files', ru: 'Файлы', cz: 'Soubory' },
+  'clientWorkspace.noAttachments': { en: 'No files', ru: 'Файлов нет', cz: 'Žádné soubory' },
+  'clientWorkspace.notes': { en: 'Notes', ru: 'Заметки', cz: 'Poznámky' },
+  'clientWorkspace.noNotes': { en: 'No notes yet', ru: 'Заметок пока нет', cz: 'Zatím žádné poznámky' },
+  'clientWorkspace.notePlaceholder': { en: 'A note only your team can see', ru: 'Заметка, которую видит только команда', cz: 'Poznámka viditelná jen pro váš tým' },
+  'clientWorkspace.addNote': { en: 'Add note', ru: 'Добавить заметку', cz: 'Přidat poznámku' },
+  'clientWorkspace.deleteNoteConfirm': { en: 'Delete this note?', ru: 'Удалить эту заметку?', cz: 'Smazat tuto poznámku?' },
+  'clientWorkspace.noteError': { en: 'Could not save the note', ru: 'Не удалось сохранить заметку', cz: 'Poznámku se nepodařilo uložit' },
+  'clientWorkspace.tags': { en: 'Tags', ru: 'Теги', cz: 'Štítky' },
+  'clientWorkspace.noTags': { en: 'No tags yet', ru: 'Тегов пока нет', cz: 'Zatím žádné štítky' },
+  'clientWorkspace.tagPlaceholder': { en: 'Add a tag', ru: 'Добавить тег', cz: 'Přidat štítek' },
+  'clientWorkspace.addTag': { en: 'Add', ru: 'Добавить', cz: 'Přidat' },
+  'clientWorkspace.preferences': { en: 'Preferences', ru: 'Предпочтения', cz: 'Preference' },
+  'clientWorkspace.preferencesPlaceholder': { en: 'Anything the team should know before a visit', ru: 'Что команде важно знать до визита', cz: 'Co má tým vědět před návštěvou' },
+  'clientWorkspace.saveProfile': { en: 'Save tags and preferences', ru: 'Сохранить теги и предпочтения', cz: 'Uložit štítky a preference' },
+  'clientWorkspace.profileError': { en: 'Could not save tags and preferences', ru: 'Не удалось сохранить теги и предпочтения', cz: 'Štítky a preference se nepodařilo uložit' },
+  'clientWorkspace.forbidden': { en: 'You do not have permission to change this client', ru: 'Недостаточно прав для изменения клиента', cz: 'Nemáte oprávnění měnit tohoto klienta' },
+  'clientWorkspace.dataUnavailable': { en: 'This section is unavailable', ru: 'Этот раздел недоступен', cz: 'Tato část není dostupná' },
   
   'services.title': { en: 'Services', ru: 'Услуги', cz: 'Služby' },
   'services.addService': { en: 'Add Service', ru: 'Добавить услугу', cz: 'Přidat službu' },

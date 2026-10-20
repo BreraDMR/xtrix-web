@@ -924,6 +924,77 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/clients/{client_id}/notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Client Notes */
+        get: operations["list_client_notes_clients__client_id__notes_get"];
+        put?: never;
+        /** Create Client Note */
+        post: operations["create_client_note_clients__client_id__notes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/clients/{client_id}/notes/{note_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Client Note */
+        put: operations["update_client_note_clients__client_id__notes__note_id__put"];
+        post?: never;
+        /** Delete Client Note */
+        delete: operations["delete_client_note_clients__client_id__notes__note_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/clients/{client_id}/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Client Overview */
+        get: operations["get_client_overview_clients__client_id__overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/clients/{client_id}/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Client Profile */
+        get: operations["get_client_profile_clients__client_id__profile_get"];
+        /** Update Client Profile */
+        put: operations["update_client_profile_clients__client_id__profile_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/clients/{client_id}/qr-code/generate": {
         parameters: {
             query?: never;
@@ -3517,6 +3588,47 @@ export interface components {
             /** Points */
             points: number;
         };
+        /** ClientNoteCreate */
+        ClientNoteCreate: {
+            /**
+             * Body
+             * @description Plain text note
+             */
+            body: string;
+        };
+        /** ClientNoteOut */
+        ClientNoteOut: {
+            /** Author Id */
+            author_id?: number | null;
+            /** Author Name */
+            author_name?: string | null;
+            /** Body */
+            body: string;
+            /** Business Id */
+            business_id: number;
+            /** Client Id */
+            client_id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ClientNoteUpdate */
+        ClientNoteUpdate: {
+            /**
+             * Body
+             * @description Plain text note
+             */
+            body: string;
+        };
         /** ClientOut */
         ClientOut: {
             /** Birth Date */
@@ -3552,6 +3664,78 @@ export interface components {
             location_lon?: number | null;
             /** Owner Id */
             owner_id?: number | null;
+        };
+        /** ClientOverviewOut */
+        ClientOverviewOut: {
+            /** Client Id */
+            client_id: number;
+            next_visit?: components["schemas"]["ClientOverviewVisit"] | null;
+            payments?: components["schemas"]["ClientOverviewPayments"] | null;
+            /** Recent Visits */
+            recent_visits: components["schemas"]["ClientOverviewVisit"][];
+            stats: components["schemas"]["ClientOverviewStats"];
+            /** Upcoming Visits */
+            upcoming_visits: components["schemas"]["ClientOverviewVisit"][];
+        };
+        /** ClientOverviewPayments */
+        ClientOverviewPayments: {
+            /** Currency */
+            currency: string;
+            /** Paid Visits */
+            paid_visits: number;
+            /** Total Paid */
+            total_paid: number;
+        };
+        /** ClientOverviewStats */
+        ClientOverviewStats: {
+            /** Cancelled Visits */
+            cancelled_visits: number;
+            /** Completed Visits */
+            completed_visits: number;
+            /** Last Visit At */
+            last_visit_at?: string | null;
+            /** Next Visit At */
+            next_visit_at?: string | null;
+            /** Total Visits */
+            total_visits: number;
+        };
+        /** ClientOverviewVisit */
+        ClientOverviewVisit: {
+            /** Date End */
+            date_end?: string | null;
+            /**
+             * Date Start
+             * Format: date-time
+             */
+            date_start: string;
+            /** Id */
+            id: number;
+            /** Payment Method */
+            payment_method?: string | null;
+            /** Price */
+            price?: number | null;
+            /** Service Name */
+            service_name?: string | null;
+            /** Specialist Name */
+            specialist_name?: string | null;
+            /** Status */
+            status: string;
+        };
+        /** ClientProfileOut */
+        ClientProfileOut: {
+            /** Client Id */
+            client_id: number;
+            /** Preferences */
+            preferences?: string | null;
+            /** Tags */
+            tags?: string[];
+        };
+        /** ClientProfileUpdate */
+        ClientProfileUpdate: {
+            /** Preferences */
+            preferences?: string | null;
+            /** Tags */
+            tags?: string[] | null;
         };
         /** ClientSearchOut */
         ClientSearchOut: {
@@ -10051,6 +10235,251 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ClientOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_client_notes_clients__client_id__notes_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientNoteOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_client_note_clients__client_id__notes_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientNoteCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientNoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_client_note_clients__client_id__notes__note_id__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+                note_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientNoteUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientNoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_client_note_clients__client_id__notes__note_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+                note_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_client_overview_clients__client_id__overview_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientOverviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_client_profile_clients__client_id__profile_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientProfileOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_client_profile_clients__client_id__profile_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientProfileUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientProfileOut"];
                 };
             };
             /** @description Validation Error */

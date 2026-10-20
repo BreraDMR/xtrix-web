@@ -8,6 +8,7 @@ import ResetPassword from './pages/ResetPassword'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
+import ClientWorkspace from './components/clients/ClientWorkspace'
 import Visits from './pages/Visits'
 import CalendarPage from './pages/CalendarPage'
 import Schedule from './pages/Schedule'
@@ -81,6 +82,7 @@ function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="clients" element={<Clients />} />
+          <Route path="clients/:clientId" element={<ClientWorkspace />} />
           <Route path="visits" element={<Visits />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="schedules" element={<Schedule />} />
