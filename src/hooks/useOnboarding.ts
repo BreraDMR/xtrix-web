@@ -15,7 +15,7 @@ export function useOnboarding(enabled = true) {
       return data
     },
     enabled: enabled && !!userId,
-    staleTime: 30 * 1000,
+    staleTime: 0,
   })
 }
 

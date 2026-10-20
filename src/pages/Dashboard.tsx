@@ -13,6 +13,7 @@ import { formatCurrency } from '../utils/currency'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { HiOutlineChartBar, HiOutlineUsers, HiOutlineCalendar } from 'react-icons/hi'
 import Welcome from '../components/onboarding/Welcome'
+import Checklist from '../components/onboarding/Checklist'
 
 export default function Dashboard() {
   const { t } = useTranslation()
@@ -62,6 +63,7 @@ export default function Dashboard() {
   if (isOwner && business.data === null) return (
     <div className="animate-fade-in">
       <Welcome />
+      <Checklist />
       <Card className="p-5 sm:p-6">
         <h1 className="mb-4 text-2xl font-bold">{t('business.title')}</h1>
         <Link to="/app/business" className="text-blue-700 underline">{t('business.create')}</Link>
@@ -72,6 +74,7 @@ export default function Dashboard() {
   if (queryError0 || queryError1 || queryError2) return (
     <div className="animate-fade-in">
       <Welcome />
+      <Checklist />
       <QueryError retry={() => { void retryQuery0(); void retryQuery1(); void retryQuery2() }} />
     </div>
   )
@@ -79,6 +82,7 @@ export default function Dashboard() {
   return (
     <div className="animate-fade-in">
       <Welcome />
+      <Checklist />
       <div className="page-toolbar">
         <div>
           <h1 className="page-title">{t('dashboard.title')}</h1>
