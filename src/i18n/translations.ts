@@ -1055,6 +1055,10 @@ export type TranslationKey =
   | 'onboarding.tour.clients'
   | 'onboarding.tour.calendar'
   | 'onboarding.tour.assistant'
+  | 'onboarding.tour.dashboardBody'
+  | 'onboarding.tour.clientsBody'
+  | 'onboarding.tour.calendarBody'
+  | 'onboarding.tour.assistantBody'
   | 'onboarding.tour.next'
   | 'onboarding.tour.back'
   | 'onboarding.tour.skip'
@@ -2429,6 +2433,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.tour.dashboard': { en: 'Dashboard shows revenue, visits and clients at a glance.', ru: 'Панель показывает выручку, визиты и клиентов.', cz: 'Nástěnka ukazuje tržby, návštěvy a klienty.' },
   'onboarding.tour.clients': { en: 'Clients keeps cards and visit history.', ru: 'Клиенты — карточки и история визитов.', cz: 'Klienti — karty a historie návštěv.' },
   'onboarding.tour.calendar': { en: 'Calendar is your working day.', ru: 'Календарь — ваш рабочий день.', cz: 'Kalendář je váš pracovní den.' },
+  'onboarding.tour.dashboardBody': { en: 'The dashboard shows the state of the business at a glance.', ru: 'На дашборде видно состояние бизнеса с первого взгляда.', cz: 'Na přehledu vidíte stav firmy na první pohled.' },
+  'onboarding.tour.clientsBody': { en: 'Client cards keep contacts, visits and notes in one place.', ru: 'Карточки клиентов хранят контакты, визиты и заметки вместе.', cz: 'Karty klientů drží kontakty, návštěvy a poznámky na jednom místě.' },
+  'onboarding.tour.calendarBody': { en: 'The calendar shows visits by day and by master.', ru: 'Календарь показывает визиты по дням и мастерам.', cz: 'Kalendář ukazuje návštěvy podle dnů a mistrů.' },
+  'onboarding.tour.assistantBody': { en: 'Sashka helps with plans and everyday questions.', ru: 'Сашенька помогает с планами и повседневными вопросами.', cz: 'Sašenka pomáhá s plány a každodenními otázkami.' },
   'onboarding.tour.assistant': { en: 'The assistant plans visits and other actions from plain words.', ru: 'Ассистент планирует визиты и другие действия по тексту.', cz: 'Asistent naplánuje návštěvy a další akce z běžného textu.' },
   'onboarding.tour.next': { en: 'Next', ru: 'Дальше', cz: 'Další' },
   'onboarding.tour.back': { en: 'Back', ru: 'Назад', cz: 'Zpět' },

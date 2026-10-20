@@ -16,6 +16,7 @@ import Checklist from '../components/onboarding/Checklist'
 import BusinessStep from '../components/onboarding/BusinessStep'
 import ServiceStep from '../components/onboarding/ServiceStep'
 import StaffStep from '../components/onboarding/StaffStep'
+import ProductTour from '../components/onboarding/ProductTour'
 
 export default function Dashboard() {
   const { t } = useTranslation()
@@ -84,6 +85,7 @@ export default function Dashboard() {
       <Checklist />
       <ServiceStep />
       <StaffStep />
+      <ProductTour />
       <div className="page-toolbar">
         <div>
           <h1 className="page-title">{t('dashboard.title')}</h1>
