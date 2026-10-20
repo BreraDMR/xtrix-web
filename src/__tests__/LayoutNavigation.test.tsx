@@ -53,3 +53,16 @@ it('toggles desktop navigation without opening the mobile menu or changing role 
   await userEvent.click(screen.getByRole('button', { name: 'Expand menu' }))
   expect(screen.getByRole('button', { name: 'Collapse menu' })).toHaveAttribute('aria-expanded', 'true')
 })
+
+it('keeps icon links named, titled and marked as current in compact mode', async () => {
+  renderLayout()
+  await userEvent.click(screen.getByRole('button', { name: 'Collapse menu' }))
+  const clients = within(screen.getByRole('navigation')).getByRole('link', { name: 'Clients' })
+  expect(clients).toHaveAttribute('aria-label', 'Clients')
+  expect(clients).toHaveAttribute('title', 'Clients')
+  expect(clients).toHaveAttribute('aria-current', 'page')
+  clients.focus()
+  expect(clients).toHaveFocus()
+  await userEvent.keyboard('{Enter}')
+  expect(screen.getByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
+})

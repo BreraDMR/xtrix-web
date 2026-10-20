@@ -95,7 +95,7 @@ export default function Layout() {
   const links = (items: { path: string; label: string }[]) => items.map(({ path, label }) => {
     const Icon = icons[path]
     const selected = path === '/' ? location.pathname === path : location.pathname === path || location.pathname.startsWith(path + '/')
-    return <Link key={path} to={path} className="crm-navlink" aria-current={selected ? 'page' : undefined}
+    return <Link key={path} to={path} className="crm-navlink" aria-label={label} title={label} aria-current={selected ? 'page' : undefined}
       onClick={() => setIsMobileMenuOpen(false)}>
       <Icon className="h-[18px] w-[18px] shrink-0" /><span className="crm-navtext truncate">{label}</span>
     </Link>
@@ -115,7 +115,7 @@ export default function Layout() {
           </Link>
           <button className="ml-auto p-1 text-gray-500 lg:hidden" aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)}><HiOutlineX className="h-5 w-5" /></button>
         </div>
-        <div className="crm-business mx-[18px] mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-gray-200 bg-white px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
+        <div title={workspaceName} className="crm-business mx-[18px] mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-gray-200 bg-white px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gray-100 text-[11px] font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(workspaceName)}</span>
           <div className="crm-navtext min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
         </div>
@@ -130,6 +130,7 @@ export default function Layout() {
           <div className="flex min-w-0 items-center gap-3">
             <button className="hidden rounded-lg p-2 text-gray-600 lg:inline-flex dark:text-gray-300"
               aria-label={t(isCompact ? 'nav.expand_menu' : 'nav.collapse_menu')}
+              title={t(isCompact ? 'nav.expand_menu' : 'nav.collapse_menu')}
               aria-controls="workspace-navigation" aria-expanded={!isCompact}
               onClick={() => setIsCompact((compact) => !compact)}>
               {isCompact ? <HiOutlineChevronRight className="h-5 w-5" /> : <HiOutlineChevronLeft className="h-5 w-5" />}
