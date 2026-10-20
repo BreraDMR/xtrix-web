@@ -1031,6 +1031,8 @@ export type TranslationKey =
   | 'onboarding.step.staff.title'
   | 'onboarding.step.staff.body'
   | 'onboarding.step.staff.cta'
+  | 'onboarding.step.staff.soloTitle'
+  | 'onboarding.step.staff.workAlone'
   | 'onboarding.step.schedule.title'
   | 'onboarding.step.schedule.body'
   | 'onboarding.step.schedule.cta'
@@ -2401,6 +2403,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.step.staff.title': { en: 'Add your team', ru: 'Добавьте команду', cz: 'Přidejte tým' },
   'onboarding.step.staff.body': { en: 'Invite a master, or keep the service assigned to you and work on your own.', ru: 'Добавьте мастера или оставьте услугу на себе и работайте сами.', cz: 'Přidejte mistra, nebo si službu nechte a pracujte sami.' },
   'onboarding.step.staff.cta': { en: 'Add master', ru: 'Добавить мастера', cz: 'Přidat mistra' },
+  'onboarding.step.staff.soloTitle': { en: 'I work alone', ru: 'Работаю сам', cz: 'Pracuji sám' },
+  'onboarding.step.staff.workAlone': { en: 'I work alone', ru: 'Работаю сам', cz: 'Pracuji sám' },
   'onboarding.step.schedule.title': { en: 'Set working hours', ru: 'Настройте рабочие часы', cz: 'Nastavte pracovní hodiny' },
   'onboarding.step.schedule.body': { en: 'Clients only see slots inside your working hours.', ru: 'Клиенты видят только окна внутри вашего графика.', cz: 'Klienti vidí jen termíny v rámci vašich hodin.' },
   'onboarding.step.schedule.cta': { en: 'Set schedule', ru: 'Настроить график', cz: 'Nastavit rozvrh' },

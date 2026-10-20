@@ -84,7 +84,9 @@ export default function Checklist() {
                   <span className="h-5 w-5 shrink-0 rounded-full border border-[var(--workspace-border)]" aria-hidden="true" />
                 )}
                 <span className={`truncate text-sm ${step.completed ? 'text-[var(--workspace-muted)] line-through' : 'font-medium'}`}>
-                  {t(STEP_COPY[step.key].title)}
+                  {step.key === 'staff' && data.persona === 'solo'
+                    ? t('onboarding.step.staff.soloTitle')
+                    : t(STEP_COPY[step.key].title)}
                 </span>
                 {isNext && (
                   <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/60 dark:text-blue-200">
