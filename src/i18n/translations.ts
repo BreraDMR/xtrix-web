@@ -570,6 +570,10 @@ export type TranslationKey =
   | 'calendar.insights'
   | 'calendar.insightsTitle'
   | 'calendar.searchEvents'
+  | 'calendar.dayView'
+  | 'calendar.dayViewDescription'
+  | 'calendar.daySchedule'
+  | 'calendar.today'
   | 'employees.title'
   | 'employees.add_employee'
   | 'employees.search_placeholder'
@@ -2025,6 +2029,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.insights': { en: 'Insights', ru: 'Аналитика', cz: 'Přehledy' },
   'calendar.insightsTitle': { en: 'This month breakdown', ru: 'Разбивка этого месяца', cz: 'Rozpis tohoto měsíce' },
   'calendar.searchEvents': { en: 'Search events...', ru: 'Поиск событий...', cz: 'Hledat události...' },
+  'calendar.dayView': { en: 'Day view', ru: 'День', cz: 'Denní zobrazení' },
+  'calendar.dayViewDescription': { en: 'One day at a glance: time, client, price and status of every visit.', ru: 'Один день целиком: время, клиент, цена и статус каждого визита.', cz: 'Jeden den přehledně: čas, klient, cena a stav každé návštěvy.' },
+  'calendar.daySchedule': { en: 'Daily schedule', ru: 'Расписание на день', cz: 'Denní rozvrh' },
+  'calendar.today': { en: 'Today', ru: 'Сегодня', cz: 'Dnes' },
   
   'employees.title': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'employees.add_employee': { en: 'Add Employee', ru: 'Добавить сотрудника', cz: 'Přidat zaměstnance' },
