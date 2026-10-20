@@ -1480,6 +1480,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/offers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get public approved offer catalog
+         * @description Public catalog of approved SaaS offers for CRM and AI products.
+         *
+         *     Per D01 policy:
+         *     1. Only approved tiers are published. Drafts are excluded from anonymous visitors.
+         *     2. Zero business, customer or private tenant data is exposed.
+         */
+        get: operations["list_offers_offers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/offers/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get single approved offer by code
+         * @description Fetch single approved offer by code.
+         */
+        get: operations["get_offer_offers__code__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/products/": {
         parameters: {
             query?: never;
@@ -1978,6 +2022,29 @@ export interface paths {
         };
         /** Get Trial Status */
         get: operations["get_trial_status_subscriptions_trial_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/subscriptions/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Usage And Entitlements
+         * @description Authenticated endpoint returning CRM and AI usage units and limits.
+         *
+         *     Ensures employee cannot view payment credentials or billing details of another business,
+         *     strictly validates period bounds, and reflects payer entitlements.
+         */
+        get: operations["get_usage_and_entitlements_subscriptions_usage_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2548,6 +2615,20 @@ export interface components {
             text: string;
             /** Visit Id */
             visit_id: number;
+        };
+        /** AiUsageOut */
+        AiUsageOut: {
+            /** Daily Requests Limit */
+            daily_requests_limit?: number | null;
+            /** Daily Requests Used */
+            daily_requests_used: number;
+            /**
+             * Is Within Limit
+             * @default true
+             */
+            is_within_limit: boolean;
+            /** Offer Code */
+            offer_code?: string | null;
         };
         /** AnonymousBenchmarksResponse */
         AnonymousBenchmarksResponse: {
@@ -3140,6 +3221,20 @@ export interface components {
             /** Start */
             start?: string | null;
         };
+        /** CrmUsageOut */
+        CrmUsageOut: {
+            /** Active Clients */
+            active_clients: number;
+            /**
+             * Is Within Limit
+             * @default true
+             */
+            is_within_limit: boolean;
+            /** Limit */
+            limit?: number | null;
+            /** Offer Code */
+            offer_code?: string | null;
+        };
         /** EmployeeCreate */
         EmployeeCreate: {
             /**
@@ -3379,6 +3474,19 @@ export interface components {
             } | null;
             /** Position */
             position?: string | null;
+        };
+        /** EntitlementsUsageOut */
+        EntitlementsUsageOut: {
+            ai: components["schemas"]["AiUsageOut"];
+            /** Can Manage Billing */
+            can_manage_billing: boolean;
+            crm: components["schemas"]["CrmUsageOut"];
+            /** Daily Period */
+            daily_period: string;
+            /** Is Payer */
+            is_payer: boolean;
+            /** Period */
+            period: string;
         };
         /** ExecuteOut */
         ExecuteOut: {
@@ -4257,6 +4365,88 @@ export interface components {
             moderation_notes?: string | null;
             /** Moderation Status */
             moderation_status: string;
+        };
+        /** OfferCatalogOut */
+        OfferCatalogOut: {
+            /**
+             * Offers
+             * @description List of offers
+             */
+            offers?: components["schemas"]["OfferOut"][];
+            /**
+             * Updated At
+             * @description Catalog last update timestamp
+             */
+            updated_at?: string | null;
+            /**
+             * Version
+             * @description Offer catalog version string, e.g. 2026-10-v1
+             */
+            version: string;
+        };
+        /** OfferEntitlements */
+        OfferEntitlements: {
+            /**
+             * Daily Requests Limit
+             * @description Daily requests limit for AI assistant
+             */
+            daily_requests_limit?: number | null;
+            /**
+             * Features
+             * @description List of included feature keys
+             */
+            features?: string[];
+            /**
+             * Max Active Clients
+             * @description Max active clients allowed in period for CRM
+             */
+            max_active_clients?: number | null;
+        };
+        /** OfferOut */
+        OfferOut: {
+            /**
+             * Code
+             * @description Unique offer code, e.g. crm_starter_czk
+             */
+            code: string;
+            /**
+             * Currency
+             * @description ISO currency code, e.g. CZK
+             */
+            currency: string;
+            /** Description */
+            description?: string | null;
+            entitlements?: components["schemas"]["OfferEntitlements"];
+            /**
+             * Interval
+             * @description Billing interval: month or year
+             * @default month
+             * @enum {string}
+             */
+            interval: "month" | "year";
+            /**
+             * Name
+             * @description Display name of offer
+             */
+            name: string;
+            /**
+             * Price
+             * @description Price in currency units
+             */
+            price: string;
+            /**
+             * Product
+             * @description Product line: crm or ai
+             * @enum {string}
+             */
+            product: "crm" | "ai";
+            /**
+             * Status
+             * @description Offer status: approved or draft
+             * @default approved
+             * @enum {string}
+             */
+            status: "approved" | "draft";
         };
         /** PaginatedResponse[AuditLogOut] */
         PaginatedResponse_AuditLogOut_: {
@@ -10117,6 +10307,69 @@ export interface operations {
             };
         };
     };
+    list_offers_offers_get: {
+        parameters: {
+            query?: {
+                /** @description Optional product filter: crm or ai */
+                product?: ("crm" | "ai") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OfferCatalogOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_offer_offers__code__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OfferOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_products_products__get: {
         parameters: {
             query?: {
@@ -11561,6 +11814,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_usage_and_entitlements_subscriptions_usage_get: {
+        parameters: {
+            query?: {
+                period?: string | null;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntitlementsUsageOut"];
                 };
             };
             /** @description Validation Error */
