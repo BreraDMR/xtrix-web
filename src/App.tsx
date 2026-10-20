@@ -4,6 +4,7 @@ import PrivateRoute from './components/PrivateRoute'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
@@ -39,6 +40,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/booking/:slug" element={<BookingPage />} />
         <Route path="/manage" element={<ManageBookingPage />} />

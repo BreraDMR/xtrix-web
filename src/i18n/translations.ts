@@ -58,6 +58,18 @@ export type TranslationKey =
   | 'forgot.success'
   | 'forgot.backToLogin'
   | 'forgot.failed'
+  | 'reset.subtitle'
+  | 'reset.newPassword'
+  | 'reset.confirmPassword'
+  | 'reset.submit'
+  | 'reset.saving'
+  | 'reset.successTitle'
+  | 'reset.success'
+  | 'reset.invalidTitle'
+  | 'reset.invalid'
+  | 'reset.requestNew'
+  | 'reset.backToLogin'
+  | 'reset.failed'
   | 'errors.tooManyRequests'
   | 'errors.tooManyRequestsLater'
   | 'errors.loginThrottled'
@@ -1878,6 +1890,30 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     en: 'Could not send the reset link. Try again later.',
     ru: 'Не удалось отправить ссылку для сброса. Попробуйте позже.',
     cz: 'Odkaz pro obnovení se nepodařilo odeslat. Zkuste to později.',
+  },
+  'reset.subtitle': { en: 'Choose a new password for your account.', ru: 'Придумайте новый пароль для аккаунта.', cz: 'Zvolte nové heslo pro svůj účet.' },
+  'reset.newPassword': { en: 'New password', ru: 'Новый пароль', cz: 'Nové heslo' },
+  'reset.confirmPassword': { en: 'Repeat new password', ru: 'Повторите новый пароль', cz: 'Zopakujte nové heslo' },
+  'reset.submit': { en: 'Change password', ru: 'Изменить пароль', cz: 'Změnit heslo' },
+  'reset.saving': { en: 'Saving...', ru: 'Сохранение...', cz: 'Ukládání...' },
+  'reset.successTitle': { en: 'Password changed', ru: 'Пароль изменён', cz: 'Heslo změněno' },
+  'reset.success': {
+    en: 'Your password has been changed. Sign in with the new password; other sessions were signed out.',
+    ru: 'Пароль изменён. Войдите с новым паролем; остальные сеансы завершены.',
+    cz: 'Heslo bylo změněno. Přihlaste se novým heslem; ostatní relace byly odhlášeny.',
+  },
+  'reset.invalidTitle': { en: 'Link is not valid', ru: 'Ссылка недействительна', cz: 'Odkaz není platný' },
+  'reset.invalid': {
+    en: 'This reset link is invalid, has expired, or has already been used.',
+    ru: 'Эта ссылка для сброса недействительна, истекла или уже была использована.',
+    cz: 'Tento odkaz pro obnovení je neplatný, vypršel nebo už byl použit.',
+  },
+  'reset.requestNew': { en: 'Request a new link', ru: 'Запросить новую ссылку', cz: 'Vyžádat nový odkaz' },
+  'reset.backToLogin': { en: 'Back to sign in', ru: 'Вернуться ко входу', cz: 'Zpět k přihlášení' },
+  'reset.failed': {
+    en: 'Could not change the password. Try again later.',
+    ru: 'Не удалось изменить пароль. Попробуйте позже.',
+    cz: 'Heslo se nepodařilo změnit. Zkuste to později.',
   },
   
   'dashboard.title': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },

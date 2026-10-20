@@ -101,6 +101,7 @@ const FIELD_LABELS: Record<string, TranslationKey> = {
   phone: 'field.phone',
   contact_phone: 'field.phone',
   password: 'field.password',
+  new_password: 'field.password',
   birth_date: 'field.birth_date',
   date_start: 'field.date_start',
   date_end: 'field.date_end',
