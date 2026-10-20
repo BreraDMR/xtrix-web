@@ -249,6 +249,7 @@ export default function DayGrid({
 
       <div
         className={`relative flex-1 ${showAxis ? 'border-l border-[var(--workspace-line)]' : ''}`}
+        data-calendar-grid={dayKey}
         onDragOver={(dragEvent) => {
           if (!onDropVisit) return
           dragEvent.preventDefault()
@@ -348,6 +349,7 @@ export default function DayGrid({
                 return (
                   <div
                     key={visit.id}
+                    data-visit-id={visit.id}
                     draggable={Boolean(onDropVisit)}
                     onDragStart={handleDragStart(visit, event.startMin, event.endMin)}
                     className={blockClass}
@@ -364,6 +366,7 @@ export default function DayGrid({
                 <button
                   key={visit.id}
                   type="button"
+                  data-visit-id={visit.id}
                   draggable={Boolean(onDropVisit)}
                   onDragStart={handleDragStart(visit, event.startMin, event.endMin)}
                   onClick={() => onSelectVisit(visit)}
