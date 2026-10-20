@@ -13,7 +13,7 @@ export interface SeedUser {
 }
 
 // logins made by the API's scripts/seed_demo.py, scripts/e2e.sh saves its output for us
-export function seedUser(key: 'owner_a' | 'employee_a' | 'solo' | 'owner_b'): SeedUser {
+export function seedUser(key: 'owner_a' | 'employee_a' | 'employee_a_noperm' | 'solo' | 'owner_b' | 'admin'): SeedUser {
   const file = process.env.E2E_SEED_FILE
   if (!file) throw new Error('E2E_SEED_FILE is not set - run the suite with scripts/e2e.sh')
   return JSON.parse(fs.readFileSync(file, 'utf8')).users[key]
