@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import LanguageSwitcher from '../components/LanguageSwitcher'
+import Features from '../components/marketing/Features'
 import {
   HiOutlineCalendar,
   HiOutlineCheckCircle,
@@ -193,6 +194,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Features Section */}
+      <Features />
     </div>
   )
 }
