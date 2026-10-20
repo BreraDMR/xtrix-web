@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { addDays, startOfWeek } from 'date-fns'
 import api from '../api/client'
 import Calendar from '../components/Calendar'
@@ -7,6 +7,7 @@ import SimpleCalendar from '../components/SimpleCalendar'
 import { zonedDayKey } from '../components/calendar/DayGrid'
 import StaffColumns, { type StaffColumn } from '../components/calendar/StaffColumns'
 import WeekGrid from '../components/calendar/WeekGrid'
+import type { StaffScheduleData } from '../components/calendar/schedule'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
 import Button from '../ui/Button'
@@ -15,7 +16,13 @@ import { useMyBusiness } from '../hooks/useMyBusiness'
 import { useAuthStore } from '../store/authStore'
 import { zonedWallTimeToIso } from '../utils/dates'
 import ContextHint from '../components/onboarding/ContextHint'
-import type { ClientOut, VisitOut } from '../api/types'
+import type {
+  BlockSlotOut,
+  ClientOut,
+  ScheduleExceptionOut,
+  VisitOut,
+  WorkScheduleOut,
+} from '../api/types'
 
 type CalendarView = 'day' | 'week' | 'simple' | 'advanced'
 
@@ -52,6 +59,7 @@ export default function CalendarPage() {
   })
   const { data: business } = useMyBusiness()
   const timeZone = business?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+  const dayKey = zonedDayKey(day, timeZone)
 
   const isRangeView = view === 'day' || view === 'week'
   const weekStart = useMemo(() => startOfWeek(day, { weekStartsOn: 1 }), [day])
@@ -120,6 +128,45 @@ export default function CalendarPage() {
     () => new Map((clients ?? []).map((client) => [client.id, client.full_name])),
     [clients],
   )
+
+  const scheduleQueries = useQueries({
+    queries: view === 'day'
+      ? staff.map((member) => ({
+          queryKey: ['schedules', 'calendar', member.id, dayKey],
+          queryFn: async (): Promise<StaffScheduleData> => {
+            const params = { specialist_id: member.id }
+            // each source is read on its own: a forbidden endpoint must not fake a closed day
+            const [work, blocks, exceptions] = await Promise.all([
+              api.get('/schedules/work', { params })
+                .then((response) => response.data as WorkScheduleOut[])
+                .catch(() => null),
+              api.get('/schedules/blocks', { params })
+                .then((response) => response.data as BlockSlotOut[])
+                .catch(() => null),
+              api.get('/schedules/exceptions', { params: { ...params, date_from: dayKey, date_to: dayKey } })
+                .then((response) => response.data as ScheduleExceptionOut[])
+                .catch(() => null),
+            ])
+            return {
+              work: work ?? [],
+              blocks: blocks ?? [],
+              exceptions: exceptions ?? [],
+              complete: work !== null && blocks !== null && exceptions !== null,
+            }
+          },
+          staleTime: 60_000,
+        }))
+      : [],
+  })
+
+  const schedules = useMemo(() => {
+    const byStaff = new Map<number, StaffScheduleData>()
+    staff.forEach((member, index) => {
+      const data = scheduleQueries[index]?.data
+      if (data) byStaff.set(member.id, data)
+    })
+    return byStaff
+  }, [staff, scheduleQueries])
 
   const viewButtonClass = (active: boolean) => `px-4 py-2 rounded-md ${
     active
@@ -203,6 +250,7 @@ export default function CalendarPage() {
               day={day}
               visits={rangeQuery.data ?? []}
               staff={staff}
+              schedules={schedules}
               timeZone={timeZone}
               clientNames={clientNames}
             />

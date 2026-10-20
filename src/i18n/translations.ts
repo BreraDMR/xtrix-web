@@ -578,6 +578,9 @@ export type TranslationKey =
   | 'calendar.noStaff'
   | 'calendar.weekView'
   | 'calendar.weekViewDescription'
+  | 'calendar.free'
+  | 'calendar.blocked'
+  | 'calendar.nonWorking'
   | 'employees.title'
   | 'employees.add_employee'
   | 'employees.search_placeholder'
@@ -2041,6 +2044,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.noStaff': { en: 'No specialists to show', ru: 'Нет мастеров для отображения', cz: 'Žádní specialisté k zobrazení' },
   'calendar.weekView': { en: 'Week view', ru: 'Неделя', cz: 'Týdenní zobrazení' },
   'calendar.weekViewDescription': { en: 'Seven days side by side, every visit at its own time.', ru: 'Семь дней рядом, каждый визит на своём времени.', cz: 'Sedm dní vedle sebe, každá návštěva ve svém čase.' },
+  'calendar.free': { en: 'Free', ru: 'Свободно', cz: 'Volno' },
+  'calendar.blocked': { en: 'Blocked', ru: 'Заблокировано', cz: 'Blokováno' },
+  'calendar.nonWorking': { en: 'Non-working hours', ru: 'Нерабочие часы', cz: 'Nepracovní hodiny' },
   
   'employees.title': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'employees.add_employee': { en: 'Add Employee', ru: 'Добавить сотрудника', cz: 'Přidat zaměstnance' },

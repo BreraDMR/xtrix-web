@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { format, parseISO } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
 import DayGrid, { HourAxis, zonedDayKey, type CalendarVisit } from './DayGrid'
+import { buildDayOverlay, type DayOverlay, type StaffScheduleData } from './schedule'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
 
@@ -14,6 +15,7 @@ interface StaffColumnsProps {
   day: Date
   visits: CalendarVisit[]
   staff: StaffColumn[]
+  schedules?: ReadonlyMap<number, StaffScheduleData>
   timeZone?: string
   clientNames?: ReadonlyMap<number, string>
   onSelectVisit?: (visit: CalendarVisit) => void
@@ -26,6 +28,7 @@ export default function StaffColumns({
   day,
   visits,
   staff,
+  schedules,
   timeZone,
   clientNames,
   onSelectVisit,
@@ -58,6 +61,19 @@ export default function StaffColumns({
     return grouped
   }, [columns, visits])
 
+  const overlays = useMemo(() => {
+    const built = new Map<number, DayOverlay>()
+    if (!schedules) return built
+    for (const column of columns) {
+      const data = schedules.get(column.id)
+      // an unreadable SCH must not turn the whole day into a closed one
+      if (!data?.complete) continue
+      built.set(column.id, buildDayOverlay(dayKey, zone, data, visitsByStaff.get(column.id) ?? []))
+    }
+    return built
+  }, [columns, dayKey, schedules, visitsByStaff, zone])
+  const hasSchedule = overlays.size > 0
+
   const gridHeight = HOURS_IN_DAY * hourHeight
   const template = `3.5rem repeat(${columns.length}, minmax(12rem, 1fr))`
 
@@ -75,43 +91,62 @@ export default function StaffColumns({
           {t('calendar.noStaff')}
         </p>
       ) : (
-        <div className="max-h-[70vh] overflow-auto rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
-          <div className="grid" style={{ gridTemplateColumns: template }}>
-            <div className="sticky left-0 top-0 z-30 border-b border-[var(--workspace-line)] bg-[var(--workspace-panel)]" />
-            {columns.map((column) => (
-              <div
-                key={column.id}
-                className="sticky top-0 z-20 truncate border-b border-l border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-2 py-2 text-xs font-semibold text-[var(--workspace-ink)]"
-                title={column.name}
-              >
-                {column.name}
-              </div>
-            ))}
-
-            <div className="sticky left-0 z-10 bg-[var(--workspace-panel)]" style={{ height: gridHeight }}>
-              <HourAxis hourHeight={hourHeight} />
+        <>
+          {hasSchedule && (
+            <div className="mb-2 flex flex-wrap items-center gap-3 text-[11px] text-[var(--workspace-muted)]">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2.5 w-4 rounded-sm border border-dashed border-emerald-400/60 bg-emerald-50/50 dark:border-emerald-700/70 dark:bg-emerald-950/25" />
+                {t('calendar.free')}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2.5 w-4 rounded-sm border border-gray-300 bg-gray-200/80 dark:border-gray-600 dark:bg-gray-700/70" />
+                {t('calendar.blocked')}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-2.5 w-4 rounded-sm bg-gray-100/70 dark:bg-gray-900/40" />
+                {t('calendar.nonWorking')}
+              </span>
             </div>
-            {columns.map((column) => (
-              <div
-                key={column.id}
-                className="border-l border-[var(--workspace-line)]"
-                style={{ height: gridHeight }}
-              >
-                <DayGrid
-                  day={day}
-                  visits={visitsByStaff.get(column.id) ?? []}
-                  timeZone={zone}
-                  clientNames={clientNames}
-                  onSelectVisit={onSelectVisit}
-                  hourHeight={hourHeight}
-                  showHeader={false}
-                  showAxis={false}
-                  contained={false}
-                />
+          )}
+          <div className="max-h-[70vh] overflow-auto rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
+            <div className="grid" style={{ gridTemplateColumns: template }}>
+              <div className="sticky left-0 top-0 z-30 border-b border-[var(--workspace-line)] bg-[var(--workspace-panel)]" />
+              {columns.map((column) => (
+                <div
+                  key={column.id}
+                  className="sticky top-0 z-20 truncate border-b border-l border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-2 py-2 text-xs font-semibold text-[var(--workspace-ink)]"
+                  title={column.name}
+                >
+                  {column.name}
+                </div>
+              ))}
+
+              <div className="sticky left-0 z-10 bg-[var(--workspace-panel)]" style={{ height: gridHeight }}>
+                <HourAxis hourHeight={hourHeight} />
               </div>
-            ))}
+              {columns.map((column) => (
+                <div
+                  key={column.id}
+                  className="border-l border-[var(--workspace-line)]"
+                  style={{ height: gridHeight }}
+                >
+                  <DayGrid
+                    day={day}
+                    visits={visitsByStaff.get(column.id) ?? []}
+                    timeZone={zone}
+                    clientNames={clientNames}
+                    onSelectVisit={onSelectVisit}
+                    overlay={overlays.get(column.id)}
+                    hourHeight={hourHeight}
+                    showHeader={false}
+                    showAxis={false}
+                    contained={false}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </section>
   )

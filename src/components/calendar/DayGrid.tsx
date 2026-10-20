@@ -7,6 +7,7 @@ import { useLocaleStore } from '../../store/localeStore'
 import { useBusinessCurrency } from '../../hooks/useBusinessCurrency'
 import { formatCurrency } from '../../utils/currency'
 import { isoToZonedWallTime } from '../../utils/dates'
+import type { DayOverlay, MinuteInterval } from './schedule'
 import type { VisitOut } from '../../api/types'
 
 export type CalendarVisit = VisitOut & { client_name?: string | null }
@@ -17,6 +18,7 @@ interface DayGridProps {
   timeZone?: string
   clientNames?: ReadonlyMap<number, string>
   onSelectVisit?: (visit: CalendarVisit) => void
+  overlay?: DayOverlay
   hourHeight?: number
   className?: string
   showHeader?: boolean
@@ -138,6 +140,11 @@ const STATUS_CLASS: Record<string, string> = {
 
 const statusClass = (status?: string | null): string => STATUS_CLASS[status ?? ''] ?? STATUS_CLASS.planned
 
+const overlayStyle = (interval: MinuteInterval, hourHeight: number) => ({
+  top: (interval.start / 60) * hourHeight,
+  height: ((interval.end - interval.start) / 60) * hourHeight,
+})
+
 export function HourAxis({ hourHeight = DEFAULT_HOUR_HEIGHT }: { hourHeight?: number }) {
   return (
     <div className="relative h-full w-full" aria-hidden="true">
@@ -162,6 +169,7 @@ export default function DayGrid({
   timeZone,
   clientNames,
   onSelectVisit,
+  overlay,
   hourHeight = DEFAULT_HOUR_HEIGHT,
   className = '',
   showHeader = true,
@@ -197,6 +205,47 @@ export default function DayGrid({
           />
         ))}
 
+        {overlay && (
+          <div className="pointer-events-none absolute inset-0">
+            {overlay.nonWorking.map((interval, index) => (
+              <div
+                key={`off-${index}`}
+                aria-hidden="true"
+                className="absolute inset-x-0 bg-gray-100/70 dark:bg-gray-900/40"
+                style={overlayStyle(interval, hourHeight)}
+              />
+            ))}
+            {overlay.free.map((interval, index) => (
+              <div
+                key={`free-${index}`}
+                aria-hidden="true"
+                className="absolute inset-x-1 rounded-md border border-dashed border-emerald-400/60 bg-emerald-50/50 dark:border-emerald-700/70 dark:bg-emerald-950/25"
+                style={overlayStyle(interval, hourHeight)}
+                title={t('calendar.free')}
+              >
+                {interval.end - interval.start >= 30 && (
+                  <span className="absolute left-1.5 top-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-300">
+                    {t('calendar.free')}
+                  </span>
+                )}
+              </div>
+            ))}
+            {overlay.blocks.map((interval, index) => (
+              <div
+                key={`block-${index}`}
+                className="absolute inset-x-1 overflow-hidden rounded-md border border-gray-300 bg-gray-200/80 px-1.5 py-1 text-[10px] text-gray-700 dark:border-gray-600 dark:bg-gray-700/70 dark:text-gray-200"
+                style={overlayStyle(interval, hourHeight)}
+                title={interval.label || t('calendar.blocked')}
+              >
+                <span className="block truncate font-medium">{t('calendar.blocked')}</span>
+                {interval.end - interval.start >= 30 && interval.label && (
+                  <span className="block truncate opacity-80">{interval.label}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
         {events.map((event) => {
               const { visit } = event
               const clientName = clientNames?.get(visit.client_id) || visit.client_name
@@ -223,7 +272,7 @@ export default function DayGrid({
                 left: `calc(${event.lane * width}% + 2px)`,
                 width: `calc(${width}% - 4px)`,
               }
-              const blockClass = `absolute overflow-hidden rounded-lg border px-1.5 py-1 text-left shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-accent)] ${statusClass(visit.status)}`
+              const blockClass = `absolute z-10 overflow-hidden rounded-lg border px-1.5 py-1 text-left shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-accent)] ${statusClass(visit.status)}`
 
               if (!onSelectVisit) {
                 return (
