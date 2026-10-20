@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { useTranslation } from '../../hooks/useTranslation'
 import LoadingSpinner from '../LoadingSpinner'
+import { INTL_LOCALE } from './intl'
 import type { PublicDaySlotsOut, PublicSlotOut } from '../../api/types'
 
 type TimeStepProps = {
@@ -14,8 +15,6 @@ type TimeStepProps = {
   onSelect: (slot: PublicSlotOut) => void
   onBack: () => void
 }
-
-const INTL_LOCALE = { en: 'en-GB', ru: 'ru-RU', cz: 'cs-CZ' } as const
 
 const dayAsUtc = (day: string) => new Date(`${day}T00:00:00Z`)
 
@@ -37,9 +36,13 @@ export default function TimeStep({
     setSelectedDay((current) => {
       const currentDay = days.find((day) => day.date === current)
       if (currentDay && currentDay.slots.length > 0) return current
+      const slotDay = selectedStart
+        ? days.find((day) => day.slots.some((slot) => slot.start === selectedStart))?.date
+        : undefined
+      if (slotDay) return slotDay
       return days.find((day) => day.slots.length > 0)?.date ?? days[0]?.date ?? null
     })
-  }, [days])
+  }, [days, selectedStart])
 
   const weekdayFormatter = new Intl.DateTimeFormat(intlLocale, { weekday: 'short', timeZone: 'UTC' })
   const dateFormatter = new Intl.DateTimeFormat(intlLocale, { day: 'numeric', month: 'short', timeZone: 'UTC' })

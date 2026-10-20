@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 
@@ -6,12 +6,18 @@ import api from '../../api/client'
 import { apiErrorStatus } from '../../api/errors'
 import LanguageSwitcher from '../../components/LanguageSwitcher'
 import LoadingSpinner from '../../components/LoadingSpinner'
+import BookingSummary from '../../components/booking/BookingSummary'
+import ContactStep from '../../components/booking/ContactStep'
 import ServiceStep from '../../components/booking/ServiceStep'
 import StaffStep from '../../components/booking/StaffStep'
 import TimeStep from '../../components/booking/TimeStep'
+import { INTL_LOCALE } from '../../components/booking/intl'
+import type { ContactDetails } from '../../components/booking/types'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLabels } from '../../i18n/labels'
 import type {
+  PublicBookingCreate,
+  PublicBookingOut,
   PublicBusinessOut,
   PublicServiceOut,
   PublicSlotOut,
@@ -20,7 +26,22 @@ import type {
 } from '../../api/types'
 import { formatCurrency, type Currency } from '../../utils/currency'
 
-type BookingStep = 'service' | 'staff' | 'time'
+type BookingStep = 'service' | 'staff' | 'time' | 'contact' | 'summary' | 'done'
+
+const EMPTY_DETAILS: ContactDetails = {
+  fullName: '',
+  phone: '',
+  email: '',
+  marketingConsent: false,
+  processingConsent: false,
+}
+
+function newRequestId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `bk-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`
+}
 
 function salonDate(timeZone: string, offsetDays: number): string {
   const date = new Date()
@@ -80,6 +101,62 @@ function LoadError({ retry }: { retry: () => unknown }) {
   )
 }
 
+function BookingSuccess({ booking, onNew }: { booking: PublicBookingOut; onNew: () => void }) {
+  const { t, locale } = useTranslation()
+  const dateTime = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    timeZone: booking.timezone,
+  }).format(new Date(booking.start))
+
+  return (
+    <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <h2 className="text-xl font-semibold">{t('booking.successTitle')}</h2>
+      <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">{t('booking.successText')}</p>
+
+      <dl className="mt-5 divide-y divide-slate-100 text-sm dark:divide-gray-700">
+        <div className="flex justify-between gap-4 py-3">
+          <dt className="text-slate-500 dark:text-gray-400">{t('booking.bookingNumber')}</dt>
+          <dd className="text-right font-semibold">#{booking.id}</dd>
+        </div>
+        <div className="flex justify-between gap-4 py-3">
+          <dt className="text-slate-500 dark:text-gray-400">{t('booking.service')}</dt>
+          <dd className="text-right font-medium">{booking.service_name}</dd>
+        </div>
+        {booking.staff_name && (
+          <div className="flex justify-between gap-4 py-3">
+            <dt className="text-slate-500 dark:text-gray-400">{t('booking.master')}</dt>
+            <dd className="text-right font-medium">{booking.staff_name}</dd>
+          </div>
+        )}
+        <div className="flex justify-between gap-4 py-3">
+          <dt className="text-slate-500 dark:text-gray-400">{t('booking.dateTime')}</dt>
+          <dd className="text-right font-medium">
+            {dateTime}
+            <span className="mt-1 block text-xs font-normal text-slate-500 dark:text-gray-400">{booking.timezone}</span>
+          </dd>
+        </div>
+        <div className="flex justify-between gap-4 py-3">
+          <dt className="text-slate-500 dark:text-gray-400">{t('booking.price')}</dt>
+          <dd className="text-right font-medium">
+            {booking.price === null || booking.price === undefined
+              ? t('booking.priceOnRequest')
+              : formatCurrency(booking.price, booking.currency as Currency)}
+          </dd>
+        </div>
+      </dl>
+
+      <button
+        type="button"
+        onClick={onNew}
+        className="mt-5 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
+      >
+        {t('booking.newBooking')}
+      </button>
+    </section>
+  )
+}
+
 export default function BookingPage() {
   const { slug = '' } = useParams<{ slug: string }>()
   const { t } = useTranslation()
@@ -89,6 +166,12 @@ export default function BookingPage() {
   const [selectedService, setSelectedService] = useState<PublicServiceOut | null>(null)
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<PublicSlotOut | null>(null)
+  const [details, setDetails] = useState<ContactDetails>(EMPTY_DETAILS)
+  const [requestId, setRequestId] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<unknown>(null)
+  const [result, setResult] = useState<PublicBookingOut | null>(null)
+  const submitLock = useRef(false)
 
   const businessQuery = useQuery<PublicBusinessOut>({
     queryKey: ['public-booking', slug, 'business'],
@@ -157,6 +240,8 @@ export default function BookingPage() {
     if (service.id !== selectedService?.id) {
       setSelectedStaffId(null)
       setSelectedSlot(null)
+      setRequestId(null)
+      setSubmitError(null)
     }
     setSelectedService(service)
     setStep('staff')
@@ -165,7 +250,80 @@ export default function BookingPage() {
   const handleSelectStaff = (staffId: number | null) => {
     setSelectedStaffId(staffId)
     setSelectedSlot(null)
+    setRequestId(null)
+    setSubmitError(null)
     setStep('time')
+  }
+
+  const handleSelectSlot = (slot: PublicSlotOut) => {
+    if (selectedSlot && (selectedSlot.start !== slot.start || selectedSlot.staff_id !== slot.staff_id)) {
+      setRequestId(null)
+    }
+    setSelectedSlot(slot)
+    setSubmitError(null)
+    setStep('contact')
+  }
+
+  const handleContactSubmit = () => {
+    if (!requestId) setRequestId(newRequestId())
+    setSubmitError(null)
+    setStep('summary')
+  }
+
+  const handleChooseAnotherTime = () => {
+    setSelectedSlot(null)
+    setRequestId(null)
+    setSubmitError(null)
+    setStep('time')
+  }
+
+  const handleConfirm = async () => {
+    if (!selectedService || !selectedSlot || submitLock.current) return
+    submitLock.current = true
+    const id = requestId ?? newRequestId()
+    if (!requestId) setRequestId(id)
+
+    const phone = details.phone.trim()
+    const email = details.email.trim().toLowerCase()
+    const payload: PublicBookingCreate = {
+      service_id: selectedService.id,
+      staff_id: selectedSlot.staff_id,
+      start: selectedSlot.start,
+      full_name: details.fullName.trim(),
+      phone: phone || undefined,
+      email: email || undefined,
+      marketing_consent: details.marketingConsent,
+      processing_consent: details.processingConsent,
+      client_request_id: id,
+    }
+
+    setIsSubmitting(true)
+    setSubmitError(null)
+    try {
+      const { data } = await api.post<PublicBookingOut>(
+        `/public/booking/${encodeURIComponent(slug)}/bookings`,
+        payload,
+      )
+      setResult(data)
+      setStep('done')
+    } catch (error) {
+      setSubmitError(error)
+    } finally {
+      submitLock.current = false
+      setIsSubmitting(false)
+    }
+  }
+
+  const startNewBooking = () => {
+    setStep('service')
+    setSelectedService(null)
+    setSelectedStaffId(null)
+    setSelectedSlot(null)
+    setDetails(EMPTY_DETAILS)
+    setRequestId(null)
+    setIsSubmitting(false)
+    setSubmitError(null)
+    setResult(null)
   }
 
   if (businessQuery.isLoading) {
@@ -187,6 +345,9 @@ export default function BookingPage() {
 
   const currency = business.currency as Currency
   const services = servicesQuery.data ?? []
+  const bookedStaffName = selectedSlot
+    ? staffQuery.data?.find((person) => person.id === selectedSlot.staff_id)?.full_name ?? null
+    : null
 
   return (
     <PublicFrame>
@@ -240,70 +401,99 @@ export default function BookingPage() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
-        {selectedService && step !== 'service' && (
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 px-4 py-3 text-sm dark:bg-gray-700">
-            <span className="font-medium">{selectedService.name}</span>
-            <span className="text-slate-600 dark:text-gray-300">
-              {selectedService.duration_minutes} {t('services.min')} ·{' '}
-              {selectedService.price === null || selectedService.price === undefined
-                ? t('booking.priceOnRequest')
-                : formatCurrency(selectedService.price, currency)}
-            </span>
-          </div>
-        )}
+      {step === 'done' && result ? (
+        <BookingSuccess booking={result} onNew={startNewBooking} />
+      ) : (
+        <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+          {selectedService && step !== 'service' && (
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 px-4 py-3 text-sm dark:bg-gray-700">
+              <span className="font-medium">{selectedService.name}</span>
+              <span className="text-slate-600 dark:text-gray-300">
+                {selectedService.duration_minutes} {t('services.min')} ·{' '}
+                {selectedService.price === null || selectedService.price === undefined
+                  ? t('booking.priceOnRequest')
+                  : formatCurrency(selectedService.price, currency)}
+              </span>
+            </div>
+          )}
 
-        {step === 'service' ? (
-          servicesQuery.isLoading ? (
-            <div className="flex justify-center py-10">
-              <LoadingSpinner />
-            </div>
-          ) : servicesQuery.isError ? (
-            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
-              <p>{t('common.loadError')}</p>
-              <button
-                type="button"
-                onClick={() => void servicesQuery.refetch()}
-                className="mt-2 rounded-md border border-red-300 px-3 py-1.5 font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
-              >
-                {t('common.retry')}
-              </button>
-            </div>
-          ) : services.length === 0 ? (
-            <>
-              <h2 className="text-lg font-semibold">{t('booking.servicesTitle')}</h2>
-              <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('booking.noServices')}</p>
-            </>
-          ) : (
-            <ServiceStep
-              services={services}
-              currency={currency}
-              selectedId={selectedService?.id ?? null}
-              onSelect={handleSelectService}
+          {step === 'service' ? (
+            servicesQuery.isLoading ? (
+              <div className="flex justify-center py-10">
+                <LoadingSpinner />
+              </div>
+            ) : servicesQuery.isError ? (
+              <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+                <p>{t('common.loadError')}</p>
+                <button
+                  type="button"
+                  onClick={() => void servicesQuery.refetch()}
+                  className="mt-2 rounded-md border border-red-300 px-3 py-1.5 font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+                >
+                  {t('common.retry')}
+                </button>
+              </div>
+            ) : services.length === 0 ? (
+              <>
+                <h2 className="text-lg font-semibold">{t('booking.servicesTitle')}</h2>
+                <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('booking.noServices')}</p>
+              </>
+            ) : (
+              <ServiceStep
+                services={services}
+                currency={currency}
+                selectedId={selectedService?.id ?? null}
+                onSelect={handleSelectService}
+              />
+            )
+          ) : step === 'staff' ? (
+            <StaffStep
+              staff={staffQuery.data ?? []}
+              isLoading={staffQuery.isLoading}
+              isError={staffQuery.isError}
+              onRetry={staffQuery.refetch}
+              onSelect={handleSelectStaff}
+              onBack={() => setStep('service')}
             />
-          )
-        ) : step === 'staff' ? (
-          <StaffStep
-            staff={staffQuery.data ?? []}
-            isLoading={staffQuery.isLoading}
-            isError={staffQuery.isError}
-            onRetry={staffQuery.refetch}
-            onSelect={handleSelectStaff}
-            onBack={() => setStep('service')}
-          />
-        ) : (
-          <TimeStep
-            days={slotsQuery.data?.days ?? []}
-            timezone={slotsQuery.data?.timezone ?? business.timezone}
-            selectedStart={selectedSlot?.start ?? null}
-            isLoading={slotsQuery.isLoading}
-            isError={slotsQuery.isError}
-            onRetry={slotsQuery.refetch}
-            onSelect={setSelectedSlot}
-            onBack={() => setStep('staff')}
-          />
-        )}
-      </section>
+          ) : step === 'time' ? (
+            <TimeStep
+              days={slotsQuery.data?.days ?? []}
+              timezone={slotsQuery.data?.timezone ?? business.timezone}
+              selectedStart={selectedSlot?.start ?? null}
+              isLoading={slotsQuery.isLoading}
+              isError={slotsQuery.isError}
+              onRetry={slotsQuery.refetch}
+              onSelect={handleSelectSlot}
+              onBack={() => setStep('staff')}
+            />
+          ) : step === 'contact' ? (
+            selectedService && selectedSlot ? (
+              <ContactStep
+                value={details}
+                onChange={setDetails}
+                onSubmit={handleContactSubmit}
+                onBack={() => setStep('time')}
+              />
+            ) : null
+          ) : step === 'summary' ? (
+            selectedService && selectedSlot ? (
+              <BookingSummary
+                service={selectedService}
+                staffName={bookedStaffName}
+                slot={selectedSlot}
+                timezone={slotsQuery.data?.timezone ?? business.timezone}
+                details={details}
+                currency={currency}
+                isSubmitting={isSubmitting}
+                error={submitError}
+                onConfirm={() => void handleConfirm()}
+                onChooseAnotherTime={handleChooseAnotherTime}
+                onBack={() => setStep('contact')}
+              />
+            ) : null
+          ) : null}
+        </section>
+      )}
     </PublicFrame>
   )
 }

@@ -158,6 +158,31 @@ export type TranslationKey =
   | 'booking.onlyFreeTimes'
   | 'booking.timezone'
   | 'booking.back'
+  | 'booking.yourDetails'
+  | 'booking.contactHint'
+  | 'booking.nameRequired'
+  | 'booking.contactRequired'
+  | 'booking.contactOnlyOne'
+  | 'booking.invalidEmail'
+  | 'booking.invalidPhone'
+  | 'booking.phoneHint'
+  | 'booking.processingConsent'
+  | 'booking.processingConsentRequired'
+  | 'booking.marketingConsent'
+  | 'booking.continue'
+  | 'booking.summary'
+  | 'booking.service'
+  | 'booking.master'
+  | 'booking.dateTime'
+  | 'booking.price'
+  | 'booking.contact'
+  | 'booking.confirm'
+  | 'booking.submitting'
+  | 'booking.chooseAnotherTime'
+  | 'booking.successTitle'
+  | 'booking.successText'
+  | 'booking.bookingNumber'
+  | 'booking.newBooking'
   | 'validation.code.invalid_assistant_name'
   | 'field.assistant_name'
   | 'field.assistant_gender'
@@ -1308,6 +1333,31 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.onlyFreeTimes": {"en": "Only free times are shown.", "ru": "Показаны только свободные окна.", "cz": "Zobrazeny jsou pouze volné termíny."},
   "booking.timezone": {"en": "Salon time zone", "ru": "Часовой пояс салона", "cz": "Časové pásmo salonu"},
   "booking.back": {"en": "Back", "ru": "Назад", "cz": "Zpět"},
+  "booking.yourDetails": {"en": "Your details", "ru": "Ваши данные", "cz": "Vaše údaje"},
+  "booking.contactHint": {"en": "Leave a phone or an email — one contact is enough.", "ru": "Оставьте телефон или email — достаточно одного контакта.", "cz": "Zanechte telefon nebo e-mail — stačí jeden kontakt."},
+  "booking.nameRequired": {"en": "Enter your name", "ru": "Укажите имя", "cz": "Zadejte své jméno"},
+  "booking.contactRequired": {"en": "Enter a phone number or an email", "ru": "Укажите телефон или email", "cz": "Zadejte telefon nebo e-mail"},
+  "booking.contactOnlyOne": {"en": "Leave only one contact: a phone number or an email", "ru": "Оставьте только один контакт: телефон или email", "cz": "Zanechte pouze jeden kontakt: telefon nebo e-mail"},
+  "booking.invalidEmail": {"en": "Check the email address", "ru": "Проверьте адрес email", "cz": "Zkontrolujte e-mailovou adresu"},
+  "booking.invalidPhone": {"en": "Check the phone number", "ru": "Проверьте номер телефона", "cz": "Zkontrolujte telefonní číslo"},
+  "booking.phoneHint": {"en": "International format, e.g. +420777123456", "ru": "Международный формат, например +420777123456", "cz": "Mezinárodní formát, např. +420777123456"},
+  "booking.processingConsent": {"en": "I agree that the salon may process my details to create and manage this booking.", "ru": "Согласен(на), что салон обработает мои данные для создания записи и связи со мной.", "cz": "Souhlasím, aby salon zpracoval mé údaje pro vytvoření rezervace a kontakt se mnou."},
+  "booking.processingConsentRequired": {"en": "Please agree to the processing of your details", "ru": "Подтвердите согласие на обработку данных", "cz": "Potvrďte souhlas se zpracováním údajů"},
+  "booking.marketingConsent": {"en": "I agree to receive offers and news from the salon. Optional.", "ru": "Согласен(на) получать предложения и новости салона. Необязательно.", "cz": "Souhlasím se zasíláním nabídek a novinek salonu. Nepovinné."},
+  "booking.continue": {"en": "Continue", "ru": "Продолжить", "cz": "Pokračovat"},
+  "booking.summary": {"en": "Check your booking", "ru": "Проверьте запись", "cz": "Zkontrolujte rezervaci"},
+  "booking.service": {"en": "Service", "ru": "Услуга", "cz": "Služba"},
+  "booking.master": {"en": "Master", "ru": "Мастер", "cz": "Specialista"},
+  "booking.dateTime": {"en": "Date and time", "ru": "Дата и время", "cz": "Datum a čas"},
+  "booking.price": {"en": "Price", "ru": "Стоимость", "cz": "Cena"},
+  "booking.contact": {"en": "Contact", "ru": "Контакт", "cz": "Kontakt"},
+  "booking.confirm": {"en": "Confirm booking", "ru": "Подтвердить запись", "cz": "Potvrdit rezervaci"},
+  "booking.submitting": {"en": "Sending...", "ru": "Отправляем...", "cz": "Odesílám..."},
+  "booking.chooseAnotherTime": {"en": "Choose another time", "ru": "Выбрать другое время", "cz": "Vybrat jiný čas"},
+  "booking.successTitle": {"en": "You are booked", "ru": "Вы записаны", "cz": "Rezervace potvrzena"},
+  "booking.successText": {"en": "The salon will contact you using the details you left. No email confirmation is sent automatically.", "ru": "Салон свяжется с вами по оставленным контактам. Письмо-подтверждение автоматически не отправляется.", "cz": "Salon vás bude kontaktovat na uvedené údaje. Potvrzovací e-mail se automaticky neposílá."},
+  "booking.bookingNumber": {"en": "Booking number", "ru": "Номер записи", "cz": "Číslo rezervace"},
+  "booking.newBooking": {"en": "Book another time", "ru": "Записаться ещё раз", "cz": "Rezervovat další termín"},
   "validation.code.invalid_assistant_name": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
   "field.assistant_name": {"en": "Assistant name", "ru": "Имя помощника", "cz": "Jméno asistenta"},
   "field.assistant_gender": {"en": "Assistant gender", "ru": "Род помощника", "cz": "Rod asistenta"},
