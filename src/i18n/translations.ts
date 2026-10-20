@@ -141,6 +141,14 @@ export type TranslationKey =
   | 'business.assistantDefault'
   | 'business.assistantNameTooLong'
   | 'business.assistantNameInvalid'
+  | 'booking.title'
+  | 'booking.servicesTitle'
+  | 'booking.noServices'
+  | 'booking.priceOnRequest'
+  | 'booking.unavailableTitle'
+  | 'booking.unavailableText'
+  | 'booking.contacts'
+  | 'booking.noAccount'
   | 'validation.code.invalid_assistant_name'
   | 'field.assistant_name'
   | 'field.assistant_gender'
@@ -1274,6 +1282,14 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "business.assistantDefault": {"en": "default", "ru": "по умолчанию", "cz": "výchozí"},
   "business.assistantNameTooLong": {"en": "Up to 30 characters", "ru": "Не больше 30 символов", "cz": "Nejvýše 30 znaků"},
   "business.assistantNameInvalid": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
+  "booking.title": {"en": "Online booking", "ru": "Онлайн-запись", "cz": "Online rezervace"},
+  "booking.servicesTitle": {"en": "Services and prices", "ru": "Услуги и цены", "cz": "Služby a ceny"},
+  "booking.noServices": {"en": "Online booking is not available yet. Please contact the salon directly.", "ru": "Онлайн-запись пока недоступна. Свяжитесь с салоном напрямую.", "cz": "Online rezervace zatím není dostupná. Kontaktujte prosím salon přímo."},
+  "booking.priceOnRequest": {"en": "Price on request", "ru": "Цена по запросу", "cz": "Cena na vyžádání"},
+  "booking.unavailableTitle": {"en": "Booking link is not active", "ru": "Ссылка на запись неактивна", "cz": "Odkaz pro rezervaci není aktivní"},
+  "booking.unavailableText": {"en": "Check the address or contact the salon. If the salon sent you this link, online booking may be turned off.", "ru": "Проверьте адрес или свяжитесь с салоном. Если ссылку прислал салон, онлайн-запись может быть выключена.", "cz": "Zkontrolujte adresu nebo kontaktujte salon. Pokud vám odkaz poslal salon, online rezervace může být vypnutá."},
+  "booking.contacts": {"en": "Contacts", "ru": "Контакты", "cz": "Kontakty"},
+  "booking.noAccount": {"en": "No account needed", "ru": "Без регистрации и пароля", "cz": "Bez registrace a hesla"},
   "validation.code.invalid_assistant_name": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
   "field.assistant_name": {"en": "Assistant name", "ru": "Имя помощника", "cz": "Jméno asistenta"},
   "field.assistant_gender": {"en": "Assistant gender", "ru": "Род помощника", "cz": "Rod asistenta"},

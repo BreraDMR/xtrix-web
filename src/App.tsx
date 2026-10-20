@@ -22,6 +22,7 @@ import Analytics from './pages/Analytics'
 import Loyalty from './pages/Loyalty'
 import Settings from './pages/Settings'
 import NotFound from './pages/NotFound'
+import BookingPage from './pages/booking/BookingPage'
 import Layout from './components/Layout'
 import { LegacyRedirect, ParameterizedLegacyRedirect } from './utils/routing'
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/booking/:slug" element={<BookingPage />} />
 
         {/* Legacy CRM routes redirecting to /app/... while preserving query and hash */}
         <Route path="/clients" element={<LegacyRedirect target="/app/clients" />} />
