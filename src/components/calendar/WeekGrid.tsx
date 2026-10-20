@@ -1,7 +1,12 @@
 import { useMemo } from 'react'
 import { addDays, format } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
-import DayGrid, { HourAxis, zonedDayKey, type CalendarVisit } from './DayGrid'
+import DayGrid, {
+  HourAxis,
+  zonedDayKey,
+  type CalendarVisit,
+  type MovePreview,
+} from './DayGrid'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
 
@@ -11,6 +16,8 @@ interface WeekGridProps {
   timeZone?: string
   clientNames?: ReadonlyMap<number, string>
   onSelectVisit?: (visit: CalendarVisit) => void
+  preview?: MovePreview
+  onDropVisit?: (visitId: number, dayKey: string, startMin: number) => void
   hourHeight?: number
 }
 
@@ -23,6 +30,8 @@ export default function WeekGrid({
   timeZone,
   clientNames,
   onSelectVisit,
+  preview,
+  onDropVisit,
   hourHeight = 64,
 }: WeekGridProps) {
   const { t } = useTranslation()
@@ -86,6 +95,8 @@ export default function WeekGrid({
                 timeZone={zone}
                 clientNames={clientNames}
                 onSelectVisit={onSelectVisit}
+                preview={preview}
+                onDropVisit={onDropVisit}
                 hourHeight={hourHeight}
                 showHeader={false}
                 showAxis={false}

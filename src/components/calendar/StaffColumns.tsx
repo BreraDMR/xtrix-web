@@ -1,7 +1,12 @@
 import { useMemo } from 'react'
 import { format, parseISO } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
-import DayGrid, { HourAxis, zonedDayKey, type CalendarVisit } from './DayGrid'
+import DayGrid, {
+  HourAxis,
+  zonedDayKey,
+  type CalendarVisit,
+  type MovePreview,
+} from './DayGrid'
 import { buildDayOverlay, type DayOverlay, type StaffScheduleData } from './schedule'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
@@ -19,6 +24,8 @@ interface StaffColumnsProps {
   timeZone?: string
   clientNames?: ReadonlyMap<number, string>
   onSelectVisit?: (visit: CalendarVisit) => void
+  preview?: MovePreview
+  onDropVisit?: (visitId: number, dayKey: string, startMin: number) => void
   hourHeight?: number
 }
 
@@ -32,6 +39,8 @@ export default function StaffColumns({
   timeZone,
   clientNames,
   onSelectVisit,
+  preview,
+  onDropVisit,
   hourHeight = 64,
 }: StaffColumnsProps) {
   const { t } = useTranslation()
@@ -137,6 +146,8 @@ export default function StaffColumns({
                     clientNames={clientNames}
                     onSelectVisit={onSelectVisit}
                     overlay={overlays.get(column.id)}
+                    preview={preview}
+                    onDropVisit={onDropVisit}
                     hourHeight={hourHeight}
                     showHeader={false}
                     showAxis={false}

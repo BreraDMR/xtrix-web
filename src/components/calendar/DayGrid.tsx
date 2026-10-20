@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, type DragEvent } from 'react'
 import { format, parseISO } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -12,6 +12,13 @@ import type { VisitOut } from '../../api/types'
 
 export type CalendarVisit = VisitOut & { client_name?: string | null }
 
+export interface MovePreview {
+  dayKey: string
+  startMin: number
+  endMin: number
+  label: string
+}
+
 interface DayGridProps {
   day: Date
   visits: CalendarVisit[]
@@ -19,6 +26,8 @@ interface DayGridProps {
   clientNames?: ReadonlyMap<number, string>
   onSelectVisit?: (visit: CalendarVisit) => void
   overlay?: DayOverlay
+  preview?: MovePreview
+  onDropVisit?: (visitId: number, dayKey: string, startMin: number) => void
   hourHeight?: number
   className?: string
   showHeader?: boolean
@@ -39,6 +48,7 @@ interface DayEvent {
 const HOURS_IN_DAY = 24
 const DEFAULT_HOUR_HEIGHT = 64
 const FALLBACK_MINUTES = 60
+const DRAG_MIME = 'application/x-xtrix-visit'
 
 // the business time zone decides which calendar day an instant belongs to
 export function zonedDayKey(value: Date, timeZone: string): string {
@@ -170,6 +180,8 @@ export default function DayGrid({
   clientNames,
   onSelectVisit,
   overlay,
+  preview,
+  onDropVisit,
   hourHeight = DEFAULT_HOUR_HEIGHT,
   className = '',
   showHeader = true,
@@ -187,6 +199,46 @@ export default function DayGrid({
   const title = format(parseISO(dayKey), 'EEEE, d MMMM', { locale: dateLocale })
   const events = useMemo(() => layoutDay(visits, dayKey, zone), [visits, dayKey, zone])
 
+  const previewStyle = preview && preview.dayKey === dayKey
+    ? {
+        top: (preview.startMin / 60) * hourHeight,
+        height: Math.max(((preview.endMin - preview.startMin) / 60) * hourHeight, 30),
+      }
+    : null
+
+  const handleDragStart = (visit: CalendarVisit, startMin: number, endMin: number) =>
+    (dragEvent: DragEvent<HTMLElement>) => {
+      if (!onDropVisit) return
+      const rect = dragEvent.currentTarget.getBoundingClientRect()
+      const grabOffset = Math.max(
+        0,
+        Math.min(((dragEvent.clientY - rect.top) / hourHeight) * 60, endMin - startMin),
+      )
+      dragEvent.dataTransfer.setData(
+        DRAG_MIME,
+        JSON.stringify({ id: visit.id, grabOffsetMinutes: grabOffset }),
+      )
+      dragEvent.dataTransfer.effectAllowed = 'move'
+    }
+
+  const handleDrop = (dropEvent: DragEvent<HTMLDivElement>) => {
+    if (!onDropVisit) return
+    const raw = dropEvent.dataTransfer.getData(DRAG_MIME)
+    if (!raw) return
+    let payload: { id?: unknown; grabOffsetMinutes?: unknown }
+    try {
+      payload = JSON.parse(raw)
+    } catch {
+      return
+    }
+    if (typeof payload.id !== 'number') return
+    dropEvent.preventDefault()
+    const grabOffset = typeof payload.grabOffsetMinutes === 'number' ? payload.grabOffsetMinutes : 0
+    const rect = dropEvent.currentTarget.getBoundingClientRect()
+    const startMin = ((dropEvent.clientY - rect.top) / hourHeight) * 60 - grabOffset
+    onDropVisit(payload.id, dayKey, startMin)
+  }
+
   const body = (
     <div className="flex" style={{ height: HOURS_IN_DAY * hourHeight }}>
       {showAxis && (
@@ -195,7 +247,15 @@ export default function DayGrid({
         </div>
       )}
 
-      <div className={`relative flex-1 ${showAxis ? 'border-l border-[var(--workspace-line)]' : ''}`}>
+      <div
+        className={`relative flex-1 ${showAxis ? 'border-l border-[var(--workspace-line)]' : ''}`}
+        onDragOver={(dragEvent) => {
+          if (!onDropVisit) return
+          dragEvent.preventDefault()
+          dragEvent.dataTransfer.dropEffect = 'move'
+        }}
+        onDrop={handleDrop}
+      >
         {Array.from({ length: HOURS_IN_DAY }, (_, hour) => (
           <div
             key={hour}
@@ -246,6 +306,16 @@ export default function DayGrid({
           </div>
         )}
 
+        {previewStyle && preview && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-1 z-20 overflow-hidden rounded-lg border-2 border-dashed border-[var(--workspace-accent)] bg-white/80 px-1.5 py-1 text-[10px] font-medium text-[var(--workspace-ink)] dark:bg-gray-800/80"
+            style={previewStyle}
+          >
+            <span className="block truncate">{preview.label}</span>
+          </div>
+        )}
+
         {events.map((event) => {
               const { visit } = event
               const clientName = clientNames?.get(visit.client_id) || visit.client_name
@@ -276,7 +346,15 @@ export default function DayGrid({
 
               if (!onSelectVisit) {
                 return (
-                  <div key={visit.id} className={blockClass} style={style} title={`${name} · ${detail}`} aria-label={ariaLabel}>
+                  <div
+                    key={visit.id}
+                    draggable={Boolean(onDropVisit)}
+                    onDragStart={handleDragStart(visit, event.startMin, event.endMin)}
+                    className={blockClass}
+                    style={style}
+                    title={`${name} · ${detail}`}
+                    aria-label={ariaLabel}
+                  >
                     <span className="block truncate text-[11px] font-semibold leading-tight">{name}</span>
                     <span className="block truncate text-[10px] leading-tight opacity-80">{detail}</span>
                   </div>
@@ -286,6 +364,8 @@ export default function DayGrid({
                 <button
                   key={visit.id}
                   type="button"
+                  draggable={Boolean(onDropVisit)}
+                  onDragStart={handleDragStart(visit, event.startMin, event.endMin)}
                   onClick={() => onSelectVisit(visit)}
                   className={blockClass}
                   style={style}

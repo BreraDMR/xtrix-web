@@ -4,10 +4,12 @@ import { addDays, startOfWeek } from 'date-fns'
 import api from '../api/client'
 import Calendar from '../components/Calendar'
 import SimpleCalendar from '../components/SimpleCalendar'
-import { zonedDayKey, type CalendarVisit } from '../components/calendar/DayGrid'
+import { zonedDayKey, type CalendarVisit, type MovePreview } from '../components/calendar/DayGrid'
 import StaffColumns, { type StaffColumn } from '../components/calendar/StaffColumns'
 import WeekGrid from '../components/calendar/WeekGrid'
 import MoveVisitDialog from '../components/calendar/MoveVisitDialog'
+import FormError from '../components/FormError'
+import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import type { StaffScheduleData } from '../components/calendar/schedule'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
@@ -31,6 +33,26 @@ interface EmployeeRow {
   employee_user_id: number
   employee_user?: { full_name?: string; email?: string | null } | null
 }
+
+interface DragPreview {
+  visit: CalendarVisit
+  dayKey: string
+  startMin: number
+  endMin: number
+}
+
+const MINUTES_IN_DAY = 24 * 60
+
+const visitDurationMinutes = (visit: VisitOut): number => {
+  const start = new Date(visit.date_start).getTime()
+  const end = visit.date_end ? new Date(visit.date_end).getTime() : Number.NaN
+  const minutes = (end - start) / 60_000
+  // a visit without a usable end is previewed and moved as one hour, like the grid draws it
+  return Number.isFinite(minutes) && minutes > 0 ? Math.min(Math.round(minutes), MINUTES_IN_DAY) : 60
+}
+
+const formatMinutes = (value: number): string =>
+  `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`
 
 async function fetchVisitsInRange(from: string, to: string): Promise<VisitOut[]> {
   const items: VisitOut[] = []
@@ -59,6 +81,9 @@ export default function CalendarPage() {
     return value
   })
   const [selectedVisit, setSelectedVisit] = useState<CalendarVisit | null>(null)
+  const [dragPreview, setDragPreview] = useState<DragPreview | null>(null)
+  const [moveError, setMoveError] = useState('')
+  const [moveSaving, setMoveSaving] = useState(false)
   const { data: business } = useMyBusiness()
   const timeZone = business?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
   const dayKey = zonedDayKey(day, timeZone)
@@ -137,6 +162,70 @@ export default function CalendarPage() {
       || selectedVisit.service_name
       || `#${selectedVisit.id}`
     : ''
+
+  const dragPreviewName = dragPreview
+    ? clientNames.get(dragPreview.visit.client_id)
+      || dragPreview.visit.client_name
+      || dragPreview.visit.service_name
+      || `#${dragPreview.visit.id}`
+    : ''
+
+  const handleDropVisit = (visitId: number, targetDayKey: string, rawStartMin: number) => {
+    const visit = (rangeQuery.data ?? []).find((item) => item.id === visitId)
+    if (!visit) return
+    const duration = visitDurationMinutes(visit)
+    const snapped = Math.round(rawStartMin / 5) * 5
+    const startMin = Math.max(0, Math.min(MINUTES_IN_DAY - duration, snapped))
+    setMoveError('')
+    setDragPreview({ visit, dayKey: targetDayKey, startMin, endMin: startMin + duration })
+  }
+
+  const cancelDragPreview = () => {
+    if (moveSaving) return
+    setDragPreview(null)
+    setMoveError('')
+  }
+
+  const confirmDragMove = async () => {
+    if (!dragPreview || moveSaving) return
+    const startIso = zonedWallTimeToIso(
+      dragPreview.dayKey,
+      formatMinutes(dragPreview.startMin),
+      timeZone,
+    )
+    const payload: { date_start: string; date_end?: string } = { date_start: startIso }
+    if (dragPreview.visit.date_end) {
+      const duration = dragPreview.endMin - dragPreview.startMin
+      payload.date_end = new Date(new Date(startIso).getTime() + duration * 60_000).toISOString()
+    }
+
+    setMoveSaving(true)
+    setMoveError('')
+    try {
+      await api.put(`/visits/${dragPreview.visit.id}`, payload)
+      // only a confirmed, accepted move removes the old block
+      setDragPreview(null)
+      rangeQuery.refetch()
+    } catch (error) {
+      setDragPreview(null)
+      setMoveError(
+        apiErrorStatus(error) === 409
+          ? t('calendar.moveConflict')
+          : apiErrorMessage(error, t('calendar.moveError')),
+      )
+    } finally {
+      setMoveSaving(false)
+    }
+  }
+
+  const movePreview: MovePreview | undefined = dragPreview
+    ? {
+        dayKey: dragPreview.dayKey,
+        startMin: dragPreview.startMin,
+        endMin: dragPreview.endMin,
+        label: `${t('calendar.moveSubmit')} ${formatMinutes(dragPreview.startMin)}–${formatMinutes(dragPreview.endMin)}`,
+      }
+    : undefined
 
   const scheduleQueries = useQueries({
     queries: view === 'day'
@@ -246,6 +335,12 @@ export default function CalendarPage() {
 
       {showHint && <ContextHint hint="calendar" to="/app/visits" />}
 
+      {moveError && (
+        <div role="alert" className="mb-4">
+          <FormError message={moveError} />
+        </div>
+      )}
+
       <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
         {isRangeView && (
           rangeQuery.isError ? (
@@ -263,6 +358,8 @@ export default function CalendarPage() {
               timeZone={timeZone}
               clientNames={clientNames}
               onSelectVisit={setSelectedVisit}
+              preview={movePreview}
+              onDropVisit={handleDropVisit}
             />
           ) : (
             <WeekGrid
@@ -271,6 +368,8 @@ export default function CalendarPage() {
               timeZone={timeZone}
               clientNames={clientNames}
               onSelectVisit={setSelectedVisit}
+              preview={movePreview}
+              onDropVisit={handleDropVisit}
             />
           )
         )}
@@ -281,6 +380,30 @@ export default function CalendarPage() {
           <Calendar visits={visits || []} onRefresh={() => refetch()} />
         )}
       </div>
+
+      {dragPreview && (
+        <div
+          role="region"
+          aria-live="polite"
+          aria-label={t('calendar.moveTitle')}
+          className="fixed inset-x-4 bottom-4 z-40 mx-auto max-w-xl rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-4 shadow-xl"
+        >
+          <p className="text-sm font-medium text-[var(--workspace-ink)]">
+            {t('calendar.moveTitle')}: {dragPreviewName}
+          </p>
+          <p className="mt-1 text-xs text-[var(--workspace-muted)]">
+            {dragPreview.dayKey} · {formatMinutes(dragPreview.startMin)}–{formatMinutes(dragPreview.endMin)}
+          </p>
+          <div className="mt-3 flex justify-end gap-2">
+            <Button variant="secondary" onClick={cancelDragPreview} disabled={moveSaving}>
+              {t('common.cancel')}
+            </Button>
+            <Button onClick={confirmDragMove} disabled={moveSaving}>
+              {moveSaving ? t('calendar.moving') : t('calendar.moveSubmit')}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {selectedVisit && (
         <MoveVisitDialog
