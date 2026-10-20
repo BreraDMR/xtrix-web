@@ -1,5 +1,4 @@
 import Card from '../ui/Card'
-import { Link } from 'react-router-dom'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import QueryError from '../components/QueryError'
 import { useQuery } from '@tanstack/react-query'
@@ -14,6 +13,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 import { HiOutlineChartBar, HiOutlineUsers, HiOutlineCalendar } from 'react-icons/hi'
 import Welcome from '../components/onboarding/Welcome'
 import Checklist from '../components/onboarding/Checklist'
+import BusinessStep from '../components/onboarding/BusinessStep'
 
 export default function Dashboard() {
   const { t } = useTranslation()
@@ -64,10 +64,7 @@ export default function Dashboard() {
     <div className="animate-fade-in">
       <Welcome />
       <Checklist />
-      <Card className="p-5 sm:p-6">
-        <h1 className="mb-4 text-2xl font-bold">{t('business.title')}</h1>
-        <Link to="/app/business" className="text-blue-700 underline">{t('business.create')}</Link>
-      </Card>
+      <BusinessStep />
     </div>
   )
 
