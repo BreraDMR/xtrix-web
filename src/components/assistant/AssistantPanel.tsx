@@ -9,8 +9,10 @@ import type { AssistantExecuteOut, AssistantPlanOut, AssistantStatusOut, Assista
 import { assistantT, type AssistantGender, type AssistantKey } from '../../i18n/assistant'
 import { useLocaleStore } from '../../store/localeStore'
 import { ASSISTANT_STATUS_KEY, formatDay, refreshAfterAssistant } from '../../hooks/useAssistant'
+import { MESSAGES_KEY, useConversationMessages, useConversations } from '../../hooks/useConversations'
 import { minutesSeconds, useCountdown } from '../../hooks/useCountdown'
 import { MAX_RECORDING_SECONDS, useVoiceRecorder, type VoiceProblem } from '../../hooks/useVoiceRecorder'
+import ConversationList from './ConversationList'
 import PlanCard from './PlanCard'
 import { confirmable, type PlanEntry, type PlanPhase, type Say } from './plan'
 
@@ -92,6 +94,49 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   const ready = !!data && !off
   const limitReached = (!!data && data.used >= data.limit) || (limitUntil !== null && Date.now() < limitUntil)
   const resetsAt = data?.resets_at ?? (limitUntil ? new Date(limitUntil).toISOString() : null)
+
+  const {
+    conversations,
+    activeId,
+    selectConversation,
+    createConversation,
+    renameConversation,
+    archiveConversation,
+    isCreating,
+  } = useConversations(open)
+
+  const messagesQuery = useConversationMessages(activeId, open)
+
+  useEffect(() => {
+    if (!messagesQuery.data?.items) return
+    const msgs = messagesQuery.data.items
+    if (msgs.length === 0) {
+      setEntries([])
+      return
+    }
+    const mapped: Entry[] = msgs.map((m) => {
+      if (m.role === 'user') {
+        return { id: nextId.current++, kind: 'user', text: m.text }
+      }
+      if (m.plan) {
+        return {
+          id: nextId.current++,
+          kind: 'plan',
+          plan: m.plan,
+          request: m.text,
+          phase: m.result ? 'done' : m.status === 'expired' ? 'expired' : 'open',
+          ...(m.result ? { result: m.result } : {}),
+        }
+      }
+      return {
+        id: nextId.current++,
+        kind: 'notice',
+        tone: m.status === 'failed' ? 'error' : 'info',
+        text: m.text || (m.error_code ? say('requestFailed') : say('notUnderstood')),
+      }
+    })
+    setEntries(mapped)
+  }, [messagesQuery.data, say])
 
   const add = useCallback((entry: NewEntry) => {
     const id = nextId.current++
@@ -187,7 +232,18 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
     setText('')
     setSending(true)
     try {
-      const { data: plan } = await api.post<AssistantPlanOut>('/assistant/plan', { text: request, locale })
+      let targetConvId = activeId
+      if (!targetConvId) {
+        const newConv = await createConversation()
+        targetConvId = newConv.id
+      }
+      const client_request_id = crypto.randomUUID()
+      const { data: plan } = await api.post<AssistantPlanOut>('/assistant/plan', {
+        text: request,
+        locale,
+        conversation_id: targetConvId,
+        client_request_id,
+      })
       const id = nextId.current++
       setEntries((prev) => {
         const older = prev.map((e) => (e.kind === 'plan' && e.phase === 'open'
@@ -198,6 +254,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
         return [...older, { id, kind: 'plan', plan, request, phase: 'open' }]
       })
       queryClient.invalidateQueries({ queryKey: ASSISTANT_STATUS_KEY })
+      queryClient.invalidateQueries({ queryKey: [...MESSAGES_KEY, targetConvId] })
     } catch (err) {
       // give the text back so it can be sent again, unless something new was typed meanwhile
       setText((current) => current || typed)
@@ -303,6 +360,15 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
         <p className="m-4 rounded-lg bg-gray-50 p-4 text-sm text-gray-700 dark:bg-gray-900/40 dark:text-gray-300">{say('notConfigured')}</p>
       ) : (
         <>
+          <ConversationList
+            conversations={conversations}
+            activeId={activeId}
+            onSelect={(id) => selectConversation(id)}
+            onNewChat={() => createConversation()}
+            onRename={(id, title) => renameConversation({ id, title })}
+            onArchive={(id) => archiveConversation(id)}
+            isCreating={isCreating}
+          />
           <div
             ref={logRef}
             role="log"
