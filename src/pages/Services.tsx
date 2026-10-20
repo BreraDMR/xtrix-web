@@ -1,4 +1,5 @@
 import QueryError from '../components/QueryError'
+import ContextHint from '../components/onboarding/ContextHint'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
@@ -124,6 +125,16 @@ export default function Services() {
           </button>
         )}
       </div>
+
+      {!showForm && services?.length === 0 && !searchQuery && !activeFilter && (
+        <ContextHint
+          hint="services"
+          onAction={() => {
+            setEditingId(undefined)
+            setShowForm(true)
+          }}
+        />
+      )}
 
       {!showForm && (
         <div className="mb-6 space-y-4">

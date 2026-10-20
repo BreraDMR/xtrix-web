@@ -4,6 +4,7 @@ import api from '../api/client'
 import Calendar from '../components/Calendar'
 import SimpleCalendar from '../components/SimpleCalendar'
 import { useTranslation } from '../hooks/useTranslation'
+import ContextHint from '../components/onboarding/ContextHint'
 
 export default function CalendarPage() {
   const { t } = useTranslation()
@@ -51,6 +52,9 @@ export default function CalendarPage() {
           </button>
         </div>
       </div>
+      {Array.isArray(visits) && visits.length === 0 && (
+        <ContextHint hint="calendar" to="/app/visits" />
+      )}
       <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
         {view === 'simple' ? (
           <SimpleCalendar visits={visits || []} onRefresh={() => refetch()} />

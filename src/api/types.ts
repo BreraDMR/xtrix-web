@@ -48,3 +48,4 @@ export type OnboardingStep = Schema<'OnboardingStep'>
 export type OnboardingStepKey = OnboardingStep['key']
 export type OnboardingPersona = OnboardingState['persona']
 export type OnboardingUpdate = Schema<'OnboardingUpdate'>
+export type OnboardingHintKey = OnboardingState['dismissed_hints'][number]

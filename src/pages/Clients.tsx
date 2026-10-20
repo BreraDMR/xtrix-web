@@ -3,6 +3,7 @@ import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Card from '../ui/Card'
 import QueryError from '../components/QueryError'
+import ContextHint from '../components/onboarding/ContextHint'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
@@ -190,6 +191,16 @@ export default function Clients() {
           </div>
         )}
       </div>
+
+      {!showForm && clients?.length === 0 && !searchQuery && !genderFilter && (
+        <ContextHint
+          hint="clients"
+          onAction={() => {
+            setEditingId(undefined)
+            setShowForm(true)
+          }}
+        />
+      )}
 
       {!showForm && (
         <div className="mb-6 space-y-4">

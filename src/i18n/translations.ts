@@ -1043,6 +1043,9 @@ export type TranslationKey =
   | 'onboarding.hint.clients.title'
   | 'onboarding.hint.clients.body'
   | 'onboarding.hint.clients.cta'
+  | 'onboarding.hint.services.title'
+  | 'onboarding.hint.services.body'
+  | 'onboarding.hint.services.cta'
   | 'onboarding.hint.calendar.title'
   | 'onboarding.hint.calendar.body'
   | 'onboarding.hint.calendar.cta'
@@ -2415,6 +2418,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.hint.clients.title': { en: 'Start with your first client', ru: 'Начните с первого клиента', cz: 'Začněte prvním klientem' },
   'onboarding.hint.clients.body': { en: 'A client card keeps contacts, visits and notes in one place.', ru: 'Карточка клиента хранит контакты, визиты и заметки вместе.', cz: 'Karta klienta drží kontakty, návštěvy a poznámky na jednom místě.' },
   'onboarding.hint.clients.cta': { en: 'Add client', ru: 'Добавить клиента', cz: 'Přidat klienta' },
+  'onboarding.hint.services.title': { en: 'Add your first service', ru: 'Добавьте первую услугу', cz: 'Přidejte první službu' },
+  'onboarding.hint.services.body': { en: 'Name, price and duration — clients see them before booking.', ru: 'Название, цена и длительность — клиент видит их до записи.', cz: 'Název, cena a délka — klient je uvidí před rezervací.' },
+  'onboarding.hint.services.cta': { en: 'Add service', ru: 'Добавить услугу', cz: 'Přidat službu' },
   'onboarding.hint.calendar.title': { en: 'No visits yet', ru: 'Визитов пока нет', cz: 'Zatím žádné návštěvy' },
   'onboarding.hint.calendar.body': { en: 'Create a visit to see it on the calendar.', ru: 'Создайте визит, чтобы он появился в календаре.', cz: 'Vytvořte návštěvu, aby se objevila v kalendáři.' },
   'onboarding.hint.calendar.cta': { en: 'Create visit', ru: 'Создать визит', cz: 'Vytvořit návštěvu' },
