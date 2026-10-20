@@ -1005,6 +1005,61 @@ export type TranslationKey =
   | 'notfound.subtitle'
   | 'notfound.to_home'
   | 'notfound.to_app'
+  | 'onboarding.welcome.ownerTitle'
+  | 'onboarding.welcome.ownerBody'
+  | 'onboarding.welcome.soloTitle'
+  | 'onboarding.welcome.soloBody'
+  | 'onboarding.welcome.staffTitle'
+  | 'onboarding.welcome.staffBody'
+  | 'onboarding.welcome.start'
+  | 'onboarding.welcome.open'
+  | 'onboarding.welcome.later'
+  | 'onboarding.checklist.title'
+  | 'onboarding.checklist.description'
+  | 'onboarding.checklist.progressLabel'
+  | 'onboarding.checklist.hide'
+  | 'onboarding.checklist.locked'
+  | 'onboarding.checklist.done'
+  | 'onboarding.checklist.next'
+  | 'onboarding.checklist.allDone'
+  | 'onboarding.step.business.title'
+  | 'onboarding.step.business.body'
+  | 'onboarding.step.business.cta'
+  | 'onboarding.step.service.title'
+  | 'onboarding.step.service.body'
+  | 'onboarding.step.service.cta'
+  | 'onboarding.step.staff.title'
+  | 'onboarding.step.staff.body'
+  | 'onboarding.step.staff.cta'
+  | 'onboarding.step.schedule.title'
+  | 'onboarding.step.schedule.body'
+  | 'onboarding.step.schedule.cta'
+  | 'onboarding.step.booking.title'
+  | 'onboarding.step.booking.body'
+  | 'onboarding.step.booking.cta'
+  | 'onboarding.step.cancel'
+  | 'onboarding.hint.clients.title'
+  | 'onboarding.hint.clients.body'
+  | 'onboarding.hint.clients.cta'
+  | 'onboarding.hint.calendar.title'
+  | 'onboarding.hint.calendar.body'
+  | 'onboarding.hint.calendar.cta'
+  | 'onboarding.hint.dismiss'
+  | 'onboarding.tour.title'
+  | 'onboarding.tour.dashboard'
+  | 'onboarding.tour.clients'
+  | 'onboarding.tour.calendar'
+  | 'onboarding.tour.assistant'
+  | 'onboarding.tour.next'
+  | 'onboarding.tour.back'
+  | 'onboarding.tour.skip'
+  | 'onboarding.tour.done'
+  | 'onboarding.settings.title'
+  | 'onboarding.settings.description'
+  | 'onboarding.settings.showTour'
+  | 'onboarding.settings.showChecklist'
+  | 'onboarding.settings.saved'
+  | 'onboarding.error.save'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -2320,6 +2375,61 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     ru: 'В рабочее пространство CRM',
     cz: 'Do pracovního prostoru CRM',
   },
+  'onboarding.welcome.ownerTitle': { en: 'Welcome to Xtrix', ru: 'Добро пожаловать в Xtrix', cz: 'Vítejte v Xtrixu' },
+  'onboarding.welcome.ownerBody': { en: 'Create your business, add the first service and set working hours. You can stop and continue later.', ru: 'Создайте бизнес, добавьте первую услугу и настройте рабочие часы. Можно остановиться и продолжить позже.', cz: 'Vytvořte firmu, přidejte první službu a nastavte pracovní hodiny. Můžete přestat a pokračovat později.' },
+  'onboarding.welcome.soloTitle': { en: 'Welcome to Xtrix', ru: 'Добро пожаловать в Xtrix', cz: 'Vítejte v Xtrixu' },
+  'onboarding.welcome.soloBody': { en: 'Start with the first service. The workspace is already yours — no employee needed.', ru: 'Начните с первой услуги. Рабочее пространство уже ваше — сотрудник не обязателен.', cz: 'Začněte první službou. Pracovní prostor je váš — zaměstnanec není potřeba.' },
+  'onboarding.welcome.staffTitle': { en: 'Welcome to the team workspace', ru: 'Добро пожаловать в рабочее пространство команды', cz: 'Vítejte v týmovém pracovním prostoru' },
+  'onboarding.welcome.staffBody': { en: 'The owner has set up the business. Here you will find visits, clients and your schedule.', ru: 'Владелец уже настроил бизнес. Здесь будут визиты, клиенты и ваше расписание.', cz: 'Majitel už firmu nastavil. Najdete zde návštěvy, klienty a svůj rozvrh.' },
+  'onboarding.welcome.start': { en: 'Start setup', ru: 'Начать настройку', cz: 'Začít nastavení' },
+  'onboarding.welcome.open': { en: 'Open workspace', ru: 'Открыть рабочее пространство', cz: 'Otevřít pracovní prostor' },
+  'onboarding.welcome.later': { en: 'Maybe later', ru: 'Позже', cz: 'Později' },
+  'onboarding.checklist.title': { en: 'Getting started', ru: 'С чего начать', cz: 'Jak začít' },
+  'onboarding.checklist.description': { en: 'You can return to these steps later.', ru: 'К этим шагам можно вернуться позже.', cz: 'K těmto krokům se můžete vrátit později.' },
+  'onboarding.checklist.progressLabel': { en: 'Completed', ru: 'Выполнено', cz: 'Hotovo' },
+  'onboarding.checklist.hide': { en: 'Hide checklist', ru: 'Скрыть список', cz: 'Skrýt seznam' },
+  'onboarding.checklist.locked': { en: 'Available in an upcoming release', ru: 'Появится в ближайшем обновлении', cz: 'Bude v některé z příštích aktualizací' },
+  'onboarding.checklist.done': { en: 'Done', ru: 'Готово', cz: 'Hotovo' },
+  'onboarding.checklist.next': { en: 'Next step', ru: 'Следующий шаг', cz: 'Další krok' },
+  'onboarding.checklist.allDone': { en: 'Setup is complete', ru: 'Настройка завершена', cz: 'Nastavení je hotové' },
+  'onboarding.step.business.title': { en: 'Create your business', ru: 'Создайте бизнес', cz: 'Vytvořte firmu' },
+  'onboarding.step.business.body': { en: 'Name, currency and contacts — used on documents and on the booking page.', ru: 'Название, валюта и контакты — для документов и страницы записи.', cz: 'Název, měna a kontakty — pro dokumenty a rezervační stránku.' },
+  'onboarding.step.business.cta': { en: 'Create business', ru: 'Создать бизнес', cz: 'Vytvořit firmu' },
+  'onboarding.step.service.title': { en: 'Add your first service', ru: 'Добавьте первую услугу', cz: 'Přidejte první službu' },
+  'onboarding.step.service.body': { en: 'Price and duration are shown to clients before booking.', ru: 'Цену и длительность клиент видит до записи.', cz: 'Cenu a délku klient uvidí před rezervací.' },
+  'onboarding.step.service.cta': { en: 'Add service', ru: 'Добавить услугу', cz: 'Přidat službu' },
+  'onboarding.step.staff.title': { en: 'Add your team', ru: 'Добавьте команду', cz: 'Přidejte tým' },
+  'onboarding.step.staff.body': { en: 'Invite a master, or keep the service assigned to you and work on your own.', ru: 'Добавьте мастера или оставьте услугу на себе и работайте сами.', cz: 'Přidejte mistra, nebo si službu nechte a pracujte sami.' },
+  'onboarding.step.staff.cta': { en: 'Add master', ru: 'Добавить мастера', cz: 'Přidat mistra' },
+  'onboarding.step.schedule.title': { en: 'Set working hours', ru: 'Настройте рабочие часы', cz: 'Nastavte pracovní hodiny' },
+  'onboarding.step.schedule.body': { en: 'Clients only see slots inside your working hours.', ru: 'Клиенты видят только окна внутри вашего графика.', cz: 'Klienti vidí jen termíny v rámci vašich hodin.' },
+  'onboarding.step.schedule.cta': { en: 'Set schedule', ru: 'Настроить график', cz: 'Nastavit rozvrh' },
+  'onboarding.step.booking.title': { en: 'Turn on online booking', ru: 'Включите онлайн-запись', cz: 'Zapněte online rezervace' },
+  'onboarding.step.booking.body': { en: 'Share your link and let clients book a free slot themselves.', ru: 'Поделитесь ссылкой — клиенты сами выберут свободное время.', cz: 'Sdílejte odkaz a klienti si sami vyberou volný termín.' },
+  'onboarding.step.booking.cta': { en: 'Set up booking', ru: 'Настроить запись', cz: 'Nastavit rezervace' },
+  'onboarding.step.cancel': { en: 'Cancel', ru: 'Отмена', cz: 'Zrušit' },
+  'onboarding.hint.clients.title': { en: 'Start with your first client', ru: 'Начните с первого клиента', cz: 'Začněte prvním klientem' },
+  'onboarding.hint.clients.body': { en: 'A client card keeps contacts, visits and notes in one place.', ru: 'Карточка клиента хранит контакты, визиты и заметки вместе.', cz: 'Karta klienta drží kontakty, návštěvy a poznámky na jednom místě.' },
+  'onboarding.hint.clients.cta': { en: 'Add client', ru: 'Добавить клиента', cz: 'Přidat klienta' },
+  'onboarding.hint.calendar.title': { en: 'No visits yet', ru: 'Визитов пока нет', cz: 'Zatím žádné návštěvy' },
+  'onboarding.hint.calendar.body': { en: 'Create a visit to see it on the calendar.', ru: 'Создайте визит, чтобы он появился в календаре.', cz: 'Vytvořte návštěvu, aby se objevila v kalendáři.' },
+  'onboarding.hint.calendar.cta': { en: 'Create visit', ru: 'Создать визит', cz: 'Vytvořit návštěvu' },
+  'onboarding.hint.dismiss': { en: 'Dismiss', ru: 'Скрыть', cz: 'Skrýt' },
+  'onboarding.tour.title': { en: 'Quick tour', ru: 'Короткий тур', cz: 'Krátká prohlídka' },
+  'onboarding.tour.dashboard': { en: 'Dashboard shows revenue, visits and clients at a glance.', ru: 'Панель показывает выручку, визиты и клиентов.', cz: 'Nástěnka ukazuje tržby, návštěvy a klienty.' },
+  'onboarding.tour.clients': { en: 'Clients keeps cards and visit history.', ru: 'Клиенты — карточки и история визитов.', cz: 'Klienti — karty a historie návštěv.' },
+  'onboarding.tour.calendar': { en: 'Calendar is your working day.', ru: 'Календарь — ваш рабочий день.', cz: 'Kalendář je váš pracovní den.' },
+  'onboarding.tour.assistant': { en: 'The assistant plans visits and other actions from plain words.', ru: 'Ассистент планирует визиты и другие действия по тексту.', cz: 'Asistent naplánuje návštěvy a další akce z běžného textu.' },
+  'onboarding.tour.next': { en: 'Next', ru: 'Дальше', cz: 'Další' },
+  'onboarding.tour.back': { en: 'Back', ru: 'Назад', cz: 'Zpět' },
+  'onboarding.tour.skip': { en: 'Skip', ru: 'Пропустить', cz: 'Přeskočit' },
+  'onboarding.tour.done': { en: 'Got it', ru: 'Понятно', cz: 'Rozumím' },
+  'onboarding.settings.title': { en: 'Hints and tour', ru: 'Подсказки и тур', cz: 'Tipy a prohlídka' },
+  'onboarding.settings.description': { en: 'Show the first-run checklist and the navigation tour again. Business data is not changed.', ru: 'Снова показать чеклист первого входа и тур по навигации. Данные бизнеса не меняются.', cz: 'Znovu zobrazit úvodní seznam a prohlídku navigace. Data firmy se nemění.' },
+  'onboarding.settings.showTour': { en: 'Show tour again', ru: 'Показать тур снова', cz: 'Zobrazit prohlídku znovu' },
+  'onboarding.settings.showChecklist': { en: 'Show checklist again', ru: 'Показать чеклист снова', cz: 'Zobrazit seznam znovu' },
+  'onboarding.settings.saved': { en: 'Updated', ru: 'Обновлено', cz: 'Aktualizováno' },
+  'onboarding.error.save': { en: 'Could not save the choice. Try again.', ru: 'Не удалось сохранить выбор. Попробуйте ещё раз.', cz: 'Volbu se nepodařilo uložit. Zkuste to znovu.' },
 }
 
 export default translations

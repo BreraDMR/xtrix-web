@@ -12,6 +12,7 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { HiOutlineChartBar, HiOutlineUsers, HiOutlineCalendar } from 'react-icons/hi'
+import Welcome from '../components/onboarding/Welcome'
 
 export default function Dashboard() {
   const { t } = useTranslation()
@@ -59,16 +60,25 @@ export default function Dashboard() {
   if (isOwner && business.isPending) return <LoadingSpinner size="lg" />
   if (isOwner && business.isError) return <QueryError retry={() => { void business.refetch() }} />
   if (isOwner && business.data === null) return (
-    <Card className="p-5 sm:p-6">
-      <h1 className="mb-4 text-2xl font-bold">{t('business.title')}</h1>
-      <Link to="/business" className="text-blue-700 underline">{t('business.create')}</Link>
-    </Card>
+    <div className="animate-fade-in">
+      <Welcome />
+      <Card className="p-5 sm:p-6">
+        <h1 className="mb-4 text-2xl font-bold">{t('business.title')}</h1>
+        <Link to="/app/business" className="text-blue-700 underline">{t('business.create')}</Link>
+      </Card>
+    </div>
   )
 
-  if (queryError0 || queryError1 || queryError2) return <QueryError retry={() => { void retryQuery0(); void retryQuery1(); void retryQuery2() }} />
+  if (queryError0 || queryError1 || queryError2) return (
+    <div className="animate-fade-in">
+      <Welcome />
+      <QueryError retry={() => { void retryQuery0(); void retryQuery1(); void retryQuery2() }} />
+    </div>
+  )
 
   return (
     <div className="animate-fade-in">
+      <Welcome />
       <div className="page-toolbar">
         <div>
           <h1 className="page-title">{t('dashboard.title')}</h1>

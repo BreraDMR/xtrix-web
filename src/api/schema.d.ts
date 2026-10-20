@@ -1524,6 +1524,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/onboarding/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get my first-run checklist */
+        get: operations["get_my_onboarding_onboarding_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Save my first-run choices */
+        patch: operations["update_my_onboarding_onboarding_me_patch"];
+        trace?: never;
+    };
     "/products/": {
         parameters: {
             query?: never;
@@ -4447,6 +4465,73 @@ export interface components {
              * @enum {string}
              */
             status: "approved" | "draft";
+        };
+        /** OnboardingStateOut */
+        OnboardingStateOut: {
+            /** Checklist Dismissed */
+            checklist_dismissed: boolean;
+            /** Completed Steps */
+            completed_steps: number;
+            /** Dismissed Hints */
+            dismissed_hints: ("clients" | "services" | "calendar")[];
+            /** Next Step */
+            next_step?: ("business" | "service" | "staff" | "schedule" | "booking") | null;
+            /** Onboarding Version */
+            onboarding_version: number;
+            /**
+             * Persona
+             * @enum {string}
+             */
+            persona: "owner" | "solo" | "staff";
+            /** Progress Percent */
+            progress_percent: number;
+            /** Steps */
+            steps: components["schemas"]["OnboardingStep"][];
+            /** Total Steps */
+            total_steps: number;
+            /** Tour Completed */
+            tour_completed: boolean;
+            /** Tour Dismissed */
+            tour_dismissed: boolean;
+            /** Tour Version */
+            tour_version: number;
+            /** Welcome Dismissed */
+            welcome_dismissed: boolean;
+        };
+        /** OnboardingStep */
+        OnboardingStep: {
+            /**
+             * Available
+             * @description False while the screen behind the step is not released yet
+             * @default true
+             */
+            available: boolean;
+            /** Completed */
+            completed: boolean;
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "business" | "service" | "staff" | "schedule" | "booking";
+            /**
+             * Required
+             * @description Only required steps count towards progress
+             * @default true
+             */
+            required: boolean;
+        };
+        /** OnboardingUpdate */
+        OnboardingUpdate: {
+            /** Checklist Dismissed */
+            checklist_dismissed?: boolean | null;
+            /** Dismissed Hints */
+            dismissed_hints?: ("clients" | "services" | "calendar")[] | null;
+            /** Tour Completed */
+            tour_completed?: boolean | null;
+            /** Tour Dismissed */
+            tour_dismissed?: boolean | null;
+            /** Welcome Dismissed */
+            welcome_dismissed?: boolean | null;
         };
         /** PaginatedResponse[AuditLogOut] */
         PaginatedResponse_AuditLogOut_: {
@@ -10357,6 +10442,59 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OfferOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_my_onboarding_onboarding_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnboardingStateOut"];
+                };
+            };
+        };
+    };
+    update_my_onboarding_onboarding_me_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OnboardingUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnboardingStateOut"];
                 };
             };
             /** @description Validation Error */
