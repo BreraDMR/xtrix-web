@@ -12,7 +12,7 @@ import {
   HiOutlinePaperClip, HiOutlineCurrencyDollar, HiOutlineShoppingCart, HiOutlineChartBar,
   HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
   HiOutlineClock, HiOutlineClipboardList, HiOutlineMenuAlt2, HiOutlineX,
-  HiOutlineChevronRight, HiOutlineChevronLeft,
+  HiOutlineChevronRight, HiOutlineChevronLeft, HiOutlineBell,
 } from 'react-icons/hi'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -22,6 +22,7 @@ const icons: Record<string, ComponentType<{ className?: string }>> = {
   '/app/finance': HiOutlineCurrencyDollar, '/app/analytics': HiOutlineChartBar, '/app/loyalty': HiOutlineHeart,
   '/app/employees': HiOutlineUsers, '/app/business': HiOutlineBriefcase, '/app/subscription': HiOutlineDocumentText,
   '/app/my-salary': HiOutlineCurrencyDollar, '/app/settings': HiOutlineCog,
+  '/app/notifications': HiOutlineBell,
 }
 
 export default function Layout() {
@@ -92,6 +93,7 @@ export default function Layout() {
   const systemItems = [
     ...(managesBusiness ? [{ path: '/app/business', label: t('nav.business') }] : []),
     ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/app/subscription', label: t('nav.subscription') }] : []),
+    ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/app/notifications', label: t('nav.notifications') }] : []),
     ...(user?.role === 'employee' || user?.role === 'specialist' ? [{ path: '/app/my-salary', label: t('nav.my_salary') }] : []),
     { path: '/app/settings', label: t('nav.settings') },
   ]

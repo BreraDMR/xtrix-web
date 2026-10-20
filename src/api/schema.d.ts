@@ -550,6 +550,78 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/businesses/me/notification-deliveries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List notification deliveries */
+        get: operations["list_notification_deliveries_businesses_me_notification_deliveries_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/notification-deliveries/{message_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry a failed delivery */
+        post: operations["retry_notification_delivery_businesses_me_notification_deliveries__message_id__retry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/notification-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get notification settings */
+        get: operations["get_notification_settings_businesses_me_notification_settings_get"];
+        /** Change notification settings */
+        put: operations["update_notification_settings_businesses_me_notification_settings_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/notification-settings/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Preview a notification without sending it
+         * @description Always uses the capture transport, so the test can never reach a real inbox.
+         */
+        post: operations["test_notification_settings_businesses_me_notification_settings_test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/businesses/me/public-booking": {
         parameters: {
             query?: never;
@@ -4822,6 +4894,81 @@ export interface components {
             /** Moderation Status */
             moderation_status: string;
         };
+        /** NotificationDeliveryOut */
+        NotificationDeliveryOut: {
+            /** Attempts */
+            attempts: number;
+            /** Channel */
+            channel: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            /** Kind */
+            kind: string;
+            /** Last Error */
+            last_error?: string | null;
+            /** Provider */
+            provider?: string | null;
+            /** Recipient */
+            recipient: string;
+            /** Retryable */
+            retryable: boolean;
+            /**
+             * Scheduled At
+             * Format: date-time
+             */
+            scheduled_at: string;
+            /** Sent At */
+            sent_at?: string | null;
+            /** Status */
+            status: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Visit Id */
+            visit_id?: number | null;
+        };
+        /** NotificationSettingsOut */
+        NotificationSettingsOut: {
+            /** Available Channels */
+            available_channels: string[];
+            /** Channel */
+            channel: string;
+            /** Is Enabled */
+            is_enabled: boolean;
+            /** Provider Ready */
+            provider_ready: boolean;
+            /** Reminder Time */
+            reminder_time: string;
+        };
+        /** NotificationSettingsUpdate */
+        NotificationSettingsUpdate: {
+            /** Channel */
+            channel?: string | null;
+            /** Is Enabled */
+            is_enabled?: boolean | null;
+            /** Reminder Time */
+            reminder_time?: string | null;
+        };
+        /** NotificationTestOut */
+        NotificationTestOut: {
+            /** Preview */
+            preview: string;
+            /** Provider */
+            provider: string;
+            /** Recipient */
+            recipient: string;
+            /** Status */
+            status: string;
+            /** Subject */
+            subject: string;
+        };
         /** OfferCatalogOut */
         OfferCatalogOut: {
             /**
@@ -5014,6 +5161,19 @@ export interface components {
         PaginatedResponse_LoyaltyTransactionOut_: {
             /** Items */
             items: components["schemas"]["LoyaltyTransactionOut"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** PaginatedResponse[NotificationDeliveryOut] */
+        PaginatedResponse_NotificationDeliveryOut_: {
+            /** Items */
+            items: components["schemas"]["NotificationDeliveryOut"][];
             /** Page */
             page: number;
             /** Pages */
@@ -8791,6 +8951,172 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BusinessOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_notification_deliveries_businesses_me_notification_deliveries_get: {
+        parameters: {
+            query?: {
+                status?: ("pending" | "processing" | "sent" | "captured" | "skipped" | "failed" | "cancelled") | null;
+                kind?: string | null;
+                page?: number;
+                per_page?: number;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_NotificationDeliveryOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_notification_delivery_businesses_me_notification_deliveries__message_id__retry_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                message_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationDeliveryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_notification_settings_businesses_me_notification_settings_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_notification_settings_businesses_me_notification_settings_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotificationSettingsUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    test_notification_settings_businesses_me_notification_settings_test_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationTestOut"];
                 };
             };
             /** @description Validation Error */

@@ -699,6 +699,7 @@ export type TranslationKey =
   | 'nav.analytics'
   | 'nav.loyalty'
   | 'nav.settings'
+  | 'nav.notifications'
   | 'nav.collapse_menu'
   | 'nav.expand_menu'
   | 'nav.primary'
@@ -1298,6 +1299,36 @@ export type TranslationKey =
   | 'bookingManage.status.completed'
   | 'bookingManage.status.cancelled'
   | 'bookingManage.status.in_progress'
+  | 'notifications.title'
+  | 'notifications.description'
+  | 'notifications.noAccess'
+  | 'notifications.businessRequired'
+  | 'notifications.providerReady'
+  | 'notifications.providerNotReady'
+  | 'notifications.providerNotReadyHint'
+  | 'notifications.channel'
+  | 'notifications.channelHint'
+  | 'notifications.channelNotConnected'
+  | 'notifications.enabled'
+  | 'notifications.enabledHint'
+  | 'notifications.enable'
+  | 'notifications.disable'
+  | 'notifications.reminderTime'
+  | 'notifications.reminderTimeHint'
+  | 'notifications.timezone'
+  | 'notifications.saved'
+  | 'notifications.saveError'
+  | 'notifications.testTitle'
+  | 'notifications.testDescription'
+  | 'notifications.testRun'
+  | 'notifications.testRunning'
+  | 'notifications.testCaptured'
+  | 'notifications.testStatus'
+  | 'notifications.testProvider'
+  | 'notifications.testRecipient'
+  | 'notifications.testSubject'
+  | 'notifications.testPreview'
+  | 'notifications.testError'
   | 'questionnairePage.title'
   | 'questionnairePage.linkUnavailableTitle'
   | 'questionnairePage.linkUnavailableText'
@@ -2051,6 +2082,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.analytics': { en: 'Analytics', ru: 'Аналитика', cz: 'Analytika' },
   'nav.loyalty': { en: 'Loyalty', ru: 'Лояльность', cz: 'Věrnost' },
   'nav.settings': { en: 'Settings', ru: 'Настройки', cz: 'Nastavení' },
+  'nav.notifications': { en: 'Notifications', ru: 'Уведомления', cz: 'Oznámení' },
   'nav.collapse_menu': { en: 'Collapse menu', ru: 'Свернуть меню', cz: 'Sbalit nabídku' },
   'nav.expand_menu': { en: 'Expand menu', ru: 'Развернуть меню', cz: 'Rozbalit nabídku' },
   'nav.primary': { en: 'PRIMARY', ru: 'ОСНОВНОЕ', cz: 'ZÁKLADNÍ' },
@@ -3110,6 +3142,97 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'bookingManage.status.completed': { en: 'Completed', ru: 'Завершён', cz: 'Dokončeno' },
   'bookingManage.status.cancelled': { en: 'Cancelled', ru: 'Отменён', cz: 'Zrušeno' },
   'bookingManage.status.in_progress': { en: 'In progress', ru: 'Идёт', cz: 'Probíhá' },
+
+  'notifications.title': { en: 'Notifications', ru: 'Уведомления', cz: 'Oznámení' },
+  'notifications.description': {
+    en: 'Email messages to clients about bookings and the reminder before a visit.',
+    ru: 'Письма клиентам о записи и напоминание перед визитом.',
+    cz: 'E-maily klientům o rezervaci a připomínka před návštěvou.',
+  },
+  'notifications.noAccess': {
+    en: 'You do not have access to notification settings.',
+    ru: 'У вас нет доступа к настройкам уведомлений.',
+    cz: 'K nastavení oznámení nemáte přístup.',
+  },
+  'notifications.businessRequired': {
+    en: 'Notifications need a business.',
+    ru: 'Для уведомлений нужен бизнес.',
+    cz: 'Oznámení vyžadují podnik.',
+  },
+  'notifications.providerReady': {
+    en: 'Email provider is connected',
+    ru: 'Провайдер email подключён',
+    cz: 'Poskytovatel e-mailu je připojen',
+  },
+  'notifications.providerNotReady': {
+    en: 'Email provider is not connected',
+    ru: 'Провайдер email не подключён',
+    cz: 'Poskytovatel e-mailu není připojen',
+  },
+  'notifications.providerNotReadyHint': {
+    en: 'The server has no SMTP settings, so notifications cannot be enabled. Ask the administrator to connect the provider; the test below stays local.',
+    ru: 'На сервере не заданы настройки SMTP, поэтому уведомления нельзя включить. Попросите администратора подключить провайдера; тест ниже остаётся локальным.',
+    cz: 'Server nemá nastavení SMTP, proto oznámení nelze zapnout. Požádejte správce o připojení poskytovatele; test níže zůstává lokální.',
+  },
+  'notifications.channel': { en: 'Channel', ru: 'Канал', cz: 'Kanál' },
+  'notifications.channelHint': {
+    en: 'Email is the only channel available in this version.',
+    ru: 'В этой версии доступен только email.',
+    cz: 'V této verzi je dostupný pouze e-mail.',
+  },
+  'notifications.channelNotConnected': {
+    en: 'not connected',
+    ru: 'не подключён',
+    cz: 'nepřipojeno',
+  },
+  'notifications.enabled': {
+    en: 'Send notifications to clients',
+    ru: 'Отправлять уведомления клиентам',
+    cz: 'Odesílat oznámení klientům',
+  },
+  'notifications.enabledHint': {
+    en: 'Messages about created, changed and cancelled bookings, plus the reminder.',
+    ru: 'Письма о создании, переносе и отмене записи, а также напоминание.',
+    cz: 'Zprávy o vytvoření, změně a zrušení rezervace a připomínka.',
+  },
+  'notifications.enable': { en: 'Enable', ru: 'Включить', cz: 'Zapnout' },
+  'notifications.disable': { en: 'Disable', ru: 'Выключить', cz: 'Vypnout' },
+  'notifications.reminderTime': { en: 'Reminder time', ru: 'Время напоминания', cz: 'Čas připomínky' },
+  'notifications.reminderTimeHint': {
+    en: 'Local time on the day before the visit.',
+    ru: 'Местное время за день до визита.',
+    cz: 'Místní čas den před návštěvou.',
+  },
+  'notifications.timezone': { en: 'Business timezone', ru: 'Часовой пояс бизнеса', cz: 'Časové pásmo podniku' },
+  'notifications.saved': { en: 'Settings saved.', ru: 'Настройки сохранены.', cz: 'Nastavení uloženo.' },
+  'notifications.saveError': {
+    en: 'Could not save notification settings.',
+    ru: 'Не удалось сохранить настройки уведомлений.',
+    cz: 'Nastavení oznámení se nepodařilo uložit.',
+  },
+  'notifications.testTitle': { en: 'Test delivery', ru: 'Тестовая доставка', cz: 'Testovací doručení' },
+  'notifications.testDescription': {
+    en: 'The button uses the local capture transport: it shows what would be sent and never contacts a provider.',
+    ru: 'Кнопка использует локальный capture-транспорт: показывает, что было бы отправлено, и не обращается к провайдеру.',
+    cz: 'Tlačítko používá lokální capture transport: ukáže, co by se odeslalo, a nikdy nekontaktuje poskytovatele.',
+  },
+  'notifications.testRun': { en: 'Run test', ru: 'Проверить', cz: 'Otestovat' },
+  'notifications.testRunning': { en: 'Testing...', ru: 'Проверка...', cz: 'Testování...' },
+  'notifications.testCaptured': {
+    en: 'Captured locally — not sent',
+    ru: 'Перехвачено локально — не отправлено',
+    cz: 'Zachyceno lokálně — neodesláno',
+  },
+  'notifications.testStatus': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'notifications.testProvider': { en: 'Transport', ru: 'Транспорт', cz: 'Transport' },
+  'notifications.testRecipient': { en: 'Recipient', ru: 'Получатель', cz: 'Příjemce' },
+  'notifications.testSubject': { en: 'Subject', ru: 'Тема', cz: 'Předmět' },
+  'notifications.testPreview': { en: 'Preview', ru: 'Предпросмотр', cz: 'Náhled' },
+  'notifications.testError': {
+    en: 'Could not run the test.',
+    ru: 'Не удалось выполнить проверку.',
+    cz: 'Test se nepodařilo spustit.',
+  },
 
   'questionnairePage.title': { en: 'Questionnaire', ru: 'Анкета', cz: 'Dotazník' },
   'questionnairePage.linkUnavailableTitle': {

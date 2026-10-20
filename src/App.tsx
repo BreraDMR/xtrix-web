@@ -22,6 +22,7 @@ import Finance from './pages/Finance'
 import Analytics from './pages/Analytics'
 import Loyalty from './pages/Loyalty'
 import Settings from './pages/Settings'
+import NotificationSettings from './pages/NotificationSettings'
 import NotFound from './pages/NotFound'
 import BookingPage from './pages/booking/BookingPage'
 import ManageBookingPage from './pages/booking/ManageBooking'
@@ -91,6 +92,7 @@ function App() {
           <Route path="analytics" element={<Analytics />} />
           <Route path="loyalty" element={<Loyalty />} />
           <Route path="subscription" element={<Subscription />} />
+          <Route path="notifications" element={<NotificationSettings />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 
