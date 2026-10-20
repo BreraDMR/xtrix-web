@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { addDays, format, parseISO } from 'date-fns'
+import { addDays, startOfWeek } from 'date-fns'
 import api from '../api/client'
 import Calendar from '../components/Calendar'
 import SimpleCalendar from '../components/SimpleCalendar'
 import { zonedDayKey } from '../components/calendar/DayGrid'
 import StaffColumns, { type StaffColumn } from '../components/calendar/StaffColumns'
+import WeekGrid from '../components/calendar/WeekGrid'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
 import Button from '../ui/Button'
@@ -16,7 +17,7 @@ import { zonedWallTimeToIso } from '../utils/dates'
 import ContextHint from '../components/onboarding/ContextHint'
 import type { ClientOut, VisitOut } from '../api/types'
 
-type CalendarView = 'day' | 'simple' | 'advanced'
+type CalendarView = 'day' | 'week' | 'simple' | 'advanced'
 
 interface EmployeeRow {
   employee_user_id: number
@@ -52,15 +53,17 @@ export default function CalendarPage() {
   const { data: business } = useMyBusiness()
   const timeZone = business?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
 
-  const dayKey = zonedDayKey(day, timeZone)
+  const isRangeView = view === 'day' || view === 'week'
+  const weekStart = useMemo(() => startOfWeek(day, { weekStartsOn: 1 }), [day])
   const range = useMemo(() => {
-    const nextKey = format(addDays(parseISO(dayKey), 1), 'yyyy-MM-dd')
-    const start = zonedWallTimeToIso(dayKey, '00:00', timeZone)
+    const startDate = view === 'week' ? weekStart : day
+    const endDate = view === 'week' ? addDays(weekStart, 7) : addDays(day, 1)
+    const start = zonedWallTimeToIso(zonedDayKey(startDate, timeZone), '00:00', timeZone)
     const end = new Date(
-      new Date(zonedWallTimeToIso(nextKey, '00:00', timeZone)).getTime() - 1,
+      new Date(zonedWallTimeToIso(zonedDayKey(endDate, timeZone), '00:00', timeZone)).getTime() - 1,
     ).toISOString()
     return { start, end }
-  }, [dayKey, timeZone])
+  }, [day, weekStart, view, timeZone])
 
   const { data: visits, refetch } = useQuery<VisitOut[]>({
     queryKey: ['visits'],
@@ -68,13 +71,13 @@ export default function CalendarPage() {
       const { data } = await api.get('/visits/')
       return Array.isArray(data) ? data : (data?.items || data?.data || [])
     },
-    enabled: view !== 'day',
+    enabled: !isRangeView,
   })
 
-  const dayQuery = useQuery<VisitOut[]>({
-    queryKey: ['visits', 'day', range.start, range.end],
+  const rangeQuery = useQuery<VisitOut[]>({
+    queryKey: ['visits', 'calendar', range.start, range.end],
     queryFn: () => fetchVisitsInRange(range.start, range.end),
-    enabled: view === 'day',
+    enabled: isRangeView,
   })
 
   const { data: clients } = useQuery<ClientOut[]>({
@@ -83,7 +86,7 @@ export default function CalendarPage() {
       const { data } = await api.get('/clients/', { params: { per_page: 100 } })
       return Array.isArray(data) ? data : (data?.items || [])
     },
-    enabled: view === 'day',
+    enabled: isRangeView,
   })
 
   const managesStaff = user?.role === 'admin' || user?.role === 'business_owner'
@@ -126,12 +129,14 @@ export default function CalendarPage() {
 
   const description = view === 'day'
     ? t('calendar.dayViewDescription')
-    : view === 'simple'
-      ? t('calendar.simpleViewDescription')
-      : t('calendar.advancedViewDescription')
+    : view === 'week'
+      ? t('calendar.weekViewDescription')
+      : view === 'simple'
+        ? t('calendar.simpleViewDescription')
+        : t('calendar.advancedViewDescription')
 
-  const showHint = view === 'day'
-    ? !dayQuery.isLoading && !dayQuery.isError && (dayQuery.data?.length ?? 0) === 0
+  const showHint = isRangeView
+    ? !rangeQuery.isLoading && !rangeQuery.isError && (rangeQuery.data?.length ?? 0) === 0
     : Array.isArray(visits) && visits.length === 0
 
   const goToToday = () => {
@@ -151,6 +156,9 @@ export default function CalendarPage() {
           <button onClick={() => setView('day')} className={viewButtonClass(view === 'day')}>
             {t('calendar.dayView')}
           </button>
+          <button onClick={() => setView('week')} className={viewButtonClass(view === 'week')}>
+            {t('calendar.weekView')}
+          </button>
           <button onClick={() => setView('simple')} className={viewButtonClass(view === 'simple')}>
             {t('calendar.simpleView')}
           </button>
@@ -160,12 +168,18 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {view === 'day' && (
+      {isRangeView && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <Button variant="secondary" onClick={() => setDay((value) => addDays(value, -1))}>
+          <Button
+            variant="secondary"
+            onClick={() => setDay((value) => addDays(value, view === 'week' ? -7 : -1))}
+          >
             {t('calendar.previous')}
           </Button>
-          <Button variant="secondary" onClick={() => setDay((value) => addDays(value, 1))}>
+          <Button
+            variant="secondary"
+            onClick={() => setDay((value) => addDays(value, view === 'week' ? 7 : 1))}
+          >
             {t('calendar.next')}
           </Button>
           <Button variant="quiet" onClick={goToToday}>
@@ -177,18 +191,25 @@ export default function CalendarPage() {
       {showHint && <ContextHint hint="calendar" to="/app/visits" />}
 
       <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
-        {view === 'day' && (
-          dayQuery.isError ? (
-            <QueryError retry={() => dayQuery.refetch()} />
-          ) : dayQuery.isLoading ? (
+        {isRangeView && (
+          rangeQuery.isError ? (
+            <QueryError retry={() => rangeQuery.refetch()} />
+          ) : rangeQuery.isLoading ? (
             <div className="flex h-64 items-center justify-center">
               <LoadingSpinner size="lg" />
             </div>
-          ) : (
+          ) : view === 'day' ? (
             <StaffColumns
               day={day}
-              visits={dayQuery.data ?? []}
+              visits={rangeQuery.data ?? []}
               staff={staff}
+              timeZone={timeZone}
+              clientNames={clientNames}
+            />
+          ) : (
+            <WeekGrid
+              weekStart={weekStart}
+              visits={rangeQuery.data ?? []}
               timeZone={timeZone}
               clientNames={clientNames}
             />
