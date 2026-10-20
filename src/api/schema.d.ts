@@ -5245,6 +5245,10 @@ export interface components {
         };
         /** PublicBookingSettingsOut */
         PublicBookingSettingsOut: {
+            /** Has Bookable Service */
+            has_bookable_service: boolean;
+            /** Has Schedule */
+            has_schedule: boolean;
             /** Is Enabled */
             is_enabled: boolean;
             /** Slug */

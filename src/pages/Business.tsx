@@ -1,13 +1,15 @@
 import { useTranslation } from '../hooks/useTranslation'
-import { useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { HiCheckCircle, HiOutlineExclamationCircle } from 'react-icons/hi'
 import api from '../api/client'
-import { apiErrorStatus } from '../api/errors'
+import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import BusinessForm from '../components/BusinessForm'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
 import { useLabels } from '../i18n/labels'
-import type { BusinessOut } from '../api/types'
+import type { BusinessOut, PublicBookingSettingsOut } from '../api/types'
 import { effectiveAssistant } from '../i18n/assistant'
 
 export default function Business() {
@@ -97,44 +99,47 @@ export default function Business() {
           />
         </div>
       ) : business ? (
-        <div className="bg-white shadow rounded-lg p-6 dark:bg-gray-800">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.name')}</label>
-              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{business.name}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.type')}</label>
-              <p className="text-gray-900 dark:text-gray-100">{labels.businessType(business.business_type)}</p>
-            </div>
-            {business.address && (
+        <div className="space-y-6">
+          <div className="bg-white shadow rounded-lg p-6 dark:bg-gray-800">
+            <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.address')}</label>
-                <p className="text-gray-900 dark:text-gray-100">{business.address}</p>
+                <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.name')}</label>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{business.name}</p>
               </div>
-            )}
-            <div className="grid grid-cols-2 gap-4">
-              {business.phone && (
+              <div>
+                <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.type')}</label>
+                <p className="text-gray-900 dark:text-gray-100">{labels.businessType(business.business_type)}</p>
+              </div>
+              {business.address && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('clients.phone')}</label>
-                  <p className="text-gray-900 dark:text-gray-100">{business.phone}</p>
+                  <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.address')}</label>
+                  <p className="text-gray-900 dark:text-gray-100">{business.address}</p>
                 </div>
               )}
-              {business.email && (
+              <div className="grid grid-cols-2 gap-4">
+                {business.phone && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('clients.phone')}</label>
+                    <p className="text-gray-900 dark:text-gray-100">{business.phone}</p>
+                  </div>
+                )}
+                {business.email && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('clients.email')}</label>
+                    <p className="text-gray-900 dark:text-gray-100">{business.email}</p>
+                  </div>
+                )}
+              </div>
+              {business.description && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('clients.email')}</label>
-                  <p className="text-gray-900 dark:text-gray-100">{business.email}</p>
+                  <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.description')}</label>
+                  <p className="text-gray-900 dark:text-gray-100">{business.description}</p>
                 </div>
               )}
+              <AssistantInfo business={business} />
             </div>
-            {business.description && (
-              <div>
-                <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.description')}</label>
-                <p className="text-gray-900 dark:text-gray-100">{business.description}</p>
-              </div>
-            )}
-            <AssistantInfo business={business} />
           </div>
+          <PublicBookingCard />
         </div>
       ) : (
         <div className="bg-white shadow rounded-lg p-6 text-center dark:bg-gray-800">
@@ -168,5 +173,210 @@ function AssistantInfo({ business }: { business: BusinessOut }) {
         <p className="text-gray-900 dark:text-gray-100">{t(`business.assistantGender.${gender}`)}</p>
       </div>
     </div>
+  )
+}
+
+function PublicBookingCard() {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const [copied, setCopied] = useState(false)
+  const [copyError, setCopyError] = useState(false)
+
+  const settingsQuery = useQuery<PublicBookingSettingsOut>({
+    queryKey: ['public-booking-settings'],
+    queryFn: async () => {
+      const { data } = await api.get('/businesses/me/public-booking')
+      return data
+    },
+    retry: false,
+  })
+
+  const toggle = useMutation({
+    mutationFn: async (isEnabled: boolean) => {
+      const { data } = await api.put<PublicBookingSettingsOut>('/businesses/me/public-booking', {
+        is_enabled: isEnabled,
+      })
+      return data
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData<PublicBookingSettingsOut>(['public-booking-settings'], data)
+      setCopied(false)
+      setCopyError(false)
+    },
+  })
+
+  useEffect(() => {
+    if (!copied) return
+    const timer = window.setTimeout(() => setCopied(false), 2000)
+    return () => window.clearTimeout(timer)
+  }, [copied])
+
+  const settings = settingsQuery.data
+  const publicUrl = settings ? `${window.location.origin}/booking/${settings.slug}` : ''
+  const ready = Boolean(settings?.has_bookable_service && settings?.has_schedule)
+
+  const copyLink = async () => {
+    if (!publicUrl) return
+    try {
+      await navigator.clipboard.writeText(publicUrl)
+      setCopied(true)
+      setCopyError(false)
+    } catch {
+      setCopied(false)
+      setCopyError(true)
+    }
+  }
+
+  return (
+    <section aria-labelledby="public-booking-title" className="bg-white shadow rounded-lg p-6 dark:bg-gray-800">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h2 id="public-booking-title" className="text-lg font-semibold">
+            {t('business.publicBooking.title')}
+          </h2>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t('business.publicBooking.description')}</p>
+        </div>
+        {settings && (
+          <button
+            type="button"
+            role="switch"
+            aria-checked={settings.is_enabled}
+            disabled={toggle.isPending}
+            onClick={() => toggle.mutate(!settings.is_enabled)}
+            className={`shrink-0 rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60 ${
+              settings.is_enabled
+                ? 'border border-red-300 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950'
+                : 'bg-primary-600 text-white hover:bg-primary-700'
+            }`}
+          >
+            {toggle.isPending
+              ? t('business.publicBooking.saving')
+              : settings.is_enabled
+                ? t('business.publicBooking.disable')
+                : t('business.publicBooking.enable')}
+          </button>
+        )}
+      </div>
+
+      {settingsQuery.isLoading ? (
+        <div className="flex justify-center py-8">
+          <LoadingSpinner />
+        </div>
+      ) : settingsQuery.isError ? (
+        <div
+          role="alert"
+          className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200"
+        >
+          <p>{t('common.loadError')}</p>
+          <button
+            type="button"
+            onClick={() => void settingsQuery.refetch()}
+            className="mt-2 rounded-md border border-red-300 px-3 py-1.5 font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+          >
+            {t('common.retry')}
+          </button>
+        </div>
+      ) : settings ? (
+        <>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <input
+              readOnly
+              value={publicUrl}
+              aria-label={t('business.publicBooking.link')}
+              onFocus={(event) => event.currentTarget.select()}
+              className="min-w-0 flex-1 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-800 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-200"
+            />
+            <button
+              type="button"
+              onClick={() => void copyLink()}
+              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700"
+            >
+              {copied ? t('business.publicBooking.copied') : t('business.publicBooking.copy')}
+            </button>
+          </div>
+          <span className="sr-only" aria-live="polite">
+            {copied ? t('business.publicBooking.copied') : ''}
+          </span>
+          {copyError && (
+            <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">
+              {t('business.publicBooking.copyError')}
+            </p>
+          )}
+
+          <p
+            className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-medium ${
+              settings.is_enabled
+                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+                : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+            }`}
+          >
+            {settings.is_enabled ? t('business.publicBooking.enabled') : t('business.publicBooking.disabled')}
+          </p>
+          {!settings.is_enabled && (
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('business.publicBooking.disabledHint')}</p>
+          )}
+
+          <ul className="mt-4 space-y-2 text-sm">
+            <li className="flex flex-wrap items-center gap-2">
+              {settings.has_bookable_service ? (
+                <HiCheckCircle className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
+              ) : (
+                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
+              )}
+              <span className={settings.has_bookable_service ? '' : 'text-amber-700 dark:text-amber-400'}>
+                {t(
+                  settings.has_bookable_service
+                    ? 'business.publicBooking.servicesReady'
+                    : 'business.publicBooking.servicesMissing',
+                )}
+              </span>
+              {!settings.has_bookable_service && (
+                <Link to="/app/services" className="text-primary-600 hover:underline dark:text-primary-400">
+                  {t('business.publicBooking.setupServices')}
+                </Link>
+              )}
+            </li>
+            <li className="flex flex-wrap items-center gap-2">
+              {settings.has_schedule ? (
+                <HiCheckCircle className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
+              ) : (
+                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
+              )}
+              <span className={settings.has_schedule ? '' : 'text-amber-700 dark:text-amber-400'}>
+                {t(
+                  settings.has_schedule
+                    ? 'business.publicBooking.scheduleReady'
+                    : 'business.publicBooking.scheduleMissing',
+                )}
+              </span>
+              {!settings.has_schedule && (
+                <Link to="/app/schedules" className="text-primary-600 hover:underline dark:text-primary-400">
+                  {t('business.publicBooking.setupSchedule')}
+                </Link>
+              )}
+            </li>
+          </ul>
+
+          <p
+            className={`mt-3 text-sm font-medium ${
+              ready ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400'
+            }`}
+          >
+            {ready ? t('business.publicBooking.ready') : t('business.publicBooking.notReady')}
+          </p>
+          {settings.is_enabled && !ready && (
+            <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+              {t('business.publicBooking.enabledNotReady')}
+            </p>
+          )}
+
+          {toggle.isError && (
+            <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
+              {apiErrorMessage(toggle.error, t('business.publicBooking.saveError'))}
+            </p>
+          )}
+        </>
+      ) : null}
+    </section>
   )
 }

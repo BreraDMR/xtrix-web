@@ -141,6 +141,28 @@ export type TranslationKey =
   | 'business.assistantDefault'
   | 'business.assistantNameTooLong'
   | 'business.assistantNameInvalid'
+  | 'business.publicBooking.title'
+  | 'business.publicBooking.description'
+  | 'business.publicBooking.enabled'
+  | 'business.publicBooking.disabled'
+  | 'business.publicBooking.enable'
+  | 'business.publicBooking.disable'
+  | 'business.publicBooking.saving'
+  | 'business.publicBooking.saveError'
+  | 'business.publicBooking.link'
+  | 'business.publicBooking.copy'
+  | 'business.publicBooking.copied'
+  | 'business.publicBooking.copyError'
+  | 'business.publicBooking.ready'
+  | 'business.publicBooking.notReady'
+  | 'business.publicBooking.servicesReady'
+  | 'business.publicBooking.servicesMissing'
+  | 'business.publicBooking.scheduleReady'
+  | 'business.publicBooking.scheduleMissing'
+  | 'business.publicBooking.setupServices'
+  | 'business.publicBooking.setupSchedule'
+  | 'business.publicBooking.disabledHint'
+  | 'business.publicBooking.enabledNotReady'
   | 'booking.title'
   | 'booking.servicesTitle'
   | 'booking.noServices'
@@ -1316,6 +1338,28 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "business.assistantDefault": {"en": "default", "ru": "по умолчанию", "cz": "výchozí"},
   "business.assistantNameTooLong": {"en": "Up to 30 characters", "ru": "Не больше 30 символов", "cz": "Nejvýše 30 znaků"},
   "business.assistantNameInvalid": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
+  "business.publicBooking.title": {"en": "Online booking link", "ru": "Ссылка на онлайн-запись", "cz": "Odkaz na online rezervaci"},
+  "business.publicBooking.description": {"en": "Share this link with clients so they can book without an account.", "ru": "Поделитесь ссылкой с клиентами — они смогут записаться без аккаунта.", "cz": "Sdílejte odkaz s klienty — mohou se rezervovat bez účtu."},
+  "business.publicBooking.enabled": {"en": "Online booking is on", "ru": "Онлайн-запись включена", "cz": "Online rezervace je zapnutá"},
+  "business.publicBooking.disabled": {"en": "Online booking is off", "ru": "Онлайн-запись выключена", "cz": "Online rezervace je vypnutá"},
+  "business.publicBooking.enable": {"en": "Turn on booking", "ru": "Включить запись", "cz": "Zapnout rezervace"},
+  "business.publicBooking.disable": {"en": "Turn off booking", "ru": "Выключить запись", "cz": "Vypnout rezervace"},
+  "business.publicBooking.saving": {"en": "Saving…", "ru": "Сохраняю…", "cz": "Ukládám…"},
+  "business.publicBooking.saveError": {"en": "Couldn't change the booking link", "ru": "Не удалось изменить ссылку записи", "cz": "Odkaz rezervace se nepodařilo změnit"},
+  "business.publicBooking.link": {"en": "Public link", "ru": "Публичная ссылка", "cz": "Veřejný odkaz"},
+  "business.publicBooking.copy": {"en": "Copy link", "ru": "Скопировать ссылку", "cz": "Kopírovat odkaz"},
+  "business.publicBooking.copied": {"en": "Copied", "ru": "Скопировано", "cz": "Zkopírováno"},
+  "business.publicBooking.copyError": {"en": "Couldn't copy — select the link and copy it manually", "ru": "Не удалось скопировать — выделите ссылку и скопируйте вручную", "cz": "Kopírování se nepodařilo — odkaz vyberte a zkopírujte ručně"},
+  "business.publicBooking.ready": {"en": "Ready to accept bookings", "ru": "Ссылка готова принимать записи", "cz": "Odkaz může přijímat rezervace"},
+  "business.publicBooking.notReady": {"en": "Not ready for bookings yet", "ru": "Ссылка пока не готова к записи", "cz": "Odkaz zatím není připraven k rezervacím"},
+  "business.publicBooking.servicesReady": {"en": "There is a bookable service with a master", "ru": "Есть активная услуга с мастером", "cz": "Existuje aktivní služba s mistrem"},
+  "business.publicBooking.servicesMissing": {"en": "No active service with a duration and a master", "ru": "Нет активной услуги с длительностью и мастером", "cz": "Chybí aktivní služba s délkou a mistrem"},
+  "business.publicBooking.scheduleReady": {"en": "The master has working hours", "ru": "У мастера заполнен график", "cz": "Mistr má vyplněný rozvrh"},
+  "business.publicBooking.scheduleMissing": {"en": "The master has no working hours", "ru": "У мастера нет рабочего графика", "cz": "Mistr nemá pracovní rozvrh"},
+  "business.publicBooking.setupServices": {"en": "Set up services", "ru": "Настроить услуги", "cz": "Nastavit služby"},
+  "business.publicBooking.setupSchedule": {"en": "Set up working hours", "ru": "Настроить график", "cz": "Nastavit rozvrh"},
+  "business.publicBooking.disabledHint": {"en": "Guests opening the link see that booking is unavailable.", "ru": "Гости по ссылке увидят, что запись недоступна.", "cz": "Hosté přes odkaz uvidí, že rezervace není dostupná."},
+  "business.publicBooking.enabledNotReady": {"en": "The link is on, but guests won't see any free times until the checklist is complete.", "ru": "Ссылка включена, но свободных окон не будет, пока не выполнены условия выше.", "cz": "Odkaz je zapnutý, ale hosté neuvidí volné termíny, dokud nebudou podmínky splněné."},
   "booking.title": {"en": "Online booking", "ru": "Онлайн-запись", "cz": "Online rezervace"},
   "booking.servicesTitle": {"en": "Services and prices", "ru": "Услуги и цены", "cz": "Služby a ceny"},
   "booking.noServices": {"en": "Online booking is not available yet. Please contact the salon directly.", "ru": "Онлайн-запись пока недоступна. Свяжитесь с салоном напрямую.", "cz": "Online rezervace zatím není dostupná. Kontaktujte prosím salon přímo."},
