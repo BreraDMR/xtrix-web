@@ -581,6 +581,14 @@ export type TranslationKey =
   | 'calendar.free'
   | 'calendar.blocked'
   | 'calendar.nonWorking'
+  | 'calendar.moveTitle'
+  | 'calendar.moveDate'
+  | 'calendar.moveTime'
+  | 'calendar.moveSubmit'
+  | 'calendar.moving'
+  | 'calendar.moveConflict'
+  | 'calendar.moveError'
+  | 'calendar.moveInvalidTime'
   | 'employees.title'
   | 'employees.add_employee'
   | 'employees.search_placeholder'
@@ -2047,6 +2055,14 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.free': { en: 'Free', ru: 'Свободно', cz: 'Volno' },
   'calendar.blocked': { en: 'Blocked', ru: 'Заблокировано', cz: 'Blokováno' },
   'calendar.nonWorking': { en: 'Non-working hours', ru: 'Нерабочие часы', cz: 'Nepracovní hodiny' },
+  'calendar.moveTitle': { en: 'Move visit', ru: 'Перенести визит', cz: 'Přesunout návštěvu' },
+  'calendar.moveDate': { en: 'Date', ru: 'Дата', cz: 'Datum' },
+  'calendar.moveTime': { en: 'Time', ru: 'Время', cz: 'Čas' },
+  'calendar.moveSubmit': { en: 'Move', ru: 'Перенести', cz: 'Přesunout' },
+  'calendar.moving': { en: 'Moving...', ru: 'Переносим...', cz: 'Přesouvám...' },
+  'calendar.moveConflict': { en: 'This time is already taken. The visit stayed where it was.', ru: 'Это время уже занято. Визит остался на прежнем месте.', cz: 'Tento čas je již obsazen. Návštěva zůstala na původním místě.' },
+  'calendar.moveError': { en: 'Could not move the visit', ru: 'Не удалось перенести визит', cz: 'Návštěvu se nepodařilo přesunout' },
+  'calendar.moveInvalidTime': { en: 'Choose a valid date and time', ru: 'Укажите корректные дату и время', cz: 'Zadejte platné datum a čas' },
   
   'employees.title': { en: 'Employees', ru: 'Сотрудники', cz: 'Zaměstnanci' },
   'employees.add_employee': { en: 'Add Employee', ru: 'Добавить сотрудника', cz: 'Přidat zaměstnance' },

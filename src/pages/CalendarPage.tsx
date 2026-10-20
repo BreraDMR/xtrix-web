@@ -4,9 +4,10 @@ import { addDays, startOfWeek } from 'date-fns'
 import api from '../api/client'
 import Calendar from '../components/Calendar'
 import SimpleCalendar from '../components/SimpleCalendar'
-import { zonedDayKey } from '../components/calendar/DayGrid'
+import { zonedDayKey, type CalendarVisit } from '../components/calendar/DayGrid'
 import StaffColumns, { type StaffColumn } from '../components/calendar/StaffColumns'
 import WeekGrid from '../components/calendar/WeekGrid'
+import MoveVisitDialog from '../components/calendar/MoveVisitDialog'
 import type { StaffScheduleData } from '../components/calendar/schedule'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
@@ -57,6 +58,7 @@ export default function CalendarPage() {
     value.setHours(12, 0, 0, 0)
     return value
   })
+  const [selectedVisit, setSelectedVisit] = useState<CalendarVisit | null>(null)
   const { data: business } = useMyBusiness()
   const timeZone = business?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
   const dayKey = zonedDayKey(day, timeZone)
@@ -128,6 +130,13 @@ export default function CalendarPage() {
     () => new Map((clients ?? []).map((client) => [client.id, client.full_name])),
     [clients],
   )
+
+  const selectedVisitName = selectedVisit
+    ? clientNames.get(selectedVisit.client_id)
+      || selectedVisit.client_name
+      || selectedVisit.service_name
+      || `#${selectedVisit.id}`
+    : ''
 
   const scheduleQueries = useQueries({
     queries: view === 'day'
@@ -253,6 +262,7 @@ export default function CalendarPage() {
               schedules={schedules}
               timeZone={timeZone}
               clientNames={clientNames}
+              onSelectVisit={setSelectedVisit}
             />
           ) : (
             <WeekGrid
@@ -260,6 +270,7 @@ export default function CalendarPage() {
               visits={rangeQuery.data ?? []}
               timeZone={timeZone}
               clientNames={clientNames}
+              onSelectVisit={setSelectedVisit}
             />
           )
         )}
@@ -270,6 +281,19 @@ export default function CalendarPage() {
           <Calendar visits={visits || []} onRefresh={() => refetch()} />
         )}
       </div>
+
+      {selectedVisit && (
+        <MoveVisitDialog
+          visit={selectedVisit}
+          name={selectedVisitName}
+          timeZone={timeZone}
+          onClose={() => setSelectedVisit(null)}
+          onMoved={() => {
+            setSelectedVisit(null)
+            rangeQuery.refetch()
+          }}
+        />
+      )}
     </div>
   )
 }
