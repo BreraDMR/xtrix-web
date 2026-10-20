@@ -706,6 +706,9 @@ export type TranslationKey =
   | 'finance.total'
   | 'finance.payment_other'
   | 'subscription.title'
+  | 'trial.banner_active'
+  | 'trial.banner_cta'
+  | 'trial.banner_expired'
   | 'subscription.usage_title'
   | 'subscription.crm_usage'
   | 'subscription.ai_usage'
@@ -1819,6 +1822,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'finance.total': { en: 'Total', ru: 'Итого', cz: 'Celkem' },
   
   'subscription.title': { en: 'Subscription Management', ru: 'Управление подпиской', cz: 'Správa předplatného' },
+  'trial.banner_active': { en: 'Trial period: {days} days remaining (until {date})', ru: 'Пробный период: осталось {days} дн. (до {date})', cz: 'Zkušební období: zbývá {days} dní (do {date})' },
+  'trial.banner_cta': { en: 'Choose Plan', ru: 'Выбрать тариф', cz: 'Vybrat tarif' },
+  'trial.banner_expired': { en: 'Trial ended. Your salon data is preserved. Choose a plan to continue.', ru: 'Пробный период завершён. Ваши данные сохранены. Выберите тариф для продолжения.', cz: 'Zkušební období skončilo. Vaše data jsou uložena. Vyberte tarif pro pokračování.' },
   'subscription.usage_title': { en: 'Plan Usage and Entitlements', ru: 'Использование тарифа и лимиты', cz: 'Využití tarifu a limity' },
   'subscription.crm_usage': { en: 'CRM: Active Clients', ru: 'CRM: активные клиенты', cz: 'CRM: aktivní klienti' },
   'subscription.ai_usage': { en: 'AI Sasha: Daily Requests', ru: 'ИИ Сашенька: запросы за сегодня', cz: 'AI Sašenka: dnešní dotazy' },

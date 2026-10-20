@@ -6,6 +6,7 @@ import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import CheckoutReturn from '../components/CheckoutReturn'
+import TrialBanner from '../components/TrialBanner'
 import { useLabels } from '../i18n/labels'
 import type { Schema, EntitlementsUsageOut } from '../api/types'
 
@@ -453,19 +454,8 @@ export default function Subscription() {
         </div>
       )}
 
-      {}
-      {trialStatus && trialStatus.is_trial && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-yellow-800 font-medium mb-2">
-            {t('subscription.trialActive')}
-          </p>
-          {trialStatus.trial_end && (
-            <p className="text-sm text-yellow-700">
-              {t('subscription.trialEnds')}: {formatDate(trialStatus.trial_end)} ({getDaysRemaining(trialStatus.trial_end)} {t('subscription.days_remaining')})
-            </p>
-          )}
-        </div>
-      )}
+      {/* Trial banner */}
+      <TrialBanner />
 
       {}
       <div className="mb-8">
