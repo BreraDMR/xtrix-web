@@ -38,7 +38,7 @@ export default function Register() {
   const { setAuth, startSession } = useAuthStore()
 
   useEffect(() => {
-    if (useAuthStore.getState().token && useAuthStore.getState().user) navigate('/', { replace: true })
+    if (useAuthStore.getState().token && useAuthStore.getState().user) navigate('/app', { replace: true })
   }, [navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,7 +107,7 @@ export default function Register() {
       const token = useAuthStore.getState().token
       if (!token) throw new Error('Session expired')
       setAuth(token, user)
-      navigate('/', { replace: true })
+      navigate('/app', { replace: true })
     } catch (err) {
       if (accountCreated) {
         useAuthStore.getState().logout()

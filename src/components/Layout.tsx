@@ -15,11 +15,11 @@ import {
 } from 'react-icons/hi'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
-  '/': HiOutlineViewGrid, '/clients': HiOutlineUsers, '/visits': HiOutlineOfficeBuilding,
-  '/calendar': HiOutlineCalendar, '/services': HiOutlinePaperClip, '/inventory': HiOutlineShoppingCart,
-  '/finance': HiOutlineCurrencyDollar, '/analytics': HiOutlineChartBar, '/loyalty': HiOutlineHeart,
-  '/employees': HiOutlineUsers, '/business': HiOutlineBriefcase, '/subscription': HiOutlineDocumentText,
-  '/my-salary': HiOutlineCurrencyDollar, '/settings': HiOutlineCog,
+  '/app': HiOutlineViewGrid, '/app/clients': HiOutlineUsers, '/app/visits': HiOutlineOfficeBuilding,
+  '/app/calendar': HiOutlineCalendar, '/app/services': HiOutlinePaperClip, '/app/inventory': HiOutlineShoppingCart,
+  '/app/finance': HiOutlineCurrencyDollar, '/app/analytics': HiOutlineChartBar, '/app/loyalty': HiOutlineHeart,
+  '/app/employees': HiOutlineUsers, '/app/business': HiOutlineBriefcase, '/app/subscription': HiOutlineDocumentText,
+  '/app/my-salary': HiOutlineCurrencyDollar, '/app/settings': HiOutlineCog,
 }
 
 export default function Layout() {
@@ -74,28 +74,28 @@ export default function Layout() {
 
   const managesBusiness = user?.role === 'admin' || user?.role === 'business_owner'
   const primaryItems = [
-    { path: '/', label: t('nav.dashboard') }, { path: '/clients', label: t('nav.clients') },
-    { path: '/visits', label: t('nav.visits') }, { path: '/calendar', label: t('nav.calendar') },
-    { path: '/services', label: t('nav.services') },
-    ...(managesBusiness ? [{ path: '/inventory', label: t('nav.inventory') }, { path: '/finance', label: t('nav.finance') }] : []),
+    { path: '/app', label: t('nav.dashboard') }, { path: '/app/clients', label: t('nav.clients') },
+    { path: '/app/visits', label: t('nav.visits') }, { path: '/app/calendar', label: t('nav.calendar') },
+    { path: '/app/services', label: t('nav.services') },
+    ...(managesBusiness ? [{ path: '/app/inventory', label: t('nav.inventory') }, { path: '/app/finance', label: t('nav.finance') }] : []),
   ]
   const manageItems = managesBusiness ? [
-    { path: '/analytics', label: t('nav.analytics') }, { path: '/loyalty', label: t('nav.loyalty') },
-    { path: '/employees', label: t('nav.employees') },
+    { path: '/app/analytics', label: t('nav.analytics') }, { path: '/app/loyalty', label: t('nav.loyalty') },
+    { path: '/app/employees', label: t('nav.employees') },
   ] : []
   const systemItems = [
-    ...(managesBusiness ? [{ path: '/business', label: t('nav.business') }] : []),
-    ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/subscription', label: t('nav.subscription') }] : []),
-    ...(user?.role === 'employee' || user?.role === 'specialist' ? [{ path: '/my-salary', label: t('nav.my_salary') }] : []),
-    { path: '/settings', label: t('nav.settings') },
+    ...(managesBusiness ? [{ path: '/app/business', label: t('nav.business') }] : []),
+    ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/app/subscription', label: t('nav.subscription') }] : []),
+    ...(user?.role === 'employee' || user?.role === 'specialist' ? [{ path: '/app/my-salary', label: t('nav.my_salary') }] : []),
+    { path: '/app/settings', label: t('nav.settings') },
   ]
   const active = [...primaryItems, ...manageItems, ...systemItems].find(({ path }) =>
-    path === '/' ? location.pathname === path : location.pathname === path || location.pathname.startsWith(path + '/'))
+    path === '/app' ? (location.pathname === '/app' || location.pathname === '/app/') : (location.pathname === path || location.pathname.startsWith(path + '/')))
   const workspaceName = business?.name || t('nav.business')
   const initials = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
   const links = (items: { path: string; label: string }[]) => items.map(({ path, label }) => {
     const Icon = icons[path]
-    const selected = path === '/' ? location.pathname === path : location.pathname === path || location.pathname.startsWith(path + '/')
+    const selected = path === '/app' ? (location.pathname === '/app' || location.pathname === '/app/') : (location.pathname === path || location.pathname.startsWith(path + '/'))
     return <Link key={path} to={path} className="crm-navlink" aria-label={label} title={label} aria-current={selected ? 'page' : undefined}
       onClick={() => setIsMobileMenuOpen(false)}>
       <Icon className="h-[18px] w-[18px] shrink-0" /><span className="crm-navtext truncate">{label}</span>
@@ -110,7 +110,7 @@ export default function Layout() {
         aria-modal={isMobileMenuOpen || undefined} aria-label={t('nav.primary')}
         className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="crm-brand flex h-[90px] shrink-0 items-center gap-3">
-          <Link to="/" aria-label="Xtrix" className="flex items-center gap-2.5">
+          <Link to="/app" aria-label="Xtrix" className="flex items-center gap-2.5">
             <span className="grid h-8 w-8 place-items-center rounded-[11px] bg-gray-900 text-[25px] font-medium leading-none text-white dark:bg-white dark:text-gray-900">x</span>
             <span className="crm-navtext text-[25px] font-semibold tracking-[-1.2px]">Xtrix</span>
           </Link>

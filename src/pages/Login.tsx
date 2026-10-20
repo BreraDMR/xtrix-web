@@ -6,14 +6,13 @@ import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
+import { sanitizeReturnTo } from '../utils/routing'
 
 export default function Login() {
   const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
-  const requestedPath = new URLSearchParams(location.search).get('returnTo') || '/'
-  // only paths inside the app, never //host or a loop back to login
-  const returnTo = /^\/(?!\/)/.test(requestedPath) && !requestedPath.includes('\\') && !/^\/(login|register)([/?#]|$)/.test(requestedPath) ? requestedPath : '/'
+  const returnTo = sanitizeReturnTo(new URLSearchParams(location.search).get('returnTo'), '/app')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
