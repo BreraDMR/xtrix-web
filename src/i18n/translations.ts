@@ -975,6 +975,15 @@ export type TranslationKey =
   | 'landing.nav.tour'
   | 'landing.nav.faq'
   | 'landing.nav.pricing'
+  | 'landing.pricing.title'
+  | 'landing.pricing.subtitle'
+  | 'landing.pricing.crm_tab'
+  | 'landing.pricing.ai_tab'
+  | 'landing.pricing.per_month'
+  | 'landing.pricing.choose_plan'
+  | 'landing.pricing.draft_badge'
+  | 'landing.pricing.loading'
+  | 'landing.pricing.error'
   | 'landing.nav.contact'
   | 'landing.footer.rights'
   | 'landing.footer.privacy'
@@ -2191,6 +2200,51 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     en: 'Pricing',
     ru: 'Тарифы',
     cz: 'Ceník',
+  },
+  'landing.pricing.title': {
+    en: 'Simple and Transparent Pricing',
+    ru: 'Простые и прозрачные тарифы',
+    cz: 'Jednoduchý a přehledný ceník',
+  },
+  'landing.pricing.subtitle': {
+    en: 'Independent products for CRM and AI assistant. Pay only for what your salon needs.',
+    ru: 'Независимые продукты для CRM и ИИ ассистента. Выбирайте только то, что нужно вашему бизнесу.',
+    cz: 'Nezávislé produkty pro CRM a AI asistentku. Plaťte jen za to, co váš salon potřebuje.',
+  },
+  'landing.pricing.crm_tab': {
+    en: 'CRM Platform',
+    ru: 'CRM система',
+    cz: 'CRM platforma',
+  },
+  'landing.pricing.ai_tab': {
+    en: 'AI Assistant Sasha',
+    ru: 'ИИ ассистент Сашенька',
+    cz: 'AI asistentka Sašenka',
+  },
+  'landing.pricing.per_month': {
+    en: '/ month',
+    ru: '/ месяц',
+    cz: '/ měsíc',
+  },
+  'landing.pricing.choose_plan': {
+    en: 'Get Started',
+    ru: 'Выбрать тариф',
+    cz: 'Vybrat tarif',
+  },
+  'landing.pricing.draft_badge': {
+    en: 'Draft (D01)',
+    ru: 'Черновик (D01)',
+    cz: 'Návrh (D01)',
+  },
+  'landing.pricing.loading': {
+    en: 'Loading pricing plans...',
+    ru: 'Загрузка тарифов...',
+    cz: 'Načítání ceníku...',
+  },
+  'landing.pricing.error': {
+    en: 'Failed to load pricing plans',
+    ru: 'Не удалось загрузить тарифы',
+    cz: 'Nepodařilo se načíst ceník',
   },
   'landing.nav.contact': {
     en: 'Contact',

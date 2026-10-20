@@ -5,6 +5,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher'
 import PublicHeader from '../components/marketing/PublicHeader'
 import Features from '../components/marketing/Features'
 import ProductTour from '../components/marketing/ProductTour'
+import Pricing from '../components/marketing/Pricing'
 import FAQ from '../components/marketing/FAQ'
 import PublicFooter from '../components/marketing/PublicFooter'
 import {
@@ -155,6 +156,9 @@ export default function Landing() {
 
       {/* Product Tour */}
       <ProductTour />
+
+      {/* Pricing Section */}
+      <Pricing />
 
       {/* FAQ Section */}
       <FAQ />
