@@ -7,12 +7,13 @@ import Select from '../ui/Select'
 import LoadingSpinner from '../components/LoadingSpinner'
 import WeeklyEditor from '../components/schedules/WeeklyEditor'
 import DateExceptions from '../components/schedules/DateExceptions'
+import BookingRules from '../components/schedules/BookingRules'
 import { useAuthStore } from '../store/authStore'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import { useTranslation } from '../hooks/useTranslation'
 import type { TranslationKey } from '../i18n/translations'
 
-type Tab = 'weekly' | 'exceptions'
+type Tab = 'weekly' | 'exceptions' | 'rules'
 
 interface EmployeeRow {
   employee_user_id: number
@@ -22,6 +23,7 @@ interface EmployeeRow {
 const TABS: { id: Tab; label: TranslationKey }[] = [
   { id: 'weekly', label: 'schedule.tab.weekly' },
   { id: 'exceptions', label: 'schedule.tab.exceptions' },
+  { id: 'rules', label: 'schedule.tab.rules' },
 ]
 
 export default function Schedule() {
@@ -34,6 +36,10 @@ export default function Schedule() {
     || user?.role === 'business_owner'
     || user?.role === 'specialist'
   const managesBusiness = user?.role === 'admin' || user?.role === 'business_owner'
+  const canEditBusiness = !!user && (
+    user.role === 'admin'
+    || ((user.role === 'business_owner' || user.role === 'specialist') && !user.employer_id)
+  )
 
   const { data: business, isLoading: businessLoading } = useMyBusiness(!!user && canManageSchedule)
 
@@ -124,6 +130,13 @@ export default function Schedule() {
       )}
       {!businessLoading && activeId !== undefined && tab === 'exceptions' && (
         <DateExceptions key={`exceptions-${activeId}`} specialistId={activeId} timeZone={timeZone} />
+      )}
+      {!businessLoading && tab === 'rules' && (
+        <BookingRules
+          key={`rules-${business?.id ?? 'none'}`}
+          business={business ?? null}
+          canEdit={canEditBusiness}
+        />
       )}
     </div>
   )
