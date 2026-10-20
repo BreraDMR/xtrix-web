@@ -21,6 +21,7 @@ import Analytics from './pages/Analytics'
 import Loyalty from './pages/Loyalty'
 import Settings from './pages/Settings'
 import Layout from './components/Layout'
+import { LegacyRedirect, ParameterizedLegacyRedirect } from './utils/routing'
 
 function App() {
   useTheme()
@@ -30,6 +31,32 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Legacy CRM routes redirecting to /app/... while preserving query and hash */}
+        <Route path="/clients" element={<LegacyRedirect target="/app/clients" />} />
+        <Route path="/visits" element={<LegacyRedirect target="/app/visits" />} />
+        <Route path="/calendar" element={<LegacyRedirect target="/app/calendar" />} />
+        <Route path="/services" element={<LegacyRedirect target="/app/services" />} />
+        <Route path="/profile" element={<LegacyRedirect target="/app/profile" />} />
+        <Route path="/employees" element={<LegacyRedirect target="/app/employees" />} />
+        <Route
+          path="/employees/:id/salary"
+          element={
+            <ParameterizedLegacyRedirect
+              targetTemplate={(params) => `/app/employees/${params.id}/salary`}
+            />
+          }
+        />
+        <Route path="/my-salary" element={<LegacyRedirect target="/app/my-salary" />} />
+        <Route path="/business" element={<LegacyRedirect target="/app/business" />} />
+        <Route path="/inventory" element={<LegacyRedirect target="/app/inventory" />} />
+        <Route path="/finance" element={<LegacyRedirect target="/app/finance" />} />
+        <Route path="/analytics" element={<LegacyRedirect target="/app/analytics" />} />
+        <Route path="/loyalty" element={<LegacyRedirect target="/app/loyalty" />} />
+        <Route path="/subscription" element={<LegacyRedirect target="/app/subscription" />} />
+        <Route path="/settings" element={<LegacyRedirect target="/app/settings" />} />
+
+        {/* Authenticated workspace */}
         <Route
           path="/app"
           element={
