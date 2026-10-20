@@ -10,7 +10,7 @@ import {
   HiOutlineViewGrid, HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineCalendar,
   HiOutlinePaperClip, HiOutlineCurrencyDollar, HiOutlineShoppingCart, HiOutlineChartBar,
   HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
-  HiOutlineMenuAlt2, HiOutlineX, HiOutlineChevronRight,
+  HiOutlineMenuAlt2, HiOutlineX, HiOutlineChevronRight, HiOutlineChevronLeft,
 } from 'react-icons/hi'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -28,6 +28,7 @@ export default function Layout() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isCompact, setIsCompact] = useState(false)
   const [offline, setOffline] = useState(!navigator.onLine)
   const sidebar = useRef<HTMLElement>(null)
   const menuButton = useRef<HTMLButtonElement>(null)
@@ -101,7 +102,7 @@ export default function Layout() {
   })
 
   return (
-    <div className="crm-app min-h-screen">
+    <div className="crm-app min-h-screen" data-sidebar-compact={isCompact}>
       {isMobileMenuOpen && <button className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[3px] lg:hidden"
         aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)} />}
       <aside ref={sidebar} id="workspace-navigation" role={isMobileMenuOpen ? 'dialog' : undefined}
@@ -127,6 +128,12 @@ export default function Layout() {
       <div className="flex min-h-screen min-w-0 flex-col lg:ml-[228px]">
         <header className="crm-header flex h-16 shrink-0 items-center justify-between gap-3 px-5 lg:h-[76px] lg:px-11">
           <div className="flex min-w-0 items-center gap-3">
+            <button className="hidden rounded-lg p-2 text-gray-600 lg:inline-flex dark:text-gray-300"
+              aria-label={t(isCompact ? 'nav.expand_menu' : 'nav.collapse_menu')}
+              aria-controls="workspace-navigation" aria-expanded={!isCompact}
+              onClick={() => setIsCompact((compact) => !compact)}>
+              {isCompact ? <HiOutlineChevronRight className="h-5 w-5" /> : <HiOutlineChevronLeft className="h-5 w-5" />}
+            </button>
             <button ref={menuButton} className="-ml-1 p-1 text-gray-600 lg:hidden dark:text-gray-300"
               aria-label={t('nav.primary')} aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((open) => !open)}><HiOutlineMenuAlt2 className="h-5 w-5" /></button>

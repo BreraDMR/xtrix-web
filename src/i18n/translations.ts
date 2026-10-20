@@ -630,6 +630,8 @@ export type TranslationKey =
   | 'nav.analytics'
   | 'nav.loyalty'
   | 'nav.settings'
+  | 'nav.collapse_menu'
+  | 'nav.expand_menu'
   | 'nav.primary'
   | 'nav.manage'
   | 'nav.system'
@@ -1571,6 +1573,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.analytics': { en: 'Analytics', ru: 'Аналитика', cz: 'Analytika' },
   'nav.loyalty': { en: 'Loyalty', ru: 'Лояльность', cz: 'Věrnost' },
   'nav.settings': { en: 'Settings', ru: 'Настройки', cz: 'Nastavení' },
+  'nav.collapse_menu': { en: 'Collapse menu', ru: 'Свернуть меню', cz: 'Sbalit nabídku' },
+  'nav.expand_menu': { en: 'Expand menu', ru: 'Развернуть меню', cz: 'Rozbalit nabídku' },
   'nav.primary': { en: 'PRIMARY', ru: 'ОСНОВНОЕ', cz: 'ZÁKLADNÍ' },
   'nav.manage': { en: 'MANAGE', ru: 'УПРАВЛЕНИЕ', cz: 'SPRÁVA' },
   'nav.system': { en: 'SYSTEM', ru: 'СИСТЕМА', cz: 'SYSTÉM' },
