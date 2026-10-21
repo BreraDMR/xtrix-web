@@ -7,6 +7,7 @@ import { apiErrorStatus } from '../../api/errors'
 import LanguageSwitcher from '../../components/LanguageSwitcher'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import BookingSummary from '../../components/booking/BookingSummary'
+import DepositStep from '../../components/booking/DepositStep'
 import ContactStep from '../../components/booking/ContactStep'
 import ServiceStep from '../../components/booking/ServiceStep'
 import StaffStep from '../../components/booking/StaffStep'
@@ -115,11 +116,16 @@ function BookingSuccess({ booking, onNew }: { booking: PublicBookingOut; onNew: 
     timeZone: booking.timezone,
   })
   const items = booking.items ?? []
+  const payment = booking.payment ?? null
 
   return (
     <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
-      <h2 className="text-xl font-semibold">{t('booking.successTitle')}</h2>
-      <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">{t('booking.successText')}</p>
+      <h2 className="text-xl font-semibold">
+        {payment ? t('booking.heldTitle') : t('booking.successTitle')}
+      </h2>
+      <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
+        {payment ? t('booking.heldText') : t('booking.successText')}
+      </p>
 
       <dl className="mt-5 divide-y divide-slate-100 text-sm dark:divide-gray-700">
         <div className="flex justify-between gap-4 py-3">
@@ -168,6 +174,10 @@ function BookingSuccess({ booking, onNew }: { booking: PublicBookingOut; onNew: 
           </dd>
         </div>
       </dl>
+
+      {payment && (
+        <DepositStep payment={payment} timezone={booking.timezone} currency={booking.currency} />
+      )}
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         {booking.manage_token && (
@@ -580,6 +590,9 @@ export default function BookingPage() {
                 timezone={slotsQuery.data?.timezone ?? business.timezone}
                 details={details}
                 currency={currency}
+                depositType={business.deposit_type ?? 'none'}
+                depositValue={business.deposit_value ?? 0}
+                depositHoldMinutes={business.deposit_hold_minutes ?? 30}
                 isSubmitting={isSubmitting}
                 error={submitError}
                 onConfirm={() => void handleConfirm()}

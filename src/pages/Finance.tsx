@@ -11,6 +11,7 @@ import FormError from '../components/FormError'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
+import ServicePayments from '../components/payments/ServicePayments'
 import { dayEnd, dayNoon, dayStart, today } from '../utils/dates'
 import { useLabels } from '../i18n/labels'
 import type { Schema } from '../api/types'
@@ -125,6 +126,9 @@ export default function Finance() {
       </div>
 
       {}
+
+      <ServicePayments />
+
       <div className="bg-white p-4 rounded-lg shadow-md mb-6 dark:bg-gray-800">
         <div className="flex flex-wrap gap-4 items-end">
           <div className="min-w-0 w-full sm:w-auto">

@@ -12,6 +12,9 @@ type BookingSummaryProps = {
   timezone: string
   details: ContactDetails
   currency: Currency
+  depositType: 'none' | 'fixed' | 'percentage'
+  depositValue: number
+  depositHoldMinutes: number
   isSubmitting: boolean
   error: unknown | null
   onConfirm: () => void
@@ -26,6 +29,9 @@ export default function BookingSummary({
   timezone,
   details,
   currency,
+  depositType,
+  depositValue,
+  depositHoldMinutes,
   isSubmitting,
   error,
   onConfirm,
@@ -43,6 +49,12 @@ export default function BookingSummary({
   const totalMinutes = services.reduce((sum, service) => sum + service.duration_minutes, 0)
   const priceKnown = services.every((service) => service.price !== null && service.price !== undefined)
   const totalPrice = services.reduce((sum, service) => sum + (service.price ?? 0), 0)
+  const deposit = !priceKnown || depositType === 'none'
+    ? 0
+    : depositType === 'fixed'
+      ? Math.min(depositValue, totalPrice)
+      : Math.round(totalPrice * depositValue) / 100
+  const remaining = Math.round((totalPrice - deposit) * 100) / 100
 
   return (
     <div>
@@ -80,6 +92,24 @@ export default function BookingSummary({
             {priceKnown ? formatCurrency(totalPrice, currency) : t('booking.priceOnRequest')}
           </dd>
         </div>
+        {deposit > 0 && (
+          <div className="py-3">
+            <div className="flex justify-between gap-4">
+              <dt className="text-slate-500 dark:text-gray-400">{t('booking.depositTermsTitle')}</dt>
+              <dd className="text-right font-medium">{formatCurrency(deposit, currency)}</dd>
+            </div>
+            <p className="mt-1 text-right text-xs text-slate-500 dark:text-gray-400">
+              {depositType === 'percentage'
+                ? t('booking.depositPercent').replace('{n}', String(depositValue))
+                : t('booking.depositFixed')}
+              {' · '}
+              {t('booking.remainingAmount')}: {formatCurrency(remaining, currency)}
+            </p>
+            <p className="mt-1 text-right text-xs text-slate-500 dark:text-gray-400">
+              {t('booking.holdMinutes').replace('{n}', String(depositHoldMinutes))}
+            </p>
+          </div>
+        )}
         {staffName && (
           <div className="flex justify-between gap-4 py-3">
             <dt className="text-slate-500 dark:text-gray-400">{t('booking.master')}</dt>

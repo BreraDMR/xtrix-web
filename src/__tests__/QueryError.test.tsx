@@ -36,7 +36,8 @@ it.each([Visits, Employees, Services, Inventory, Finance, Dashboard])('shows fai
   signIn({ id: 1, role: 'business_owner', business_id: 1 })
   vi.mocked(api.get).mockRejectedValue(apiError(500, 'failed'))
   renderWithProviders(<Page />)
-  expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
+  // Finance also renders the deposit desk, which may report its own failure first
+  expect(await screen.findByText('Unable to load data')).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument()
 })
 

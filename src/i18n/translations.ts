@@ -363,6 +363,93 @@ export type TranslationKey =
   | 'booking.newBooking'
   | 'booking.manageLink'
   | 'booking.manageHint'
+  | 'booking.depositTermsTitle'
+  | 'booking.depositFixed'
+  | 'booking.depositPercent'
+  | 'booking.depositAmount'
+  | 'booking.remainingAmount'
+  | 'booking.holdMinutes'
+  | 'booking.holdNote'
+  | 'booking.heldTitle'
+  | 'booking.heldText'
+  | 'booking.payDeposit'
+  | 'booking.payBefore'
+  | 'payment.deposit'
+  | 'payment.remaining'
+  | 'payment.sandboxTitle'
+  | 'payment.sandboxBadge'
+  | 'payment.sandboxText'
+  | 'payment.sandboxPay'
+  | 'payment.sandboxFail'
+  | 'payment.sandboxSending'
+  | 'payment.alreadySettled'
+  | 'payment.checkStatus'
+  | 'payment.invalidLink'
+  | 'payment.invalidLinkText'
+  | 'payment.returnTitle'
+  | 'payment.checking'
+  | 'payment.waitingTitle'
+  | 'payment.waitingText'
+  | 'payment.waitingHint'
+  | 'payment.checkAgain'
+  | 'payment.paidTitle'
+  | 'payment.paidText'
+  | 'payment.failedTitle'
+  | 'payment.failedText'
+  | 'payment.expiredTitle'
+  | 'payment.expiredText'
+  | 'payment.cancelledTitle'
+  | 'payment.cancelledText'
+  | 'payment.reviewTitle'
+  | 'payment.reviewText'
+  | 'payment.loadError'
+  | 'payment.status.pending'
+  | 'payment.status.paid'
+  | 'payment.status.failed'
+  | 'payment.status.expired'
+  | 'payment.status.cancelled'
+  | 'payment.status.reconcile'
+  | 'payment.status.partially_refunded'
+  | 'payment.status.refunded'
+  | 'finance.servicePayments.title'
+  | 'finance.servicePayments.subtitle'
+  | 'finance.servicePayments.empty'
+  | 'finance.servicePayments.loadError'
+  | 'finance.servicePayments.filter'
+  | 'finance.servicePayments.allStatuses'
+  | 'finance.servicePayments.client'
+  | 'finance.servicePayments.service'
+  | 'finance.servicePayments.visit'
+  | 'finance.servicePayments.status'
+  | 'finance.servicePayments.amount'
+  | 'finance.servicePayments.refunded'
+  | 'finance.servicePayments.refundable'
+  | 'finance.servicePayments.holdExpires'
+  | 'finance.servicePayments.refund'
+  | 'finance.servicePayments.refundTitle'
+  | 'finance.servicePayments.amountLabel'
+  | 'finance.servicePayments.amountHint'
+  | 'finance.servicePayments.reason'
+  | 'finance.servicePayments.reasonPlaceholder'
+  | 'finance.servicePayments.submit'
+  | 'finance.servicePayments.submitting'
+  | 'finance.servicePayments.cancel'
+  | 'finance.servicePayments.done'
+  | 'finance.servicePayments.error'
+  | 'finance.servicePayments.refundsTitle'
+  | 'business.publicBooking.depositTitle'
+  | 'business.publicBooking.depositHint'
+  | 'business.publicBooking.depositType'
+  | 'business.publicBooking.depositNone'
+  | 'business.publicBooking.depositFixed'
+  | 'business.publicBooking.depositPercentage'
+  | 'business.publicBooking.depositValue'
+  | 'business.publicBooking.depositHold'
+  | 'business.publicBooking.depositSave'
+  | 'business.publicBooking.depositSaving'
+  | 'business.publicBooking.depositSaved'
+  | 'business.publicBooking.depositUnavailable'
+  | 'business.publicBooking.depositInvalid'
   | 'validation.code.invalid_assistant_name'
   | 'field.assistant_name'
   | 'field.assistant_gender'
@@ -1902,6 +1989,93 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.newBooking": {"en": "Book another time", "ru": "Записаться ещё раз", "cz": "Rezervovat další termín"},
   "booking.manageLink": {"en": "Manage this booking", "ru": "Управление записью", "cz": "Spravovat rezervaci"},
   "booking.manageHint": {"en": "Save this link: you can confirm, reschedule or cancel the visit there.", "ru": "Сохраните ссылку: по ней можно подтвердить, перенести или отменить визит.", "cz": "Uložte si odkaz: můžete tam návštěvu potvrdit, přeložit nebo zrušit."},
+  "booking.depositTermsTitle": {"en": "Deposit to confirm", "ru": "Предоплата для подтверждения", "cz": "Záloha pro potvrzení"},
+  "booking.depositFixed": {"en": "Fixed deposit", "ru": "Фиксированная предоплата", "cz": "Pevná záloha"},
+  "booking.depositPercent": {"en": "{n}% of the price", "ru": "{n}% от стоимости", "cz": "{n} % z ceny"},
+  "booking.depositAmount": {"en": "Deposit now", "ru": "Предоплата", "cz": "Záloha"},
+  "booking.remainingAmount": {"en": "Remaining at the salon", "ru": "Остаток в салоне", "cz": "Zbytek v salonu"},
+  "booking.holdMinutes": {"en": "The slot is held for {n} minutes.", "ru": "Время удерживается {n} мин.", "cz": "Termín držíme {n} min."},
+  "booking.holdNote": {"en": "The booking is confirmed only when the payment provider confirms the deposit.", "ru": "Запись подтверждается только после подтверждения оплаты провайдером.", "cz": "Rezervace se potvrdí až po potvrzení platby poskytovatelem."},
+  "booking.heldTitle": {"en": "Slot held — pay the deposit", "ru": "Время удержано — внесите предоплату", "cz": "Termín držíme — zaplaťte zálohu"},
+  "booking.heldText": {"en": "We are holding this time for you. Pay the deposit to confirm the booking; the rest is paid at the salon.", "ru": "Мы держим это время за вами. Внесите предоплату для подтверждения записи, остаток оплатите в салоне.", "cz": "Tento čas pro vás držíme. Zaplaťte zálohu pro potvrzení rezervace, zbytek uhradíte v salonu."},
+  "booking.payDeposit": {"en": "Pay deposit", "ru": "Оплатить предоплату", "cz": "Zaplatit zálohu"},
+  "booking.payBefore": {"en": "Pay before", "ru": "Оплатить до", "cz": "Zaplatit do"},
+  "payment.deposit": {"en": "Deposit", "ru": "Предоплата", "cz": "Záloha"},
+  "payment.remaining": {"en": "Remaining", "ru": "Остаток", "cz": "Zbytek"},
+  "payment.sandboxTitle": {"en": "Sandbox checkout", "ru": "Тестовая оплата", "cz": "Testovací platba"},
+  "payment.sandboxBadge": {"en": "Test mode — no real money", "ru": "Тестовый режим — реальные деньги не списываются", "cz": "Testovací režim — skutečné peníze se neplatí"},
+  "payment.sandboxText": {"en": "The local sandbox provider signs the result and sends it to the booking service. No card is charged.", "ru": "Локальный sandbox-провайдер подписывает результат и отправляет его сервису записи. Карта не используется.", "cz": "Místní sandbox poskytovatel podepíše výsledek a odešle ho rezervační službě. Karta se nepoužívá."},
+  "payment.sandboxPay": {"en": "Pay {amount}", "ru": "Оплатить {amount}", "cz": "Zaplatit {amount}"},
+  "payment.sandboxFail": {"en": "Simulate a failed payment", "ru": "Смоделировать неуспешную оплату", "cz": "Simulovat neúspěšnou platbu"},
+  "payment.sandboxSending": {"en": "Sending the result…", "ru": "Отправляю результат…", "cz": "Odesílám výsledek…"},
+  "payment.alreadySettled": {"en": "This payment is already settled. Check its status.", "ru": "Эта оплата уже завершена. Проверьте её статус.", "cz": "Tato platba je již dokončena. Zkontrolujte její stav."},
+  "payment.checkStatus": {"en": "Check status", "ru": "Проверить статус", "cz": "Zkontrolovat stav"},
+  "payment.invalidLink": {"en": "Payment link is not valid", "ru": "Ссылка на оплату недействительна", "cz": "Odkaz na platbu není platný"},
+  "payment.invalidLinkText": {"en": "Open the link from the booking confirmation again.", "ru": "Откройте ссылку из подтверждения записи заново.", "cz": "Otevřete znovu odkaz z potvrzení rezervace."},
+  "payment.returnTitle": {"en": "Payment status", "ru": "Статус оплаты", "cz": "Stav platby"},
+  "payment.checking": {"en": "Checking the payment status…", "ru": "Проверяю статус оплаты…", "cz": "Kontroluji stav platby…"},
+  "payment.waitingTitle": {"en": "Waiting for confirmation", "ru": "Ждём подтверждения", "cz": "Čekáme na potvrzení"},
+  "payment.waitingText": {"en": "The provider has not confirmed the payment yet. This page checks the server and never trusts the return URL alone.", "ru": "Провайдер ещё не подтвердил оплату. Страница проверяет сервер и не доверяет одному лишь адресу возврата.", "cz": "Poskytovatel zatím platbu nepotvrdil. Stránka kontroluje server a nespoléhá jen na návratovou adresu."},
+  "payment.waitingHint": {"en": "You can close this page and open the link later to check the status.", "ru": "Страницу можно закрыть и открыть ссылку позже, чтобы проверить статус.", "cz": "Stránku můžete zavřít a odkaz otevřít později pro kontrolu stavu."},
+  "payment.checkAgain": {"en": "Check again", "ru": "Проверить снова", "cz": "Zkontrolovat znovu"},
+  "payment.paidTitle": {"en": "Payment received", "ru": "Оплата получена", "cz": "Platba přijata"},
+  "payment.paidText": {"en": "The deposit is paid and the booking is confirmed.", "ru": "Предоплата оплачена, запись подтверждена.", "cz": "Záloha je zaplacena a rezervace potvrzena."},
+  "payment.failedTitle": {"en": "Payment was not completed", "ru": "Оплата не прошла", "cz": "Platba neproběhla"},
+  "payment.failedText": {"en": "The slot has been released. You can book again or contact the salon.", "ru": "Время освобождено. Можно записаться снова или связаться с салоном.", "cz": "Termín byl uvolněn. Můžete rezervovat znovu nebo kontaktovat salon."},
+  "payment.expiredTitle": {"en": "The hold has expired", "ru": "Удержание истекло", "cz": "Rezervace vypršela"},
+  "payment.expiredText": {"en": "The slot was released because the deposit was not paid in time. You can book again.", "ru": "Время освобождено, потому что предоплата не поступила вовремя. Можно записаться снова.", "cz": "Termín byl uvolněn, protože záloha nepřišla včas. Můžete rezervovat znovu."},
+  "payment.cancelledTitle": {"en": "Payment cancelled", "ru": "Оплата отменена", "cz": "Platba zrušena"},
+  "payment.cancelledText": {"en": "The hold was released. You can book again.", "ru": "Удержание снято. Можно записаться снова.", "cz": "Držení termínu bylo zrušeno. Můžete rezervovat znovu."},
+  "payment.reviewTitle": {"en": "Payment needs a manual check", "ru": "Оплата требует ручной проверки", "cz": "Platba vyžaduje ruční kontrolu"},
+  "payment.reviewText": {"en": "The provider confirmed the payment after the hold changed. The salon will reconcile it with you.", "ru": "Провайдер подтвердил оплату после изменения удержания. Салон сверит платёж с вами.", "cz": "Poskytovatel potvrdil platbu po změně držení termínu. Salon ji s vámi vyrovná."},
+  "payment.loadError": {"en": "Could not load the payment.", "ru": "Не удалось загрузить оплату.", "cz": "Platbu se nepodařilo načíst."},
+  "payment.status.pending": {"en": "Pending", "ru": "Ожидает", "cz": "Čeká"},
+  "payment.status.paid": {"en": "Paid", "ru": "Оплачено", "cz": "Zaplaceno"},
+  "payment.status.failed": {"en": "Failed", "ru": "Не прошла", "cz": "Neúspěšná"},
+  "payment.status.expired": {"en": "Expired", "ru": "Истекла", "cz": "Vypršela"},
+  "payment.status.cancelled": {"en": "Cancelled", "ru": "Отменена", "cz": "Zrušena"},
+  "payment.status.reconcile": {"en": "Needs review", "ru": "Нужна сверка", "cz": "Ke kontrole"},
+  "payment.status.partially_refunded": {"en": "Partly refunded", "ru": "Частично возвращено", "cz": "Částečně vráceno"},
+  "payment.status.refunded": {"en": "Refunded", "ru": "Возвращено", "cz": "Vráceno"},
+  "finance.servicePayments.title": {"en": "Guest deposits", "ru": "Предоплаты гостей", "cz": "Zálohy hostů"},
+  "finance.servicePayments.subtitle": {"en": "Prepayments from online bookings, separate from your Xtrix subscription.", "ru": "Оплаты онлайн-записей, отдельно от подписки Xtrix.", "cz": "Platby z online rezervací, odděleně od předplatného Xtrix."},
+  "finance.servicePayments.empty": {"en": "No deposits yet.", "ru": "Предоплат пока нет.", "cz": "Zatím žádné zálohy."},
+  "finance.servicePayments.loadError": {"en": "Could not load guest deposits.", "ru": "Не удалось загрузить предоплаты.", "cz": "Zálohy se nepodařilo načíst."},
+  "finance.servicePayments.filter": {"en": "Status", "ru": "Статус", "cz": "Stav"},
+  "finance.servicePayments.allStatuses": {"en": "All statuses", "ru": "Все статусы", "cz": "Všechny stavy"},
+  "finance.servicePayments.client": {"en": "Client", "ru": "Клиент", "cz": "Klient"},
+  "finance.servicePayments.service": {"en": "Service", "ru": "Услуга", "cz": "Služba"},
+  "finance.servicePayments.visit": {"en": "Visit", "ru": "Визит", "cz": "Návštěva"},
+  "finance.servicePayments.status": {"en": "Status", "ru": "Статус", "cz": "Stav"},
+  "finance.servicePayments.amount": {"en": "Deposit", "ru": "Предоплата", "cz": "Záloha"},
+  "finance.servicePayments.refunded": {"en": "Refunded", "ru": "Возвращено", "cz": "Vráceno"},
+  "finance.servicePayments.refundable": {"en": "Refundable", "ru": "К возврату", "cz": "K vrácení"},
+  "finance.servicePayments.holdExpires": {"en": "Hold expires", "ru": "Удержание до", "cz": "Držení do"},
+  "finance.servicePayments.refund": {"en": "Refund", "ru": "Вернуть", "cz": "Vrátit"},
+  "finance.servicePayments.refundTitle": {"en": "Refund deposit", "ru": "Возврат предоплаты", "cz": "Vrácení zálohy"},
+  "finance.servicePayments.amountLabel": {"en": "Amount", "ru": "Сумма", "cz": "Částka"},
+  "finance.servicePayments.amountHint": {"en": "Leave empty to refund the remaining amount.", "ru": "Оставьте пустым, чтобы вернуть остаток.", "cz": "Ponechte prázdné pro vrácení zbytku."},
+  "finance.servicePayments.reason": {"en": "Reason", "ru": "Причина", "cz": "Důvod"},
+  "finance.servicePayments.reasonPlaceholder": {"en": "For example, the guest cancelled", "ru": "Например, гость отменил запись", "cz": "Například host zrušil rezervaci"},
+  "finance.servicePayments.submit": {"en": "Refund", "ru": "Вернуть", "cz": "Vrátit"},
+  "finance.servicePayments.submitting": {"en": "Refunding…", "ru": "Возвращаю…", "cz": "Vracím…"},
+  "finance.servicePayments.cancel": {"en": "Cancel", "ru": "Отмена", "cz": "Zrušit"},
+  "finance.servicePayments.done": {"en": "Refund recorded.", "ru": "Возврат записан.", "cz": "Vrácení zaznamenáno."},
+  "finance.servicePayments.error": {"en": "Could not refund the deposit.", "ru": "Не удалось вернуть предоплату.", "cz": "Zálohu se nepodařilo vrátit."},
+  "finance.servicePayments.refundsTitle": {"en": "Refunds", "ru": "Возвраты", "cz": "Vrácení"},
+  "business.publicBooking.depositTitle": {"en": "Deposit for online bookings", "ru": "Предоплата для онлайн-записи", "cz": "Záloha pro online rezervace"},
+  "business.publicBooking.depositHint": {"en": "A guest pays part of the price to hold a slot. The rest is paid at the salon.", "ru": "Гость оплачивает часть стоимости, чтобы удержать время. Остаток — в салоне.", "cz": "Host zaplatí část ceny, aby mu termín zůstal. Zbytek zaplatí v salonu."},
+  "business.publicBooking.depositType": {"en": "Deposit type", "ru": "Тип предоплаты", "cz": "Typ zálohy"},
+  "business.publicBooking.depositNone": {"en": "No deposit", "ru": "Без предоплаты", "cz": "Bez zálohy"},
+  "business.publicBooking.depositFixed": {"en": "Fixed amount", "ru": "Фиксированная сумма", "cz": "Pevná částka"},
+  "business.publicBooking.depositPercentage": {"en": "Percentage of the price", "ru": "Процент от стоимости", "cz": "Procento z ceny"},
+  "business.publicBooking.depositValue": {"en": "Amount", "ru": "Сумма", "cz": "Částka"},
+  "business.publicBooking.depositHold": {"en": "Hold, minutes", "ru": "Удержание, минут", "cz": "Držení, minuty"},
+  "business.publicBooking.depositSave": {"en": "Save deposit settings", "ru": "Сохранить настройки предоплаты", "cz": "Uložit nastavení zálohy"},
+  "business.publicBooking.depositSaving": {"en": "Saving…", "ru": "Сохранение…", "cz": "Ukládám…"},
+  "business.publicBooking.depositSaved": {"en": "Deposit settings saved.", "ru": "Настройки предоплаты сохранены.", "cz": "Nastavení zálohy uloženo."},
+  "business.publicBooking.depositUnavailable": {"en": "The payment provider is not configured on this server, so guests do not see a deposit.", "ru": "Платёжный провайдер на этом сервере не настроен, поэтому гости не видят предоплату.", "cz": "Poskytovatel plateb není na tomto serveru nastaven, proto hosté zálohu nevidí."},
+  "business.publicBooking.depositInvalid": {"en": "Check the deposit amount and hold time.", "ru": "Проверьте сумму предоплаты и время удержания.", "cz": "Zkontrolujte částku zálohy a dobu držení."},
   "portal.title": {"en": "Client area", "ru": "Кабинет клиента", "cz": "Klientský portál"},
   "portal.login.title": {"en": "Sign in to your client area", "ru": "Вход в кабинет клиента", "cz": "Přihlášení do klientského portálu"},
   "portal.login.subtitle": {"en": "See your visits, points and questionnaires. Sign-in is by a one-time link — no password needed.", "ru": "Смотрите свои визиты, баллы и анкеты. Вход по одноразовой ссылке — пароль не нужен.", "cz": "Prohlédněte si návštěvy, body a dotazníky. Přihlášení je jednorázovým odkazem — bez hesla."},

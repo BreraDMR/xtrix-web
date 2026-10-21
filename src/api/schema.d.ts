@@ -727,6 +727,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/businesses/me/service-payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Deposits and holds of this business */
+        get: operations["list_service_payments_businesses_me_service_payments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/service-payments/{attempt_id}/refunds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refund a paid deposit by an idempotent key */
+        post: operations["refund_service_payment_businesses_me_service_payments__attempt_id__refunds_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/businesses/{business_id}": {
         parameters: {
             query?: never;
@@ -1967,6 +2001,40 @@ export interface paths {
          * @description The visit keeps its service and master. The target is checked against the same availability rules as public booking while both rows are locked; on a conflict the old time stays unchanged. Repeating the request for the time already stored returns the booking without a second move or event.
          */
         post: operations["reschedule_managed_booking_public_booking_management_reschedule_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/booking/payments/{public_ref}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Guest-visible state of one deposit */
+        get: operations["get_payment_status_public_booking_payments__public_ref__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/booking/payments/{public_ref}/sandbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Finish a sandbox checkout (never moves money) */
+        post: operations["sandbox_outcome_public_booking_payments__public_ref__sandbox_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6394,6 +6462,8 @@ export interface components {
              * @description One-time management token for this booking; put it in a link fragment and never log it
              */
             manage_token?: string | null;
+            /** @description Deposit required before the slot is confirmed; absent when the salon takes payment on site */
+            payment?: components["schemas"]["PublicPaymentOut"] | null;
             /** Price */
             price?: number | null;
             /** Service Name */
@@ -6422,17 +6492,44 @@ export interface components {
         };
         /** PublicBookingSettingsOut */
         PublicBookingSettingsOut: {
+            /**
+             * Deposit Hold Minutes
+             * @default 30
+             */
+            deposit_hold_minutes: number;
+            /**
+             * Deposit Type
+             * @default none
+             * @enum {string}
+             */
+            deposit_type: "none" | "fixed" | "percentage";
+            /**
+             * Deposit Value
+             * @default 0
+             */
+            deposit_value: number;
             /** Has Bookable Service */
             has_bookable_service: boolean;
             /** Has Schedule */
             has_schedule: boolean;
             /** Is Enabled */
             is_enabled: boolean;
+            /**
+             * Payments Available
+             * @default false
+             */
+            payments_available: boolean;
             /** Slug */
             slug: string;
         };
         /** PublicBookingSettingsUpdate */
         PublicBookingSettingsUpdate: {
+            /** Deposit Hold Minutes */
+            deposit_hold_minutes?: number | null;
+            /** Deposit Type */
+            deposit_type?: ("none" | "fixed" | "percentage") | null;
+            /** Deposit Value */
+            deposit_value?: number | null;
             /** Is Enabled */
             is_enabled?: boolean | null;
             /** Slug */
@@ -6449,6 +6546,22 @@ export interface components {
             business_type: string;
             /** Currency */
             currency: string;
+            /**
+             * Deposit Hold Minutes
+             * @default 30
+             */
+            deposit_hold_minutes: number;
+            /**
+             * Deposit Type
+             * @default none
+             * @enum {string}
+             */
+            deposit_type: "none" | "fixed" | "percentage";
+            /**
+             * Deposit Value
+             * @default 0
+             */
+            deposit_value: number;
             /** Description */
             description?: string | null;
             /** Email */
@@ -6471,6 +6584,70 @@ export interface components {
             date: string;
             /** Slots */
             slots: components["schemas"]["PublicSlotOut"][];
+        };
+        /** PublicPaymentOut */
+        PublicPaymentOut: {
+            /** Amount */
+            amount: number;
+            /** Checkout Url */
+            checkout_url?: string | null;
+            /** Currency */
+            currency: string;
+            /**
+             * Hold Expires At
+             * Format: date-time
+             */
+            hold_expires_at: string;
+            /** Paid At */
+            paid_at?: string | null;
+            /** Public Ref */
+            public_ref: string;
+            /** Refunded Amount */
+            refunded_amount: number;
+            /** Remaining Amount */
+            remaining_amount: number;
+            /** Status */
+            status: string;
+        };
+        /** PublicPaymentStatusOut */
+        PublicPaymentStatusOut: {
+            /** Amount */
+            amount: number;
+            /** Checkout Url */
+            checkout_url?: string | null;
+            /** Currency */
+            currency: string;
+            /**
+             * Hold Expires At
+             * Format: date-time
+             */
+            hold_expires_at: string;
+            /** Paid At */
+            paid_at?: string | null;
+            /** Public Ref */
+            public_ref: string;
+            /** Refunded Amount */
+            refunded_amount: number;
+            /** Remaining Amount */
+            remaining_amount: number;
+            /** Service Name */
+            service_name: string;
+            /** Status */
+            status: string;
+            /** Timezone */
+            timezone: string;
+            /**
+             * Visit End
+             * Format: date-time
+             */
+            visit_end: string;
+            /**
+             * Visit Start
+             * Format: date-time
+             */
+            visit_start: string;
+            /** Visit Status */
+            visit_status: string;
         };
         /** PublicServiceOut */
         PublicServiceOut: {
@@ -7341,6 +7518,14 @@ export interface components {
             /** Status */
             status?: ("completed" | "pending" | "failed") | null;
         };
+        /** SandboxPaymentOutcomeIn */
+        SandboxPaymentOutcomeIn: {
+            /**
+             * Outcome
+             * @enum {string}
+             */
+            outcome: "paid" | "failed";
+        };
         /** ScheduleExceptionCreate */
         ScheduleExceptionCreate: {
             /** End Time */
@@ -7512,6 +7697,85 @@ export interface components {
              * @description Specialists' info
              */
             specialists?: components["schemas"]["ServiceSpecialistOut"][] | null;
+        };
+        /** ServicePaymentOut */
+        ServicePaymentOut: {
+            /** Amount */
+            amount: number;
+            /** Client Name */
+            client_name: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Currency */
+            currency: string;
+            /**
+             * Hold Expires At
+             * Format: date-time
+             */
+            hold_expires_at: string;
+            /** Id */
+            id: number;
+            /** Paid At */
+            paid_at?: string | null;
+            /** Provider */
+            provider: string;
+            /** Refundable Amount */
+            refundable_amount: number;
+            /** Refunded Amount */
+            refunded_amount: number;
+            /** Refunds */
+            refunds?: components["schemas"]["ServicePaymentRefundOut"][];
+            /** Remaining Amount */
+            remaining_amount: number;
+            /** Service Name */
+            service_name: string;
+            /** Status */
+            status: string;
+            /** Visit Id */
+            visit_id: number;
+            /**
+             * Visit Start
+             * Format: date-time
+             */
+            visit_start: string;
+            /** Visit Status */
+            visit_status: string;
+        };
+        /** ServicePaymentRefundIn */
+        ServicePaymentRefundIn: {
+            /**
+             * Amount
+             * @description Defaults to the whole unrefunded amount
+             */
+            amount?: number | null;
+            /** Reason */
+            reason?: string | null;
+            /**
+             * Refund Key
+             * @description Caller-generated retry key: the same key never refunds twice
+             */
+            refund_key: string;
+        };
+        /** ServicePaymentRefundOut */
+        ServicePaymentRefundOut: {
+            /** Amount */
+            amount: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Currency */
+            currency: string;
+            /** Id */
+            id: number;
+            /** Reason */
+            reason?: string | null;
+            /** Status */
+            status: string;
         };
         /** ServiceSpecialistOut */
         ServiceSpecialistOut: {
@@ -8582,6 +8846,8 @@ export interface components {
              * @description One-time management token for this booking; put it in a link fragment and never log it
              */
             manage_token?: string | null;
+            /** @description Deposit required before the slot is confirmed; absent when the salon takes payment on site */
+            payment?: components["schemas"]["PublicPaymentOut"] | null;
             /** Price */
             price?: number | null;
             /** Service Name */
@@ -10376,6 +10642,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QuestionnaireVersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_service_payments_businesses_me_service_payments_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServicePaymentOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refund_service_payment_businesses_me_service_payments__attempt_id__refunds_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                attempt_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServicePaymentRefundIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServicePaymentRefundOut"];
                 };
             };
             /** @description Validation Error */
@@ -13871,6 +14209,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicBookingManageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_payment_status_public_booking_payments__public_ref__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Payment-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                public_ref: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicPaymentStatusOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sandbox_outcome_public_booking_payments__public_ref__sandbox_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Payment-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                public_ref: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SandboxPaymentOutcomeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicPaymentStatusOut"];
                 };
             };
             /** @description Validation Error */

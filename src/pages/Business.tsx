@@ -9,6 +9,7 @@ import BusinessForm from '../components/BusinessForm'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useAuthStore } from '../store/authStore'
 import { useLabels } from '../i18n/labels'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import type { BusinessOut, PublicBookingSettingsOut } from '../api/types'
 import { effectiveAssistant } from '../i18n/assistant'
 
@@ -178,9 +179,14 @@ function AssistantInfo({ business }: { business: BusinessOut }) {
 
 function PublicBookingCard() {
   const { t } = useTranslation()
+  const currency = useBusinessCurrency()
   const queryClient = useQueryClient()
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
+  const [depositType, setDepositType] = useState<'none' | 'fixed' | 'percentage'>('none')
+  const [depositValue, setDepositValue] = useState('0')
+  const [holdMinutes, setHoldMinutes] = useState('30')
+  const [depositSaved, setDepositSaved] = useState(false)
 
   const settingsQuery = useQuery<PublicBookingSettingsOut>({
     queryKey: ['public-booking-settings'],
@@ -205,6 +211,21 @@ function PublicBookingCard() {
     },
   })
 
+  const depositMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.put<PublicBookingSettingsOut>('/businesses/me/public-booking', {
+        deposit_type: depositType,
+        deposit_value: depositType === 'none' ? 0 : Number(depositValue),
+        deposit_hold_minutes: Number(holdMinutes),
+      })
+      return data
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData<PublicBookingSettingsOut>(['public-booking-settings'], data)
+      setDepositSaved(true)
+    },
+  })
+
   useEffect(() => {
     if (!copied) return
     const timer = window.setTimeout(() => setCopied(false), 2000)
@@ -212,6 +233,22 @@ function PublicBookingCard() {
   }, [copied])
 
   const settings = settingsQuery.data
+
+  useEffect(() => {
+    if (!settings) return
+    setDepositType(settings.deposit_type ?? 'none')
+    setDepositValue(String(settings.deposit_value ?? 0))
+    setHoldMinutes(String(settings.deposit_hold_minutes ?? 30))
+  }, [settings])
+
+  const depositNumber = Number(depositValue)
+  const holdNumber = Number(holdMinutes)
+  const depositValid = depositType === 'none'
+    || (Number.isFinite(depositNumber)
+      && (depositType === 'fixed'
+        ? depositNumber > 0
+        : depositNumber >= 1 && depositNumber <= 100))
+  const holdValid = Number.isInteger(holdNumber) && holdNumber >= 5 && holdNumber <= 1440
   const publicUrl = settings ? `${window.location.origin}/booking/${settings.slug}` : ''
   const ready = Boolean(settings?.has_bookable_service && settings?.has_schedule)
 
@@ -369,6 +406,103 @@ function PublicBookingCard() {
               {t('business.publicBooking.enabledNotReady')}
             </p>
           )}
+
+          <div className="mt-6 border-t border-gray-100 pt-4 dark:border-gray-700">
+            <h3 className="text-base font-semibold">{t('business.publicBooking.depositTitle')}</h3>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {t('business.publicBooking.depositHint')}
+            </p>
+            {!settings.payments_available && (
+              <p className="mt-2 rounded-md bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                {t('business.publicBooking.depositUnavailable')}
+              </p>
+            )}
+
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              <label className="block text-sm font-medium">
+                {t('business.publicBooking.depositType')}
+                <select
+                  value={depositType}
+                  onChange={(event) => {
+                    setDepositType(event.target.value as 'none' | 'fixed' | 'percentage')
+                    setDepositSaved(false)
+                  }}
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+                >
+                  <option value="none">{t('business.publicBooking.depositNone')}</option>
+                  <option value="fixed">{t('business.publicBooking.depositFixed')}</option>
+                  <option value="percentage">{t('business.publicBooking.depositPercentage')}</option>
+                </select>
+              </label>
+
+              {depositType !== 'none' && (
+                <label className="block text-sm font-medium">
+                  {t('business.publicBooking.depositValue')}
+                  <div className="mt-1 flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={depositType === 'fixed' ? 0.01 : 1}
+                      max={depositType === 'percentage' ? 100 : undefined}
+                      step={depositType === 'fixed' ? 0.01 : 1}
+                      value={depositValue}
+                      onChange={(event) => {
+                        setDepositValue(event.target.value)
+                        setDepositSaved(false)
+                      }}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+                    />
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {depositType === 'percentage' ? '%' : currency}
+                    </span>
+                  </div>
+                </label>
+              )}
+
+              <label className="block text-sm font-medium">
+                {t('business.publicBooking.depositHold')}
+                <input
+                  type="number"
+                  min={5}
+                  max={1440}
+                  step={1}
+                  value={holdMinutes}
+                  onChange={(event) => {
+                    setHoldMinutes(event.target.value)
+                    setDepositSaved(false)
+                  }}
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+                />
+              </label>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                disabled={depositMutation.isPending || !depositValid || !holdValid}
+                onClick={() => depositMutation.mutate()}
+                className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
+              >
+                {depositMutation.isPending
+                  ? t('business.publicBooking.depositSaving')
+                  : t('business.publicBooking.depositSave')}
+              </button>
+              {depositSaved && (
+                <span role="status" className="text-sm text-emerald-700 dark:text-emerald-400">
+                  {t('business.publicBooking.depositSaved')}
+                </span>
+              )}
+              {(!depositValid || !holdValid) && (
+                <span className="text-sm text-amber-700 dark:text-amber-400">
+                  {t('business.publicBooking.depositInvalid')}
+                </span>
+              )}
+            </div>
+            {depositMutation.isError && (
+              <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {apiErrorMessage(depositMutation.error, t('business.publicBooking.depositInvalid'))}
+              </p>
+            )}
+          </div>
 
           {toggle.isError && (
             <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">

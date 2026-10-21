@@ -32,6 +32,7 @@ import BookingPage from './pages/booking/BookingPage'
 import ManageBookingPage from './pages/booking/ManageBooking'
 import WaitlistOfferPage from './pages/booking/WaitlistOffer'
 import QuestionnairePage from './pages/booking/Questionnaire'
+import PaymentReturn, { SandboxCheckout } from './pages/booking/PaymentReturn'
 import PortalLogin from './pages/client/PortalLogin'
 import ClientPortal from './pages/client/Portal'
 import LegacyHistory from './pages/client/LegacyHistory'
@@ -52,6 +53,8 @@ function App() {
         <Route path="/manage" element={<ManageBookingPage />} />
         <Route path="/waitlist/offer" element={<WaitlistOfferPage />} />
         <Route path="/questionnaire" element={<QuestionnairePage />} />
+        <Route path="/payment/sandbox" element={<SandboxCheckout />} />
+        <Route path="/payment/return" element={<PaymentReturn />} />
         <Route path="/client" element={<ClientPortal />} />
         <Route path="/client/portal" element={<PortalLogin />} />
         <Route path="/client/history" element={<LegacyHistory />} />

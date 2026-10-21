@@ -5,6 +5,7 @@ import api from '../../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
 import LanguageSwitcher from '../../components/LanguageSwitcher'
 import LoadingSpinner from '../../components/LoadingSpinner'
+import DepositStep from '../../components/booking/DepositStep'
 import { INTL_LOCALE } from '../../components/booking/intl'
 import { useTranslation } from '../../hooks/useTranslation'
 import type { TranslationKey } from '../../i18n/translations'
@@ -222,14 +223,39 @@ export default function WaitlistOffer() {
         )}
 
         {accepted ? (
-          <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
-            <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">
-              {t('waitlistOffer.acceptedTitle')}
+          <div className={`mt-5 rounded-xl border p-4 ${
+            accepted.payment
+              ? 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950'
+              : 'border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950'
+          }`}>
+            <h2 className={`text-lg font-semibold ${
+              accepted.payment
+                ? 'text-amber-900 dark:text-amber-100'
+                : 'text-emerald-900 dark:text-emerald-100'
+            }`}>
+              {accepted.payment ? t('booking.heldTitle') : t('waitlistOffer.acceptedTitle')}
             </h2>
-            <p className="mt-1 text-sm text-emerald-800 dark:text-emerald-200">{t('waitlistOffer.acceptedText')}</p>
-            <p className="mt-2 text-sm font-medium text-emerald-900 dark:text-emerald-100">
+            <p className={`mt-1 text-sm ${
+              accepted.payment
+                ? 'text-amber-900 dark:text-amber-100'
+                : 'text-emerald-800 dark:text-emerald-200'
+            }`}>
+              {accepted.payment ? t('booking.heldText') : t('waitlistOffer.acceptedText')}
+            </p>
+            <p className={`mt-2 text-sm font-medium ${
+              accepted.payment
+                ? 'text-amber-950 dark:text-amber-50'
+                : 'text-emerald-900 dark:text-emerald-100'
+            }`}>
               {t('booking.bookingNumber')}: #{accepted.id}
             </p>
+            {accepted.payment && (
+              <DepositStep
+                payment={accepted.payment}
+                timezone={accepted.timezone}
+                currency={accepted.currency}
+              />
+            )}
             {accepted.manage_token && (
               <a
                 href={`/manage#token=${encodeURIComponent(accepted.manage_token)}`}
