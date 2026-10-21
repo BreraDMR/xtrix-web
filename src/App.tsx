@@ -33,6 +33,7 @@ import ManageBookingPage from './pages/booking/ManageBooking'
 import WaitlistOfferPage from './pages/booking/WaitlistOffer'
 import QuestionnairePage from './pages/booking/Questionnaire'
 import PaymentReturn, { SandboxCheckout } from './pages/booking/PaymentReturn'
+import { GiftPurchase, GiftCheckout, GiftReturn } from './pages/booking/GiftPurchase'
 import PortalLogin from './pages/client/PortalLogin'
 import ClientPortal from './pages/client/Portal'
 import LegacyHistory from './pages/client/LegacyHistory'
@@ -55,6 +56,9 @@ function App() {
         <Route path="/questionnaire" element={<QuestionnairePage />} />
         <Route path="/payment/sandbox" element={<SandboxCheckout />} />
         <Route path="/payment/return" element={<PaymentReturn />} />
+        <Route path="/gift/:slug" element={<GiftPurchase />} />
+        <Route path="/gift/checkout" element={<GiftCheckout />} />
+        <Route path="/gift/return" element={<GiftReturn />} />
         <Route path="/client" element={<ClientPortal />} />
         <Route path="/client/portal" element={<PortalLogin />} />
         <Route path="/client/history" element={<LegacyHistory />} />

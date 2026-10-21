@@ -1700,6 +1700,114 @@ export type TranslationKey =
   | 'questionnaireAnswers.submittedAt'
   | 'questionnaireAnswers.noAccess'
   | 'questionnaireAnswers.loadError'
+  | 'gift.tab'
+  | 'gift.offersTitle'
+  | 'gift.offersSubtitle'
+  | 'gift.addOffer'
+  | 'gift.editOffer'
+  | 'gift.name'
+  | 'gift.description'
+  | 'gift.kind'
+  | 'gift.kindMoney'
+  | 'gift.kindPackage'
+  | 'gift.price'
+  | 'gift.faceValue'
+  | 'gift.visitsCount'
+  | 'gift.validityDays'
+  | 'gift.services'
+  | 'gift.allServices'
+  | 'gift.active'
+  | 'gift.inactive'
+  | 'gift.save'
+  | 'gift.saveError'
+  | 'gift.saved'
+  | 'gift.noOffers'
+  | 'gift.publicLink'
+  | 'gift.publicLinkHint'
+  | 'gift.needSlug'
+  | 'gift.copy'
+  | 'gift.copied'
+  | 'gift.shopTitle'
+  | 'gift.shopSubtitle'
+  | 'gift.buy'
+  | 'gift.paymentsUnavailable'
+  | 'gift.noOffersPublic'
+  | 'gift.buyerName'
+  | 'gift.buyerEmail'
+  | 'gift.recipientName'
+  | 'gift.recipientEmail'
+  | 'gift.message'
+  | 'gift.consent'
+  | 'gift.continue'
+  | 'gift.purchaseError'
+  | 'gift.checkoutTitle'
+  | 'gift.checkoutText'
+  | 'gift.pay'
+  | 'gift.fail'
+  | 'gift.alreadySettled'
+  | 'gift.returnTitle'
+  | 'gift.paidTitle'
+  | 'gift.paidText'
+  | 'gift.pendingTitle'
+  | 'gift.pendingText'
+  | 'gift.failedTitle'
+  | 'gift.failedText'
+  | 'gift.expiredTitle'
+  | 'gift.expiredText'
+  | 'gift.reconcileTitle'
+  | 'gift.reconcileText'
+  | 'gift.code'
+  | 'gift.codeHint'
+  | 'gift.balance'
+  | 'gift.visitsLeft'
+  | 'gift.validUntil'
+  | 'gift.invalidLink'
+  | 'gift.loadError'
+  | 'gift.checkAgain'
+  | 'gift.amountToUse'
+  | 'gift.amountHint'
+  | 'gift.useGift'
+  | 'gift.lookup'
+  | 'gift.lookupHint'
+  | 'gift.notFound'
+  | 'gift.applyError'
+  | 'gift.remove'
+  | 'gift.loyaltyDisabled'
+  | 'gift.savedGiftWarning'
+  | 'gift.forService'
+  | 'gift.anyService'
+  | 'gift.visitsUnit'
+  | 'gift.issuedBy'
+  | 'gift.recipient'
+  | 'gift.status.active'
+  | 'gift.status.exhausted'
+  | 'gift.status.expired'
+  | 'gift.status.cancelled'
+  | 'gift.certificatesTitle'
+  | 'gift.certificatesSubtitle'
+  | 'gift.noCertificates'
+  | 'gift.details'
+  | 'gift.close'
+  | 'gift.reverse'
+  | 'gift.reverseConfirm'
+  | 'gift.reverseError'
+  | 'gift.reverseDone'
+  | 'gift.ledger'
+  | 'gift.ledger.issued'
+  | 'gift.ledger.redeemed'
+  | 'gift.ledger.reversed'
+  | 'gift.ledger.expired'
+  | 'gift.remaining'
+  | 'gift.visit'
+  | 'gift.buyer'
+  | 'gift.statusFilter.all'
+  | 'gift.servicesHint'
+  | 'gift.payBefore'
+  | 'gift.sandboxBadge'
+  | 'gift.amountTooHigh'
+  | 'gift.scopeMismatch'
+  | 'gift.amountDue'
+  | 'gift.unusable'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -4080,6 +4188,255 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     en: 'Could not load the questionnaire answers.',
     ru: 'Не удалось загрузить ответы анкеты.',
     cz: 'Odpovědi z dotazníku se nepodařilo načíst.',
+  },
+
+  'gift.tab': { en: 'Gift certificates', ru: 'Подарочные сертификаты', cz: 'Dárkové certifikáty' },
+  'gift.offersTitle': { en: 'Gift offers', ru: 'Подарочные предложения', cz: 'Dárkové nabídky' },
+  'gift.offersSubtitle': {
+    en: 'Sell money certificates and visit packages through your public gift shop.',
+    ru: 'Продавайте денежные сертификаты и пакеты визитов через публичный подарочный магазин.',
+    cz: 'Prodávejte peněžní certifikáty a balíčky návštěv přes veřejný dárkový obchod.',
+  },
+  'gift.addOffer': { en: 'Add offer', ru: 'Добавить предложение', cz: 'Přidat nabídku' },
+  'gift.editOffer': { en: 'Edit offer', ru: 'Изменить предложение', cz: 'Upravit nabídku' },
+  'gift.name': { en: 'Name', ru: 'Название', cz: 'Název' },
+  'gift.description': { en: 'Description', ru: 'Описание', cz: 'Popis' },
+  'gift.kind': { en: 'Type', ru: 'Тип', cz: 'Typ' },
+  'gift.kindMoney': { en: 'Money certificate', ru: 'Денежный сертификат', cz: 'Peněžní certifikát' },
+  'gift.kindPackage': { en: 'Visit package', ru: 'Пакет визитов', cz: 'Balíček návštěv' },
+  'gift.price': { en: 'Price', ru: 'Цена', cz: 'Cena' },
+  'gift.faceValue': { en: 'Face value', ru: 'Номинал', cz: 'Nominální hodnota' },
+  'gift.visitsCount': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'gift.validityDays': { en: 'Valid for, days', ru: 'Срок действия, дней', cz: 'Platnost, dní' },
+  'gift.services': { en: 'Applicable services', ru: 'Доступные услуги', cz: 'Platné služby' },
+  'gift.allServices': { en: 'All services', ru: 'Все услуги', cz: 'Všechny služby' },
+  'gift.active': { en: 'On sale', ru: 'В продаже', cz: 'V prodeji' },
+  'gift.inactive': { en: 'Hidden', ru: 'Скрыто', cz: 'Skryto' },
+  'gift.save': { en: 'Save', ru: 'Сохранить', cz: 'Uložit' },
+  'gift.saveError': {
+    en: 'Could not save the offer.',
+    ru: 'Не удалось сохранить предложение.',
+    cz: 'Nabídku se nepodařilo uložit.',
+  },
+  'gift.saved': { en: 'Offer saved', ru: 'Предложение сохранено', cz: 'Nabídka uložena' },
+  'gift.noOffers': {
+    en: 'No gift offers yet. Add the first one.',
+    ru: 'Подарочных предложений пока нет. Добавьте первое.',
+    cz: 'Zatím žádné dárkové nabídky. Přidejte první.',
+  },
+  'gift.publicLink': { en: 'Public gift shop', ru: 'Публичный магазин подарков', cz: 'Veřejný dárkový obchod' },
+  'gift.publicLinkHint': {
+    en: 'Share this link with clients so they can buy certificates online.',
+    ru: 'Поделитесь ссылкой с клиентами, чтобы они могли купить сертификат онлайн.',
+    cz: 'Sdílejte odkaz s klienty, aby si mohli certifikát koupit online.',
+  },
+  'gift.needSlug': {
+    en: 'Set up public booking first to get a shop link.',
+    ru: 'Сначала настройте публичную запись, чтобы получить ссылку на магазин.',
+    cz: 'Nejprve nastavte veřejnou rezervaci, abyste získali odkaz na obchod.',
+  },
+  'gift.copy': { en: 'Copy link', ru: 'Копировать ссылку', cz: 'Kopírovat odkaz' },
+  'gift.copied': { en: 'Copied', ru: 'Скопировано', cz: 'Zkopírováno' },
+  'gift.shopTitle': { en: 'Gift certificates', ru: 'Подарочные сертификаты', cz: 'Dárkové certifikáty' },
+  'gift.shopSubtitle': {
+    en: 'Give a certificate for a visit or a whole course of care.',
+    ru: 'Подарите сертификат на один визит или целый курс ухода.',
+    cz: 'Darujte certifikát na jednu návštěvu nebo celý kurz péče.',
+  },
+  'gift.buy': { en: 'Buy', ru: 'Купить', cz: 'Koupit' },
+  'gift.paymentsUnavailable': {
+    en: 'Online payment is not set up yet. Please contact the salon.',
+    ru: 'Онлайн-оплата пока не настроена. Пожалуйста, свяжитесь с салоном.',
+    cz: 'Online platba zatím není nastavena. Kontaktujte prosím salon.',
+  },
+  'gift.noOffersPublic': {
+    en: 'No certificates on sale right now.',
+    ru: 'Сейчас сертификаты не продаются.',
+    cz: 'Momentálně nejsou certifikáty v prodeji.',
+  },
+  'gift.buyerName': { en: 'Your name', ru: 'Ваше имя', cz: 'Vaše jméno' },
+  'gift.buyerEmail': { en: 'Your email', ru: 'Ваш email', cz: 'Váš email' },
+  'gift.recipientName': { en: 'Recipient name', ru: 'Имя получателя', cz: 'Jméno obdarovaného' },
+  'gift.recipientEmail': { en: 'Recipient email', ru: 'Email получателя', cz: 'Email obdarovaného' },
+  'gift.message': { en: 'Message', ru: 'Сообщение', cz: 'Zpráva' },
+  'gift.consent': {
+    en: 'I agree to the processing of my personal data for this purchase.',
+    ru: 'Согласен на обработку персональных данных для этой покупки.',
+    cz: 'Souhlasím se zpracováním osobních údajů pro tento nákup.',
+  },
+  'gift.continue': { en: 'Continue to payment', ru: 'Перейти к оплате', cz: 'Pokračovat k platbě' },
+  'gift.purchaseError': {
+    en: 'Could not create the order.',
+    ru: 'Не удалось создать заказ.',
+    cz: 'Objednávku se nepodařilo vytvořit.',
+  },
+  'gift.checkoutTitle': { en: 'Gift payment', ru: 'Оплата сертификата', cz: 'Platba certifikátu' },
+  'gift.checkoutText': {
+    en: 'This is a sandbox payment. Confirm to complete the purchase.',
+    ru: 'Это тестовая оплата. Подтвердите, чтобы завершить покупку.',
+    cz: 'Toto je testovací platba. Potvrďte dokončení nákupu.',
+  },
+  'gift.pay': { en: 'Confirm payment', ru: 'Подтвердить оплату', cz: 'Potvrdit platbu' },
+  'gift.fail': { en: 'Decline payment', ru: 'Отклонить оплату', cz: 'Zamítnout platbu' },
+  'gift.alreadySettled': {
+    en: 'This payment is already settled.',
+    ru: 'Эта оплата уже обработана.',
+    cz: 'Tato platba je již vyřízena.',
+  },
+  'gift.returnTitle': { en: 'Gift order', ru: 'Заказ сертификата', cz: 'Objednávka certifikátu' },
+  'gift.paidTitle': { en: 'Certificate issued', ru: 'Сертификат выпущен', cz: 'Certifikát vystaven' },
+  'gift.paidText': {
+    en: 'We issued the certificate and linked it to this page. Keep the link.',
+    ru: 'Сертификат выпущен и привязан к этой странице. Сохраните ссылку.',
+    cz: 'Certifikát byl vystaven a propojen s touto stránkou. Uložte si odkaz.',
+  },
+  'gift.pendingTitle': { en: 'Waiting for payment', ru: 'Ожидаем оплату', cz: 'Čeká se na platbu' },
+  'gift.pendingText': {
+    en: 'The payment has not arrived yet. Check again in a moment.',
+    ru: 'Оплата ещё не поступила. Проверьте через минуту.',
+    cz: 'Platba zatím nedorazila. Zkontrolujte za chvíli.',
+  },
+  'gift.failedTitle': { en: 'Payment failed', ru: 'Оплата не прошла', cz: 'Platba selhala' },
+  'gift.failedText': {
+    en: 'The certificate was not issued. Return to the shop to try again.',
+    ru: 'Сертификат не выпущен. Вернитесь в магазин и попробуйте снова.',
+    cz: 'Certifikát nebyl vystaven. Vraťte se do obchodu a zkuste to znovu.',
+  },
+  'gift.expiredTitle': { en: 'Order expired', ru: 'Заказ истёк', cz: 'Objednávka vypršela' },
+  'gift.expiredText': {
+    en: 'The payment window closed. Start a new purchase.',
+    ru: 'Время на оплату истекло. Оформите покупку заново.',
+    cz: 'Čas na platbu vypršel. Vytvořte novou objednávku.',
+  },
+  'gift.reconcileTitle': { en: 'Checking payment', ru: 'Проверяем оплату', cz: 'Kontrola platby' },
+  'gift.reconcileText': {
+    en: 'The provider has not answered yet. Refresh the status in a moment.',
+    ru: 'Провайдер ещё не ответил. Обновите статус через минуту.',
+    cz: 'Poskytovatel zatím neodpověděl. Obnovte stav za chvíli.',
+  },
+  'gift.code': { en: 'Certificate code', ru: 'Код сертификата', cz: 'Kód certifikátu' },
+  'gift.codeHint': {
+    en: 'Enter the code from the certificate. The current balance is calculated automatically.',
+    ru: 'Введите код с сертификата. Текущий баланс рассчитывается автоматически.',
+    cz: 'Zadejte kód z certifikátu. Aktuální zůstatek se vypočítá automaticky.',
+  },
+  'gift.balance': { en: 'Balance', ru: 'Баланс', cz: 'Zůstatek' },
+  'gift.visitsLeft': { en: 'Visits left', ru: 'Осталось визитов', cz: 'Zbývá návštěv' },
+  'gift.validUntil': { en: 'Valid until', ru: 'Действует до', cz: 'Platí do' },
+  'gift.invalidLink': {
+    en: 'This link is not valid. Ask the salon for a new one.',
+    ru: 'Ссылка недействительна. Попросите салон прислать новую.',
+    cz: 'Tento odkaz není platný. Požádejte salon o nový.',
+  },
+  'gift.loadError': {
+    en: 'Could not load the gift data.',
+    ru: 'Не удалось загрузить данные сертификата.',
+    cz: 'Dárková data se nepodařilo načíst.',
+  },
+  'gift.checkAgain': { en: 'Check again', ru: 'Проверить снова', cz: 'Zkontrolovat znovu' },
+  'gift.amountToUse': { en: 'Amount to use', ru: 'Сумма к списанию', cz: 'Částka k čerpání' },
+  'gift.amountHint': {
+    en: 'Leave empty to apply the maximum available for this visit.',
+    ru: 'Оставьте пустым, чтобы списать максимум, доступный для этого визита.',
+    cz: 'Nechte prázdné pro maximální částku dostupnou pro tuto návštěvu.',
+  },
+  'gift.useGift': { en: 'Apply gift certificate', ru: 'Применить сертификат', cz: 'Použít certifikát' },
+  'gift.lookup': { en: 'Find', ru: 'Найти', cz: 'Najít' },
+  'gift.lookupHint': {
+    en: 'Find a certificate by its code.',
+    ru: 'Найдите сертификат по коду.',
+    cz: 'Najděte certifikát podle kódu.',
+  },
+  'gift.notFound': {
+    en: 'No certificate found for this code.',
+    ru: 'Сертификат с таким кодом не найден.',
+    cz: 'Certifikát s tímto kódem nebyl nalezen.',
+  },
+  'gift.applyError': {
+    en: 'Could not apply the certificate.',
+    ru: 'Не удалось применить сертификат.',
+    cz: 'Certifikát se nepodařilo použít.',
+  },
+  'gift.remove': { en: 'Remove', ru: 'Убрать', cz: 'Odebrat' },
+  'gift.loyaltyDisabled': {
+    en: 'Loyalty points cannot be combined with a gift certificate.',
+    ru: 'Баллы лояльности нельзя сочетать с подарочным сертификатом.',
+    cz: 'Věrnostní body nelze kombinovat s dárkovým certifikátem.',
+  },
+  'gift.savedGiftWarning': {
+    en: 'The visit was saved, but the certificate was not applied.',
+    ru: 'Визит сохранён, но сертификат не применён.',
+    cz: 'Návštěva byla uložena, ale certifikát nebyl použit.',
+  },
+  'gift.forService': { en: 'For service', ru: 'На услугу', cz: 'Na službu' },
+  'gift.anyService': { en: 'Any service', ru: 'Любая услуга', cz: 'Libovolná služba' },
+  'gift.visitsUnit': { en: 'visits', ru: 'визитов', cz: 'návštěv' },
+  'gift.issuedBy': { en: 'Issued by', ru: 'Кем выпущен', cz: 'Vystavil' },
+  'gift.recipient': { en: 'Recipient', ru: 'Получатель', cz: 'Příjemce' },
+  'gift.status.active': { en: 'Active', ru: 'Активен', cz: 'Aktivní' },
+  'gift.status.exhausted': { en: 'Used up', ru: 'Использован', cz: 'Vyčerpán' },
+  'gift.status.expired': { en: 'Expired', ru: 'Истёк', cz: 'Vypršel' },
+  'gift.status.cancelled': { en: 'Cancelled', ru: 'Отменён', cz: 'Zrušen' },
+  'gift.certificatesTitle': {
+    en: 'Issued certificates',
+    ru: 'Выпущенные сертификаты',
+    cz: 'Vystavené certifikáty',
+  },
+  'gift.certificatesSubtitle': {
+    en: 'Balances are calculated from the ledger and cannot be edited by hand.',
+    ru: 'Балансы рассчитываются по журналу и не редактируются вручную.',
+    cz: 'Zůstatky se počítají z deníku a nelze je ručně upravovat.',
+  },
+  'gift.noCertificates': {
+    en: 'No certificates yet.',
+    ru: 'Сертификатов пока нет.',
+    cz: 'Zatím žádné certifikáty.',
+  },
+  'gift.details': { en: 'Details', ru: 'Подробнее', cz: 'Podrobnosti' },
+  'gift.close': { en: 'Close', ru: 'Закрыть', cz: 'Zavřít' },
+  'gift.reverse': { en: 'Reverse redemption', ru: 'Отменить списание', cz: 'Vrátit čerpání' },
+  'gift.reverseConfirm': {
+    en: 'Return this redemption to the certificate balance?',
+    ru: 'Вернуть это списание на баланс сертификата?',
+    cz: 'Vrátit toto čerpání na zůstatek certifikátu?',
+  },
+  'gift.reverseError': {
+    en: 'Could not reverse the redemption.',
+    ru: 'Не удалось отменить списание.',
+    cz: 'Čerpání se nepodařilo vrátit.',
+  },
+  'gift.reverseDone': { en: 'Redemption reversed', ru: 'Списание отменено', cz: 'Čerpání vráceno' },
+  'gift.ledger': { en: 'Ledger', ru: 'Журнал операций', cz: 'Deník operací' },
+  'gift.ledger.issued': { en: 'Issued', ru: 'Выпуск', cz: 'Vystavení' },
+  'gift.ledger.redeemed': { en: 'Redeemed', ru: 'Списание', cz: 'Čerpání' },
+  'gift.ledger.reversed': { en: 'Reversed', ru: 'Возврат', cz: 'Vrácení' },
+  'gift.ledger.expired': { en: 'Expired', ru: 'Истечение', cz: 'Vypršení' },
+  'gift.remaining': { en: 'Remaining', ru: 'Остаток', cz: 'Zbývá' },
+  'gift.visit': { en: 'Visit', ru: 'Визит', cz: 'Návštěva' },
+  'gift.buyer': { en: 'Buyer', ru: 'Покупатель', cz: 'Kupující' },
+  'gift.statusFilter.all': { en: 'All statuses', ru: 'Все статусы', cz: 'Všechny stavy' },
+  'gift.servicesHint': {
+    en: 'With no services selected the certificate works for every service.',
+    ru: 'Если услуги не выбраны, сертификат действует на все услуги.',
+    cz: 'Pokud nejsou vybrány služby, certifikát platí na všechny služby.',
+  },
+  'gift.payBefore': { en: 'Pay before', ru: 'Оплатить до', cz: 'Zaplatit do' },
+  'gift.sandboxBadge': { en: 'Sandbox', ru: 'Тестовый режим', cz: 'Testovací režim' },
+  'gift.amountTooHigh': {
+    en: 'The amount is higher than the available balance.',
+    ru: 'Сумма больше доступного баланса.',
+    cz: 'Částka je vyšší než dostupný zůstatek.',
+  },
+  'gift.scopeMismatch': {
+    en: 'This certificate does not cover the services of this visit.',
+    ru: 'Этот сертификат не покрывает услуги этого визита.',
+    cz: 'Tento certifikát nepokrývá služby této návštěvy.',
+  },
+  'gift.amountDue': { en: 'Due after the certificate', ru: 'К оплате после сертификата', cz: 'K úhradě po certifikátu' },
+  'gift.unusable': {
+    en: 'This certificate cannot be used.',
+    ru: 'Этот сертификат нельзя использовать.',
+    cz: 'Tento certifikát nelze použít.',
   },
 }
 

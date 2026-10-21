@@ -584,6 +584,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/businesses/me/gift-certificates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Certificates and packages of this business with computed balances */
+        get: operations["list_gift_certificates_businesses_me_gift_certificates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/gift-certificates/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Find one certificate by the code the guest presented */
+        get: operations["lookup_gift_certificate_businesses_me_gift_certificates_lookup_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/gift-certificates/redeem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Spend part of the balance or one visit with a retry key */
+        post: operations["redeem_gift_certificate_businesses_me_gift_certificates_redeem_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/gift-certificates/{certificate_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One certificate with its ledger */
+        get: operations["get_gift_certificate_businesses_me_gift_certificates__certificate_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/gift-certificates/{certificate_id}/reversals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Return one redemption to the balance */
+        post: operations["reverse_gift_redemption_businesses_me_gift_certificates__certificate_id__reversals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/gift-offers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Gift offers of this business */
+        get: operations["list_gift_offers_businesses_me_gift_offers_get"];
+        put?: never;
+        /** Create a certificate or visit package offer */
+        post: operations["create_gift_offer_businesses_me_gift_offers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/gift-offers/{offer_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Change a gift offer */
+        put: operations["update_gift_offer_businesses_me_gift_offers__offer_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/businesses/me/notification-deliveries": {
         parameters: {
             query?: never;
@@ -2276,6 +2396,74 @@ export interface paths {
         put?: never;
         /** Email a one-time visitor portal sign-in link */
         post: operations["request_portal_link_public_client_portal__slug__request_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/gifts/orders/{public_ref}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Buyer-visible state of one gift order */
+        get: operations["get_gift_order_public_gifts_orders__public_ref__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/gifts/orders/{public_ref}/sandbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Finish a sandbox gift checkout (never moves money) */
+        post: operations["gift_sandbox_outcome_public_gifts_orders__public_ref__sandbox_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/gifts/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Certificates and visit packages on sale */
+        get: operations["get_gift_shop_public_gifts__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/gifts/{slug}/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start a gift purchase with a retry-safe request key */
+        post: operations["create_gift_order_public_gifts__slug__orders_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5001,6 +5189,315 @@ export interface components {
             last_value: number;
             /** Periods */
             periods: number;
+        };
+        /** GiftCertificateDetailOut */
+        GiftCertificateDetailOut: {
+            /** Buyer Name */
+            buyer_name: string;
+            /** Code */
+            code?: string | null;
+            /** Code Last4 */
+            code_last4: string;
+            /** Currency */
+            currency: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Face Value */
+            face_value: number;
+            /** Id */
+            id: number;
+            /**
+             * Issued At
+             * Format: date-time
+             */
+            issued_at: string;
+            /** Issuer Name */
+            issuer_name: string;
+            /** Kind */
+            kind: string;
+            /** Ledger */
+            ledger?: components["schemas"]["GiftLedgerEntryOut"][];
+            /** Message */
+            message?: string | null;
+            /** Money Balance */
+            money_balance: number;
+            /** Offer Name */
+            offer_name: string;
+            /** Order Id */
+            order_id: number;
+            /** Recipient Email */
+            recipient_email?: string | null;
+            /** Recipient Name */
+            recipient_name: string;
+            /** Service Ids */
+            service_ids?: number[];
+            /** Status */
+            status: string;
+            /** Visits Remaining */
+            visits_remaining: number;
+            /** Visits Total */
+            visits_total: number;
+        };
+        /** GiftCertificateOut */
+        GiftCertificateOut: {
+            /** Buyer Name */
+            buyer_name: string;
+            /** Code */
+            code?: string | null;
+            /** Code Last4 */
+            code_last4: string;
+            /** Currency */
+            currency: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Face Value */
+            face_value: number;
+            /** Id */
+            id: number;
+            /**
+             * Issued At
+             * Format: date-time
+             */
+            issued_at: string;
+            /** Issuer Name */
+            issuer_name: string;
+            /** Kind */
+            kind: string;
+            /** Message */
+            message?: string | null;
+            /** Money Balance */
+            money_balance: number;
+            /** Offer Name */
+            offer_name: string;
+            /** Recipient Email */
+            recipient_email?: string | null;
+            /** Recipient Name */
+            recipient_name: string;
+            /** Service Ids */
+            service_ids?: number[];
+            /** Status */
+            status: string;
+            /** Visits Remaining */
+            visits_remaining: number;
+            /** Visits Total */
+            visits_total: number;
+        };
+        /** GiftLedgerEntryOut */
+        GiftLedgerEntryOut: {
+            /** Amount Delta */
+            amount_delta: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Entry Type */
+            entry_type: string;
+            /** Id */
+            id: number;
+            /** Reason */
+            reason?: string | null;
+            /** Redeems Entry Id */
+            redeems_entry_id?: number | null;
+            /** Request Key */
+            request_key: string;
+            /** Units Delta */
+            units_delta: number;
+            /** Visit Id */
+            visit_id?: number | null;
+        };
+        /** GiftOfferIn */
+        GiftOfferIn: {
+            /** Description */
+            description?: string | null;
+            /** Face Value */
+            face_value?: number | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "money" | "package";
+            /** Name */
+            name: string;
+            /** Price */
+            price: number;
+            /** Service Ids */
+            service_ids?: number[];
+            /** Validity Days */
+            validity_days: number;
+            /** Visits Count */
+            visits_count?: number | null;
+        };
+        /** GiftOfferOut */
+        GiftOfferOut: {
+            /** Business Id */
+            business_id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Currency */
+            currency: string;
+            /** Description */
+            description?: string | null;
+            /** Face Value */
+            face_value?: number | null;
+            /** Id */
+            id: number;
+            /** Is Active */
+            is_active: boolean;
+            /** Kind */
+            kind: string;
+            /** Name */
+            name: string;
+            /** Price */
+            price: number;
+            /** Service Ids */
+            service_ids?: number[];
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Validity Days */
+            validity_days: number;
+            /** Visits Count */
+            visits_count?: number | null;
+        };
+        /** GiftOrderOut */
+        GiftOrderOut: {
+            /** Amount */
+            amount: number;
+            /** Buyer Name */
+            buyer_name: string;
+            certificate?: components["schemas"]["GiftCertificateOut"] | null;
+            /** Checkout Url */
+            checkout_url?: string | null;
+            /** Currency */
+            currency: string;
+            /**
+             * Hold Expires At
+             * Format: date-time
+             */
+            hold_expires_at: string;
+            /** Kind */
+            kind: string;
+            /** Offer Name */
+            offer_name: string;
+            /** Paid At */
+            paid_at?: string | null;
+            /** Public Ref */
+            public_ref: string;
+            /** Recipient Name */
+            recipient_name: string;
+            /** Status */
+            status: string;
+        };
+        /** GiftPurchaseIn */
+        GiftPurchaseIn: {
+            /**
+             * Buyer Email
+             * Format: email
+             */
+            buyer_email: string;
+            /** Buyer Name */
+            buyer_name: string;
+            /**
+             * Client Request Id
+             * @description Caller-generated retry key for one purchase
+             */
+            client_request_id: string;
+            /** Message */
+            message?: string | null;
+            /** Offer Id */
+            offer_id: number;
+            /** Processing Consent */
+            processing_consent: boolean;
+            /** Recipient Email */
+            recipient_email?: string | null;
+            /** Recipient Name */
+            recipient_name?: string | null;
+        };
+        /** GiftRedemptionIn */
+        GiftRedemptionIn: {
+            /** Amount */
+            amount?: number | null;
+            /** Code */
+            code: string;
+            /** Reason */
+            reason?: string | null;
+            /**
+             * Request Key
+             * @description Caller-generated retry key: the same key never redeems twice
+             */
+            request_key: string;
+            /** Visit Id */
+            visit_id: number;
+        };
+        /** GiftRedemptionOut */
+        GiftRedemptionOut: {
+            /** Applied Amount */
+            applied_amount: number;
+            /** Applied Visits */
+            applied_visits: number;
+            certificate: components["schemas"]["GiftCertificateOut"];
+            /** Entry Id */
+            entry_id: number;
+        };
+        /** GiftReversalIn */
+        GiftReversalIn: {
+            /** Reason */
+            reason?: string | null;
+            /** Redemption Entry Id */
+            redemption_entry_id: number;
+            /** Request Key */
+            request_key: string;
+        };
+        /** GiftReversalOut */
+        GiftReversalOut: {
+            certificate: components["schemas"]["GiftCertificateOut"];
+            /** Entry Id */
+            entry_id: number;
+            /** Restored Amount */
+            restored_amount: number;
+            /** Restored Visits */
+            restored_visits: number;
+        };
+        /** GiftSandboxOutcomeIn */
+        GiftSandboxOutcomeIn: {
+            /**
+             * Outcome
+             * @enum {string}
+             */
+            outcome: "paid" | "failed";
+        };
+        /** GiftShopOut */
+        GiftShopOut: {
+            /** Business Name */
+            business_name: string;
+            /** Currency */
+            currency: string;
+            /** Offers */
+            offers?: components["schemas"]["GiftOfferOut"][];
+            /**
+             * Payments Available
+             * @default false
+             */
+            payments_available: boolean;
+            /** Slug */
+            slug: string;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -10250,6 +10747,282 @@ export interface operations {
             };
         };
     };
+    list_gift_certificates_businesses_me_gift_certificates_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftCertificateOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lookup_gift_certificate_businesses_me_gift_certificates_lookup_get: {
+        parameters: {
+            query: {
+                code: string;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftCertificateDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    redeem_gift_certificate_businesses_me_gift_certificates_redeem_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GiftRedemptionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftRedemptionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_gift_certificate_businesses_me_gift_certificates__certificate_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                certificate_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftCertificateDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reverse_gift_redemption_businesses_me_gift_certificates__certificate_id__reversals_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                certificate_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GiftReversalIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftReversalOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_gift_offers_businesses_me_gift_offers_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftOfferOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_gift_offer_businesses_me_gift_offers_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GiftOfferIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftOfferOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_gift_offer_businesses_me_gift_offers__offer_id__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                offer_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GiftOfferIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftOfferOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_notification_deliveries_businesses_me_notification_deliveries_get: {
         parameters: {
             query?: {
@@ -14761,6 +15534,148 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ClientPortalMessageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_gift_order_public_gifts_orders__public_ref__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Gift-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                public_ref: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftOrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    gift_sandbox_outcome_public_gifts_orders__public_ref__sandbox_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Gift-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                public_ref: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GiftSandboxOutcomeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftOrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_gift_shop_public_gifts__slug__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftShopOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_gift_order_public_gifts__slug__orders_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GiftPurchaseIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GiftOrderOut"];
                 };
             };
             /** @description Validation Error */
