@@ -265,7 +265,8 @@ export default function ImportWizard() {
             ) : (listQuery.data?.items.length ?? 0) === 0 ? (
               <p className="p-4 text-sm text-slate-500 dark:text-gray-400">{t('importWizard.recentEmpty')}</p>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="relative overflow-x-auto">
+                {/* relative keeps the sr-only header from widening the page on mobile */}
                 <table className="min-w-full divide-y divide-slate-200 text-sm dark:divide-gray-700">
                   <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500 dark:bg-gray-900/60 dark:text-gray-400">
                     <tr>
