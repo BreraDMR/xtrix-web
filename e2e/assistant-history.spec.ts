@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { apiPost, apiUrl, assistantOn, newOwner, openAs } from './helpers'
+import { apiPost, assistantOn, newOwner, openAs } from './helpers'
 
 const CLIENT = 'Alice Assistant'
 

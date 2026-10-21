@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from 'axios'
 import AssistantLauncher from '../components/assistant/AssistantLauncher'
 import api from '../api/client'
+import { setSavedConversationId } from '../hooks/useConversations'
 import { useLocaleStore } from '../store/localeStore'
 import { apiError, renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
@@ -51,7 +52,19 @@ const executed = (over: Record<string, unknown> = {}) => ({
 })
 
 function mockStatus(value = status()) {
-  vi.mocked(api.get).mockImplementation(routes({ '/assistant/status': value, '/businesses/me': null }))
+  // an existing chat keeps the tests on one POST per request instead of creating a conversation first
+  setSavedConversationId('conv-1', 5, 1)
+  vi.mocked(api.get).mockImplementation(routes({
+    '/assistant/status': value,
+    '/businesses/me': null,
+    '/assistant/conversations': {
+      items: [{ id: 'conv-1', title: 'Chat', created_at: '2026-10-20T10:00:00Z', updated_at: '2026-10-20T10:00:00Z', archived_at: null }],
+      total: 1,
+      limit: 50,
+      offset: 0,
+    },
+    '/assistant/conversations/conv-1/messages': { items: [], next_before: null },
+  }))
 }
 
 function networkError() {
@@ -188,7 +201,9 @@ describe('focus and keyboard', () => {
     expect(box).toHaveValue('Book Clara\ntomorrow')
     expect(api.post).not.toHaveBeenCalled()
     await userEvent.keyboard('{Enter}')
-    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/assistant/plan', { text: 'Book Clara\ntomorrow', locale: 'en' }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/assistant/plan', expect.objectContaining({
+      text: 'Book Clara\ntomorrow', locale: 'en', conversation_id: 'conv-1', client_request_id: expect.any(String),
+    })))
     await waitFor(() => expect(box).toHaveValue(''))
   })
 
@@ -244,7 +259,9 @@ describe('plan card', () => {
     renderWithProviders(<AssistantLauncher />)
     await openPanel()
     await ask('Zapiš Kláru')
-    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/assistant/plan', { text: 'Zapiš Kláru', locale: 'cz' }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/assistant/plan', expect.objectContaining({
+      text: 'Zapiš Kláru', locale: 'cz', conversation_id: 'conv-1', client_request_id: expect.any(String),
+    })))
   })
 
   it("shows the model's questions and no Confirm, then sends the answer with the first request", async () => {
@@ -263,9 +280,9 @@ describe('plan card', () => {
 
     vi.mocked(api.post).mockResolvedValueOnce({ data: bookingPlan({ plan_id: 'plan-2' }) })
     await ask('at 10, haircut')
-    await waitFor(() => expect(api.post).toHaveBeenLastCalledWith('/assistant/plan', {
-      text: 'Book Clara tomorrow\nat 10, haircut', locale: 'en',
-    }))
+    await waitFor(() => expect(api.post).toHaveBeenLastCalledWith('/assistant/plan', expect.objectContaining({
+      text: 'Book Clara tomorrow\nat 10, haircut', locale: 'en', conversation_id: 'conv-1', client_request_id: expect.any(String),
+    })))
     expect(await screen.findByRole('article', { name: /Book Clara for a haircut/ })).toBeInTheDocument()
   })
 
@@ -527,5 +544,147 @@ describe('errors', () => {
     expect(box).toHaveAttribute('maxLength', '2000')
     fireEvent.change(box, { target: { value: 'x'.repeat(10) } })
     expect(box).toHaveValue('x'.repeat(10))
+  })
+})
+
+describe('saved chats and history', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    resetStores()
+    signIn({ id: 5, role: 'business_owner', business_id: 1 })
+  })
+
+  const conv = (id: string, title: string) => ({
+    id, title, created_at: '2026-10-20T10:00:00Z', updated_at: '2026-10-20T10:00:00Z', archived_at: null,
+  })
+  const msg = (id: string, role: 'user' | 'assistant', text: string, over: Record<string, unknown> = {}) => ({
+    id, conversation_id: 'conv-1', ordinal: 1, request_id: 'req-1', role, status: 'succeeded', text, ...over,
+  })
+
+  it('drops the previous chat right away when the next one fails to load', async () => {
+    setSavedConversationId('conv-1', 5, 1)
+    vi.mocked(api.get).mockImplementation(routes({
+      '/assistant/status': status(),
+      '/businesses/me': null,
+      '/assistant/conversations': {
+        items: [conv('conv-1', 'First Chat'), conv('conv-2', 'Second Chat')], total: 2, limit: 50, offset: 0,
+      },
+      '/assistant/conversations/conv-1/messages': {
+        items: [msg('m1', 'user', 'Question about Tuesday'), msg('m2', 'assistant', 'Answer about Tuesday')],
+        next_before: null,
+      },
+      // conv-2 messages are deliberately unmocked and fail with a 404
+    }))
+    renderWithProviders(<AssistantLauncher />)
+    await openPanel()
+    expect(await screen.findByText('Answer about Tuesday')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('Second Chat'))
+
+    await waitFor(() => expect(screen.queryByText('Answer about Tuesday')).not.toBeInTheDocument())
+    expect(screen.queryByText('Question about Tuesday')).not.toBeInTheDocument()
+    expect(screen.getByText('Sasha is ready to help')).toBeInTheDocument()
+  })
+
+  it('keeps a saved chat that is older than the first page instead of opening the newest one', async () => {
+    setSavedConversationId('conv-old', 5, 1)
+    vi.mocked(api.get).mockImplementation(routes({
+      '/assistant/status': status(),
+      '/businesses/me': null,
+      '/assistant/conversations': {
+        items: [conv('conv-new', 'Newest chat')], total: 2, limit: 1, offset: 0,
+      },
+      '/assistant/conversations/conv-old/messages': {
+        items: [msg('m-old', 'user', 'From the old chat')], next_before: null,
+      },
+    }))
+    renderWithProviders(<AssistantLauncher />)
+    await openPanel()
+
+    expect(await screen.findByText('From the old chat')).toBeInTheDocument()
+    expect(screen.getByText('Newest chat')).toBeInTheDocument()
+    expect(api.get).toHaveBeenCalledWith('/assistant/conversations/conv-old/messages', { params: undefined })
+    expect(api.get).not.toHaveBeenCalledWith('/assistant/conversations/conv-new/messages', expect.anything())
+  })
+
+  it('loads older chats from the next page', async () => {
+    vi.mocked(api.get).mockImplementation(routes({
+      '/assistant/status': status(),
+      '/businesses/me': null,
+      '/assistant/conversations': {
+        items: [conv('conv-new', 'Newest chat')], total: 2, limit: 1, offset: 0,
+      },
+      '/assistant/conversations/conv-new/messages': { items: [], next_before: null },
+    }))
+    renderWithProviders(<AssistantLauncher />)
+    await openPanel()
+    expect(await screen.findByText('Newest chat')).toBeInTheDocument()
+
+    const firstPage = vi.mocked(api.get).mock.results.length
+    vi.mocked(api.get).mockImplementation(routes({
+      '/assistant/status': status(),
+      '/businesses/me': null,
+      '/assistant/conversations': {
+        items: [conv('conv-old', 'Older chat')], total: 2, limit: 1, offset: 1,
+      },
+      '/assistant/conversations/conv-old/messages': { items: [], next_before: null },
+    }))
+    await userEvent.click(screen.getByRole('button', { name: 'Show older chats' }))
+
+    expect(await screen.findByText('Older chat')).toBeInTheDocument()
+    expect(screen.getByText('Newest chat')).toBeInTheDocument()
+    expect(vi.mocked(api.get).mock.calls.slice(firstPage)).toContainEqual([
+      '/assistant/conversations', { params: { offset: 1 } },
+    ])
+    expect(screen.queryByRole('button', { name: 'Show older chats' })).not.toBeInTheDocument()
+  })
+
+  it('loads earlier messages and shows them oldest first', async () => {
+    setSavedConversationId('conv-1', 5, 1)
+    vi.mocked(api.get).mockImplementation(((url: string, config?: { params?: { before?: number } }) => {
+      if (url === '/assistant/status') return Promise.resolve({ data: status() })
+      if (url === '/businesses/me') return Promise.resolve({ data: null })
+      if (url === '/assistant/conversations') {
+        return Promise.resolve({ data: { items: [conv('conv-1', 'Chat')], total: 1, limit: 50, offset: 0 } })
+      }
+      if (url === '/assistant/conversations/conv-1/messages') {
+        if (config?.params?.before === 100) {
+          return Promise.resolve({ data: { items: [msg('m-old', 'user', 'Earlier question')], next_before: null } })
+        }
+        return Promise.resolve({ data: { items: [msg('m-new', 'assistant', 'Latest answer')], next_before: 100 } })
+      }
+      return Promise.reject(apiError(404, 'no mock'))
+    }) as typeof api.get)
+    renderWithProviders(<AssistantLauncher />)
+    const panel = await openPanel()
+
+    expect(await within(panel).findByText('Latest answer')).toBeInTheDocument()
+    await userEvent.click(within(panel).getByRole('button', { name: 'Show earlier messages' }))
+
+    expect(await within(panel).findByText('Earlier question')).toBeInTheDocument()
+    expect(within(panel).getByText('Latest answer')).toBeInTheDocument()
+    expect(within(panel).queryByRole('button', { name: 'Show earlier messages' })).not.toBeInTheDocument()
+    const log = within(panel).getByRole('log').textContent ?? ''
+    expect(log.indexOf('Earlier question')).toBeLessThan(log.indexOf('Latest answer'))
+    expect(vi.mocked(api.get)).toHaveBeenCalledWith('/assistant/conversations/conv-1/messages', { params: { before: 100 } })
+  })
+
+  it('retries a lost request with the same key so the server can replay it', async () => {
+    mockStatus()
+    vi.mocked(api.post).mockRejectedValueOnce(networkError())
+    renderWithProviders(<AssistantLauncher />)
+    await openPanel()
+    await ask('Book Clara')
+    expect(await screen.findByText('No connection to the server, check the internet and try again')).toBeInTheDocument()
+    expect(await input()).toHaveValue('Book Clara')
+
+    vi.mocked(api.post).mockResolvedValueOnce({ data: bookingPlan() })
+    await userEvent.click(screen.getByRole('button', { name: /^send$/i }))
+    await screen.findByRole('article', { name: /Book Clara for a haircut/ })
+
+    const planCalls = vi.mocked(api.post).mock.calls.filter(([url]) => url === '/assistant/plan')
+    expect(planCalls).toHaveLength(2)
+    const keyOf = (call: unknown[]) => (call[1] as { client_request_id: string }).client_request_id
+    expect(keyOf(planCalls[1])).toBe(keyOf(planCalls[0]))
   })
 })

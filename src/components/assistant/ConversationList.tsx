@@ -12,6 +12,9 @@ interface ConversationListProps {
   onRename: (id: string, newTitle: string) => Promise<unknown>
   onArchive: (id: string) => Promise<unknown>
   isCreating?: boolean
+  hasMore?: boolean
+  onLoadMore?: () => void
+  isLoadingMore?: boolean
 }
 
 export default function ConversationList({
@@ -22,6 +25,9 @@ export default function ConversationList({
   onRename,
   onArchive,
   isCreating = false,
+  hasMore = false,
+  onLoadMore,
+  isLoadingMore = false,
 }: ConversationListProps) {
   const locale = useLocaleStore((state) => state.locale)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -200,6 +206,16 @@ export default function ConversationList({
             )
           })}
         </div>
+      )}
+      {hasMore && onLoadMore && (
+        <button
+          type="button"
+          onClick={onLoadMore}
+          disabled={isLoadingMore}
+          className="mt-1 rounded-lg px-2 py-1 text-xs text-gray-500 hover:bg-gray-200/50 disabled:opacity-50 dark:text-gray-400 dark:hover:bg-gray-700/50"
+        >
+          {assistantT(locale, 'loadMoreConversations')}
+        </button>
       )}
     </div>
   )

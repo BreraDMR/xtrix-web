@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import type { ConversationCreate, ConversationOut, ConversationPage, ConversationRename, MessagePage } from '../api/types'
 import { useAuthStore } from '../store/authStore'
@@ -38,39 +38,46 @@ export function useConversations(enabled = true) {
 
   const queryKey = [...CONVERSATIONS_KEY, user?.id, user?.business_id]
 
-  const listQuery = useQuery<ConversationPage>({
+  const listQuery = useInfiniteQuery<ConversationPage>({
     queryKey,
-    queryFn: async () => (await api.get<ConversationPage>('/assistant/conversations')).data,
+    queryFn: async ({ pageParam }) => {
+      const { data } = await api.get<ConversationPage>('/assistant/conversations', {
+        params: pageParam ? { offset: pageParam } : undefined,
+      })
+      return data ?? { items: [], total: 0, limit: 50, offset: pageParam }
+    },
+    initialPageParam: 0,
+    getNextPageParam: (last) => {
+      const loaded = last.offset + last.items.length
+      return loaded < last.total ? loaded : undefined
+    },
     enabled: enabled && !!user,
     staleTime: 10 * 1000,
   })
 
-  // Synchronize active ID with saved storage and available items
+  const conversations = useMemo(
+    () => listQuery.data?.pages.flatMap((page) => page.items) ?? [],
+    [listQuery.data],
+  )
+
+  // Synchronize active ID with saved storage and the pages loaded so far.
   useEffect(() => {
     if (!listQuery.data) return
-    const items = listQuery.data.items
-    if (items.length === 0) {
+    if (conversations.length === 0) {
       if (activeId !== null) {
         setActiveIdState(null)
         setSavedConversationId(null, user?.id, user?.business_id)
       }
       return
     }
-
-    if (activeId) {
-      const exists = items.some((item) => item.id === activeId)
-      if (!exists) {
-        // Saved ID is archived or belongs to another workspace, pick first active
-        const fallback = items[0].id
-        setActiveIdState(fallback)
-        setSavedConversationId(fallback, user?.id, user?.business_id)
-      }
-    } else {
-      const first = items[0].id
+    // A saved chat older than the first page stays selected; replacing it with the
+    // newest one would silently open the wrong conversation.
+    if (!activeId) {
+      const first = conversations[0].id
       setActiveIdState(first)
       setSavedConversationId(first, user?.id, user?.business_id)
     }
-  }, [listQuery.data, activeId, user?.id, user?.business_id])
+  }, [conversations, activeId, listQuery.data, user?.id, user?.business_id])
 
   // Clear on logout
   useEffect(() => {
@@ -84,16 +91,19 @@ export function useConversations(enabled = true) {
     setSavedConversationId(id, user?.id, user?.business_id)
   }, [user?.id, user?.business_id])
 
+  // A lost create response must not become a second chat on retry.
+  const createRequestKey = useRef<string | null>(null)
   const createMutation = useMutation({
-    mutationFn: async (title?: string) => {
+    mutationFn: async () => {
+      createRequestKey.current ||= crypto.randomUUID()
       const payload: ConversationCreate = {
-        client_request_id: crypto.randomUUID(),
-        title: title || undefined,
+        client_request_id: createRequestKey.current,
       }
       const { data } = await api.post<ConversationOut>('/assistant/conversations', payload)
       return data
     },
     onSuccess: (newConv) => {
+      createRequestKey.current = null
       queryClient.invalidateQueries({ queryKey })
       selectConversation(newConv.id)
     },
@@ -124,8 +134,8 @@ export function useConversations(enabled = true) {
   })
 
   return {
-    conversations: listQuery.data?.items ?? [],
-    total: listQuery.data?.total ?? 0,
+    conversations,
+    total: listQuery.data?.pages[0]?.total ?? 0,
     isLoading: listQuery.isLoading,
     isError: listQuery.isError,
     error: listQuery.error,
@@ -137,19 +147,32 @@ export function useConversations(enabled = true) {
     isRenaming: renameMutation.isPending,
     archiveConversation: archiveMutation.mutateAsync,
     isArchiving: archiveMutation.isPending,
+    hasMore: !!listQuery.hasNextPage,
+    loadMore: listQuery.fetchNextPage,
+    isLoadingMore: listQuery.isFetchingNextPage,
     refetch: listQuery.refetch,
   }
 }
 
 export function useConversationMessages(conversationId: string | null, enabled = true) {
-  return useQuery<MessagePage>({
+  const query = useInfiniteQuery<MessagePage>({
     queryKey: [...MESSAGES_KEY, conversationId],
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
       if (!conversationId) return { items: [], next_before: null }
-      const { data } = await api.get<MessagePage>(`/assistant/conversations/${conversationId}/messages`)
-      return data
+      const { data } = await api.get<MessagePage>(`/assistant/conversations/${conversationId}/messages`, {
+        params: pageParam ? { before: pageParam } : undefined,
+      })
+      return data ?? { items: [], next_before: null }
     },
+    initialPageParam: null as number | null,
+    getNextPageParam: (last) => last.next_before ?? undefined,
     enabled: enabled && !!conversationId,
     staleTime: 5 * 1000,
   })
+  // pages arrive newest first; render them oldest first
+  const items = useMemo(
+    () => (query.data?.pages ?? []).slice().reverse().flatMap((page) => page.items),
+    [query.data],
+  )
+  return { ...query, items }
 }

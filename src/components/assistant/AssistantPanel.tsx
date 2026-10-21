@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useQueryClient, type UseQueryResult } from '@tanstack/react-query'
 import { HiOutlineMicrophone, HiOutlinePaperAirplane, HiOutlineSparkles, HiOutlineStop, HiOutlineTrash, HiOutlineX } from 'react-icons/hi'
 import api from '../../api/client'
@@ -103,13 +103,24 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
     renameConversation,
     archiveConversation,
     isCreating,
+    hasMore,
+    loadMore,
+    isLoadingMore,
   } = useConversations(open)
 
   const messagesQuery = useConversationMessages(activeId, open)
+  // switching chats must never leave the previous plan on screen, even while the new
+  // messages load or fail; an in-flight send owns its freshly created conversation
+  const shownActiveId = useRef(activeId)
+  useLayoutEffect(() => {
+    if (shownActiveId.current === activeId) return
+    shownActiveId.current = activeId
+    if (!sending) setEntries([])
+  }, [activeId, sending])
 
   useEffect(() => {
-    if (!messagesQuery.data?.items) return
-    const msgs = messagesQuery.data.items
+    const msgs = messagesQuery.items
+    if (!msgs) return
     if (msgs.length === 0) {
       setEntries([])
       return
@@ -136,7 +147,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
       }
     })
     setEntries(mapped)
-  }, [messagesQuery.data, say])
+  }, [messagesQuery.items, say])
 
   const add = useCallback((entry: NewEntry) => {
     const id = nextId.current++
@@ -220,6 +231,9 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
 
   const canSend = !!text.trim() && !sending && busySeconds === 0 && !limitReached && !voice.recording && !transcribing
   const micDisabled = sending || transcribing || busySeconds > 0 || limitReached
+  // keep the request key with the text it belongs to: a lost answer retried with the same
+  // key is replayed by the server instead of spending a second model call
+  const pendingRequest = useRef<{ conversationId: string; text: string; requestId: string } | null>(null)
 
   const send = async () => {
     const typed = text.trim()
@@ -237,13 +251,18 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
         const newConv = await createConversation()
         targetConvId = newConv.id
       }
-      const client_request_id = crypto.randomUUID()
+      const pending = pendingRequest.current
+      const client_request_id = pending && pending.conversationId === targetConvId && pending.text === request
+        ? pending.requestId
+        : crypto.randomUUID()
+      pendingRequest.current = { conversationId: targetConvId, text: request, requestId: client_request_id }
       const { data: plan } = await api.post<AssistantPlanOut>('/assistant/plan', {
         text: request,
         locale,
         conversation_id: targetConvId,
         client_request_id,
       })
+      pendingRequest.current = null
       const id = nextId.current++
       setEntries((prev) => {
         const older = prev.map((e) => (e.kind === 'plan' && e.phase === 'open'
@@ -368,6 +387,9 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
             onRename={(id, title) => renameConversation({ id, title })}
             onArchive={(id) => archiveConversation(id)}
             isCreating={isCreating}
+            hasMore={hasMore}
+            onLoadMore={() => loadMore()}
+            isLoadingMore={isLoadingMore}
           />
           <div
             ref={logRef}
@@ -376,6 +398,18 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
             aria-label={persona.name}
             className="flex-1 space-y-3 overflow-y-auto bg-gray-50 p-4 dark:bg-gray-900/30"
           >
+            {messagesQuery.hasNextPage && (
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => void messagesQuery.fetchNextPage()}
+                  disabled={messagesQuery.isFetchingNextPage}
+                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-100 disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                >
+                  {say('loadEarlierMessages')}
+                </button>
+              </div>
+            )}
             {entries.length === 0 && <p className="text-center text-sm text-gray-500 dark:text-gray-400">{say('ready')}</p>}
             {entries.map((entry) => {
               if (entry.kind === 'user') {
