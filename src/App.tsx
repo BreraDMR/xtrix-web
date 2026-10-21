@@ -26,9 +26,11 @@ import Analytics from './pages/Analytics'
 import Loyalty from './pages/Loyalty'
 import Settings from './pages/Settings'
 import NotificationSettings from './pages/NotificationSettings'
+import Waitlist from './pages/Waitlist'
 import NotFound from './pages/NotFound'
 import BookingPage from './pages/booking/BookingPage'
 import ManageBookingPage from './pages/booking/ManageBooking'
+import WaitlistOfferPage from './pages/booking/WaitlistOffer'
 import QuestionnairePage from './pages/booking/Questionnaire'
 import PortalLogin from './pages/client/PortalLogin'
 import ClientPortal from './pages/client/Portal'
@@ -48,6 +50,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/booking/:slug" element={<BookingPage />} />
         <Route path="/manage" element={<ManageBookingPage />} />
+        <Route path="/waitlist/offer" element={<WaitlistOfferPage />} />
         <Route path="/questionnaire" element={<QuestionnairePage />} />
         <Route path="/client" element={<ClientPortal />} />
         <Route path="/client/portal" element={<PortalLogin />} />
@@ -105,6 +108,7 @@ function App() {
           <Route path="loyalty" element={<Loyalty />} />
           <Route path="subscription" element={<Subscription />} />
           <Route path="notifications" element={<NotificationSettings />} />
+          <Route path="waitlist" element={<Waitlist />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 

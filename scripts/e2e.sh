@@ -78,6 +78,12 @@ export ENVIRONMENT=development
 # local-only mail sink: capture mode keeps messages out of the network and writes them here
 export NOTIFICATION_TRANSPORT=capture
 export CAPTURE_MAIL_FILE="$tmp/capture-mail.jsonl"
+# synthetic sender so the email channel counts as configured; capture never dials out
+export SMTP_HOST=smtp.invalid
+export SMTP_FROM=notifications@example.com
+# the waitlist TTL fixture runs SQL against this throwaway database
+export E2E_PG_CONTAINER="$PG_CONTAINER"
+export E2E_PG_DB=xtrix_e2e_test
 export E2E_API_DIR="$API_DIR"
 export API_PYTHON
 # the suite logs in a lot from one IP

@@ -12,7 +12,7 @@ import {
   HiOutlinePaperClip, HiOutlineCurrencyDollar, HiOutlineShoppingCart, HiOutlineChartBar,
   HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
   HiOutlineClock, HiOutlineClipboardList, HiOutlineMenuAlt2, HiOutlineX,
-  HiOutlineChevronRight, HiOutlineChevronLeft, HiOutlineBell,
+  HiOutlineChevronRight, HiOutlineChevronLeft, HiOutlineBell, HiOutlineUserAdd,
 } from 'react-icons/hi'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -22,7 +22,7 @@ const icons: Record<string, ComponentType<{ className?: string }>> = {
   '/app/finance': HiOutlineCurrencyDollar, '/app/analytics': HiOutlineChartBar, '/app/loyalty': HiOutlineHeart,
   '/app/employees': HiOutlineUsers, '/app/business': HiOutlineBriefcase, '/app/subscription': HiOutlineDocumentText,
   '/app/my-salary': HiOutlineCurrencyDollar, '/app/settings': HiOutlineCog,
-  '/app/notifications': HiOutlineBell,
+  '/app/notifications': HiOutlineBell, '/app/waitlist': HiOutlineUserAdd,
 }
 
 export default function Layout() {
@@ -86,10 +86,14 @@ export default function Layout() {
     ...(managesQuestionnaires ? [{ path: '/app/questionnaires', label: t('nav.questionnaires') }] : []),
     ...(managesBusiness ? [{ path: '/app/inventory', label: t('nav.inventory') }, { path: '/app/finance', label: t('nav.finance') }] : []),
   ]
-  const manageItems = managesBusiness ? [
-    { path: '/app/analytics', label: t('nav.analytics') }, { path: '/app/loyalty', label: t('nav.loyalty') },
-    { path: '/app/employees', label: t('nav.employees') },
-  ] : []
+  const managesWaitlist = managesBusiness || (user?.role === 'specialist' && !user.employer_id)
+  const manageItems = [
+    ...(managesBusiness ? [
+      { path: '/app/analytics', label: t('nav.analytics') }, { path: '/app/loyalty', label: t('nav.loyalty') },
+      { path: '/app/employees', label: t('nav.employees') },
+    ] : []),
+    ...(managesWaitlist ? [{ path: '/app/waitlist', label: t('nav.waitlist') }] : []),
+  ]
   const systemItems = [
     ...(managesBusiness ? [{ path: '/app/business', label: t('nav.business') }] : []),
     ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/app/subscription', label: t('nav.subscription') }] : []),
