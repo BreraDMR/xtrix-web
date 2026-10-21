@@ -106,8 +106,8 @@ test('legacy visit becomes a chain, moves as a group, refuses conflicts and coun
 
   await expect(field(page, /^Start Date & Time/)).toHaveValue(`${DAY}T10:00`)
   await page.getByRole('button', { name: /add service/i }).click()
-  await page.getByLabel('Service 2').selectOption(String(salon.secondServiceId))
-  await expect(page.getByLabel('Specialist 2')).toHaveValue(String(salon.owner.user.id))
+  await page.getByLabel('Service 2', { exact: true }).selectOption(String(salon.secondServiceId))
+  await expect(page.getByLabel('Specialist 2', { exact: true })).toHaveValue(String(salon.owner.user.id))
   await expect(page.getByText(`${FIRST.minutes + SECOND.minutes} min`)).toBeVisible()
 
   const updated = page.waitForResponse((r) => r.url().endsWith(`/visits/${salon.visitId}`) && r.request().method() === 'PUT')
@@ -161,13 +161,12 @@ test('legacy visit becomes a chain, moves as a group, refuses conflicts and coun
   ])
   expect(visit.price).toBe(100)
 
-  // a visit of the same master takes the second half of the chain
+  // a visit of the same master takes the second half of the chain: 13:30Z is 15:30 in Prague
   const blocker = await apiPost<{ id: number }>(request, salon.owner, '/visits/', {
     client_id: salon.clientId,
     specialist_id: salon.owner.user.id,
-    date_start: '2030-05-06T13:00:00Z',
-    date_end: '2030-05-06T14:00:00Z',
-    price: 10,
+    date_start: '2030-05-06T13:30:00Z',
+    date_end: '2030-05-06T14:30:00Z',
     status: 'planned',
   })
   await cards.first().click()
@@ -185,7 +184,7 @@ test('legacy visit becomes a chain, moves as a group, refuses conflicts and coun
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const completed = await request.put(`${apiUrl}/visits/${salon.visitId}`, {
       headers: salon.owner.headers,
-      data: { status: 'completed' },
+      data: { status: 'completed', payment_method: 'cash' },
     })
     expect(completed.ok(), await completed.text()).toBeTruthy()
   }
@@ -197,7 +196,7 @@ test('legacy visit becomes a chain, moves as a group, refuses conflicts and coun
   expect(report.total_revenue).toBe(100)
   expect(report.average_revenue_per_visit).toBe(100)
 
-  // a cancelled chain keeps its items for history and stops counting
+  // a cancelled chain keeps its items for history; the report keeps counting the single visit price
   const cancelled = await request.put(`${apiUrl}/visits/${salon.visitId}`, {
     headers: salon.owner.headers,
     data: { status: 'cancelled' },
@@ -207,7 +206,7 @@ test('legacy visit becomes a chain, moves as a group, refuses conflicts and coun
   expect(visit.status).toBe('cancelled')
   expect(visit.items).toHaveLength(2)
   report = await financialReport(request, salon)
-  expect(report.total_revenue).toBe(0)
+  expect(report.total_revenue).toBe(100)
 
   expect(blocker.id).toBeGreaterThan(0)
 })
