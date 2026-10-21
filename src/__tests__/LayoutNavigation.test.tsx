@@ -13,11 +13,11 @@ vi.mock('../api/client', async (importOriginal) => ({
 
 function renderLayout() {
   return renderWithProviders(
-    <MemoryRouter initialEntries={['/clients']}>
+    <MemoryRouter initialEntries={['/app/clients']}>
       <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<h1>Dashboard screen</h1>} />
-          <Route path="/clients" element={<h1>Clients screen</h1>} />
+        <Route path="/app" element={<Layout />}>
+          <Route index element={<h1>Dashboard screen</h1>} />
+          <Route path="clients" element={<h1>Clients screen</h1>} />
         </Route>
       </Routes>
     </MemoryRouter>,

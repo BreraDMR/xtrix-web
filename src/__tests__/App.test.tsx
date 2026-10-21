@@ -7,13 +7,15 @@ import { resetStores } from '../test/render'
 describe('App', () => {
   beforeEach(resetStores)
 
-  it('sends a signed-out visitor to the login page', () => {
+  it('sends a signed-out visitor of the workspace to the login page', () => {
+    // the marketing page is public, so the guard is exercised through an app route
+    window.history.pushState({}, '', '/app')
     render(
       <QueryClientProvider client={new QueryClient()}>
         <App />
       </QueryClientProvider>
     )
-    expect(screen.getByText('Xtrix')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Xtrix' })).toBeInTheDocument()
     expect(window.location.pathname).toBe('/login')
     expect(localStorage.getItem('app_logs')).toBeNull()
   })

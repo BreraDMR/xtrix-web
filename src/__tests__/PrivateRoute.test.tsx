@@ -45,11 +45,11 @@ it('keeps the private page blocked and offers retry if user loading fails', asyn
 it('returns to the original private URL after signing in', async () => {
   vi.mocked(api.post).mockResolvedValue({ data: { access_token: 'access', refresh_token: 'refresh' } })
   vi.mocked(api.get).mockResolvedValue({ data: { id: 7, full_name: 'Jane', role: 'specialist' } })
-  mount('/clients?search=Jane#list')
+  mount('/app/clients?search=Jane#list')
   await userEvent.type(screen.getByLabelText(/email/i), 'jane@example.com')
   await userEvent.type(screen.getByLabelText(/password/i), 'password123')
   await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
-  expect(await screen.findByText('Protected /clients?search=Jane#list')).toBeInTheDocument()
+  expect(await screen.findByText('Protected /app/clients?search=Jane#list')).toBeInTheDocument()
   expect(localStorage.getItem('auth_refresh_token')).toBe('refresh')
 })
 
@@ -67,8 +67,8 @@ it('does not invent an admin user when the profile request fails after login', a
 
 it('sends the user to login with a way back when the session ends', async () => {
   useAuthStore.getState().setAuth('saved', { id: 7, full_name: 'Jane', role: 'specialist' })
-  mount('/employees/1/salary')
-  expect(await screen.findByText('Protected /employees/1/salary')).toBeInTheDocument()
+  mount('/app/employees/1/salary')
+  expect(await screen.findByText('Protected /app/employees/1/salary')).toBeInTheDocument()
   act(() => useAuthStore.getState().logout())
   expect(await screen.findByRole('button', { name: /sign in/i })).toBeInTheDocument()
   vi.mocked(api.post).mockResolvedValue({ data: { access_token: 'access', refresh_token: 'refresh' } })
@@ -76,7 +76,7 @@ it('sends the user to login with a way back when the session ends', async () => 
   await userEvent.type(screen.getByLabelText(/email/i), 'jane@example.com')
   await userEvent.type(screen.getByLabelText(/password/i), 'password123')
   await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
-  expect(await screen.findByText('Protected /employees/1/salary')).toBeInTheDocument()
+  expect(await screen.findByText('Protected /app/employees/1/salary')).toBeInTheDocument()
 })
 
 it('ignores a return address that leads off the site', async () => {
@@ -86,5 +86,5 @@ it('ignores a return address that leads off the site', async () => {
   await userEvent.type(screen.getByLabelText(/email/i), 'jane@example.com')
   await userEvent.type(screen.getByLabelText(/password/i), 'password123')
   await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
-  expect(await screen.findByText('Protected /')).toBeInTheDocument()
+  expect(await screen.findByText('Protected /app')).toBeInTheDocument()
 })

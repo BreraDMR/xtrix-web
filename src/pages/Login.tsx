@@ -6,7 +6,7 @@ import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
-import { sanitizeReturnTo } from '../utils/routing'
+import { sanitizeReturnTo } from '../utils/returnTo'
 
 export default function Login() {
   const { t } = useTranslation()
