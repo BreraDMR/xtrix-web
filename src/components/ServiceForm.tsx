@@ -22,6 +22,8 @@ interface ServiceData {
   is_active: boolean
   specialist_id: number
   specialist_ids?: number[]
+  buffer_before_minutes: number
+  buffer_after_minutes: number
 }
 
 interface Specialist {
@@ -73,6 +75,8 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
       is_active: true,
       specialist_id: currentUser?.id || 1,
       specialist_ids: currentUser?.id ? [currentUser.id] : [],
+      buffer_before_minutes: 0,
+      buffer_after_minutes: 0,
       ...draft,
     }
   })
@@ -140,6 +144,8 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
         is_active: data.is_active ?? true,
         specialist_id: data.specialist_id,
         specialist_ids: data.specialist_ids || [data.specialist_id],
+        buffer_before_minutes: data.buffer_before_minutes ?? 0,
+        buffer_after_minutes: data.buffer_after_minutes ?? 0,
       })
     } catch (error) {
       console.error('Failed to load service:', error)
@@ -168,6 +174,8 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
         is_active: formData.is_active,
         specialist_id: formData.specialist_id,
         specialist_ids: (formData.specialist_ids || []).filter(id => id !== formData.specialist_id),
+        buffer_before_minutes: formData.buffer_before_minutes,
+        buffer_after_minutes: formData.buffer_after_minutes,
       }
       
       if (serviceId) {

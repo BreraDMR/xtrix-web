@@ -101,7 +101,7 @@ describe('ServiceForm', () => {
       await waitFor(() => expect(api.put).toHaveBeenCalled())
       const body = vi.mocked(api.put).mock.calls[0][1] as Record<string, unknown>
       expect(body.description).toBeNull()
-      expect(Object.keys(body).sort()).toEqual(['description', 'duration_minutes', 'is_active', 'name', 'price', 'specialist_id', 'specialist_ids'])
+      expect(Object.keys(body).sort()).toEqual(['buffer_after_minutes', 'buffer_before_minutes', 'description', 'duration_minutes', 'is_active', 'name', 'price', 'specialist_id', 'specialist_ids'])
     })
   })
 })
