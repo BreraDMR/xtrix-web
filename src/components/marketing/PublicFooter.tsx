@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useTranslation } from '../../hooks/useTranslation'
 import { HiOutlineDocumentText, HiOutlineMail, HiOutlineX } from 'react-icons/hi'
 

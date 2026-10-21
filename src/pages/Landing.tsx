@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
-import LanguageSwitcher from '../components/LanguageSwitcher'
 import PublicHeader from '../components/marketing/PublicHeader'
 import Features from '../components/marketing/Features'
 import ProductTour from '../components/marketing/ProductTour'
@@ -10,7 +9,6 @@ import FAQ from '../components/marketing/FAQ'
 import PublicFooter from '../components/marketing/PublicFooter'
 import {
   HiOutlineCalendar,
-  HiOutlineCheckCircle,
   HiOutlineClock,
   HiOutlineUser,
 } from 'react-icons/hi'

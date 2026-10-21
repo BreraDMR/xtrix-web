@@ -1207,6 +1207,7 @@ export type TranslationKey =
   | 'onboarding.settings.showTour'
   | 'onboarding.settings.showChecklist'
   | 'onboarding.settings.saved'
+  | 'onboarding.settings.saveError'
   | 'onboarding.error.save'
   | 'nav.schedule'
   | 'schedule.title'
@@ -2653,9 +2654,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     cz: 'Přímá online rezervace',
   },
   'landing.features.booking_desc': {
-    en: 'Provide clients with a clean booking link to select services and available time slots.',
-    ru: 'Удобная ссылка для записи клиентов с выбором мастера, услуги и свободного времени.',
-    cz: 'Pohodlný odkaz pro rezervaci klientů s výběrem mistra, služby a volného času.',
+    en: 'Turn on the public booking link in your business settings so clients can pick a service and a free slot.',
+    ru: 'Включите публичную ссылку записи в настройках бизнеса — клиенты выберут услугу и свободное время.',
+    cz: 'Zapněte veřejný rezervační odkaz v nastavení podniku, aby si klienti vybrali službu a volný termín.',
   },
   'landing.features.calendar_title': {
     en: 'Master Schedule Grid',
@@ -3005,6 +3006,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.settings.showTour': { en: 'Show tour again', ru: 'Показать тур снова', cz: 'Zobrazit prohlídku znovu' },
   'onboarding.settings.showChecklist': { en: 'Show checklist again', ru: 'Показать чеклист снова', cz: 'Zobrazit seznam znovu' },
   'onboarding.settings.saved': { en: 'Updated', ru: 'Обновлено', cz: 'Aktualizováno' },
+  'onboarding.settings.saveError': { en: 'Failed to update settings', ru: 'Не удалось обновить настройки', cz: 'Nastavení se nepodařilo aktualizovat' },
   'onboarding.error.save': { en: 'Could not save the choice. Try again.', ru: 'Не удалось сохранить выбор. Попробуйте ещё раз.', cz: 'Volbu se nepodařilo uložit. Zkuste to znovu.' },
 
   'nav.schedule': { en: 'Schedule', ru: 'График', cz: 'Rozvrh' },

@@ -203,7 +203,7 @@ export default function Settings() {
             <p className="mt-3 text-sm text-green-600 dark:text-green-400">{t('onboarding.settings.saved')}</p>
           )}
           {updateOnboarding.isError && (
-            <p className="mt-3 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(updateOnboarding.error)}</p>
+            <p className="mt-3 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(updateOnboarding.error, t('onboarding.settings.saveError'))}</p>
           )}
         </Card>
 
