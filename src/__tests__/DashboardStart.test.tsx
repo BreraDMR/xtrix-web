@@ -13,7 +13,8 @@ beforeEach(() => { vi.clearAllMocks(); resetStores(); signIn({ id: 7, role: 'bus
 it('guides a new owner to create a business without requesting financial reports', async () => {
   vi.mocked(api.get).mockImplementation(routes({ '/businesses/me': null }))
   renderWithProviders(<Dashboard />)
-  expect(await screen.findByRole('link', { name: 'Create Business' })).toHaveAttribute('href', '/business')
+  expect(await screen.findByRole('heading', { name: 'Create your business' })).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Create business' })).toBeInTheDocument()
   expect(api.get).not.toHaveBeenCalledWith('/expenses/reports/profit')
 })
 
