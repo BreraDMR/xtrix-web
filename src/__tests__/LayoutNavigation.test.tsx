@@ -36,7 +36,7 @@ it('opens the dashboard from the X logo on the clients screen', async () => {
   renderLayout()
   expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
   await userEvent.click(screen.getByRole('link', { name: 'Xtrix' }))
-  expect(screen.getByRole('heading', { name: 'Dashboard screen' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Dashboard screen' })).toBeInTheDocument()
   expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Dashboard' })).toHaveAttribute('aria-current', 'page')
 })
 
