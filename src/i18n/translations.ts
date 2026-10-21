@@ -279,6 +279,77 @@ export type TranslationKey =
   | 'booking.confirm'
   | 'booking.submitting'
   | 'booking.chooseAnotherTime'
+  | 'booking.waitlist.cta'
+  | 'booking.waitlist.noSlotsHint'
+  | 'booking.waitlist.title'
+  | 'booking.waitlist.notBooking'
+  | 'booking.waitlist.explanation'
+  | 'booking.waitlist.join'
+  | 'booking.waitlist.decline'
+  | 'booking.waitlist.joinedTitle'
+  | 'booking.waitlist.joinedText'
+  | 'booking.waitlist.leave'
+  | 'booking.waitlist.leftTitle'
+  | 'booking.waitlist.leftText'
+  | 'booking.waitlist.emailRequired'
+  | 'booking.waitlist.dateRange'
+  | 'booking.waitlist.timePreference'
+  | 'booking.waitlist.timeAny'
+  | 'booking.waitlist.timeMorning'
+  | 'booking.waitlist.timeAfternoon'
+  | 'booking.waitlist.timeEvening'
+  | 'booking.waitlist.dateFrom'
+  | 'booking.waitlist.dateTo'
+  | 'booking.waitlist.processingConsent'
+  | 'waitlist.title'
+  | 'waitlist.subtitle'
+  | 'waitlist.filter.status'
+  | 'waitlist.filter.service'
+  | 'waitlist.filter.anyService'
+  | 'waitlist.filter.dateFrom'
+  | 'waitlist.filter.dateTo'
+  | 'waitlist.filter.reset'
+  | 'waitlist.status.all'
+  | 'waitlist.status.active'
+  | 'waitlist.status.cancelled'
+  | 'waitlist.status.fulfilled'
+  | 'waitlist.offer.pending'
+  | 'waitlist.offer.accepted'
+  | 'waitlist.offer.declined'
+  | 'waitlist.offer.expired'
+  | 'waitlist.offer.conflict'
+  | 'waitlist.empty'
+  | 'waitlist.table.guest'
+  | 'waitlist.table.preferences'
+  | 'waitlist.table.offer'
+  | 'waitlist.table.created'
+  | 'waitlist.table.actions'
+  | 'waitlist.table.expires'
+  | 'waitlist.table.noOffer'
+  | 'waitlist.cancel'
+  | 'waitlist.cancelConfirm'
+  | 'waitlistOffer.title'
+  | 'waitlistOffer.subtitle'
+  | 'waitlistOffer.unavailableTitle'
+  | 'waitlistOffer.unavailableText'
+  | 'waitlistOffer.loadError'
+  | 'waitlistOffer.notReserved'
+  | 'waitlistOffer.expires'
+  | 'waitlistOffer.accept'
+  | 'waitlistOffer.accepting'
+  | 'waitlistOffer.decline'
+  | 'waitlistOffer.declining'
+  | 'waitlistOffer.acceptedTitle'
+  | 'waitlistOffer.acceptedText'
+  | 'waitlistOffer.declinedTitle'
+  | 'waitlistOffer.declinedText'
+  | 'waitlistOffer.closedText'
+  | 'waitlistOffer.actionError'
+  | 'waitlistOffer.status.accepted'
+  | 'waitlistOffer.status.declined'
+  | 'waitlistOffer.status.expired'
+  | 'waitlistOffer.status.conflict'
+  | 'waitlistOffer.status.cancelled'
   | 'booking.successTitle'
   | 'booking.successText'
   | 'booking.bookingNumber'
@@ -510,6 +581,7 @@ export type TranslationKey =
   | 'nav.visits'
   | 'nav.calendar'
   | 'nav.services'
+  | 'nav.waitlist'
   | 'nav.profile'
   | 'nav.logout'
   | 'nav.inventory'
@@ -1727,6 +1799,77 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.confirm": {"en": "Confirm booking", "ru": "Подтвердить запись", "cz": "Potvrdit rezervaci"},
   "booking.submitting": {"en": "Sending...", "ru": "Отправляем...", "cz": "Odesílám..."},
   "booking.chooseAnotherTime": {"en": "Choose another time", "ru": "Выбрать другое время", "cz": "Vybrat jiný čas"},
+  "booking.waitlist.cta": {"en": "Join the waitlist", "ru": "Встать в лист ожидания", "cz": "Zařadit se na seznam čekatelů"},
+  "booking.waitlist.noSlotsHint": {"en": "You can leave a request — the salon will email you if a matching time frees up.", "ru": "Можно оставить заявку — салон напишет на email, если подходящее время освободится.", "cz": "Můžete zanechat žádost — salon vám napíše e-mailem, když se uvolní vhodný termín."},
+  "booking.waitlist.title": {"en": "Waitlist request", "ru": "Заявка в лист ожидания", "cz": "Žádost do seznamu čekatelů"},
+  "booking.waitlist.notBooking": {"en": "This is not a booking and does not hold a time.", "ru": "Это не запись и не резерв времени.", "cz": "Toto není rezervace ani rezervace času."},
+  "booking.waitlist.explanation": {"en": "If a suitable slot frees up, you may get a time-limited offer by email. The time is not held for you until you accept it.", "ru": "Если подходящее окно освободится, на email придёт предложение с ограниченным сроком. До подтверждения время за вами не закреплено.", "cz": "Když se uvolní vhodný termín, přijde vám e-mailem nabídka s omezenou platností. Do potvrzení není čas pro vás blokován."},
+  "booking.waitlist.join": {"en": "Send request", "ru": "Отправить заявку", "cz": "Odeslat žádost"},
+  "booking.waitlist.decline": {"en": "Don't join", "ru": "Не вставать", "cz": "Nezařazovat se"},
+  "booking.waitlist.joinedTitle": {"en": "Request saved", "ru": "Заявка сохранена", "cz": "Žádost uložena"},
+  "booking.waitlist.joinedText": {"en": "The salon will see your preferences. If a matching time frees up, you may receive an email with a time-limited offer.", "ru": "Салон увидит ваши пожелания. Если подходящее время освободится, вы можете получить письмо с предложением на ограниченный срок.", "cz": "Salon uvidí vaše preference. Pokud se uvolní vhodný termín, můžete dostat e-mail s nabídkou na omezenou dobu."},
+  "booking.waitlist.leave": {"en": "Leave the waitlist", "ru": "Убрать заявку", "cz": "Odebrat žádost"},
+  "booking.waitlist.leftTitle": {"en": "You left the waitlist", "ru": "Вы убрали заявку", "cz": "Žádost byla odebrána"},
+  "booking.waitlist.leftText": {"en": "No new offers will be sent for this request.", "ru": "Новые предложения по этой заявке приходить не будут.", "cz": "Pro tuto žádost už nebudou chodit nové nabídky."},
+  "booking.waitlist.emailRequired": {"en": "Enter an email to receive an offer", "ru": "Укажите email, чтобы получить предложение", "cz": "Zadejte e-mail pro zaslání nabídky"},
+  "booking.waitlist.dateRange": {"en": "Check the preferred dates", "ru": "Проверьте желаемые даты", "cz": "Zkontrolujte požadované termíny"},
+  "booking.waitlist.timePreference": {"en": "Preferred time of day", "ru": "Желаемое время", "cz": "Preferovaný čas"},
+  "booking.waitlist.timeAny": {"en": "Any time", "ru": "Любое", "cz": "Jakýkoli"},
+  "booking.waitlist.timeMorning": {"en": "Morning (before 12)", "ru": "Утро (до 12)", "cz": "Ráno (do 12)"},
+  "booking.waitlist.timeAfternoon": {"en": "Afternoon (12–17)", "ru": "День (12–17)", "cz": "Odpoledne (12–17)"},
+  "booking.waitlist.timeEvening": {"en": "Evening (after 17)", "ru": "Вечер (после 17)", "cz": "Večer (po 17)"},
+  "booking.waitlist.dateFrom": {"en": "Earliest date", "ru": "Дата с", "cz": "Datum od"},
+  "booking.waitlist.dateTo": {"en": "Latest date", "ru": "Дата по", "cz": "Datum do"},
+  "booking.waitlist.processingConsent": {"en": "I agree that the salon may process my details to contact me about this waitlist request.", "ru": "Согласен(на), что салон обработает мои данные, чтобы связаться со мной по этой заявке.", "cz": "Souhlasím, aby salon zpracoval mé údaje pro kontakt ohledně této žádosti."},
+  "waitlist.title": {"en": "Waitlist", "ru": "Лист ожидания", "cz": "Seznam čekatelů"},
+  "waitlist.subtitle": {"en": "Requests are preferences, not bookings. When a slot frees up, matching guests receive a time-limited offer by email.", "ru": "Заявки — это пожелания, а не записи. Когда окно освобождается, подходящие гости получают письмо с предложением на ограниченный срок.", "cz": "Žádosti jsou preference, ne rezervace. Když se uvolní termín, vhodní hosté dostanou e-mailem nabídku s omezenou platností."},
+  "waitlist.filter.status": {"en": "Status", "ru": "Статус", "cz": "Stav"},
+  "waitlist.filter.service": {"en": "Service", "ru": "Услуга", "cz": "Služba"},
+  "waitlist.filter.anyService": {"en": "All services", "ru": "Все услуги", "cz": "Všechny služby"},
+  "waitlist.filter.dateFrom": {"en": "Preferences from", "ru": "Пожелания с", "cz": "Preference od"},
+  "waitlist.filter.dateTo": {"en": "Preferences to", "ru": "Пожелания по", "cz": "Preference do"},
+  "waitlist.filter.reset": {"en": "Reset filters", "ru": "Сбросить фильтры", "cz": "Zrušit filtry"},
+  "waitlist.status.all": {"en": "All statuses", "ru": "Все статусы", "cz": "Všechny stavy"},
+  "waitlist.status.active": {"en": "Active", "ru": "Активна", "cz": "Aktivní"},
+  "waitlist.status.cancelled": {"en": "Closed", "ru": "Закрыта", "cz": "Uzavřená"},
+  "waitlist.status.fulfilled": {"en": "Booked", "ru": "Записана", "cz": "Rezervováno"},
+  "waitlist.offer.pending": {"en": "Offer waiting", "ru": "Ожидает ответа", "cz": "Nabídka čeká"},
+  "waitlist.offer.accepted": {"en": "Offer accepted", "ru": "Предложение принято", "cz": "Nabídka přijata"},
+  "waitlist.offer.declined": {"en": "Offer declined", "ru": "Предложение отклонено", "cz": "Nabídka odmítnuta"},
+  "waitlist.offer.expired": {"en": "Offer expired", "ru": "Предложение истекло", "cz": "Nabídka vypršela"},
+  "waitlist.offer.conflict": {"en": "Time taken", "ru": "Время занято", "cz": "Čas obsazen"},
+  "waitlist.empty": {"en": "No waitlist requests match these filters.", "ru": "По этим фильтрам заявок нет.", "cz": "Těmto filtrům neodpovídají žádné žádosti."},
+  "waitlist.table.guest": {"en": "Guest", "ru": "Гость", "cz": "Host"},
+  "waitlist.table.preferences": {"en": "Preferences", "ru": "Пожелания", "cz": "Preference"},
+  "waitlist.table.offer": {"en": "Latest offer", "ru": "Последнее предложение", "cz": "Poslední nabídka"},
+  "waitlist.table.created": {"en": "Created", "ru": "Создана", "cz": "Vytvořeno"},
+  "waitlist.table.actions": {"en": "Actions", "ru": "Действия", "cz": "Akce"},
+  "waitlist.table.expires": {"en": "Expires", "ru": "Действует до", "cz": "Platí do"},
+  "waitlist.table.noOffer": {"en": "No offers yet", "ru": "Предложений ещё не было", "cz": "Zatím žádná nabídka"},
+  "waitlist.cancel": {"en": "Close request", "ru": "Закрыть заявку", "cz": "Uzavřít žádost"},
+  "waitlist.cancelConfirm": {"en": "Close this waitlist request? No new offers will be sent.", "ru": "Закрыть эту заявку? Новые предложения приходить не будут.", "cz": "Uzavřít tuto žádost? Nové nabídky už nebudou zasílány."},
+  "waitlistOffer.title": {"en": "Waitlist offer", "ru": "Предложение из листа ожидания", "cz": "Nabídka ze seznamu čekatelů"},
+  "waitlistOffer.subtitle": {"en": "A free time matched your waitlist request. Review it and confirm if it suits you.", "ru": "Освободилось время по вашей заявке в листе ожидания. Проверьте его и подтвердите, если подходит.", "cz": "Uvolnil se čas odpovídající vaší žádosti. Zkontrolujte jej a potvrďte, pokud vám vyhovuje."},
+  "waitlistOffer.unavailableTitle": {"en": "Offer is not available", "ru": "Предложение недоступно", "cz": "Nabídka není dostupná"},
+  "waitlistOffer.unavailableText": {"en": "The link is invalid, has expired, or the offer was already answered. Ask the salon to add you to the waitlist again.", "ru": "Ссылка недействительна, истекла или на предложение уже ответили. Попросите салон добавить вас в лист ожидания снова.", "cz": "Odkaz je neplatný, vypršel nebo už na nabídku bylo odpovězeno. Požádejte salon, aby vás znovu zařadil do seznamu čekatelů."},
+  "waitlistOffer.loadError": {"en": "Couldn't load the offer", "ru": "Не удалось загрузить предложение", "cz": "Nabídku se nepodařilo načíst"},
+  "waitlistOffer.notReserved": {"en": "This time is not reserved for you. It stays open to everyone until you accept the offer.", "ru": "Это время за вами не закреплено. Оно остаётся свободным для всех, пока вы не примете предложение.", "cz": "Tento čas pro vás není blokován. Zůstává volný pro všechny, dokud nabídku nepřijmete."},
+  "waitlistOffer.expires": {"en": "Offer valid until", "ru": "Предложение действует до", "cz": "Nabídka platí do"},
+  "waitlistOffer.accept": {"en": "Book this time", "ru": "Записаться на это время", "cz": "Rezervovat tento čas"},
+  "waitlistOffer.accepting": {"en": "Booking...", "ru": "Записываю...", "cz": "Rezervuji..."},
+  "waitlistOffer.decline": {"en": "Not this time", "ru": "Не подходит", "cz": "Tentokrát ne"},
+  "waitlistOffer.declining": {"en": "Sending...", "ru": "Отправляю...", "cz": "Odesílám..."},
+  "waitlistOffer.acceptedTitle": {"en": "You are booked", "ru": "Вы записаны", "cz": "Rezervace potvrzena"},
+  "waitlistOffer.acceptedText": {"en": "The time is now yours. The salon will contact you using the details from your waitlist request.", "ru": "Время закреплено за вами. Салон свяжется с вами по контактам из заявки.", "cz": "Čas je nyní váš. Salon vás bude kontaktovat na údaje z vaší žádosti."},
+  "waitlistOffer.declinedTitle": {"en": "Offer declined", "ru": "Предложение отклонено", "cz": "Nabídka odmítnuta"},
+  "waitlistOffer.declinedText": {"en": "Your waitlist request stays active, and you may receive another offer if a suitable time frees up.", "ru": "Заявка в листе ожидания остаётся активной — вы можете получить новое предложение, если подходящее время освободится.", "cz": "Vaše žádost zůstává aktivní a můžete dostat další nabídku, když se uvolní vhodný čas."},
+  "waitlistOffer.closedText": {"en": "This offer can no longer be accepted. Ask the salon if you would like to join the waitlist again.", "ru": "Это предложение больше нельзя принять. Спросите салон, если хотите снова встать в лист ожидания.", "cz": "Tuto nabídku už nelze přijmout. Pokud se chcete znovu zařadit, kontaktujte salon."},
+  "waitlistOffer.actionError": {"en": "Couldn't complete the action. Try again.", "ru": "Не удалось выполнить действие. Попробуйте ещё раз.", "cz": "Akci se nepodařilo dokončit. Zkuste to znovu."},
+  "waitlistOffer.status.accepted": {"en": "Offer already accepted", "ru": "Предложение уже принято", "cz": "Nabídka již přijata"},
+  "waitlistOffer.status.declined": {"en": "Offer declined", "ru": "Предложение отклонено", "cz": "Nabídka odmítnuta"},
+  "waitlistOffer.status.expired": {"en": "Offer expired", "ru": "Предложение истекло", "cz": "Nabídka vypršela"},
+  "waitlistOffer.status.conflict": {"en": "Time is already taken", "ru": "Время уже занято", "cz": "Čas je již obsazen"},
+  "waitlistOffer.status.cancelled": {"en": "Offer cancelled", "ru": "Предложение отменено", "cz": "Nabídka zrušena"},
   "booking.successTitle": {"en": "You are booked", "ru": "Вы записаны", "cz": "Rezervace potvrzena"},
   "booking.successText": {"en": "The salon will contact you using the details you left. No email confirmation is sent automatically.", "ru": "Салон свяжется с вами по оставленным контактам. Письмо-подтверждение автоматически не отправляется.", "cz": "Salon vás bude kontaktovat na uvedené údaje. Potvrzovací e-mail se automaticky neposílá."},
   "booking.bookingNumber": {"en": "Booking number", "ru": "Номер записи", "cz": "Číslo rezervace"},
@@ -2024,6 +2167,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
   'nav.calendar': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },
   'nav.services': { en: 'Services', ru: 'Услуги', cz: 'Služby' },
+  'nav.waitlist': { en: 'Waitlist', ru: 'Лист ожидания', cz: 'Seznam čekatelů' },
   'nav.profile': { en: 'Profile', ru: 'Профиль', cz: 'Profil' },
   'nav.logout': { en: 'Logout', ru: 'Выйти', cz: 'Odhlásit se' },
   

@@ -2265,6 +2265,97 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/public/waitlist/leave": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Leave the waitlist */
+        post: operations["leave_waitlist_public_waitlist_leave_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/waitlist/offer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read a time-limited waitlist offer */
+        get: operations["read_offer_public_waitlist_offer_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/waitlist/offer/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept an offer with a fresh availability check
+         * @description The offer is locked and the slot is re-checked. Of two confirmations for the same time only one creates a visit; the other gets a conflict and its entry stays active.
+         */
+        post: operations["accept_offer_public_waitlist_offer_accept_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/waitlist/offer/decline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Decline one offer without leaving the waitlist */
+        post: operations["decline_offer_public_waitlist_offer_decline_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/waitlist/{slug}/join": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Join the waitlist for a service
+         * @description Stores preferences and consent only. The response never shows a queue or other clients; repeating the same request returns the existing active entry.
+         */
+        post: operations["join_waitlist_public_waitlist__slug__join_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/schedules/blocks": {
         parameters: {
             query?: never;
@@ -3272,6 +3363,40 @@ export interface paths {
         put?: never;
         /** Restore Visit */
         post: operations["restore_visit_visits__visit_id__restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/waitlist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the business's waitlist requests */
+        get: operations["list_waitlist_waitlist_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/waitlist/{entry_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Close one waitlist request */
+        post: operations["cancel_waitlist_entry_waitlist__entry_id__cancel_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5746,6 +5871,19 @@ export interface components {
         PaginatedResponse_VisitOut_: {
             /** Items */
             items: components["schemas"]["VisitOut"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** PaginatedResponse[WaitlistEntryOut] */
+        PaginatedResponse_WaitlistEntryOut_: {
+            /** Items */
+            items: components["schemas"]["WaitlistEntryOut"][];
             /** Page */
             page: number;
             /** Pages */
@@ -8243,6 +8381,193 @@ export interface components {
             service_name?: string | null;
             /** Status */
             status?: string | null;
+        };
+        /** WaitlistEntryOut */
+        WaitlistEntryOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Email */
+            email: string;
+            /** Full Name */
+            full_name: string;
+            /** Id */
+            id: number;
+            /** Language */
+            language: string;
+            latest_offer?: components["schemas"]["WaitlistOfferSummaryOut"] | null;
+            /** Phone */
+            phone?: string | null;
+            /**
+             * Preferred Date From
+             * Format: date
+             */
+            preferred_date_from: string;
+            /** Preferred Date To */
+            preferred_date_to?: string | null;
+            /** Service Id */
+            service_id: number;
+            /** Service Name */
+            service_name: string;
+            /** Specialist Id */
+            specialist_id?: number | null;
+            /** Specialist Name */
+            specialist_name?: string | null;
+            /** Status */
+            status: string;
+            /** Time Preference */
+            time_preference: string;
+        };
+        /** WaitlistJoinIn */
+        WaitlistJoinIn: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /** Full Name */
+            full_name: string;
+            /**
+             * Marketing Consent
+             * @default false
+             */
+            marketing_consent: boolean;
+            /** Phone */
+            phone?: string | null;
+            /**
+             * Preferred Date From
+             * Format: date
+             */
+            preferred_date_from: string;
+            /** Preferred Date To */
+            preferred_date_to?: string | null;
+            /** Processing Consent */
+            processing_consent: boolean;
+            /** Service Id */
+            service_id: number;
+            /** Staff Id */
+            staff_id?: number | null;
+            /**
+             * Time Preference
+             * @default any
+             * @enum {string}
+             */
+            time_preference: "any" | "morning" | "afternoon" | "evening";
+        };
+        /** WaitlistJoinOut */
+        WaitlistJoinOut: {
+            /** Created */
+            created: boolean;
+            /**
+             * Manage Token
+             * @description Token for leaving the waitlist; returned once, only when the entry is new
+             */
+            manage_token?: string | null;
+            /** Message */
+            message: string;
+        };
+        /** WaitlistMessageOut */
+        WaitlistMessageOut: {
+            /** Message */
+            message: string;
+        };
+        /** WaitlistOfferAcceptOut */
+        WaitlistOfferAcceptOut: {
+            /** Currency */
+            currency: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /** Id */
+            id: number;
+            /**
+             * Manage Token
+             * @description One-time management token for this booking; put it in a link fragment and never log it
+             */
+            manage_token?: string | null;
+            /** Price */
+            price?: number | null;
+            /** Service Name */
+            service_name: string;
+            /** Staff Id */
+            staff_id: number;
+            /** Staff Name */
+            staff_name: string;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /** Status */
+            status: string;
+            /** Timezone */
+            timezone: string;
+        };
+        /** WaitlistOfferOut */
+        WaitlistOfferOut: {
+            /** Business Address */
+            business_address?: string | null;
+            /** Business Name */
+            business_name: string;
+            /** Business Phone */
+            business_phone?: string | null;
+            /** Currency */
+            currency: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Price */
+            price?: number | null;
+            /** Service Name */
+            service_name: string;
+            /** Staff Name */
+            staff_name: string;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /** Status */
+            status: string;
+            /** Timezone */
+            timezone: string;
+        };
+        /** WaitlistOfferSummaryOut */
+        WaitlistOfferSummaryOut: {
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Id */
+            id: number;
+            /** Staff Id */
+            staff_id: number;
+            /** Staff Name */
+            staff_name: string;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /** Status */
+            status: string;
         };
         /** WorkScheduleCreate */
         WorkScheduleCreate: {
@@ -14046,6 +14371,171 @@ export interface operations {
             };
         };
     };
+    leave_waitlist_public_waitlist_leave_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Waitlist-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WaitlistMessageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_offer_public_waitlist_offer_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Waitlist-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WaitlistOfferOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    accept_offer_public_waitlist_offer_accept_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Waitlist-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WaitlistOfferAcceptOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decline_offer_public_waitlist_offer_decline_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Waitlist-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WaitlistMessageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    join_waitlist_public_waitlist__slug__join_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WaitlistJoinIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WaitlistJoinOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_blocks_schedules_blocks_get: {
         parameters: {
             query: {
@@ -16638,6 +17128,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_waitlist_waitlist_get: {
+        parameters: {
+            query?: {
+                status?: ("active" | "cancelled" | "fulfilled") | null;
+                service_id?: number | null;
+                specialist_id?: number | null;
+                date_from?: string | null;
+                date_to?: string | null;
+                page?: number;
+                per_page?: number;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_WaitlistEntryOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_waitlist_entry_waitlist__entry_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                entry_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WaitlistEntryOut"];
                 };
             };
             /** @description Validation Error */

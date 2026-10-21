@@ -13,6 +13,7 @@ type TimeStepProps = {
   isError: boolean
   onRetry: () => unknown
   onSelect: (slot: PublicSlotOut) => void
+  onWaitlist: () => void
   onBack: () => void
 }
 
@@ -26,6 +27,7 @@ export default function TimeStep({
   isError,
   onRetry,
   onSelect,
+  onWaitlist,
   onBack,
 }: TimeStepProps) {
   const { t, locale } = useTranslation()
@@ -88,7 +90,17 @@ export default function TimeStep({
           </button>
         </div>
       ) : !hasSlots ? (
-        <p className="mt-4 text-sm text-slate-500 dark:text-gray-400">{t('booking.noSlots')}</p>
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-gray-600 dark:bg-gray-700">
+          <p className="text-sm text-slate-600 dark:text-gray-300">{t('booking.noSlots')}</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('booking.waitlist.noSlotsHint')}</p>
+          <button
+            type="button"
+            onClick={onWaitlist}
+            className="mt-3 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          >
+            {t('booking.waitlist.cta')}
+          </button>
+        </div>
       ) : (
         <>
           <div className="-mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-2">

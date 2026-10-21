@@ -11,6 +11,7 @@ import ContactStep from '../../components/booking/ContactStep'
 import ServiceStep from '../../components/booking/ServiceStep'
 import StaffStep from '../../components/booking/StaffStep'
 import TimeStep from '../../components/booking/TimeStep'
+import WaitlistForm from '../../components/booking/WaitlistForm'
 import { INTL_LOCALE } from '../../components/booking/intl'
 import type { ContactDetails } from '../../components/booking/types'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -26,7 +27,7 @@ import type {
 } from '../../api/types'
 import { formatCurrency, type Currency } from '../../utils/currency'
 
-type BookingStep = 'service' | 'staff' | 'time' | 'contact' | 'summary' | 'done'
+type BookingStep = 'service' | 'staff' | 'time' | 'waitlist' | 'contact' | 'summary' | 'done'
 
 const EMPTY_DETAILS: ContactDetails = {
   fullName: '',
@@ -370,8 +371,9 @@ export default function BookingPage() {
 
   const currency = business.currency as Currency
   const services = servicesQuery.data ?? []
-  const bookedStaffName = selectedSlot
-    ? staffQuery.data?.find((person) => person.id === selectedSlot.staff_id)?.full_name ?? null
+  const staffIdForSummary = selectedSlot?.staff_id ?? selectedStaffId
+  const bookedStaffName = staffIdForSummary
+    ? staffQuery.data?.find((person) => person.id === staffIdForSummary)?.full_name ?? null
     : null
 
   return (
@@ -489,8 +491,20 @@ export default function BookingPage() {
               isError={slotsQuery.isError}
               onRetry={slotsQuery.refetch}
               onSelect={handleSelectSlot}
+              onWaitlist={() => setStep('waitlist')}
               onBack={() => setStep('staff')}
             />
+          ) : step === 'waitlist' ? (
+            selectedService ? (
+              <WaitlistForm
+                slug={slug}
+                service={selectedService}
+                staffId={selectedStaffId}
+                staffName={bookedStaffName}
+                timezone={slotsQuery.data?.timezone ?? business.timezone}
+                onBack={() => setStep('time')}
+              />
+            ) : null
           ) : step === 'contact' ? (
             selectedService && selectedSlot ? (
               <ContactStep
