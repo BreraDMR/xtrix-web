@@ -2010,6 +2010,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/public/booking/{slug}/chain-slots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Free slots for a chain of services with one master */
+        get: operations["list_public_chain_slots_public_booking__slug__chain_slots_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/public/booking/{slug}/services": {
         parameters: {
             query?: never;
@@ -6284,9 +6301,35 @@ export interface components {
             /** Processing Consent */
             processing_consent: boolean;
             /** Service Id */
-            service_id: number;
+            service_id?: number | null;
+            /**
+             * Service Ids
+             * @description Ordered services for a chain; use service_id for a single booking
+             */
+            service_ids?: number[] | null;
             /** Staff Id */
             staff_id: number;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** PublicBookingItemOut */
+        PublicBookingItemOut: {
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /** Price */
+            price?: number | null;
+            /** Service Id */
+            service_id?: number | null;
+            /** Service Name */
+            service_name?: string | null;
+            /** Staff Id */
+            staff_id?: number | null;
             /**
              * Start
              * Format: date-time
@@ -6344,6 +6387,8 @@ export interface components {
             end: string;
             /** Id */
             id: number;
+            /** Items */
+            items?: components["schemas"]["PublicBookingItemOut"][];
             /**
              * Manage Token
              * @description One-time management token for this booking; put it in a link fragment and never log it
@@ -8265,6 +8310,11 @@ export interface components {
              * Format: date-time
              */
             date_start: string;
+            /**
+             * Items
+             * @description Ordered services; price and end are computed
+             */
+            items?: components["schemas"]["VisitItemIn"][] | null;
             /** Note */
             note?: string | null;
             /**
@@ -8294,6 +8344,43 @@ export interface components {
              */
             used_products?: components["schemas"]["UsedProduct"][] | null;
         };
+        /**
+         * VisitItemIn
+         * @description One service in a chain. Price, duration and time are snapshotted by the server.
+         */
+        VisitItemIn: {
+            /** Service Id */
+            service_id: number;
+            /** Specialist Id */
+            specialist_id?: number | null;
+        };
+        /** VisitItemOut */
+        VisitItemOut: {
+            /**
+             * Date End
+             * Format: date-time
+             */
+            date_end: string;
+            /**
+             * Date Start
+             * Format: date-time
+             */
+            date_start: string;
+            /** Duration Minutes */
+            duration_minutes: number;
+            /** Id */
+            id: number;
+            /** Position */
+            position: number;
+            /** Price */
+            price?: number | null;
+            /** Service Id */
+            service_id?: number | null;
+            /** Service Name */
+            service_name?: string | null;
+            /** Specialist Id */
+            specialist_id?: number | null;
+        };
         /** VisitOut */
         VisitOut: {
             /** Client Confirmed At */
@@ -8314,6 +8401,8 @@ export interface components {
             date_start: string;
             /** Id */
             id: number;
+            /** Items */
+            items?: components["schemas"]["VisitItemOut"][];
             /** Note */
             note?: string | null;
             /**
@@ -8364,6 +8453,8 @@ export interface components {
             date_end?: string | null;
             /** Date Start */
             date_start?: string | null;
+            /** Items */
+            items?: components["schemas"]["VisitItemIn"][] | null;
             /** Note */
             note?: string | null;
             /**
@@ -8484,6 +8575,8 @@ export interface components {
             end: string;
             /** Id */
             id: number;
+            /** Items */
+            items?: components["schemas"]["PublicBookingItemOut"][];
             /**
              * Manage Token
              * @description One-time management token for this booking; put it in a link fragment and never log it
@@ -13848,6 +13941,44 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicBookingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_public_chain_slots_public_booking__slug__chain_slots_get: {
+        parameters: {
+            query: {
+                service_ids: number[];
+                staff_id?: number | null;
+                date_from: string;
+                date_to?: string | null;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicSlotsOut"];
                 };
             };
             /** @description Validation Error */

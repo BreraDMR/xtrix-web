@@ -67,6 +67,7 @@ export type PublicDaySlotsOut = Schema<'PublicDaySlotsOut'>
 export type PublicSlotsOut = Schema<'PublicSlotsOut'>
 export type PublicBookingCreate = Schema<'PublicBookingCreate'>
 export type PublicBookingOut = Schema<'PublicBookingOut'>
+export type PublicBookingItemOut = Schema<'PublicBookingItemOut'>
 export type PublicBookingManageOut = Schema<'PublicBookingManageOut'>
 export type PublicBookingRescheduleIn = Schema<'PublicBookingRescheduleIn'>
 export type PublicBookingSettingsOut = Schema<'PublicBookingSettingsOut'>

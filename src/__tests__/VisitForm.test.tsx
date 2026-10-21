@@ -76,6 +76,116 @@ describe('VisitForm', () => {
     )
   })
 
+  describe('services in a chain', () => {
+    const eva = { id: 9, full_name: 'Eva Svobodová' }
+    const massage = { id: 5, name: 'Massage', duration_minutes: 60, price: 900, is_active: true, specialist_id: 9, specialist: eva }
+    const facial = { id: 6, name: 'Facial', duration_minutes: 40, price: 500, is_active: true, specialist_id: 9, specialist: eva }
+    const servicesTable = {
+      '/clients/': [jana],
+      '/services/': [massage, facial],
+      '/services/5': { ...massage, specialists: [{ ...eva, email: 'eva@example.com' }] },
+      '/services/6': { ...facial, specialists: [{ ...eva, email: 'eva@example.com' }] },
+    }
+
+    async function pickLegacyService() {
+      const option = await screen.findByRole('option', { name: /Massage/ })
+      await userEvent.selectOptions(option.closest('select')!, option)
+    }
+
+    it('submits ordered items instead of the legacy single-service fields', async () => {
+      vi.mocked(api.get).mockImplementation(routes(servicesTable))
+      vi.mocked(api.post).mockResolvedValue({ data: { id: 12 } })
+      renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+
+      await pickClient()
+      await pickLegacyService()
+      await userEvent.click(screen.getByRole('button', { name: /add service/i }))
+      await userEvent.selectOptions(screen.getByLabelText('Service 2'), '6')
+      await waitFor(() => expect(screen.getByLabelText('Specialist 2')).toHaveValue('9'))
+      expect(screen.getByText(`${60 + 40} min`)).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
+
+      await waitFor(() => expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({
+        client_id: 3,
+        items: [
+          { service_id: 5, specialist_id: 9 },
+          { service_id: 6, specialist_id: 9 },
+        ],
+      })))
+      const payload = vi.mocked(api.post).mock.calls[0][1] as Record<string, unknown>
+      expect(payload).not.toHaveProperty('service_id')
+      expect(payload).not.toHaveProperty('service_name')
+      expect(payload).not.toHaveProperty('date_end')
+      expect(payload).not.toHaveProperty('price')
+    })
+
+    it('refuses a chain with a row that has no service', async () => {
+      vi.mocked(api.get).mockImplementation(routes(servicesTable))
+      renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+
+      await pickClient()
+      await userEvent.click(screen.getByRole('button', { name: /add service/i }))
+      await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
+
+      expect(await screen.findByRole('alert')).toHaveTextContent('Choose a service for every row')
+      expect(api.post).not.toHaveBeenCalled()
+    })
+
+    it('keeps the chosen order when rows are moved', async () => {
+      vi.mocked(api.get).mockImplementation(routes(servicesTable))
+      vi.mocked(api.post).mockResolvedValue({ data: { id: 13 } })
+      renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+
+      await pickClient()
+      await pickLegacyService()
+      await userEvent.click(screen.getByRole('button', { name: /add service/i }))
+      await userEvent.selectOptions(screen.getByLabelText('Service 2'), '6')
+      await waitFor(() => expect(screen.getByLabelText('Specialist 2')).toHaveValue('9'))
+      await userEvent.click(screen.getByRole('button', { name: 'Move up 2' }))
+      await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
+
+      await waitFor(() => expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({
+        items: [
+          { service_id: 6, specialist_id: 9 },
+          { service_id: 5, specialist_id: 9 },
+        ],
+      })))
+    })
+
+    it('loads an existing chain and updates it as items', async () => {
+      vi.mocked(api.get).mockImplementation(routes({
+        ...servicesTable,
+        '/visits/21': {
+          id: 21,
+          client_id: 3,
+          specialist_id: 9,
+          date_start: '2030-05-06T08:00:00Z',
+          date_end: '2030-05-06T09:40:00Z',
+          status: 'planned',
+          price: 1400,
+          items: [
+            { id: 101, position: 1, service_id: 5, service_name: 'Massage', specialist_id: 9, duration_minutes: 60, price: 900, date_start: '2030-05-06T08:00:00Z', date_end: '2030-05-06T09:00:00Z' },
+            { id: 102, position: 2, service_id: 6, service_name: 'Facial', specialist_id: 9, duration_minutes: 40, price: 500, date_start: '2030-05-06T09:00:00Z', date_end: '2030-05-06T09:40:00Z' },
+          ],
+        },
+      }))
+      vi.mocked(api.put).mockResolvedValue({ data: { id: 21 } })
+      renderWithProviders(<VisitForm visitId={21} onSuccess={() => {}} onCancel={() => {}} />)
+
+      await waitFor(() => expect(screen.getByLabelText('Service 1')).toHaveValue('5'))
+      expect(screen.getByLabelText('Service 2')).toHaveValue('6')
+      await userEvent.click(screen.getByRole('button', { name: /update visit/i }))
+
+      await waitFor(() => expect(api.put).toHaveBeenCalledWith('/visits/21', expect.objectContaining({
+        items: [
+          { service_id: 5, specialist_id: 9 },
+          { service_id: 6, specialist_id: 9 },
+        ],
+      })))
+    })
+  })
+
   describe('specialist for the picked service', () => {
     const eva = { id: 9, full_name: 'Eva Svobodová' }
     const massage = { id: 5, name: 'Massage', duration_minutes: 60, price: 900, is_active: true, specialist_id: 9, specialist: eva }

@@ -6,7 +6,7 @@ import type { ContactDetails } from './types'
 import type { PublicServiceOut, PublicSlotOut } from '../../api/types'
 
 type BookingSummaryProps = {
-  service: PublicServiceOut
+  services: PublicServiceOut[]
   staffName: string | null
   slot: PublicSlotOut
   timezone: string
@@ -20,7 +20,7 @@ type BookingSummaryProps = {
 }
 
 export default function BookingSummary({
-  service,
+  services,
   staffName,
   slot,
   timezone,
@@ -40,6 +40,9 @@ export default function BookingSummary({
   }).format(new Date(slot.start))
   const conflict = error ? apiErrorStatus(error) === 409 : false
   const message = error ? apiErrorMessage(error, t('common.loadError')) : null
+  const totalMinutes = services.reduce((sum, service) => sum + service.duration_minutes, 0)
+  const priceKnown = services.every((service) => service.price !== null && service.price !== undefined)
+  const totalPrice = services.reduce((sum, service) => sum + (service.price ?? 0), 0)
 
   return (
     <div>
@@ -48,14 +51,33 @@ export default function BookingSummary({
       <dl className="mt-4 divide-y divide-slate-100 text-sm dark:divide-gray-700">
         <div className="flex justify-between gap-4 py-3">
           <dt className="text-slate-500 dark:text-gray-400">{t('booking.service')}</dt>
-          <dd className="text-right font-medium">{service.name}</dd>
+          {services.length > 1 ? (
+            <dd className="text-right font-medium">
+              <ol className="space-y-1">
+                {services.map((service, index) => (
+                  <li key={service.id}>
+                    <span className="mr-1 text-slate-400">{index + 1}.</span>
+                    {service.name}
+                  </li>
+                ))}
+              </ol>
+            </dd>
+          ) : (
+            <dd className="text-right font-medium">{services[0]?.name}</dd>
+          )}
         </div>
+        {services.length > 1 && (
+          <div className="flex justify-between gap-4 py-3">
+            <dt className="text-slate-500 dark:text-gray-400">{t('booking.chainDuration')}</dt>
+            <dd className="text-right font-medium">
+              {totalMinutes} {t('services.min')}
+            </dd>
+          </div>
+        )}
         <div className="flex justify-between gap-4 py-3">
           <dt className="text-slate-500 dark:text-gray-400">{t('booking.price')}</dt>
           <dd className="text-right font-medium">
-            {service.price === null || service.price === undefined
-              ? t('booking.priceOnRequest')
-              : formatCurrency(service.price, currency)}
+            {priceKnown ? formatCurrency(totalPrice, currency) : t('booking.priceOnRequest')}
           </dd>
         </div>
         {staffName && (

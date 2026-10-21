@@ -109,6 +109,12 @@ function BookingSuccess({ booking, onNew }: { booking: PublicBookingOut; onNew: 
     timeStyle: 'short',
     timeZone: booking.timezone,
   }).format(new Date(booking.start))
+  const timeFormatter = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: booking.timezone,
+  })
+  const items = booking.items ?? []
 
   return (
     <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
@@ -122,7 +128,23 @@ function BookingSuccess({ booking, onNew }: { booking: PublicBookingOut; onNew: 
         </div>
         <div className="flex justify-between gap-4 py-3">
           <dt className="text-slate-500 dark:text-gray-400">{t('booking.service')}</dt>
-          <dd className="text-right font-medium">{booking.service_name}</dd>
+          {items.length > 1 ? (
+            <dd className="text-right font-medium">
+              <ol className="space-y-1">
+                {items.map((item, index) => (
+                  <li key={`${item.start}-${index}`}>
+                    <span className="mr-1 text-slate-400">{index + 1}.</span>
+                    {item.service_name}
+                    <span className="mt-0.5 block text-xs font-normal text-slate-500 dark:text-gray-400">
+                      {timeFormatter.format(new Date(item.start))}–{timeFormatter.format(new Date(item.end))}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </dd>
+          ) : (
+            <dd className="text-right font-medium">{booking.service_name}</dd>
+          )}
         </div>
         {booking.staff_name && (
           <div className="flex justify-between gap-4 py-3">
@@ -178,7 +200,7 @@ export default function BookingPage() {
   const labels = useLabels()
 
   const [step, setStep] = useState<BookingStep>('service')
-  const [selectedService, setSelectedService] = useState<PublicServiceOut | null>(null)
+  const [selectedServices, setSelectedServices] = useState<PublicServiceOut[]>([])
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<PublicSlotOut | null>(null)
   const [details, setDetails] = useState<ContactDetails>(EMPTY_DETAILS)
@@ -216,20 +238,31 @@ export default function BookingPage() {
     const match = servicesQuery.data?.find((service) => service.id === presetServiceId)
     if (!match) return
     presetApplied.current = true
-    setSelectedService(match)
+    setSelectedServices([match])
     setStep('staff')
   }, [presetServiceId, servicesQuery.data])
 
+  const selectedServiceIds = selectedServices.map((service) => service.id)
+  const isChain = selectedServices.length > 1
+
   const staffQuery = useQuery<PublicStaffOut[]>({
-    queryKey: ['public-booking', slug, 'staff', selectedService?.id ?? null],
+    queryKey: ['public-booking', slug, 'staff', selectedServiceIds.join(',')],
     queryFn: async () => {
-      if (!selectedService) return []
-      const { data } = await api.get(`/public/booking/${encodeURIComponent(slug)}/staff`, {
-        params: { service_id: selectedService.id },
-      })
-      return data
+      if (selectedServiceIds.length === 0) return []
+      const responses = await Promise.all(
+        selectedServiceIds.map(async (serviceId) => {
+          const { data } = await api.get<PublicStaffOut[]>(
+            `/public/booking/${encodeURIComponent(slug)}/staff`,
+            { params: { service_id: serviceId } },
+          )
+          return data
+        }),
+      )
+      const [first, ...rest] = responses
+      if (!first) return []
+      return first.filter((person) => rest.every((list) => list.some((other) => other.id === person.id)))
     },
-    enabled: Boolean(selectedService),
+    enabled: selectedServiceIds.length > 0,
     retry: false,
   })
 
@@ -241,35 +274,50 @@ export default function BookingPage() {
       'public-booking',
       slug,
       'slots',
-      selectedService?.id ?? null,
+      selectedServiceIds.join(','),
       selectedStaffId,
       dateFrom,
       dateTo,
     ],
     queryFn: async () => {
-      if (!selectedService || !dateFrom || !dateTo) throw new Error('Missing booking range')
-      const { data } = await api.get(`/public/booking/${encodeURIComponent(slug)}/slots`, {
-        params: {
-          service_id: selectedService.id,
-          staff_id: selectedStaffId ?? undefined,
-          date_from: dateFrom,
-          date_to: dateTo,
-        },
-      })
+      if (selectedServiceIds.length === 0 || !dateFrom || !dateTo) throw new Error('Missing booking range')
+      if (!isChain) {
+        const { data } = await api.get(`/public/booking/${encodeURIComponent(slug)}/slots`, {
+          params: {
+            service_id: selectedServiceIds[0],
+            staff_id: selectedStaffId ?? undefined,
+            date_from: dateFrom,
+            date_to: dateTo,
+          },
+        })
+        return data
+      }
+      const params = new URLSearchParams({ date_from: dateFrom, date_to: dateTo })
+      selectedServiceIds.forEach((serviceId) => params.append('service_ids', String(serviceId)))
+      if (selectedStaffId !== null) params.set('staff_id', String(selectedStaffId))
+      const { data } = await api.get(
+        `/public/booking/${encodeURIComponent(slug)}/chain-slots?${params.toString()}`,
+      )
       return data
     },
-    enabled: step === 'time' && Boolean(selectedService) && Boolean(dateFrom) && Boolean(dateTo),
+    enabled: step === 'time' && selectedServiceIds.length > 0 && Boolean(dateFrom) && Boolean(dateTo),
     retry: false,
   })
 
-  const handleSelectService = (service: PublicServiceOut) => {
-    if (service.id !== selectedService?.id) {
-      setSelectedStaffId(null)
-      setSelectedSlot(null)
-      setRequestId(null)
-      setSubmitError(null)
-    }
-    setSelectedService(service)
+  const handleToggleService = (service: PublicServiceOut) => {
+    setSelectedServices((current) =>
+      current.some((item) => item.id === service.id)
+        ? current.filter((item) => item.id !== service.id)
+        : [...current, service],
+    )
+    setSelectedStaffId(null)
+    setSelectedSlot(null)
+    setRequestId(null)
+    setSubmitError(null)
+  }
+
+  const handleServicesContinue = () => {
+    if (selectedServices.length === 0) return
     setStep('staff')
   }
 
@@ -304,7 +352,7 @@ export default function BookingPage() {
   }
 
   const handleConfirm = async () => {
-    if (!selectedService || !selectedSlot || submitLock.current) return
+    if (selectedServices.length === 0 || !selectedSlot || submitLock.current) return
     submitLock.current = true
     const id = requestId ?? newRequestId()
     if (!requestId) setRequestId(id)
@@ -312,7 +360,9 @@ export default function BookingPage() {
     const phone = details.phone.trim()
     const email = details.email.trim().toLowerCase()
     const payload: PublicBookingCreate = {
-      service_id: selectedService.id,
+      ...(isChain
+        ? { service_ids: selectedServiceIds }
+        : { service_id: selectedServiceIds[0] }),
       staff_id: selectedSlot.staff_id,
       start: selectedSlot.start,
       full_name: details.fullName.trim(),
@@ -342,7 +392,7 @@ export default function BookingPage() {
 
   const startNewBooking = () => {
     setStep('service')
-    setSelectedService(null)
+    setSelectedServices([])
     setSelectedStaffId(null)
     setSelectedSlot(null)
     setDetails(EMPTY_DETAILS)
@@ -371,6 +421,12 @@ export default function BookingPage() {
 
   const currency = business.currency as Currency
   const services = servicesQuery.data ?? []
+  const selectedService = selectedServices[0] ?? null
+  const selectedTotalMinutes = selectedServices.reduce((sum, service) => sum + service.duration_minutes, 0)
+  const selectedPriceKnown = selectedServices.every(
+    (service) => service.price !== null && service.price !== undefined,
+  )
+  const selectedTotalPrice = selectedServices.reduce((sum, service) => sum + (service.price ?? 0), 0)
   const staffIdForSummary = selectedSlot?.staff_id ?? selectedStaffId
   const bookedStaffName = staffIdForSummary
     ? staffQuery.data?.find((person) => person.id === staffIdForSummary)?.full_name ?? null
@@ -432,14 +488,14 @@ export default function BookingPage() {
         <BookingSuccess booking={result} onNew={startNewBooking} />
       ) : (
         <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
-          {selectedService && step !== 'service' && (
+          {selectedServices.length > 0 && step !== 'service' && (
             <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 px-4 py-3 text-sm dark:bg-gray-700">
-              <span className="font-medium">{selectedService.name}</span>
+              <span className="font-medium">{selectedServices.map((service) => service.name).join(' + ')}</span>
               <span className="text-slate-600 dark:text-gray-300">
-                {selectedService.duration_minutes} {t('services.min')} ·{' '}
-                {selectedService.price === null || selectedService.price === undefined
-                  ? t('booking.priceOnRequest')
-                  : formatCurrency(selectedService.price, currency)}
+                {selectedTotalMinutes} {t('services.min')} ·{' '}
+                {selectedPriceKnown
+                  ? formatCurrency(selectedTotalPrice, currency)
+                  : t('booking.priceOnRequest')}
               </span>
             </div>
           )}
@@ -469,8 +525,9 @@ export default function BookingPage() {
               <ServiceStep
                 services={services}
                 currency={currency}
-                selectedId={selectedService?.id ?? null}
-                onSelect={handleSelectService}
+                selectedIds={selectedServiceIds}
+                onToggle={handleToggleService}
+                onContinue={handleServicesContinue}
               />
             )
           ) : step === 'staff' ? (
@@ -491,11 +548,11 @@ export default function BookingPage() {
               isError={slotsQuery.isError}
               onRetry={slotsQuery.refetch}
               onSelect={handleSelectSlot}
-              onWaitlist={() => setStep('waitlist')}
+              onWaitlist={isChain ? undefined : () => setStep('waitlist')}
               onBack={() => setStep('staff')}
             />
           ) : step === 'waitlist' ? (
-            selectedService ? (
+            selectedService && !isChain ? (
               <WaitlistForm
                 slug={slug}
                 service={selectedService}
@@ -506,7 +563,7 @@ export default function BookingPage() {
               />
             ) : null
           ) : step === 'contact' ? (
-            selectedService && selectedSlot ? (
+            selectedServices.length > 0 && selectedSlot ? (
               <ContactStep
                 value={details}
                 onChange={setDetails}
@@ -515,9 +572,9 @@ export default function BookingPage() {
               />
             ) : null
           ) : step === 'summary' ? (
-            selectedService && selectedSlot ? (
+            selectedServices.length > 0 && selectedSlot ? (
               <BookingSummary
-                service={selectedService}
+                services={selectedServices}
                 staffName={bookedStaffName}
                 slot={selectedSlot}
                 timezone={slotsQuery.data?.timezone ?? business.timezone}

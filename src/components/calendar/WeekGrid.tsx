@@ -6,6 +6,7 @@ import DayGrid, {
   type CalendarVisit,
   type MovePreview,
 } from './DayGrid'
+import { chainOverview } from './chain'
 import { zonedDayKey } from '../../utils/dates'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
@@ -43,6 +44,7 @@ export default function WeekGrid({
     () => Array.from({ length: DAYS_IN_WEEK }, (_, index) => addDays(weekStart, index)),
     [weekStart],
   )
+  const events = useMemo(() => visits.map(chainOverview), [visits])
   const todayKey = zonedDayKey(new Date(), zone)
   const title = `${format(weekStart, 'd MMM', { locale: dateLocale })} – ${format(
     addDays(weekStart, DAYS_IN_WEEK - 1),
@@ -91,7 +93,7 @@ export default function WeekGrid({
             >
               <DayGrid
                 day={date}
-                visits={visits}
+                visits={events}
                 timeZone={zone}
                 clientNames={clientNames}
                 onSelectVisit={onSelectVisit}

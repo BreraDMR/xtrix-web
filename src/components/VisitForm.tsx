@@ -6,6 +6,8 @@ import FormError from './FormError'
 import { apiErrorMessage, apiErrorStatus, apiFormErrors } from '../api/errors'
 import type { ClientLoyaltyBalance, ClientOut, Schema, ServiceOut, ServicePage, ServiceSpecialistOut } from '../api/types'
 import { useAuthStore } from '../store/authStore'
+import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
+import { formatCurrency } from '../utils/currency'
 import LoadingSpinner from './LoadingSpinner'
 import QuestionnaireAnswers from './clients/QuestionnaireAnswers'
 import { useTranslation } from '../hooks/useTranslation'
@@ -31,6 +33,15 @@ interface VisitData {
   payment_method?: string
 }
 
+interface VisitItemDraft {
+  service_id?: number
+  specialist_id?: number
+  service_name?: string
+  duration_minutes?: number
+  price?: number
+  specialists: ServiceSpecialistOut[]
+}
+
 type ClientSearchOut = Schema<'ClientSearchOut'>
 // a pick from the search (ClientSearchOut, with the medical summary) or from our own list (ClientOut)
 type SelectedClient = Pick<ClientOut, 'id' | 'full_name' | 'contact_phone' | 'contact_email'> & {
@@ -51,6 +62,7 @@ const VISIT_FIELDS = ['client_id', 'service_id', 'specialist_id', 'service_name'
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
   const { t } = useTranslation()
   const { user: currentUser } = useAuthStore()
+  const currency = useBusinessCurrency()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
@@ -60,6 +72,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [clients, setClients] = useState<ClientOut[]>([])
   const [services, setServices] = useState<ServiceOut[]>([])
   const [availableSpecialists, setAvailableSpecialists] = useState<ServiceSpecialistOut[]>([])
+  const [itemsMode, setItemsMode] = useState(false)
+  const [items, setItems] = useState<VisitItemDraft[]>([])
   const [clientSearchQuery, setClientSearchQuery] = useState('')
   const [selectedClient, setSelectedClient] = useState<SelectedClient | null>(null)
   const [nameMatches, setNameMatches] = useState<ClientOut[]>([])
@@ -216,6 +230,35 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           console.error('Failed to load service specialists:', error)
         }
       }
+
+      if (Array.isArray(data.items) && data.items.length > 1) {
+        const drafts = await Promise.all(
+          data.items.map(async (item: { service_id?: number | null; specialist_id?: number | null; service_name?: string | null; duration_minutes?: number; price?: number | null }) => {
+            let specialists: ServiceSpecialistOut[] = []
+            if (item.service_id) {
+              try {
+                const { data: serviceDetails } = await api.get<ServiceOut>(`/services/${item.service_id}`)
+                specialists = specialistsFor(serviceDetails)
+              } catch (error) {
+                console.error('Failed to load service specialists:', error)
+              }
+            }
+            if (!specialists.length && item.specialist_id) {
+              specialists = [{ id: item.specialist_id, full_name: '' }]
+            }
+            return {
+              service_id: item.service_id ?? undefined,
+              specialist_id: item.specialist_id ?? specialists[0]?.id ?? data.specialist_id,
+              service_name: item.service_name ?? undefined,
+              duration_minutes: item.duration_minutes,
+              price: item.price ?? undefined,
+              specialists,
+            }
+          }),
+        )
+        setItems(drafts)
+        setItemsMode(true)
+      }
     } catch (error) {
       console.error('Failed to load visit:', error)
     }
@@ -247,6 +290,96 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       console.error('Error calculating date_end:', error)
       return undefined
     }
+  }
+
+  const itemsComplete = items.length > 0 && items.every((item) => item.service_id && item.duration_minutes && item.specialist_id)
+  const itemsTotalMinutes = items.reduce((sum, item) => sum + (item.duration_minutes ?? 0), 0)
+  const itemsHavePrice = items.every((item) => item.price !== undefined && item.price !== null)
+  const itemsTotalPrice = items.reduce((sum, item) => sum + (item.price ?? 0), 0)
+  const chainEnd = itemsMode && itemsTotalMinutes > 0 ? calculateDateEnd(formData.date_start, itemsTotalMinutes) : undefined
+  const payableTotal = itemsMode ? (itemsHavePrice ? itemsTotalPrice : undefined) : formData.price
+
+  const addItem = () => {
+    if (!itemsMode) {
+      const selected = services.find((service) => service.id === formData.service_id)
+      const specialists = selected
+        ? specialistsFor({ ...selected, specialists: selected.specialists ?? null })
+        : availableSpecialists
+      const specialistId = specialists.some((person) => person.id === formData.specialist_id)
+        ? formData.specialist_id
+        : specialists[0]?.id ?? formData.specialist_id
+      const first: VisitItemDraft = {
+        service_id: selected?.id,
+        specialist_id: specialistId,
+        service_name: selected?.name ?? formData.service_name,
+        duration_minutes: selected?.duration_minutes ?? undefined,
+        price: selected?.price ?? formData.price,
+        specialists,
+      }
+      setItems(selected ? [first, { specialist_id: specialistId, specialists: [] }] : [first])
+      setItemsMode(true)
+      setFieldErrors({})
+      return
+    }
+    setItems((previous) => [
+      ...previous,
+      { specialist_id: formData.specialist_id, specialists: [] },
+    ])
+  }
+
+  const handleItemServiceChange = async (index: number, rawServiceId: string) => {
+    const serviceId = rawServiceId ? parseInt(rawServiceId) : undefined
+    if (!serviceId) {
+      setItems((previous) => previous.map((item, position) => position === index
+        ? { specialist_id: item.specialist_id, specialists: [] }
+        : item))
+      return
+    }
+
+    const selected = services.find((service) => service.id === serviceId)
+    let specialists = selected
+      ? specialistsFor({ ...selected, specialists: selected.specialists ?? null })
+      : []
+    if (selected) {
+      try {
+        const { data: serviceDetails } = await api.get<ServiceOut>(`/services/${serviceId}`)
+        specialists = specialistsFor(serviceDetails)
+      } catch (error) {
+        console.error('Failed to load service specialists:', error)
+      }
+    }
+
+    setItems((previous) => previous.map((item, position) => {
+      if (position !== index) return item
+      const preferred = item.specialist_id && specialists.some((person) => person.id === item.specialist_id)
+        ? item.specialist_id
+        : specialists.some((person) => person.id === formData.specialist_id)
+          ? formData.specialist_id
+          : specialists[0]?.id ?? item.specialist_id
+      return {
+        service_id: serviceId,
+        specialist_id: preferred,
+        service_name: selected?.name ?? item.service_name,
+        duration_minutes: selected?.duration_minutes ?? undefined,
+        price: selected?.price ?? undefined,
+        specialists,
+      }
+    }))
+  }
+
+  const moveItem = (index: number, delta: number) => {
+    const target = index + delta
+    if (target < 0 || target >= items.length) return
+    setItems((previous) => {
+      const next = [...previous]
+      ;[next[index], next[target]] = [next[target], next[index]]
+      return next
+    })
+  }
+
+  const removeItem = (index: number) => {
+    if (items.length <= 1) return
+    setItems((previous) => previous.filter((_, position) => position !== index))
   }
 
   const handleServiceChange = async (serviceId: string) => {
@@ -321,11 +454,15 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     if (submitting.current || visitSaved.current) return
     setFormError('')
     setFieldErrors({})
-    if (formData.date_end && (!Number.isFinite(new Date(formData.date_end).getTime()) || new Date(formData.date_end) <= new Date(formData.date_start))) {
+    if (itemsMode && !itemsComplete) {
+      setFormError(t('visits.itemsIncomplete'))
+      return
+    }
+    if (!itemsMode && formData.date_end && (!Number.isFinite(new Date(formData.date_end).getTime()) || new Date(formData.date_end) <= new Date(formData.date_start))) {
       setFormError(t('validation.visitEnd'))
       return
     }
-    if (formData.price !== undefined && (!Number.isFinite(formData.price) || formData.price < 0)) {
+    if (!itemsMode && formData.price !== undefined && (!Number.isFinite(formData.price) || formData.price < 0)) {
       setFormError(t('validation.price'))
       return
     }
@@ -337,11 +474,25 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     setLoading(true)
 
     try {
-      const submitData = {
-        ...formData,
-        date_start: new Date(formData.date_start).toISOString(),
-        date_end: formData.date_end ? new Date(formData.date_end).toISOString() : undefined,
-      }
+      const itemPayload = items.map((item) => ({
+        service_id: item.service_id!,
+        specialist_id: item.specialist_id,
+      }))
+      const submitData = itemsMode
+        ? {
+            client_id: formData.client_id,
+            specialist_id: itemPayload[0].specialist_id,
+            date_start: new Date(formData.date_start).toISOString(),
+            status: formData.status,
+            note: formData.note,
+            payment_method: formData.status === 'completed' ? formData.payment_method : undefined,
+            items: itemPayload,
+          }
+        : {
+            ...formData,
+            date_start: new Date(formData.date_start).toISOString(),
+            date_end: formData.date_end ? new Date(formData.date_end).toISOString() : undefined,
+          }
 
       let savedVisitId = visitId
       if (visitId) {
@@ -518,25 +669,156 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">{t('visits.service')}</label>
-        <select
-          aria-invalid={fieldErrors.service_id ? true : undefined}
-          value={formData.service_id || ''}
-          onChange={(e) => handleServiceChange(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md"
-        >
-          <option value="">{t('visits.selectService')}</option>
-          {services.map((service) => (
-            <option key={service.id} value={service.id}>
-              {service.name} ({service.duration_minutes} {t('services.min')})
-            </option>
-          ))}
-        </select>
-        {fieldErrors.service_id && <FormError message={fieldErrors.service_id} />}
-      </div>
+      {itemsMode ? (
+        <div className="space-y-3 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
+          <div className="flex items-center justify-between gap-2">
+            <label className="block text-sm font-medium">{t('visits.service')} *</label>
+            <button
+              type="button"
+              onClick={addItem}
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-900"
+            >
+              + {t('visits.addService')}
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t('visits.chainHint')}</p>
 
-      {formData.service_id && availableSpecialists.length > 0 && (
+          {items.map((item, index) => (
+            <div
+              key={index}
+              data-visit-item={index}
+              className="space-y-2 rounded-md border border-gray-200 p-3 dark:border-gray-700"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                  {index + 1}
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    aria-label={`${t('visits.moveServiceUp')} ${index + 1}`}
+                    title={t('visits.moveServiceUp')}
+                    disabled={index === 0}
+                    onClick={() => moveItem(index, -1)}
+                    className="rounded border border-gray-300 px-2 py-0.5 text-sm disabled:opacity-40 dark:border-gray-600"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`${t('visits.moveServiceDown')} ${index + 1}`}
+                    title={t('visits.moveServiceDown')}
+                    disabled={index === items.length - 1}
+                    onClick={() => moveItem(index, 1)}
+                    className="rounded border border-gray-300 px-2 py-0.5 text-sm disabled:opacity-40 dark:border-gray-600"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`${t('visits.removeService')} ${index + 1}`}
+                    title={t('visits.removeService')}
+                    disabled={items.length <= 1}
+                    onClick={() => removeItem(index)}
+                    className="rounded border border-gray-300 px-2 py-0.5 text-sm text-red-600 disabled:opacity-40 dark:border-gray-600 dark:text-red-400"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              <select
+                aria-label={`${t('visits.service')} ${index + 1}`}
+                value={item.service_id ?? ''}
+                onChange={(e) => void handleItemServiceChange(index, e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+              >
+                <option value="">{t('visits.selectService')}</option>
+                {services.map((service) => (
+                  <option key={service.id} value={service.id}>
+                    {service.name} ({service.duration_minutes} {t('services.min')})
+                  </option>
+                ))}
+              </select>
+
+              {item.service_id && item.specialists.length > 0 && (
+                <select
+                  aria-label={`${t('visits.specialist')} ${index + 1}`}
+                  value={item.specialist_id ?? ''}
+                  onChange={(e) => {
+                    const specialistId = parseInt(e.target.value)
+                    setItems((previous) => previous.map((row, position) => position === index
+                      ? { ...row, specialist_id: specialistId }
+                      : row))
+                  }}
+                  className="w-full px-3 py-2 border rounded-md"
+                >
+                  {item.specialists.map((spec) => (
+                    <option key={spec.id} value={spec.id}>
+                      {spec.full_name || `#${spec.id}`} {spec.email ? `(${spec.email})` : ''}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {item.service_id && (
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {item.duration_minutes ?? 0} {t('services.min')} ·{' '}
+                  {item.price === null || item.price === undefined
+                    ? t('booking.priceOnRequest')
+                    : formatCurrency(item.price, currency)}
+                </p>
+              )}
+            </div>
+          ))}
+
+          <div className="grid grid-cols-1 gap-1 border-t border-gray-200 pt-2 text-sm dark:border-gray-700 sm:grid-cols-3">
+            <p>
+              <span className="text-gray-500 dark:text-gray-400">{t('visits.chainTotal')}: </span>
+              <span className="font-medium">{itemsHavePrice ? formatCurrency(itemsTotalPrice, currency) : t('booking.priceOnRequest')}</span>
+            </p>
+            <p>
+              <span className="text-gray-500 dark:text-gray-400">{t('visits.chainDuration')}: </span>
+              <span className="font-medium">{itemsTotalMinutes} {t('services.min')}</span>
+            </p>
+            {chainEnd && (
+              <p>
+                <span className="text-gray-500 dark:text-gray-400">{t('visits.chainEnd')}: </span>
+                <span className="font-medium">{format(new Date(chainEnd), 'HH:mm')}</span>
+              </p>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div>
+          <label className="block text-sm font-medium mb-1">{t('visits.service')}</label>
+          <select
+            aria-invalid={fieldErrors.service_id ? true : undefined}
+            value={formData.service_id || ''}
+            onChange={(e) => handleServiceChange(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
+          >
+            <option value="">{t('visits.selectService')}</option>
+            {services.map((service) => (
+              <option key={service.id} value={service.id}>
+                {service.name} ({service.duration_minutes} {t('services.min')})
+              </option>
+            ))}
+          </select>
+          {fieldErrors.service_id && <FormError message={fieldErrors.service_id} />}
+          {services.length > 0 && (
+            <button
+              type="button"
+              onClick={addItem}
+              className="mt-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-900"
+            >
+              + {t('visits.addService')}
+            </button>
+          )}
+        </div>
+      )}
+
+      {!itemsMode && formData.service_id && availableSpecialists.length > 0 && (
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.specialist')} *</label>
           <select
@@ -556,17 +838,19 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         </div>
       )}
 
-      <div>
-        <label className="block text-sm font-medium mb-1">{t('visits.serviceName')}</label>
-        <input
-          aria-invalid={fieldErrors.service_name ? true : undefined}
-          type="text"
-          value={formData.service_name || ''}
-          onChange={(e) => setFormData({ ...formData, service_name: e.target.value })}
-          className="w-full px-3 py-2 border rounded-md"
-        />
-        {fieldErrors.service_name && <FormError message={fieldErrors.service_name} />}
-      </div>
+      {!itemsMode && (
+        <div>
+          <label className="block text-sm font-medium mb-1">{t('visits.serviceName')}</label>
+          <input
+            aria-invalid={fieldErrors.service_name ? true : undefined}
+            type="text"
+            value={formData.service_name || ''}
+            onChange={(e) => setFormData({ ...formData, service_name: e.target.value })}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+          {fieldErrors.service_name && <FormError message={fieldErrors.service_name} />}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -582,36 +866,46 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           />
           {fieldErrors.date_start && <FormError message={fieldErrors.date_start} />}
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">{t('visits.endDateTime')}</label>
-          <input
-            aria-invalid={fieldErrors.date_end ? true : undefined}
-            type="datetime-local"
-            style={{ minWidth: 0, maxWidth: '100%' }}
-            value={formData.date_end || ''}
-            onChange={(e) => setFormData({ ...formData, date_end: e.target.value })}
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          {fieldErrors.date_end && <FormError message={fieldErrors.date_end} />}
-        </div>
+        {!itemsMode ? (
+          <div>
+            <label className="block text-sm font-medium mb-1">{t('visits.endDateTime')}</label>
+            <input
+              aria-invalid={fieldErrors.date_end ? true : undefined}
+              type="datetime-local"
+              style={{ minWidth: 0, maxWidth: '100%' }}
+              value={formData.date_end || ''}
+              onChange={(e) => setFormData({ ...formData, date_end: e.target.value })}
+              className="w-full px-3 py-2 border rounded-md"
+            />
+            {fieldErrors.date_end && <FormError message={fieldErrors.date_end} />}
+          </div>
+        ) : (
+          <div className="flex items-end pb-2 text-sm text-gray-500 dark:text-gray-400">
+            {chainEnd
+              ? `${t('visits.chainEnd')} ${format(new Date(chainEnd), 'HH:mm')}`
+              : t('visits.chainHint')}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">{t('visits.price')}</label>
-          <input
-            aria-invalid={fieldErrors.price ? true : undefined}
-            type="number"
-            min="0"
-            step="0.01"
-            value={formData.price ?? ''}
-            onChange={(e) =>
-              setFormData({ ...formData, price: e.target.value ? parseFloat(e.target.value) : undefined })
-            }
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          {fieldErrors.price && <FormError message={fieldErrors.price} />}
-        </div>
+        {!itemsMode && (
+          <div>
+            <label className="block text-sm font-medium mb-1">{t('visits.price')}</label>
+            <input
+              aria-invalid={fieldErrors.price ? true : undefined}
+              type="number"
+              min="0"
+              step="0.01"
+              value={formData.price ?? ''}
+              onChange={(e) =>
+                setFormData({ ...formData, price: e.target.value ? parseFloat(e.target.value) : undefined })
+              }
+              className="w-full px-3 py-2 border rounded-md"
+            />
+            {fieldErrors.price && <FormError message={fieldErrors.price} />}
+          </div>
+        )}
         <div>
           <label className="block text-sm font-medium mb-1">{t('visits.status')}</label>
           <select
@@ -640,13 +934,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       {formData.status === 'completed' && (
         <div>
           <label className="block text-sm font-medium mb-1">
-            {t('finance.payment_method')} {formData.price ? `(${t('common.required_field')})` : ''}
+            {t('finance.payment_method')} {payableTotal ? `(${t('common.required_field')})` : ''}
           </label>
           <select
             aria-invalid={fieldErrors.payment_method ? true : undefined}
             value={formData.payment_method || ''}
             onChange={(e) => setFormData({ ...formData, payment_method: e.target.value || undefined })}
-            required={!!formData.price}
+            required={!!payableTotal}
             className="w-full px-3 py-2 border rounded-md"
           >
             <option value="">{t('visits.selectPaymentMethod')}</option>

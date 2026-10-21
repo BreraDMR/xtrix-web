@@ -250,6 +250,13 @@ export type TranslationKey =
   | 'booking.contacts'
   | 'booking.noAccount'
   | 'booking.chooseService'
+  | 'booking.multiHint'
+  | 'booking.selectedServices'
+  | 'booking.clearSelection'
+  | 'booking.selectedCount'
+  | 'booking.chainTotal'
+  | 'booking.chainDuration'
+  | 'booking.chainForOneMaster'
   | 'booking.chooseMaster'
   | 'booking.chooseTime'
   | 'booking.anyMaster'
@@ -703,6 +710,15 @@ export type TranslationKey =
   | 'visits.selectService'
   | 'visits.createVisit'
   | 'visits.updateVisit'
+  | 'visits.addService'
+  | 'visits.removeService'
+  | 'visits.moveServiceUp'
+  | 'visits.moveServiceDown'
+  | 'visits.chainHint'
+  | 'visits.itemsIncomplete'
+  | 'visits.chainTotal'
+  | 'visits.chainDuration'
+  | 'visits.chainEnd'
   | 'visits.selectPaymentMethod'
   | 'visits.paymentOther'
   | 'visits.clientList'
@@ -739,6 +755,9 @@ export type TranslationKey =
   | 'calendar.noStaff'
   | 'calendar.weekView'
   | 'calendar.weekViewDescription'
+  | 'calendar.chain'
+  | 'calendar.chainPosition'
+  | 'calendar.chainServices'
   | 'calendar.free'
   | 'calendar.blocked'
   | 'calendar.nonWorking'
@@ -1770,6 +1789,13 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.contacts": {"en": "Contacts", "ru": "Контакты", "cz": "Kontakty"},
   "booking.noAccount": {"en": "No account needed", "ru": "Без регистрации и пароля", "cz": "Bez registrace a hesla"},
   "booking.chooseService": {"en": "Choose a service", "ru": "Выберите услугу", "cz": "Vyberte službu"},
+  "booking.multiHint": {"en": "You can pick several services — they run one after another.", "ru": "Можно выбрать несколько услуг — они идут одна за другой.", "cz": "Můžete vybrat několik služeb — půjdou jedna po druhé."},
+  "booking.selectedServices": {"en": "Selected services", "ru": "Выбранные услуги", "cz": "Vybrané služby"},
+  "booking.clearSelection": {"en": "Clear", "ru": "Очистить", "cz": "Vymazat"},
+  "booking.selectedCount": {"en": "{n} selected", "ru": "Выбрано: {n}", "cz": "Vybráno: {n}"},
+  "booking.chainTotal": {"en": "Total", "ru": "Итого", "cz": "Celkem"},
+  "booking.chainDuration": {"en": "Total duration", "ru": "Общая длительность", "cz": "Celková délka"},
+  "booking.chainForOneMaster": {"en": "All selected services are performed by one master, back to back.", "ru": "Все выбранные услуги выполняет один мастер подряд.", "cz": "Všechny vybrané služby provádí jeden specialista po sobě."},
   "booking.chooseMaster": {"en": "Choose a master", "ru": "Выберите мастера", "cz": "Vyberte specialistu"},
   "booking.chooseTime": {"en": "Choose a date and time", "ru": "Выберите дату и время", "cz": "Vyberte datum a čas"},
   "booking.anyMaster": {"en": "Any available master", "ru": "Любой свободный мастер", "cz": "Jakýkoli volný specialista"},
@@ -2346,6 +2372,15 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.selectService': { en: 'Select service...', ru: 'Выберите услугу...', cz: 'Vyberte službu...' },
   'visits.createVisit': { en: 'Create Visit', ru: 'Создать визит', cz: 'Vytvořit návštěvu' },
   'visits.updateVisit': { en: 'Update Visit', ru: 'Обновить визит', cz: 'Aktualizovat návštěvu' },
+  'visits.addService': { en: 'Add service', ru: 'Добавить услугу', cz: 'Přidat službu' },
+  'visits.removeService': { en: 'Remove service', ru: 'Убрать услугу', cz: 'Odebrat službu' },
+  'visits.moveServiceUp': { en: 'Move up', ru: 'Выше', cz: 'Nahoru' },
+  'visits.moveServiceDown': { en: 'Move down', ru: 'Ниже', cz: 'Dolů' },
+  'visits.chainHint': { en: 'Services run one after another from the start time. The server calculates the end, duration and total.', ru: 'Услуги идут подряд от времени начала. Конец, длительность и сумму считает сервер.', cz: 'Služby jdou po sobě od času začátku. Konec, délku a celkovou cenu počítá server.' },
+  'visits.itemsIncomplete': { en: 'Choose a service for every row', ru: 'Выберите услугу в каждой строке', cz: 'Vyberte službu v každém řádku' },
+  'visits.chainTotal': { en: 'Total', ru: 'Итого', cz: 'Celkem' },
+  'visits.chainDuration': { en: 'Total duration', ru: 'Общая длительность', cz: 'Celková délka' },
+  'visits.chainEnd': { en: 'Ends around', ru: 'Окончание около', cz: 'Konec kolem' },
   'visits.selectPaymentMethod': { en: 'Select payment method', ru: 'Выберите способ оплаты', cz: 'Vyberte způsob platby' },
   'visits.paymentOther': { en: 'Other', ru: 'Другое', cz: 'Jiné' },
   
@@ -2375,6 +2410,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.noStaff': { en: 'No specialists to show', ru: 'Нет мастеров для отображения', cz: 'Žádní specialisté k zobrazení' },
   'calendar.weekView': { en: 'Week view', ru: 'Неделя', cz: 'Týdenní zobrazení' },
   'calendar.weekViewDescription': { en: 'Seven days side by side, every visit at its own time.', ru: 'Семь дней рядом, каждый визит на своём времени.', cz: 'Sedm dní vedle sebe, každá návštěva ve svém čase.' },
+  'calendar.chain': { en: 'Chain of services', ru: 'Цепочка услуг', cz: 'Řetěz služeb' },
+  'calendar.chainPosition': { en: '{position} of {total}', ru: '{position} из {total}', cz: '{position} z {total}' },
+  'calendar.chainServices': { en: 'Services in this visit', ru: 'Услуги в этом визите', cz: 'Služby v této návštěvě' },
   'calendar.free': { en: 'Free', ru: 'Свободно', cz: 'Volno' },
   'calendar.blocked': { en: 'Blocked', ru: 'Заблокировано', cz: 'Blokováno' },
   'calendar.nonWorking': { en: 'Non-working hours', ru: 'Нерабочие часы', cz: 'Nepracovní hodiny' },

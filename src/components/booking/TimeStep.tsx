@@ -13,7 +13,7 @@ type TimeStepProps = {
   isError: boolean
   onRetry: () => unknown
   onSelect: (slot: PublicSlotOut) => void
-  onWaitlist: () => void
+  onWaitlist?: () => void
   onBack: () => void
 }
 
@@ -92,14 +92,18 @@ export default function TimeStep({
       ) : !hasSlots ? (
         <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-gray-600 dark:bg-gray-700">
           <p className="text-sm text-slate-600 dark:text-gray-300">{t('booking.noSlots')}</p>
-          <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('booking.waitlist.noSlotsHint')}</p>
-          <button
-            type="button"
-            onClick={onWaitlist}
-            className="mt-3 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
-          >
-            {t('booking.waitlist.cta')}
-          </button>
+          {onWaitlist && (
+            <>
+              <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('booking.waitlist.noSlotsHint')}</p>
+              <button
+                type="button"
+                onClick={onWaitlist}
+                className="mt-3 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+              >
+                {t('booking.waitlist.cta')}
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <>

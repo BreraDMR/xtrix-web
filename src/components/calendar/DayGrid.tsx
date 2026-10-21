@@ -8,9 +8,9 @@ import { useBusinessCurrency } from '../../hooks/useBusinessCurrency'
 import { formatCurrency } from '../../utils/currency'
 import { isoToZonedWallTime, zonedDayKey } from '../../utils/dates'
 import type { DayOverlay, MinuteInterval } from './schedule'
-import type { VisitOut } from '../../api/types'
+import type { CalendarEvent } from './chain'
 
-export type CalendarVisit = VisitOut & { client_name?: string | null }
+export type { CalendarVisit } from './chain'
 
 export interface MovePreview {
   dayKey: string
@@ -21,10 +21,10 @@ export interface MovePreview {
 
 interface DayGridProps {
   day: Date
-  visits: CalendarVisit[]
+  visits: CalendarEvent[]
   timeZone?: string
   clientNames?: ReadonlyMap<number, string>
-  onSelectVisit?: (visit: CalendarVisit) => void
+  onSelectVisit?: (visit: CalendarEvent) => void
   overlay?: DayOverlay
   preview?: MovePreview
   onDropVisit?: (visitId: number, dayKey: string, startMin: number) => void
@@ -36,7 +36,7 @@ interface DayGridProps {
 }
 
 interface DayEvent {
-  visit: CalendarVisit
+  visit: CalendarEvent
   startMin: number
   endMin: number
   labelStart: string
@@ -61,7 +61,7 @@ const minutesToHHMM = (value: number): string => {
   return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
 }
 
-function rangeForDay(visit: CalendarVisit, dayKey: string, timeZone: string) {
+function rangeForDay(visit: CalendarEvent, dayKey: string, timeZone: string) {
   const start = new Date(visit.date_start)
   if (Number.isNaN(start.getTime())) return null
   let end = visit.date_end ? new Date(visit.date_end) : null
@@ -87,7 +87,7 @@ function rangeForDay(visit: CalendarVisit, dayKey: string, timeZone: string) {
 }
 
 // overlapping events get side-by-side lanes inside a connected cluster
-function layoutDay(visits: CalendarVisit[], dayKey: string, timeZone: string): DayEvent[] {
+function layoutDay(visits: CalendarEvent[], dayKey: string, timeZone: string): DayEvent[] {
   const ranges: Omit<DayEvent, 'lane' | 'lanes'>[] = []
   for (const visit of visits) {
     const range = rangeForDay(visit, dayKey, timeZone)
@@ -194,7 +194,7 @@ export default function DayGrid({
       }
     : null
 
-  const handleDragStart = (visit: CalendarVisit, startMin: number, endMin: number) =>
+  const handleDragStart = (visit: CalendarEvent, startMin: number, endMin: number) =>
     (dragEvent: DragEvent<HTMLElement>) => {
       if (!onDropVisit) return
       const rect = dragEvent.currentTarget.getBoundingClientRect()
@@ -204,7 +204,11 @@ export default function DayGrid({
       )
       dragEvent.dataTransfer.setData(
         DRAG_MIME,
-        JSON.stringify({ id: visit.id, grabOffsetMinutes: grabOffset }),
+        JSON.stringify({
+          id: visit.id,
+          grabOffsetMinutes: grabOffset,
+          chainOffsetMinutes: visit.segment?.offsetMinutes ?? 0,
+        }),
       )
       dragEvent.dataTransfer.effectAllowed = 'move'
     }
@@ -213,7 +217,7 @@ export default function DayGrid({
     if (!onDropVisit) return
     const raw = dropEvent.dataTransfer.getData(DRAG_MIME)
     if (!raw) return
-    let payload: { id?: unknown; grabOffsetMinutes?: unknown }
+    let payload: { id?: unknown; grabOffsetMinutes?: unknown; chainOffsetMinutes?: unknown }
     try {
       payload = JSON.parse(raw)
     } catch {
@@ -222,8 +226,9 @@ export default function DayGrid({
     if (typeof payload.id !== 'number') return
     dropEvent.preventDefault()
     const grabOffset = typeof payload.grabOffsetMinutes === 'number' ? payload.grabOffsetMinutes : 0
+    const chainOffset = typeof payload.chainOffsetMinutes === 'number' ? payload.chainOffsetMinutes : 0
     const rect = dropEvent.currentTarget.getBoundingClientRect()
-    const startMin = ((dropEvent.clientY - rect.top) / hourHeight) * 60 - grabOffset
+    const startMin = ((dropEvent.clientY - rect.top) / hourHeight) * 60 - grabOffset - chainOffset
     onDropVisit(payload.id, dayKey, startMin)
   }
 
@@ -307,17 +312,34 @@ export default function DayGrid({
 
         {events.map((event) => {
               const { visit } = event
+              const segment = visit.segment
               const clientName = clientNames?.get(visit.client_id) || visit.client_name
-              const name = clientName || visit.service_name || `#${visit.id}`
+              const serviceName = segment?.serviceName || visit.service_name
+              const name = clientName || serviceName || `#${visit.id}`
               const statusLabel = visitStatus(visit.status)
               const priceLabel = visit.price === null || visit.price === undefined
                 ? '—'
                 : formatCurrency(visit.price, currency)
               const timeLabel = `${event.labelStart}–${event.labelEnd}`
-              const detail = `${timeLabel} · ${priceLabel}${statusLabel ? ` · ${statusLabel}` : ''}`
+              const chainPosition = segment?.isChain
+                ? segment.position !== null
+                  ? t('calendar.chainPosition')
+                      .replace('{position}', String(segment.position))
+                      .replace('{total}', String(segment.total))
+                  : t('calendar.chainServices')
+                : null
+              const detail = segment?.isChain
+                ? [timeLabel, clientName ? serviceName : null].filter(Boolean).join(' · ')
+                : `${timeLabel} · ${priceLabel}${statusLabel ? ` · ${statusLabel}` : ''}`
+              const title = segment?.isChain
+                ? `${name} · ${t('calendar.chain')}: ${serviceName} · ${timeLabel} · ${priceLabel}`
+                : `${name} · ${detail}`
               const ariaLabel = [
                 t('calendar.visit'),
                 name,
+                segment?.isChain ? t('calendar.chain') : '',
+                chainPosition,
+                segment?.isChain ? serviceName : '',
                 timeLabel,
                 `${t('visits.price')} ${priceLabel}`,
                 statusLabel,
@@ -331,28 +353,42 @@ export default function DayGrid({
                 left: `calc(${event.lane * width}% + 2px)`,
                 width: `calc(${width}% - 4px)`,
               }
-              const blockClass = `absolute z-10 overflow-hidden rounded-lg border px-1.5 py-1 text-left shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-accent)] ${statusClass(visit.status)}`
+              const blockClass = `absolute z-10 overflow-hidden rounded-lg border px-1.5 py-1 text-left shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-accent)] ${statusClass(visit.status)}${segment?.isChain ? ' ring-1 ring-[var(--workspace-accent)]/40' : ''}`
+              const content = (
+                <>
+                  {segment?.isChain && (
+                    <span className="absolute right-1 top-1 rounded bg-white/85 px-1 text-[9px] font-semibold leading-4 text-slate-600 dark:bg-gray-900/70 dark:text-gray-200">
+                      {segment.position !== null ? `${segment.position}/${segment.total}` : `×${segment.total}`}
+                    </span>
+                  )}
+                  <span
+                    className={`block truncate text-[11px] font-semibold leading-tight ${segment?.isChain ? 'pr-6' : ''}`}
+                  >
+                    {name}
+                  </span>
+                  <span className="block truncate text-[10px] leading-tight opacity-80">{detail}</span>
+                </>
+              )
 
               if (!onSelectVisit) {
                 return (
                   <div
-                    key={visit.id}
+                    key={segment?.key ?? visit.id}
                     data-visit-id={visit.id}
                     draggable={Boolean(onDropVisit)}
                     onDragStart={handleDragStart(visit, event.startMin, event.endMin)}
                     className={blockClass}
                     style={style}
-                    title={`${name} · ${detail}`}
+                    title={title}
                     aria-label={ariaLabel}
                   >
-                    <span className="block truncate text-[11px] font-semibold leading-tight">{name}</span>
-                    <span className="block truncate text-[10px] leading-tight opacity-80">{detail}</span>
+                    {content}
                   </div>
                 )
               }
               return (
                 <button
-                  key={visit.id}
+                  key={segment?.key ?? visit.id}
                   type="button"
                   data-visit-id={visit.id}
                   draggable={Boolean(onDropVisit)}
@@ -360,11 +396,10 @@ export default function DayGrid({
                   onClick={() => onSelectVisit(visit)}
                   className={blockClass}
                   style={style}
-                  title={`${name} · ${detail}`}
+                  title={title}
                   aria-label={ariaLabel}
                 >
-                  <span className="block truncate text-[11px] font-semibold leading-tight">{name}</span>
-                  <span className="block truncate text-[10px] leading-tight opacity-80">{detail}</span>
+                  {content}
                 </button>
               )
         })}

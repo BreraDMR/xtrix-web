@@ -202,6 +202,7 @@ test('guest books online and the visit appears for the owner', async ({ page, re
     await expect(guest.getByText('No account needed')).toBeVisible()
 
     await guest.getByRole('button', { name: new RegExp(SERVICE_NAME) }).click()
+    await guest.getByRole('button', { name: 'Continue' }).click()
     await guest.getByRole('button', { name: 'Any available master' }).click()
     await expect(guest.getByRole('heading', { name: 'Choose a date and time' })).toBeVisible()
     await expect(guest.getByText(`Salon time zone: ${TIMEZONE}`)).toBeVisible()

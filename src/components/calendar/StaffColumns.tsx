@@ -6,6 +6,7 @@ import DayGrid, {
   type CalendarVisit,
   type MovePreview,
 } from './DayGrid'
+import { expandVisit, type CalendarEvent } from './chain'
 import { zonedDayKey } from '../../utils/dates'
 import { buildDayOverlay, type DayOverlay, type StaffScheduleData } from './schedule'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -50,25 +51,31 @@ export default function StaffColumns({
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
   const title = format(parseISO(dayKey), 'EEEE, d MMMM', { locale: dateLocale })
 
+  const events = useMemo(() => visits.flatMap(expandVisit), [visits])
+
   const columns = useMemo(() => {
     const known = new Set(staff.map((member) => member.id))
     const extras: StaffColumn[] = []
     // a visit of a master who is no longer in the staff list still gets a column
-    for (const visit of visits) {
-      if (!known.has(visit.specialist_id)) {
-        known.add(visit.specialist_id)
-        extras.push({ id: visit.specialist_id, name: `#${visit.specialist_id}` })
+    for (const event of events) {
+      if (!known.has(event.specialist_id)) {
+        known.add(event.specialist_id)
+        extras.push({ id: event.specialist_id, name: `#${event.specialist_id}` })
       }
     }
     return [...staff, ...extras]
-  }, [staff, visits])
+  }, [staff, events])
 
   const visitsByStaff = useMemo(() => {
-    const grouped = new Map<number, CalendarVisit[]>()
+    const grouped = new Map<number, CalendarEvent[]>()
     for (const column of columns) grouped.set(column.id, [])
-    for (const visit of visits) grouped.get(visit.specialist_id)?.push(visit)
+    for (const event of events) grouped.get(event.specialist_id)?.push(event)
     return grouped
-  }, [columns, visits])
+  }, [columns, events])
+
+  const handleSelectVisit = (event: CalendarEvent) => {
+    onSelectVisit?.(event.origin ?? event)
+  }
 
   const overlays = useMemo(() => {
     const built = new Map<number, DayOverlay>()
@@ -144,7 +151,7 @@ export default function StaffColumns({
                     visits={visitsByStaff.get(column.id) ?? []}
                     timeZone={zone}
                     clientNames={clientNames}
-                    onSelectVisit={onSelectVisit}
+                    onSelectVisit={handleSelectVisit}
                     overlay={overlays.get(column.id)}
                     preview={preview}
                     onDropVisit={onDropVisit}
