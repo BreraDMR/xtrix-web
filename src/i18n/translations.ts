@@ -1899,6 +1899,84 @@ export type TranslationKey =
   | 'unsubscribe.missing'
   | 'unsubscribe.loading'
   | 'unsubscribe.home'
+  | 'nav.audit'
+  | 'audit.title'
+  | 'audit.description'
+  | 'audit.readOnly'
+  | 'audit.noAccess'
+  | 'audit.filters'
+  | 'audit.action'
+  | 'audit.allActions'
+  | 'audit.entity'
+  | 'audit.allEntities'
+  | 'audit.actor'
+  | 'audit.actorPlaceholder'
+  | 'audit.actorInvalid'
+  | 'audit.dateFrom'
+  | 'audit.dateTo'
+  | 'audit.dateRangeInvalid'
+  | 'audit.apply'
+  | 'audit.reset'
+  | 'audit.export'
+  | 'audit.exporting'
+  | 'audit.exportError'
+  | 'audit.empty'
+  | 'audit.when'
+  | 'audit.who'
+  | 'audit.what'
+  | 'audit.details'
+  | 'audit.requestId'
+  | 'audit.fieldsChanged'
+  | 'audit.createdFields'
+  | 'audit.noDetails'
+  | 'audit.unknownActor'
+  | 'audit.role.admin'
+  | 'audit.role.businessOwner'
+  | 'audit.role.specialist'
+  | 'audit.role.employee'
+  | 'audit.role.system'
+  | 'audit.role.guest'
+  | 'audit.action.visitCreated'
+  | 'audit.action.visitUpdated'
+  | 'audit.action.visitMoved'
+  | 'audit.action.visitCancelled'
+  | 'audit.action.paymentPaid'
+  | 'audit.action.paymentFailed'
+  | 'audit.action.paymentRefunded'
+  | 'audit.action.questionnaireSubmitted'
+  | 'audit.action.clientUpdated'
+  | 'audit.entity.visit'
+  | 'audit.entity.payment'
+  | 'audit.entity.questionnaire'
+  | 'audit.entity.client'
+  | 'audit.field.status'
+  | 'audit.field.dateStart'
+  | 'audit.field.dateEnd'
+  | 'audit.field.serviceId'
+  | 'audit.field.serviceName'
+  | 'audit.field.specialistId'
+  | 'audit.field.price'
+  | 'audit.field.paymentMethod'
+  | 'audit.field.items'
+  | 'audit.field.itemsCount'
+  | 'audit.field.fullName'
+  | 'audit.field.birthDate'
+  | 'audit.field.gender'
+  | 'audit.field.contactPhone'
+  | 'audit.field.contactEmail'
+  | 'audit.field.locationLat'
+  | 'audit.field.locationLon'
+  | 'audit.field.language'
+  | 'audit.field.amount'
+  | 'audit.field.currency'
+  | 'audit.field.provider'
+  | 'audit.field.providerEventId'
+  | 'audit.field.refundId'
+  | 'audit.field.version'
+  | 'audit.field.fieldsCount'
+  | 'audit.field.answeredCount'
+  | 'audit.field.photoUrl'
+  | 'audit.field.note'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -4797,6 +4875,120 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   },
   'unsubscribe.loading': { en: 'Checking the link...', ru: 'Проверяем ссылку...', cz: 'Kontrola odkazu...' },
   'unsubscribe.home': { en: 'Go to the website', ru: 'Перейти на сайт', cz: 'Přejít na web' },
+  'nav.audit': { en: 'Action log', ru: 'Журнал действий', cz: 'Protokol akcí' },
+  'audit.title': { en: 'Action log', ru: 'Журнал действий', cz: 'Protokol akcí' },
+  'audit.description': {
+    en: 'Who changed what in your business, and when. The log is read-only and never stores personal data, questionnaire answers or payment details.',
+    ru: 'Кто, когда и что изменил в вашем бизнесе. Журнал доступен только для чтения и не содержит персональных данных, ответов на опросники и платёжных реквизитов.',
+    cz: 'Kdo, kdy a co změnil ve vaší firmě. Protokol je pouze pro čtení a neobsahuje osobní údaje, odpovědi z dotazníků ani platební údaje.',
+  },
+  'audit.readOnly': { en: 'Read-only history', ru: 'История только для чтения', cz: 'Historie jen pro čtení' },
+  'audit.noAccess': {
+    en: 'You do not have access to the action log.',
+    ru: 'У вас нет доступа к журналу действий.',
+    cz: 'K protokolu akcí nemáte přístup.',
+  },
+  'audit.filters': { en: 'Filters', ru: 'Фильтры', cz: 'Filtry' },
+  'audit.action': { en: 'Action', ru: 'Действие', cz: 'Akce' },
+  'audit.allActions': { en: 'All actions', ru: 'Все действия', cz: 'Všechny akce' },
+  'audit.entity': { en: 'Record type', ru: 'Тип записи', cz: 'Typ záznamu' },
+  'audit.allEntities': { en: 'All records', ru: 'Все записи', cz: 'Všechny záznamy' },
+  'audit.actor': { en: 'Actor (user ID)', ru: 'Автор (ID пользователя)', cz: 'Autor (ID uživatele)' },
+  'audit.actorPlaceholder': { en: 'User ID', ru: 'ID пользователя', cz: 'ID uživatele' },
+  'audit.actorInvalid': {
+    en: 'Enter a numeric user ID.',
+    ru: 'Введите числовой ID пользователя.',
+    cz: 'Zadejte číselné ID uživatele.',
+  },
+  'audit.dateFrom': { en: 'From date', ru: 'С даты', cz: 'Od data' },
+  'audit.dateTo': { en: 'To date', ru: 'По дату', cz: 'Do data' },
+  'audit.dateRangeInvalid': {
+    en: 'The start date is after the end date.',
+    ru: 'Дата начала позже даты окончания.',
+    cz: 'Datum začátku je po datu konce.',
+  },
+  'audit.apply': { en: 'Apply', ru: 'Применить', cz: 'Použít' },
+  'audit.reset': { en: 'Reset', ru: 'Сбросить', cz: 'Zrušit filtry' },
+  'audit.export': { en: 'Export CSV', ru: 'Экспорт CSV', cz: 'Export CSV' },
+  'audit.exporting': { en: 'Exporting...', ru: 'Экспортируем...', cz: 'Exportuji...' },
+  'audit.exportError': {
+    en: 'Could not download the CSV file.',
+    ru: 'Не удалось скачать CSV.',
+    cz: 'CSV se nepodařilo stáhnout.',
+  },
+  'audit.empty': {
+    en: 'No entries match the selected filters.',
+    ru: 'Записей по выбранным фильтрам нет.',
+    cz: 'Podle zvolených filtrů nejsou žádné záznamy.',
+  },
+  'audit.when': { en: 'When', ru: 'Когда', cz: 'Kdy' },
+  'audit.who': { en: 'Who', ru: 'Кто', cz: 'Kdo' },
+  'audit.what': { en: 'What', ru: 'Что', cz: 'Co' },
+  'audit.details': { en: 'Details', ru: 'Детали', cz: 'Podrobnosti' },
+  'audit.requestId': { en: 'Request ID', ru: 'ID запроса', cz: 'ID požadavku' },
+  'audit.fieldsChanged': { en: 'Changed: {fields}', ru: 'Изменено: {fields}', cz: 'Změněno: {fields}' },
+  'audit.createdFields': { en: 'Fields: {fields}', ru: 'Поля: {fields}', cz: 'Pole: {fields}' },
+  'audit.noDetails': { en: 'No details', ru: 'Без деталей', cz: 'Bez podrobností' },
+  'audit.unknownActor': { en: 'Unknown user', ru: 'Неизвестный пользователь', cz: 'Neznámý uživatel' },
+  'audit.role.admin': { en: 'Administrator', ru: 'Администратор', cz: 'Administrátor' },
+  'audit.role.businessOwner': { en: 'Business owner', ru: 'Владелец бизнеса', cz: 'Majitel firmy' },
+  'audit.role.specialist': { en: 'Specialist', ru: 'Специалист', cz: 'Specialista' },
+  'audit.role.employee': { en: 'Employee', ru: 'Сотрудник', cz: 'Zaměstnanec' },
+  'audit.role.system': { en: 'System', ru: 'Система', cz: 'Systém' },
+  'audit.role.guest': { en: 'Guest', ru: 'Гость', cz: 'Host' },
+  'audit.action.visitCreated': { en: 'Visit created', ru: 'Визит создан', cz: 'Návštěva vytvořena' },
+  'audit.action.visitUpdated': { en: 'Visit updated', ru: 'Визит изменён', cz: 'Návštěva upravena' },
+  'audit.action.visitMoved': { en: 'Visit moved', ru: 'Визит перенесён', cz: 'Návštěva přesunuta' },
+  'audit.action.visitCancelled': { en: 'Visit cancelled', ru: 'Визит отменён', cz: 'Návštěva zrušena' },
+  'audit.action.paymentPaid': { en: 'Payment received', ru: 'Платёж получен', cz: 'Platba přijata' },
+  'audit.action.paymentFailed': { en: 'Payment failed', ru: 'Платёж не прошёл', cz: 'Platba selhala' },
+  'audit.action.paymentRefunded': { en: 'Refund issued', ru: 'Возврат выполнен', cz: 'Vrácení provedeno' },
+  'audit.action.questionnaireSubmitted': {
+    en: 'Questionnaire submitted',
+    ru: 'Опросник заполнен',
+    cz: 'Dotazník vyplněn',
+  },
+  'audit.action.clientUpdated': {
+    en: 'Client card updated',
+    ru: 'Карточка клиента изменена',
+    cz: 'Karta klienta upravena',
+  },
+  'audit.entity.visit': { en: 'Visit', ru: 'Визит', cz: 'Návštěva' },
+  'audit.entity.payment': { en: 'Payment', ru: 'Платёж', cz: 'Platba' },
+  'audit.entity.questionnaire': { en: 'Questionnaire', ru: 'Опросник', cz: 'Dotazník' },
+  'audit.entity.client': { en: 'Client', ru: 'Клиент', cz: 'Klient' },
+  'audit.field.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'audit.field.dateStart': { en: 'Start', ru: 'Начало', cz: 'Začátek' },
+  'audit.field.dateEnd': { en: 'End', ru: 'Окончание', cz: 'Konec' },
+  'audit.field.serviceId': { en: 'Service', ru: 'Услуга', cz: 'Služba' },
+  'audit.field.serviceName': { en: 'Service name', ru: 'Название услуги', cz: 'Název služby' },
+  'audit.field.specialistId': { en: 'Specialist', ru: 'Специалист', cz: 'Specialista' },
+  'audit.field.price': { en: 'Price', ru: 'Цена', cz: 'Cena' },
+  'audit.field.paymentMethod': { en: 'Payment method', ru: 'Способ оплаты', cz: 'Způsob platby' },
+  'audit.field.items': { en: 'Items', ru: 'Позиции', cz: 'Položky' },
+  'audit.field.itemsCount': { en: 'Item count', ru: 'Количество позиций', cz: 'Počet položek' },
+  'audit.field.fullName': { en: 'Name', ru: 'Имя', cz: 'Jméno' },
+  'audit.field.birthDate': { en: 'Birth date', ru: 'Дата рождения', cz: 'Datum narození' },
+  'audit.field.gender': { en: 'Gender', ru: 'Пол', cz: 'Pohlaví' },
+  'audit.field.contactPhone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
+  'audit.field.contactEmail': { en: 'Email', ru: 'Email', cz: 'E-mail' },
+  'audit.field.locationLat': { en: 'Latitude', ru: 'Широта', cz: 'Zeměpisná šířka' },
+  'audit.field.locationLon': { en: 'Longitude', ru: 'Долгота', cz: 'Zeměpisná délka' },
+  'audit.field.language': { en: 'Language', ru: 'Язык', cz: 'Jazyk' },
+  'audit.field.amount': { en: 'Amount', ru: 'Сумма', cz: 'Částka' },
+  'audit.field.currency': { en: 'Currency', ru: 'Валюта', cz: 'Měna' },
+  'audit.field.provider': { en: 'Provider', ru: 'Провайдер', cz: 'Poskytovatel' },
+  'audit.field.providerEventId': {
+    en: 'Provider event ID',
+    ru: 'ID события провайдера',
+    cz: 'ID události poskytovatele',
+  },
+  'audit.field.refundId': { en: 'Refund ID', ru: 'ID возврата', cz: 'ID vrácení' },
+  'audit.field.version': { en: 'Version', ru: 'Версия', cz: 'Verze' },
+  'audit.field.fieldsCount': { en: 'Field count', ru: 'Количество полей', cz: 'Počet polí' },
+  'audit.field.answeredCount': { en: 'Answered count', ru: 'Количество ответов', cz: 'Počet odpovědí' },
+  'audit.field.photoUrl': { en: 'Photo', ru: 'Фотография', cz: 'Fotografie' },
+  'audit.field.note': { en: 'Note', ru: 'Заметка', cz: 'Poznámka' },
 }
 
 export default translations

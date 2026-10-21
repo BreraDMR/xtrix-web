@@ -584,6 +584,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/businesses/me/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read this business's action journal */
+        get: operations["list_business_audit_events_businesses_me_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/audit/export/csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export this business's action journal */
+        get: operations["export_business_audit_csv_businesses_me_audit_export_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/businesses/me/campaigns": {
         parameters: {
             query?: never;
@@ -4074,6 +4108,34 @@ export interface components {
              */
             file: string;
         };
+        /** BusinessAuditEventOut */
+        BusinessAuditEventOut: {
+            /** Action */
+            action: string;
+            /** Actor Name */
+            actor_name?: string | null;
+            /** Actor Role */
+            actor_role?: string | null;
+            /** Actor User Id */
+            actor_user_id?: number | null;
+            /** Changes */
+            changes?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Entity Id */
+            entity_id: number;
+            /** Entity Type */
+            entity_type: string;
+            /** Id */
+            id: number;
+            /** Request Id */
+            request_id?: string | null;
+        };
         /** BusinessCreate */
         BusinessCreate: {
             /** Address */
@@ -6696,6 +6758,19 @@ export interface components {
         PaginatedResponse_AuditLogOut_: {
             /** Items */
             items: components["schemas"]["AuditLogOut"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** PaginatedResponse[BusinessAuditEventOut] */
+        PaginatedResponse_BusinessAuditEventOut_: {
+            /** Items */
+            items: components["schemas"]["BusinessAuditEventOut"][];
             /** Page */
             page: number;
             /** Pages */
@@ -11126,6 +11201,82 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BusinessOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_business_audit_events_businesses_me_audit_get: {
+        parameters: {
+            query?: {
+                action?: string | null;
+                entity_type?: string | null;
+                actor_user_id?: number | null;
+                date_from?: string | null;
+                date_to?: string | null;
+                page?: number;
+                per_page?: number;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_BusinessAuditEventOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_business_audit_csv_businesses_me_audit_export_csv_get: {
+        parameters: {
+            query?: {
+                action?: string | null;
+                entity_type?: string | null;
+                actor_user_id?: number | null;
+                date_from?: string | null;
+                date_to?: string | null;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

@@ -131,3 +131,5 @@ export type CampaignPreviewRecipient = Schema<'CampaignPreviewRecipient'>
 export type CampaignStatsOut = Schema<'CampaignStatsOut'>
 export type MarketingConsentOut = Schema<'MarketingConsentOut'>
 export type PublicUnsubscribeOut = Schema<'PublicUnsubscribeOut'>
+export type BusinessAuditEventOut = Schema<'BusinessAuditEventOut'>
+export type BusinessAuditEventPage = Schema<'PaginatedResponse_BusinessAuditEventOut_'>
