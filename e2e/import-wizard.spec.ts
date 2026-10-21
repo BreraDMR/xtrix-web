@@ -367,3 +367,67 @@ test('staff cannot open imports and does not see the navigation entry', async ({
   await page.goto('/app/import')
   await expect(page.getByText('You do not have access to imports.')).toBeVisible()
 })
+
+const layoutText = {
+  en: {
+    title: 'Import clients and visit history',
+    upload: 'Upload a file',
+    recent: 'Recent imports',
+    nav: 'Import',
+    file: 'layout.csv',
+  },
+  ru: {
+    title: 'Импорт клиентов и истории визитов',
+    upload: 'Загрузка файла',
+    recent: 'Последние импорты',
+    nav: 'Импорт',
+    file: 'layout.csv',
+  },
+  cz: {
+    title: 'Import klientů a historie návštěv',
+    upload: 'Nahrání souboru',
+    recent: 'Poslední importy',
+    nav: 'Import',
+    file: 'layout.csv',
+  },
+}
+
+for (const language of ['en', 'ru', 'cz'] as const) {
+  for (const theme of ['light', 'dark'] as const) {
+    test(`import wizard layout: ${language}, ${theme}`, async ({ page, request }) => {
+      const owner = await newOwner(request)
+      await upload(
+        request,
+        owner,
+        csv(['name', 'phone'], [['Layout Guest', unique('+420600')]]),
+        'layout.csv',
+      )
+      await openAs(page, owner, '/app/import')
+      expect((await request.put(`${apiUrl}/user-preferences/me`, {
+        headers: owner.headers,
+        data: { language, theme },
+      })).ok()).toBeTruthy()
+      await page.reload()
+
+      const text = layoutText[language]
+      await expect(page.getByRole('heading', { name: text.title, level: 1 })).toBeVisible()
+      await expect(page.getByRole('heading', { name: text.upload })).toBeVisible()
+      await expect(page.getByRole('heading', { name: text.recent })).toBeVisible()
+      await expect(page.getByText(text.file).first()).toBeVisible()
+      await expect(page.locator('#workspace-navigation').getByRole('link', { name: text.nav, exact: true })).toBeVisible()
+      if (theme === 'dark') await expect(page.locator('html')).toHaveClass(/dark/)
+      else await expect(page.locator('html')).not.toHaveClass(/dark/)
+
+      await page.waitForLoadState('networkidle')
+      await page.setViewportSize({ width: 1280, height: 900 })
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1280)
+      await page.screenshot({ path: `.local-checks/import-${language}-${theme}-1280.png`, fullPage: true })
+
+      await page.setViewportSize({ width: 375, height: 900 })
+      await expect(page.getByRole('heading', { name: text.title, level: 1 })).toBeVisible()
+      await expect(page.getByRole('heading', { name: text.upload })).toBeVisible()
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375)
+      await page.screenshot({ path: `.local-checks/import-${language}-${theme}-375.png`, fullPage: true })
+    })
+  }
+}
