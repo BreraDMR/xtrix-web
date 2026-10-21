@@ -13,7 +13,7 @@ import {
   HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
   HiOutlineClock, HiOutlineClipboardList, HiOutlineMenuAlt2, HiOutlineX,
   HiOutlineChevronRight, HiOutlineChevronLeft, HiOutlineBell, HiOutlineUserAdd,
-  HiOutlineSpeakerphone, HiOutlineShieldCheck,
+  HiOutlineSpeakerphone, HiOutlineShieldCheck, HiOutlineUpload,
 } from 'react-icons/hi'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -25,6 +25,7 @@ const icons: Record<string, ComponentType<{ className?: string }>> = {
   '/app/my-salary': HiOutlineCurrencyDollar, '/app/settings': HiOutlineCog,
   '/app/notifications': HiOutlineBell, '/app/waitlist': HiOutlineUserAdd,
   '/app/campaigns': HiOutlineSpeakerphone, '/app/audit': HiOutlineShieldCheck,
+  '/app/import': HiOutlineUpload,
 }
 
 export default function Layout() {
@@ -90,6 +91,7 @@ export default function Layout() {
   ]
   const managesWaitlist = managesBusiness || (user?.role === 'specialist' && !user.employer_id)
   const canReadAudit = managesBusiness || (user?.role === 'specialist' && !user.employer_id)
+  const canImport = canReadAudit
   const manageItems = [
     ...(managesBusiness ? [
       { path: '/app/analytics', label: t('nav.analytics') }, { path: '/app/loyalty', label: t('nav.loyalty') },
@@ -98,6 +100,7 @@ export default function Layout() {
     ...(managesWaitlist ? [{ path: '/app/waitlist', label: t('nav.waitlist') }] : []),
     ...(managesBusiness ? [{ path: '/app/campaigns', label: t('nav.campaigns') }] : []),
     ...(canReadAudit ? [{ path: '/app/audit', label: t('nav.audit') }] : []),
+    ...(canImport ? [{ path: '/app/import', label: t('nav.import') }] : []),
   ]
   const systemItems = [
     ...(managesBusiness ? [{ path: '/app/business', label: t('nav.business') }] : []),

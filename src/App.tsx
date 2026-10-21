@@ -29,6 +29,7 @@ import NotificationSettings from './pages/NotificationSettings'
 import Waitlist from './pages/Waitlist'
 import Campaigns from './pages/Campaigns'
 import AuditLog from './pages/AuditLog'
+import ImportWizard from './components/import/ImportWizard'
 import Unsubscribe from './pages/Unsubscribe'
 import NotFound from './pages/NotFound'
 import BookingPage from './pages/booking/BookingPage'
@@ -122,6 +123,7 @@ function App() {
           <Route path="waitlist" element={<Waitlist />} />
           <Route path="campaigns" element={<Campaigns />} />
           <Route path="audit" element={<AuditLog />} />
+          <Route path="import" element={<ImportWizard />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 

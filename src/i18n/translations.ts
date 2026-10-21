@@ -1977,6 +1977,132 @@ export type TranslationKey =
   | 'audit.field.answeredCount'
   | 'audit.field.photoUrl'
   | 'audit.field.note'
+  | 'nav.import'
+  | 'importWizard.title'
+  | 'importWizard.description'
+  | 'importWizard.noAccess'
+  | 'importWizard.uploadTitle'
+  | 'importWizard.uploadHint'
+  | 'importWizard.selectFile'
+  | 'importWizard.replaceFile'
+  | 'importWizard.upload'
+  | 'importWizard.uploading'
+  | 'importWizard.uploadError'
+  | 'importWizard.fileTooLarge'
+  | 'importWizard.fileEmpty'
+  | 'importWizard.fileType'
+  | 'importWizard.recent'
+  | 'importWizard.recentEmpty'
+  | 'importWizard.file'
+  | 'importWizard.statusLabel'
+  | 'importWizard.rowsLabel'
+  | 'importWizard.createdLabel'
+  | 'importWizard.open'
+  | 'importWizard.batchNotFound'
+  | 'importWizard.startOver'
+  | 'importWizard.refresh'
+  | 'importWizard.steps'
+  | 'importWizard.step.upload'
+  | 'importWizard.step.mapping'
+  | 'importWizard.step.preview'
+  | 'importWizard.step.result'
+  | 'importWizard.mappingTitle'
+  | 'importWizard.mappingHint'
+  | 'importWizard.clientFields'
+  | 'importWizard.visitFields'
+  | 'importWizard.visitHint'
+  | 'importWizard.notImported'
+  | 'importWizard.target.fullName'
+  | 'importWizard.target.phone'
+  | 'importWizard.target.email'
+  | 'importWizard.target.birthDate'
+  | 'importWizard.target.gender'
+  | 'importWizard.target.language'
+  | 'importWizard.target.visitDate'
+  | 'importWizard.target.visitService'
+  | 'importWizard.target.visitSpecialist'
+  | 'importWizard.target.visitPrice'
+  | 'importWizard.target.visitStatus'
+  | 'importWizard.target.visitPaymentMethod'
+  | 'importWizard.duplicatePolicy'
+  | 'importWizard.policy.skip'
+  | 'importWizard.policy.update'
+  | 'importWizard.policy.create'
+  | 'importWizard.mappingRequired'
+  | 'importWizard.duplicateColumns'
+  | 'importWizard.buildPreview'
+  | 'importWizard.previewing'
+  | 'importWizard.saveError'
+  | 'importWizard.previewTitle'
+  | 'importWizard.previewHint'
+  | 'importWizard.valid'
+  | 'importWizard.errors'
+  | 'importWizard.create'
+  | 'importWizard.update'
+  | 'importWizard.skip'
+  | 'importWizard.rebuildPreview'
+  | 'importWizard.filterAll'
+  | 'importWizard.filterErrors'
+  | 'importWizard.row'
+  | 'importWizard.actionLabel'
+  | 'importWizard.details'
+  | 'importWizard.error'
+  | 'importWizard.noRows'
+  | 'importWizard.rowStatus.pending'
+  | 'importWizard.rowStatus.valid'
+  | 'importWizard.rowStatus.error'
+  | 'importWizard.rowStatus.imported'
+  | 'importWizard.rowStatus.skipped'
+  | 'importWizard.rowStatus.failed'
+  | 'importWizard.action.create'
+  | 'importWizard.action.update'
+  | 'importWizard.action.skip'
+  | 'importWizard.confirmHint'
+  | 'importWizard.confirm'
+  | 'importWizard.confirming'
+  | 'importWizard.confirmError'
+  | 'importWizard.outdated'
+  | 'importWizard.importingTitle'
+  | 'importWizard.importingHint'
+  | 'importWizard.lastCheckpoint'
+  | 'importWizard.importedSoFar'
+  | 'importWizard.continueImport'
+  | 'importWizard.resultTitle'
+  | 'importWizard.completedWithErrors'
+  | 'importWizard.resultSummary'
+  | 'importWizard.finishedAt'
+  | 'importWizard.downloadReport'
+  | 'importWizard.downloading'
+  | 'importWizard.reportError'
+  | 'importWizard.createsService'
+  | 'importWizard.timezoneHint'
+  | 'importWizard.currencyHint'
+  | 'importWizard.status.uploaded'
+  | 'importWizard.status.mapped'
+  | 'importWizard.status.previewed'
+  | 'importWizard.status.importing'
+  | 'importWizard.status.completed'
+  | 'importWizard.status.completedWithErrors'
+  | 'importWizard.status.failed'
+  | 'importWizard.error.requiredField'
+  | 'importWizard.error.tooLong'
+  | 'importWizard.error.invalidPhone'
+  | 'importWizard.error.invalidEmail'
+  | 'importWizard.error.invalidDate'
+  | 'importWizard.error.invalidChoice'
+  | 'importWizard.error.invalidPrice'
+  | 'importWizard.error.ambiguousMatch'
+  | 'importWizard.error.contactConflict'
+  | 'importWizard.error.unknownSpecialist'
+  | 'importWizard.error.ambiguousSpecialist'
+  | 'importWizard.error.unknownService'
+  | 'importWizard.error.ambiguousService'
+  | 'importWizard.error.clientMissing'
+  | 'importWizard.error.extraColumns'
+  | 'importWizard.error.cellTooLong'
+  | 'importWizard.error.formulaNotAllowed'
+  | 'importWizard.error.malformedRow'
+  | 'importWizard.error.rowFailed'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -4989,6 +5115,204 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'audit.field.answeredCount': { en: 'Answered count', ru: 'Количество ответов', cz: 'Počet odpovědí' },
   'audit.field.photoUrl': { en: 'Photo', ru: 'Фотография', cz: 'Fotografie' },
   'audit.field.note': { en: 'Note', ru: 'Заметка', cz: 'Poznámka' },
+  'nav.import': { en: 'Import', ru: 'Импорт', cz: 'Import' },
+  'importWizard.title': {
+    en: 'Import clients and visit history',
+    ru: 'Импорт клиентов и истории визитов',
+    cz: 'Import klientů a historie návštěv',
+  },
+  'importWizard.description': {
+    en: 'Upload a CSV or XLSX file, match its columns and check the read-only preview. The CRM changes only after you confirm.',
+    ru: 'Загрузите CSV или XLSX, сопоставьте колонки и проверьте предпросмотр. CRM изменится только после подтверждения.',
+    cz: 'Nahrajte CSV nebo XLSX, přiřaďte sloupce a zkontrolujte náhled. CRM se změní až po potvrzení.',
+  },
+  'importWizard.noAccess': {
+    en: 'You do not have access to imports.',
+    ru: 'У вас нет доступа к импорту.',
+    cz: 'K importu nemáte přístup.',
+  },
+  'importWizard.uploadTitle': { en: 'Upload a file', ru: 'Загрузка файла', cz: 'Nahrání souboru' },
+  'importWizard.uploadHint': {
+    en: 'CSV or XLSX up to 10 MB and 5000 rows. The first row must contain column names.',
+    ru: 'CSV или XLSX до 10 МБ и 5000 строк. Первая строка должна содержать названия колонок.',
+    cz: 'CSV nebo XLSX do 10 MB a 5000 řádků. První řádek musí obsahovat názvy sloupců.',
+  },
+  'importWizard.selectFile': { en: 'Choose CSV or XLSX', ru: 'Выбрать CSV или XLSX', cz: 'Vybrat CSV nebo XLSX' },
+  'importWizard.replaceFile': { en: 'Choose another file', ru: 'Выбрать другой файл', cz: 'Vybrat jiný soubor' },
+  'importWizard.upload': { en: 'Upload file', ru: 'Загрузить файл', cz: 'Nahrát soubor' },
+  'importWizard.uploading': { en: 'Uploading...', ru: 'Загружаем...', cz: 'Nahrávám...' },
+  'importWizard.uploadError': { en: 'Could not upload the file.', ru: 'Не удалось загрузить файл.', cz: 'Soubor se nepodařilo nahrát.' },
+  'importWizard.fileTooLarge': { en: 'The file is larger than 10 MB.', ru: 'Файл больше 10 МБ.', cz: 'Soubor je větší než 10 MB.' },
+  'importWizard.fileEmpty': { en: 'The file is empty.', ru: 'Файл пуст.', cz: 'Soubor je prázdný.' },
+  'importWizard.fileType': { en: 'Choose a CSV or XLSX file.', ru: 'Выберите файл CSV или XLSX.', cz: 'Vyberte soubor CSV nebo XLSX.' },
+  'importWizard.recent': { en: 'Recent imports', ru: 'Последние импорты', cz: 'Poslední importy' },
+  'importWizard.recentEmpty': { en: 'No imports yet.', ru: 'Импортов пока нет.', cz: 'Zatím žádné importy.' },
+  'importWizard.file': { en: 'File', ru: 'Файл', cz: 'Soubor' },
+  'importWizard.statusLabel': { en: 'Status', ru: 'Статус', cz: 'Stav' },
+  'importWizard.rowsLabel': { en: 'Rows', ru: 'Строк', cz: 'Řádků' },
+  'importWizard.createdLabel': { en: 'Created', ru: 'Создано', cz: 'Vytvořeno' },
+  'importWizard.open': { en: 'Open', ru: 'Открыть', cz: 'Otevřít' },
+  'importWizard.batchNotFound': { en: 'This import was not found.', ru: 'Этот импорт не найден.', cz: 'Tento import nebyl nalezen.' },
+  'importWizard.startOver': { en: 'Start a new import', ru: 'Начать новый импорт', cz: 'Začít nový import' },
+  'importWizard.refresh': { en: 'Refresh status', ru: 'Обновить статус', cz: 'Obnovit stav' },
+  'importWizard.steps': { en: 'Import steps', ru: 'Этапы импорта', cz: 'Kroky importu' },
+  'importWizard.step.upload': { en: 'Upload', ru: 'Загрузка', cz: 'Nahrání' },
+  'importWizard.step.mapping': { en: 'Columns', ru: 'Колонки', cz: 'Sloupce' },
+  'importWizard.step.preview': { en: 'Preview', ru: 'Предпросмотр', cz: 'Náhled' },
+  'importWizard.step.result': { en: 'Result', ru: 'Результат', cz: 'Výsledek' },
+  'importWizard.mappingTitle': { en: 'Match the file columns', ru: 'Сопоставьте колонки файла', cz: 'Přiřaďte sloupce souboru' },
+  'importWizard.mappingHint': {
+    en: 'The client name is required. Only matched columns are copied; everything else stays in the file.',
+    ru: 'Имя клиента обязательно. Копируются только сопоставленные колонки, остальное остаётся в файле.',
+    cz: 'Jméno klienta je povinné. Kopírují se jen přiřazené sloupce, ostatní zůstávají v souboru.',
+  },
+  'importWizard.clientFields': { en: 'Client fields', ru: 'Поля клиента', cz: 'Pole klienta' },
+  'importWizard.visitFields': { en: 'Visit history', ru: 'История визитов', cz: 'Historie návštěv' },
+  'importWizard.visitHint': {
+    en: 'Optional. Leave the date empty if the file has no visit history.',
+    ru: 'Необязательно. Оставьте дату пустой, если истории визитов нет.',
+    cz: 'Nepovinné. Pokud soubor historii návštěv nemá, nechte datum prázdné.',
+  },
+  'importWizard.notImported': { en: 'Do not import', ru: 'Не импортировать', cz: 'Neimportovat' },
+  'importWizard.target.fullName': { en: 'Name', ru: 'Имя', cz: 'Jméno' },
+  'importWizard.target.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
+  'importWizard.target.email': { en: 'Email', ru: 'Email', cz: 'E-mail' },
+  'importWizard.target.birthDate': { en: 'Birth date', ru: 'Дата рождения', cz: 'Datum narození' },
+  'importWizard.target.gender': { en: 'Gender', ru: 'Пол', cz: 'Pohlaví' },
+  'importWizard.target.language': { en: 'Language', ru: 'Язык', cz: 'Jazyk' },
+  'importWizard.target.visitDate': { en: 'Visit date', ru: 'Дата визита', cz: 'Datum návštěvy' },
+  'importWizard.target.visitService': { en: 'Service', ru: 'Услуга', cz: 'Služba' },
+  'importWizard.target.visitSpecialist': { en: 'Specialist', ru: 'Специалист', cz: 'Specialista' },
+  'importWizard.target.visitPrice': { en: 'Price', ru: 'Цена', cz: 'Cena' },
+  'importWizard.target.visitStatus': { en: 'Visit status', ru: 'Статус визита', cz: 'Stav návštěvy' },
+  'importWizard.target.visitPaymentMethod': { en: 'Payment method', ru: 'Способ оплаты', cz: 'Způsob platby' },
+  'importWizard.duplicatePolicy': {
+    en: 'If the phone or email already exists',
+    ru: 'Если телефон или email уже существует',
+    cz: 'Pokud telefon nebo e-mail již existuje',
+  },
+  'importWizard.policy.skip': { en: 'Skip the row', ru: 'Пропустить строку', cz: 'Přeskočit řádek' },
+  'importWizard.policy.update': { en: 'Update the existing client', ru: 'Обновить существующего клиента', cz: 'Aktualizovat stávajícího klienta' },
+  'importWizard.policy.create': { en: 'Create a separate client', ru: 'Создать отдельного клиента', cz: 'Vytvořit samostatného klienta' },
+  'importWizard.mappingRequired': {
+    en: 'Match the client name column before continuing.',
+    ru: 'Сопоставьте колонку с именем клиента.',
+    cz: 'Přiřaďte sloupec s jménem klienta.',
+  },
+  'importWizard.duplicateColumns': {
+    en: 'Each file column can be matched only once.',
+    ru: 'Каждую колонку файла можно сопоставить только один раз.',
+    cz: 'Každý sloupec souboru lze přiřadit jen jednou.',
+  },
+  'importWizard.buildPreview': { en: 'Build preview', ru: 'Построить предпросмотр', cz: 'Vytvořit náhled' },
+  'importWizard.previewing': { en: 'Building preview...', ru: 'Строим предпросмотр...', cz: 'Vytvářím náhled...' },
+  'importWizard.saveError': {
+    en: 'Could not save the mapping or build the preview.',
+    ru: 'Не удалось сохранить сопоставление или построить предпросмотр.',
+    cz: 'Přiřazení nebo náhled se nepodařilo uložit.',
+  },
+  'importWizard.previewTitle': { en: 'Check the preview', ru: 'Проверьте предпросмотр', cz: 'Zkontrolujte náhled' },
+  'importWizard.previewHint': {
+    en: 'The preview is read-only. Nothing has been imported yet.',
+    ru: 'Предпросмотр ничего не записывает: данные ещё не импортированы.',
+    cz: 'Náhled je pouze pro čtení. Zatím nebylo nic importováno.',
+  },
+  'importWizard.valid': { en: 'Valid', ru: 'Корректных', cz: 'Platných' },
+  'importWizard.errors': { en: 'Errors', ru: 'Ошибок', cz: 'Chyb' },
+  'importWizard.create': { en: 'Create', ru: 'Создать', cz: 'Vytvořit' },
+  'importWizard.update': { en: 'Update', ru: 'Обновить', cz: 'Aktualizovat' },
+  'importWizard.skip': { en: 'Skip', ru: 'Пропустить', cz: 'Přeskočit' },
+  'importWizard.rebuildPreview': { en: 'Rebuild preview', ru: 'Перестроить предпросмотр', cz: 'Obnovit náhled' },
+  'importWizard.filterAll': { en: 'All rows', ru: 'Все строки', cz: 'Všechny řádky' },
+  'importWizard.filterErrors': { en: 'Errors only', ru: 'Только ошибки', cz: 'Jen chyby' },
+  'importWizard.row': { en: 'Row', ru: 'Строка', cz: 'Řádek' },
+  'importWizard.actionLabel': { en: 'Action', ru: 'Действие', cz: 'Akce' },
+  'importWizard.details': { en: 'Details', ru: 'Детали', cz: 'Podrobnosti' },
+  'importWizard.error': { en: 'Error', ru: 'Ошибка', cz: 'Chyba' },
+  'importWizard.noRows': { en: 'No rows to show.', ru: 'Нет строк для показа.', cz: 'Žádné řádky k zobrazení.' },
+  'importWizard.rowStatus.pending': { en: 'Pending', ru: 'Ожидает', cz: 'Čeká' },
+  'importWizard.rowStatus.valid': { en: 'Valid', ru: 'Корректна', cz: 'Platný' },
+  'importWizard.rowStatus.error': { en: 'Error', ru: 'Ошибка', cz: 'Chyba' },
+  'importWizard.rowStatus.imported': { en: 'Imported', ru: 'Импортирована', cz: 'Importován' },
+  'importWizard.rowStatus.skipped': { en: 'Skipped', ru: 'Пропущена', cz: 'Přeskočen' },
+  'importWizard.rowStatus.failed': { en: 'Failed', ru: 'Не удалась', cz: 'Selhal' },
+  'importWizard.action.create': { en: 'Create', ru: 'Создать', cz: 'Vytvořit' },
+  'importWizard.action.update': { en: 'Update', ru: 'Обновить', cz: 'Aktualizovat' },
+  'importWizard.action.skip': { en: 'Skip', ru: 'Пропустить', cz: 'Přeskočit' },
+  'importWizard.confirmHint': {
+    en: 'Confirmation imports exactly this previewed file. A repeated click will not create duplicates.',
+    ru: 'Подтверждение импортирует именно этот проверенный файл. Повторное нажатие не создаст дубли.',
+    cz: 'Potvrzení importuje právě tento zkontrolovaný soubor. Opakované kliknutí nevytvoří duplicity.',
+  },
+  'importWizard.confirm': { en: 'Confirm import', ru: 'Подтвердить импорт', cz: 'Potvrdit import' },
+  'importWizard.confirming': { en: 'Importing...', ru: 'Импортируем...', cz: 'Importuji...' },
+  'importWizard.confirmError': { en: 'Could not import the file.', ru: 'Не удалось выполнить импорт.', cz: 'Import se nepodařilo provést.' },
+  'importWizard.outdated': {
+    en: 'The file, mapping or duplicate policy changed. Build a new preview.',
+    ru: 'Файл, сопоставление или политика дублей изменились. Постройте новый предпросмотр.',
+    cz: 'Soubor, přiřazení nebo pravidlo duplicit se změnilo. Vytvořte nový náhled.',
+  },
+  'importWizard.importingTitle': { en: 'Import paused', ru: 'Импорт приостановлен', cz: 'Import pozastaven' },
+  'importWizard.importingHint': {
+    en: 'The previous run stopped before finishing. Continue from the last saved row; already imported rows are not repeated.',
+    ru: 'Предыдущий запуск прервался. Продолжите с последней сохранённой строки, уже импортированные строки не повторяются.',
+    cz: 'Předchozí běh se přerušil. Pokračujte od posledního uloženého řádku, importované řádky se neopakují.',
+  },
+  'importWizard.lastCheckpoint': { en: 'Last saved row: {row}', ru: 'Последняя сохранённая строка: {row}', cz: 'Poslední uložený řádek: {row}' },
+  'importWizard.importedSoFar': { en: 'Created {created}, updated {updated}', ru: 'Создано {created}, обновлено {updated}', cz: 'Vytvořeno {created}, aktualizováno {updated}' },
+  'importWizard.continueImport': { en: 'Continue import', ru: 'Продолжить импорт', cz: 'Pokračovat v importu' },
+  'importWizard.resultTitle': { en: 'Import finished', ru: 'Импорт завершён', cz: 'Import dokončen' },
+  'importWizard.completedWithErrors': {
+    en: 'Some rows could not be imported. They are listed with their errors; the rest was saved.',
+    ru: 'Некоторые строки не удалось импортировать. Они перечислены с ошибками, остальное сохранено.',
+    cz: 'Některé řádky se nepodařilo importovat. Jsou uvedeny s chybami, zbytek byl uložen.',
+  },
+  'importWizard.resultSummary': {
+    en: 'Created {created}, updated {updated}, skipped {skipped}, failed {failed}.',
+    ru: 'Создано {created}, обновлено {updated}, пропущено {skipped}, с ошибкой {failed}.',
+    cz: 'Vytvořeno {created}, aktualizováno {updated}, přeskočeno {skipped}, selhalo {failed}.',
+  },
+  'importWizard.finishedAt': { en: 'Finished {when}', ru: 'Завершено {when}', cz: 'Dokončeno {when}' },
+  'importWizard.downloadReport': { en: 'Download CSV report', ru: 'Скачать CSV-отчёт', cz: 'Stáhnout CSV report' },
+  'importWizard.downloading': { en: 'Downloading...', ru: 'Скачиваем...', cz: 'Stahuji...' },
+  'importWizard.reportError': { en: 'Could not download the report.', ru: 'Не удалось скачать отчёт.', cz: 'Report se nepodařilo stáhnout.' },
+  'importWizard.createsService': { en: 'new service will be created', ru: 'будет создана новая услуга', cz: 'bude vytvořena nová služba' },
+  'importWizard.timezoneHint': { en: 'Dates use {timezone}', ru: 'Даты читаются в {timezone}', cz: 'Datumy se čtou v {timezone}' },
+  'importWizard.currencyHint': { en: 'Prices are saved in {currency}', ru: 'Цены сохраняются в {currency}', cz: 'Ceny se ukládají v {currency}' },
+  'importWizard.status.uploaded': { en: 'Uploaded', ru: 'Загружен', cz: 'Nahráno' },
+  'importWizard.status.mapped': { en: 'Columns matched', ru: 'Колонки сопоставлены', cz: 'Sloupce přiřazeny' },
+  'importWizard.status.previewed': { en: 'Preview ready', ru: 'Предпросмотр готов', cz: 'Náhled připraven' },
+  'importWizard.status.importing': { en: 'Importing', ru: 'Импортируется', cz: 'Importuje se' },
+  'importWizard.status.completed': { en: 'Completed', ru: 'Завершён', cz: 'Dokončen' },
+  'importWizard.status.completedWithErrors': { en: 'Completed with errors', ru: 'Завершён с ошибками', cz: 'Dokončen s chybami' },
+  'importWizard.status.failed': { en: 'Failed', ru: 'Ошибка', cz: 'Selhal' },
+  'importWizard.error.requiredField': { en: 'Required value is missing', ru: 'Не заполнено обязательное поле', cz: 'Chybí povinná hodnota' },
+  'importWizard.error.tooLong': { en: 'Value is too long', ru: 'Значение слишком длинное', cz: 'Hodnota je příliš dlouhá' },
+  'importWizard.error.invalidPhone': { en: 'Invalid phone', ru: 'Неверный телефон', cz: 'Neplatný telefon' },
+  'importWizard.error.invalidEmail': { en: 'Invalid email', ru: 'Неверный email', cz: 'Neplatný e-mail' },
+  'importWizard.error.invalidDate': { en: 'Invalid date', ru: 'Неверная дата', cz: 'Neplatné datum' },
+  'importWizard.error.invalidChoice': { en: 'Unknown value', ru: 'Неизвестное значение', cz: 'Neznámá hodnota' },
+  'importWizard.error.invalidPrice': { en: 'Invalid price', ru: 'Неверная цена', cz: 'Neplatná cena' },
+  'importWizard.error.ambiguousMatch': {
+    en: 'Several clients match this phone or email',
+    ru: 'Несколько клиентов совпадают по телефону или email',
+    cz: 'Několik klientů odpovídá telefonu nebo e-mailu',
+  },
+  'importWizard.error.contactConflict': {
+    en: 'Phone and email belong to different clients',
+    ru: 'Телефон и email принадлежат разным клиентам',
+    cz: 'Telefon a e-mail patří různým klientům',
+  },
+  'importWizard.error.unknownSpecialist': { en: 'Specialist not found in this business', ru: 'Специалист не найден в этом бизнесе', cz: 'Specialista v této firmě nebyl nalezen' },
+  'importWizard.error.ambiguousSpecialist': { en: 'Several specialists match', ru: 'Несколько специалистов подходят', cz: 'Odpovídá několik specialistů' },
+  'importWizard.error.unknownService': { en: 'This row has no service and no service name', ru: 'В строке нет услуги и названия услуги', cz: 'Řádek nemá službu ani název služby' },
+  'importWizard.error.ambiguousService': { en: 'Several services match', ru: 'Несколько услуг подходят', cz: 'Odpovídá několik služeb' },
+  'importWizard.error.clientMissing': { en: 'Client was not created for this row', ru: 'Клиент для строки не создан', cz: 'Klient pro tento řádek nebyl vytvořen' },
+  'importWizard.error.extraColumns': { en: 'The row has more values than columns', ru: 'В строке больше значений, чем колонок', cz: 'Řádek má více hodnot než sloupců' },
+  'importWizard.error.cellTooLong': { en: 'A cell is longer than 2000 characters', ru: 'Ячейка длиннее 2000 символов', cz: 'Buňka je delší než 2000 znaků' },
+  'importWizard.error.formulaNotAllowed': { en: 'Formulas are not imported', ru: 'Формулы не импортируются', cz: 'Vzorce se neimportují' },
+  'importWizard.error.malformedRow': { en: 'The row could not be read', ru: 'Строку не удалось прочитать', cz: 'Řádek se nepodařilo přečíst' },
+  'importWizard.error.rowFailed': { en: 'The row could not be saved', ru: 'Строку не удалось сохранить', cz: 'Řádek se nepodařilo uložit' },
 }
 
 export default translations
