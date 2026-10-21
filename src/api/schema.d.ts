@@ -893,6 +893,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/businesses/me/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List import batches */
+        get: operations["list_imports_businesses_me_imports_get"];
+        put?: never;
+        /** Upload a client import file */
+        post: operations["upload_import_businesses_me_imports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/imports/{batch_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read an import batch */
+        get: operations["get_import_businesses_me_imports__batch_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/imports/{batch_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm and execute an import batch */
+        post: operations["confirm_import_businesses_me_imports__batch_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/imports/{batch_id}/mapping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save the column mapping */
+        put: operations["save_import_mapping_businesses_me_imports__batch_id__mapping_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/imports/{batch_id}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dry-run the mapped rows */
+        post: operations["preview_import_businesses_me_imports__batch_id__preview_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/imports/{batch_id}/report.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export the batch result and row errors */
+        get: operations["export_import_report_businesses_me_imports__batch_id__report_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/imports/{batch_id}/rows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read preview rows and errors */
+        get: operations["list_import_rows_businesses_me_imports__batch_id__rows_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/businesses/me/notification-deliveries": {
         parameters: {
             query?: never;
@@ -4108,6 +4228,11 @@ export interface components {
              */
             file: string;
         };
+        /** Body_upload_import_businesses_me_imports_post */
+        Body_upload_import_businesses_me_imports_post: {
+            /** File */
+            file: string;
+        };
         /** BusinessAuditEventOut */
         BusinessAuditEventOut: {
             /** Action */
@@ -5909,6 +6034,196 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** ImportBatchOut */
+        ImportBatchOut: {
+            /** Column Signature */
+            column_signature: string;
+            /** Confirmed At */
+            confirmed_at?: string | null;
+            /** Content Type */
+            content_type?: string | null;
+            /** Create Count */
+            create_count: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created Count */
+            created_count: number;
+            /** Currency */
+            currency: string;
+            /**
+             * Duplicate Policy
+             * @enum {string}
+             */
+            duplicate_policy: "skip" | "update" | "create";
+            /** Error Count */
+            error_count: number;
+            /**
+             * Failed Count
+             * @default 0
+             */
+            failed_count: number;
+            /** Finished At */
+            finished_at?: string | null;
+            /** Headers */
+            headers: string[];
+            /** Id */
+            id: number;
+            /** Last Checkpoint */
+            last_checkpoint: number;
+            /** Mapping */
+            mapping?: {
+                [key: string]: string;
+            } | null;
+            /** Mapping Version */
+            mapping_version: number;
+            /** Preview Version */
+            preview_version: number;
+            /** Previewed At */
+            previewed_at?: string | null;
+            /** Row Count */
+            row_count: number;
+            /** Skip Count */
+            skip_count: number;
+            /** Skipped Count */
+            skipped_count: number;
+            /** Source Expires At */
+            source_expires_at?: string | null;
+            /** Source Filename */
+            source_filename: string;
+            /** Source Hash */
+            source_hash: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "uploaded" | "mapped" | "previewed" | "importing" | "completed" | "completed_with_errors" | "failed";
+            /** Suggested Mapping */
+            suggested_mapping?: {
+                [key: string]: string;
+            };
+            /** Timezone */
+            timezone: string;
+            /** Update Count */
+            update_count: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Updated Count */
+            updated_count: number;
+            /** Valid Count */
+            valid_count: number;
+        };
+        /** ImportConfirmIn */
+        ImportConfirmIn: {
+            /**
+             * Duplicate Policy
+             * @enum {string}
+             */
+            duplicate_policy: "skip" | "update" | "create";
+            /** Mapping Version */
+            mapping_version: number;
+            /** Preview Version */
+            preview_version: number;
+            /** Source Hash */
+            source_hash: string;
+        };
+        /** ImportMappingIn */
+        ImportMappingIn: {
+            /** Mapping */
+            mapping: {
+                [key: string]: string;
+            };
+        };
+        /** ImportPreviewIn */
+        ImportPreviewIn: {
+            /**
+             * Duplicate Policy
+             * @default skip
+             * @enum {string}
+             */
+            duplicate_policy: "skip" | "update" | "create";
+        };
+        /** ImportRowClient */
+        ImportRowClient: {
+            /** Birth Date */
+            birth_date?: string | null;
+            /** Email */
+            email?: string | null;
+            /** Full Name */
+            full_name: string;
+            /** Gender */
+            gender?: string | null;
+            /** Language */
+            language?: string | null;
+            /** Phone */
+            phone?: string | null;
+        };
+        /** ImportRowOut */
+        ImportRowOut: {
+            /** Action */
+            action?: string | null;
+            client?: components["schemas"]["ImportRowClient"] | null;
+            /** Client Id */
+            client_id?: number | null;
+            /** Error Code */
+            error_code?: string | null;
+            /** Error Detail */
+            error_detail?: string | null;
+            /** Row Number */
+            row_number: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "valid" | "error" | "imported" | "skipped" | "failed";
+            visit?: components["schemas"]["ImportRowVisit"] | null;
+            /** Visit Id */
+            visit_id?: number | null;
+        };
+        /** ImportRowVisit */
+        ImportRowVisit: {
+            /**
+             * Creates Service
+             * @default false
+             */
+            creates_service: boolean;
+            /**
+             * Date Start
+             * Format: date-time
+             */
+            date_start: string;
+            /** Payment Method */
+            payment_method?: string | null;
+            /** Price */
+            price?: number | null;
+            /** Service Id */
+            service_id?: number | null;
+            /** Service Name */
+            service_name?: string | null;
+            /** Specialist Id */
+            specialist_id: number;
+            /** Specialist Name */
+            specialist_name?: string | null;
+            /** Status */
+            status: string;
+        };
+        /**
+         * ImportSummary
+         * @description Result of a confirmation call; repeated calls return the same stored state.
+         */
+        ImportSummary: {
+            /**
+             * Already Completed
+             * @default false
+             */
+            already_completed: boolean;
+            batch: components["schemas"]["ImportBatchOut"];
+        };
         /** InsightData */
         InsightData: {
             /** Message */
@@ -6810,6 +7125,32 @@ export interface components {
         PaginatedResponse_ExpenseOut_: {
             /** Items */
             items: components["schemas"]["ExpenseOut"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** PaginatedResponse[ImportBatchOut] */
+        PaginatedResponse_ImportBatchOut_: {
+            /** Items */
+            items: components["schemas"]["ImportBatchOut"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** PaginatedResponse[ImportRowOut] */
+        PaginatedResponse_ImportRowOut_: {
+            /** Items */
+            items: components["schemas"]["ImportRowOut"][];
             /** Page */
             page: number;
             /** Pages */
@@ -11924,6 +12265,289 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GiftOfferOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_imports_businesses_me_imports_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_ImportBatchOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_import_businesses_me_imports_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_import_businesses_me_imports_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportBatchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_import_businesses_me_imports__batch_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                batch_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportBatchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_import_businesses_me_imports__batch_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                batch_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImportConfirmIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportSummary"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_import_mapping_businesses_me_imports__batch_id__mapping_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                batch_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImportMappingIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportBatchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_import_businesses_me_imports__batch_id__preview_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                batch_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImportPreviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportBatchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_import_report_businesses_me_imports__batch_id__report_csv_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                batch_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_import_rows_businesses_me_imports__batch_id__rows_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                page?: number;
+                per_page?: number;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                batch_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_ImportRowOut_"];
                 };
             };
             /** @description Validation Error */
