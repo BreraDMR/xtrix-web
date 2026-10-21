@@ -6,11 +6,12 @@ import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LoyaltyAnalytics from './LoyaltyAnalytics'
+import GiftOffers from '../components/loyalty/GiftOffers'
 import { showDay } from '../utils/dates'
 import FormError from '../components/FormError'
 import { apiErrorMessage } from '../api/errors'
 
-type TabType = 'program' | 'levels' | 'promotions' | 'transactions' | 'analytics'
+type TabType = 'program' | 'levels' | 'promotions' | 'transactions' | 'analytics' | 'gifts'
 
 interface LoyaltyProgram {
   id: number
@@ -195,6 +196,7 @@ export default function Loyalty() {
     { id: 'promotions', label: t('loyalty.promotions') },
     { id: 'transactions', label: t('loyalty.transactions') },
     { id: 'analytics', label: t('analytics.title') },
+    ...(isAdmin ? [{ id: 'gifts' as TabType, label: t('gift.tab') }] : []),
   ]
 
   const { data: program, isLoading: isLoadingProgram } = useQuery({
@@ -1228,6 +1230,9 @@ export default function Loyalty() {
           <LoyaltyAnalytics />
         </div>
       )}
+
+      {}
+      {activeTab === 'gifts' && isAdmin && <GiftOffers canReverse={isAdmin} />}
     </div>
   )
 }
