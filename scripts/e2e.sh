@@ -90,6 +90,11 @@ export API_PYTHON
 export RATE_LIMIT_ENABLED=false
 export CORS_ORIGINS="http://localhost:$WEB_PORT,http://127.0.0.1:$WEB_PORT"
 export FRONTEND_URL="http://localhost:$WEB_PORT"
+# local sandbox adapter for service deposits: checkout and settlement stay inside this stack
+export SERVICE_PAYMENT_PROVIDER=sandbox
+export SERVICE_PAYMENT_MERCHANT=xtrix-e2e
+export SERVICE_PAYMENT_WEBHOOK_SECRET
+SERVICE_PAYMENT_WEBHOOK_SECRET=$(openssl rand -hex 24)
 # the assistant answers from a fixture file and "hears" a fixed phrase - no model or speech
 # service is ever called, whatever the shell has in LLM_* / STT_*
 export LLM_PROVIDER=fake
