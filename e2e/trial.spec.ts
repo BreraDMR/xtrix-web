@@ -9,7 +9,7 @@ test.describe('Trial lifecycle and expiration', () => {
     await expect(page.getByRole('heading', { name: 'Subscription Management', level: 1 })).toBeVisible()
 
     // Active trial indicators
-    await expect(page.getByText(/Trial period/i)).toBeVisible()
+    await expect(page.getByText(/Trial period/i).first()).toBeVisible()
     await expect(page.getByRole('link', { name: 'Choose Plan' })).toBeVisible()
 
     // Entitlements and usage block is visible

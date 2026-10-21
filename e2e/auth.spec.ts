@@ -17,9 +17,9 @@ test.describe('signup', () => {
 
     // A new owner starts with the business setup link.
     await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible()
-    await expect(page).toHaveURL(/\/$/)
+    await expect(page).toHaveURL(/\/app$/)
     await expect(page.getByText('Sofia Signup')).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Create Business', exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Create business', exact: true })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Business', exact: true })).toBeVisible()
   })
 
@@ -83,9 +83,9 @@ test.describe('login and logout', () => {
 
     await page.getByRole('button', { name: 'Logout' }).click()
     await expect(page).toHaveURL(/\/login$/)
-    // opening a private page later remembers it for after the login
+    // a full page load starts a fresh app, so the private page is remembered for after the login
     await page.goto('/clients')
-    await expect(page).toHaveURL(/\/login\?returnTo=%2Fclients$/)
+    await expect(page).toHaveURL(/\/login\?returnTo=%2Fapp%2Fclients$/)
   })
 
   test('wrong password shows an error and keeps you on the login page', async ({ page, request }) => {

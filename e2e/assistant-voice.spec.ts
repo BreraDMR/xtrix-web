@@ -4,17 +4,27 @@ import { assistantOn, newOwner, openAs } from './helpers'
 // STT_PROVIDER=fake in scripts/e2e.sh "hears" this whatever is said, nothing goes to a speech service
 const HEARD = 'Book Alice Assistant for the earliest free time'
 
-// Chromium's fake microphone plays a test tone, so MediaRecorder makes a real webm file
-// and the upload goes through the API's own audio checks
-test.use({
-  launchOptions: { args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] },
-  permissions: ['microphone'],
+// The headless browser's fake microphone never resolves getUserMedia on macOS, so the page
+// gets an oscillator track instead: MediaRecorder still makes a real webm and the upload goes
+// through the API's own audio checks. Permission and unsupported-browser paths are unit-tested.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    navigator.mediaDevices.getUserMedia = async (constraints?: MediaStreamConstraints) => {
+      if (!constraints?.audio) throw new Error('only audio is stubbed')
+      const context = new AudioContext()
+      const oscillator = context.createOscillator()
+      const destination = context.createMediaStreamDestination()
+      oscillator.connect(destination)
+      oscillator.start()
+      return destination.stream
+    }
+  })
 })
 
 test('dictate a request: the heard text lands in the input and is not sent', async ({ page, request }) => {
   const owner = await newOwner(request)
   await assistantOn(request, owner)
-  await openAs(page, owner, '/')
+  await openAs(page, owner, '/app')
   await page.getByRole('button', { name: 'Open the assistant: Sasha' }).click()
   const panel = page.getByRole('dialog', { name: 'Sasha' })
 

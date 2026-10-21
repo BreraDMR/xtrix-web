@@ -25,13 +25,16 @@ test('guest visits public landing at / and sees marketing presentation and CTAs'
 })
 
 test('legacy CRM URLs redirect to /app/... preserving query parameters and session_id', async ({ page }) => {
+  const owner = seedUser('owner_a')
+  await openAs(page, owner, '/app')
+
   // Test legacy subscription redirect with Stripe return parameters
   await page.goto('/subscription?success=true&session_id=cs_test_sample_123')
   await expect(page).toHaveURL(/\/app\/subscription\?success=true&session_id=cs_test_sample_123/)
 
-  // Test legacy clients route redirect
-  await page.goto('/clients?tab=archived')
-  await expect(page).toHaveURL(/\/app\/clients\?tab=archived/)
+  // Test legacy clients route redirect with a filter the page keeps
+  await page.goto('/clients?q=archived')
+  await expect(page).toHaveURL(/\/app\/clients\?q=archived/)
 })
 
 test('authenticated user sees open CRM CTA and workspace brand links to /app', async ({ page }) => {

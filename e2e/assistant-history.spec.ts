@@ -3,7 +3,7 @@ import { apiPost, assistantOn, newOwner, openAs } from './helpers'
 
 const CLIENT = 'Alice Assistant'
 
-test('assistant history: send -> navigate -> close -> reload -> new chat -> old chat with isolated history', async ({ page, request }) => {
+test('assistant history: send -> navigate -> close -> reload -> new chat -> old chat with isolated history', async ({ page, request, browser }) => {
   const owner = await newOwner(request)
   await assistantOn(request, owner)
   await apiPost<{ id: number }>(request, owner, '/clients/', { full_name: CLIENT, contact_phone: '+420777100200' })
@@ -48,14 +48,19 @@ test('assistant history: send -> navigate -> close -> reload -> new chat -> old 
   // New chat has empty log
   await expect(panel.getByText('Sasha is ready to help')).toBeVisible()
 
-  // Second user isolation check
+  // Second user isolation check, in a separate context: pages of one context share the session
   const stranger = await newOwner(request)
   await assistantOn(request, stranger)
-  const page2 = await page.context().newPage()
+  const strangerContext = await browser.newContext({
+    baseURL: process.env.E2E_WEB_URL || 'http://localhost:3170',
+    locale: 'en-GB',
+    timezoneId: 'Europe/Prague',
+  })
+  const page2 = await strangerContext.newPage()
   await openAs(page2, stranger, '/visits')
   await page2.getByRole('button', { name: 'Open the assistant: Sasha' }).click()
   const strangerPanel = page2.getByRole('dialog', { name: 'Sasha' })
   await expect(strangerPanel).toBeVisible()
   await expect(strangerPanel.getByText('Alice Assistant')).toHaveCount(0)
-  await page2.close()
+  await strangerContext.close()
 })

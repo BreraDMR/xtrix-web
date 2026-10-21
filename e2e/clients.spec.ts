@@ -4,7 +4,7 @@ import { newOwner, openAs, waitForFormData, type Session } from './helpers'
 async function openNewClientForm(page: Page, owner: Session) {
   await openAs(page, owner, '/clients')
   await expect(page.getByRole('heading', { name: 'Clients', level: 1 })).toBeVisible()
-  await page.getByRole('button', { name: 'Add Client' }).click()
+  await page.getByRole('button', { name: 'Add Client', exact: true }).click()
 }
 
 test('create a client, then edit it', async ({ page, request }) => {
@@ -39,7 +39,7 @@ test('second client with the same phone is refused with a message', async ({ pag
   await page.getByRole('button', { name: 'Create Client' }).click()
   await expect(page.getByRole('row').filter({ hasText: 'Petr First' })).toBeVisible()
 
-  await page.getByRole('button', { name: 'Add Client' }).click()
+  await page.getByRole('button', { name: 'Add Client', exact: true }).click()
   await page.getByLabel(/^Full Name/).fill('Petr Second')
   await page.getByLabel(/^Phone/).fill('+420777333444')
   await page.getByRole('button', { name: 'Create Client' }).click()
