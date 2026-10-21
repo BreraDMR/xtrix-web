@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import FormError from './FormError'
 import { apiErrorMessage, apiErrorStatus, apiFormErrors } from '../api/errors'
-import type { ClientLoyaltyBalance, ClientOut, Schema, ServiceOut, ServicePage, ServiceSpecialistOut } from '../api/types'
+import type { ClientLoyaltyBalance, ClientOut, GiftCertificateDetailOut, Schema, ServiceOut, ServicePage, ServiceSpecialistOut } from '../api/types'
 import { useAuthStore } from '../store/authStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -59,6 +59,13 @@ function specialistsFor(service: ServiceOut): ServiceSpecialistOut[] {
 
 const VISIT_FIELDS = ['client_id', 'service_id', 'specialist_id', 'service_name', 'date_start', 'date_end', 'price', 'status', 'payment_method', 'note']
 
+function newGiftRequestKey(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return `redeem-${crypto.randomUUID()}`
+  }
+  return `redeem-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`
+}
+
 export default function VisitForm({ visitId, onSuccess, onCancel, initialDateStart, initialDateEnd }: VisitFormProps) {
   const { t } = useTranslation()
   const { user: currentUser } = useAuthStore()
@@ -68,6 +75,16 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [formError, setFormError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [savedWithLoyaltyError, setSavedWithLoyaltyError] = useState(false)
+  const [savedWithGiftError, setSavedWithGiftError] = useState(false)
+  const [giftLookupCode, setGiftLookupCode] = useState('')
+  const [giftCode, setGiftCode] = useState('')
+  const [giftCertificate, setGiftCertificate] = useState<GiftCertificateDetailOut | null>(null)
+  const [giftAmount, setGiftAmount] = useState('')
+  const [giftError, setGiftError] = useState('')
+  const [lookingUpGift, setLookingUpGift] = useState(false)
+  const [retryingGift, setRetryingGift] = useState(false)
+  const giftRequestKey = useRef('')
+  const lastSavedVisitId = useRef<number | null>(null)
   const visitSaved = useRef(false)
   const [clients, setClients] = useState<ClientOut[]>([])
   const [services, setServices] = useState<ServiceOut[]>([])
@@ -298,6 +315,29 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const itemsTotalPrice = items.reduce((sum, item) => sum + (item.price ?? 0), 0)
   const chainEnd = itemsMode && itemsTotalMinutes > 0 ? calculateDateEnd(formData.date_start, itemsTotalMinutes) : undefined
   const payableTotal = itemsMode ? (itemsHavePrice ? itemsTotalPrice : undefined) : formData.price
+  const visitServiceIds = (itemsMode
+    ? items.map((item) => item.service_id)
+    : [formData.service_id]
+  ).filter((id): id is number => id != null)
+  const giftScopeIds = giftCertificate?.service_ids ?? []
+  const giftScopeMismatch =
+    giftScopeIds.length > 0 &&
+    visitServiceIds.length > 0 &&
+    !visitServiceIds.some((id) => giftScopeIds.includes(id))
+  const giftMoneyMax = giftCertificate?.kind === 'money'
+    ? Math.min(
+        giftCertificate.money_balance,
+        payableTotal != null ? payableTotal : giftCertificate.money_balance,
+      )
+    : 0
+  const giftPreview = giftCertificate
+    ? giftCertificate.kind === 'package'
+      ? payableTotal ?? 0
+      : Math.min(giftMoneyMax, giftAmount ? Number(giftAmount) : giftMoneyMax)
+    : 0
+  const amountDue = giftCertificate
+    ? Math.max(0, (payableTotal ?? 0) - giftPreview)
+    : payableTotal
 
   const addItem = () => {
     if (!itemsMode) {
@@ -449,6 +489,73 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     setFormData({ ...formData, ...updates })
   }
 
+  const resetGift = () => {
+    setGiftCertificate(null)
+    setGiftCode('')
+    setGiftLookupCode('')
+    setGiftAmount('')
+    setGiftError('')
+    giftRequestKey.current = ''
+  }
+
+  const lookupGift = async () => {
+    const code = giftLookupCode.trim()
+    if (!code || lookingUpGift) return
+    setLookingUpGift(true)
+    setGiftError('')
+    try {
+      const { data } = await api.get<GiftCertificateDetailOut>('/businesses/me/gift-certificates/lookup', {
+        params: { code },
+      })
+      const usable =
+        data.status === 'active' &&
+        (data.kind === 'money' ? data.money_balance > 0 : data.visits_remaining > 0)
+      if (!usable) {
+        setGiftCertificate(null)
+        setGiftCode('')
+        setGiftError(t('gift.unusable'))
+        return
+      }
+      setGiftCertificate(data)
+      setGiftCode(code)
+      setGiftAmount('')
+      giftRequestKey.current = newGiftRequestKey()
+      setPointsToUse(0)
+      setCashbackToUse(0)
+    } catch (error) {
+      setGiftCertificate(null)
+      setGiftCode('')
+      setGiftError(apiErrorMessage(error, t('gift.notFound')))
+    } finally {
+      setLookingUpGift(false)
+    }
+  }
+
+  const redeemGift = async (savedVisitId: number) => {
+    if (!giftRequestKey.current) giftRequestKey.current = newGiftRequestKey()
+    await api.post('/businesses/me/gift-certificates/redeem', {
+      code: giftCode,
+      visit_id: savedVisitId,
+      amount: giftCertificate?.kind === 'money' && giftAmount ? Number(giftAmount) : undefined,
+      request_key: giftRequestKey.current,
+    })
+  }
+
+  const retryGift = async () => {
+    const savedVisitId = lastSavedVisitId.current
+    if (!savedVisitId || !giftCertificate) return
+    setRetryingGift(true)
+    setFormError('')
+    try {
+      await redeemGift(savedVisitId)
+      onSuccess()
+    } catch (error) {
+      setFormError(apiErrorMessage(error, t('gift.applyError')))
+    } finally {
+      setRetryingGift(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (submitting.current || visitSaved.current) return
@@ -465,6 +572,24 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     if (!itemsMode && formData.price !== undefined && (!Number.isFinite(formData.price) || formData.price < 0)) {
       setFormError(t('validation.price'))
       return
+    }
+    if (giftCertificate) {
+      if (giftScopeMismatch) {
+        setFormError(t('gift.scopeMismatch'))
+        return
+      }
+      if (giftCertificate.kind === 'money' && giftAmount) {
+        const parsed = Number(giftAmount)
+        if (
+          !Number.isFinite(parsed) ||
+          parsed <= 0 ||
+          parsed > giftCertificate.money_balance ||
+          (payableTotal != null && parsed > payableTotal)
+        ) {
+          setFormError(t('gift.amountTooHigh'))
+          return
+        }
+      }
     }
     if (!formData.client_id) {
       setFormError(t('visits.selectClient'))
@@ -503,8 +628,19 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         savedVisitId = data.id
       }
       
+      if (savedVisitId == null) throw new Error('Visit was saved without an id')
       visitSaved.current = true
-      if (currentClientId && (pointsToUse > 0 || cashbackToUse > 0)) {
+      lastSavedVisitId.current = savedVisitId
+      if (giftCertificate) {
+        try {
+          await redeemGift(savedVisitId)
+        } catch (error) {
+          console.error('Error applying gift certificate:', error)
+          setFormError(apiErrorMessage(error, t('gift.applyError')))
+          setSavedWithGiftError(true)
+          return
+        }
+      } else if (currentClientId && (pointsToUse > 0 || cashbackToUse > 0)) {
         try {
           await api.post('/loyalty/use-points', {
             points_to_use: pointsToUse > 0 ? pointsToUse : undefined,
@@ -530,12 +666,26 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
-  if (savedWithLoyaltyError) {
+  if (savedWithLoyaltyError || savedWithGiftError) {
     return (
       <div className="space-y-4">
-        <p>{t('visits.savedLoyaltyWarning')}</p>
+        <p>{savedWithGiftError ? t('gift.savedGiftWarning') : t('visits.savedLoyaltyWarning')}</p>
         <div role="alert"><FormError message={formError} /></div>
-        <button type="button" onClick={onSuccess} className="px-4 py-2 bg-primary-600 text-white rounded-lg">{t('common.close')}</button>
+        <div className="flex gap-2">
+          {savedWithGiftError && (
+            <button
+              type="button"
+              onClick={() => void retryGift()}
+              disabled={retryingGift}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg disabled:opacity-60"
+            >
+              {t('gift.useGift')}
+            </button>
+          )}
+          <button type="button" onClick={onSuccess} className="px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600">
+            {t('common.close')}
+          </button>
+        </div>
       </div>
     )
   }
@@ -934,13 +1084,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       {formData.status === 'completed' && (
         <div>
           <label className="block text-sm font-medium mb-1">
-            {t('finance.payment_method')} {payableTotal ? `(${t('common.required_field')})` : ''}
+            {t('finance.payment_method')} {amountDue ? `(${t('common.required_field')})` : ''}
           </label>
           <select
             aria-invalid={fieldErrors.payment_method ? true : undefined}
             value={formData.payment_method || ''}
             onChange={(e) => setFormData({ ...formData, payment_method: e.target.value || undefined })}
-            required={!!payableTotal}
+            required={!!amountDue}
             className="w-full px-3 py-2 border rounded-md"
           >
             <option value="">{t('visits.selectPaymentMethod')}</option>
@@ -952,11 +1102,104 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         </div>
       )}
 
+      {currentClientId && (
+        <div className="border-t border-gray-200 pt-4 mt-4 dark:border-gray-700">
+          <h3 className="text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">{t('gift.useGift')}</h3>
+          {!giftCertificate ? (
+            <>
+              <p className="text-xs text-gray-600 mb-2 dark:text-gray-400">{t('gift.codeHint')}</p>
+              <div className="flex flex-wrap gap-2">
+                <input
+                  value={giftLookupCode}
+                  onChange={(event) => setGiftLookupCode(event.target.value)}
+                  aria-label={t('gift.code')}
+                  placeholder={t('gift.code')}
+                  className="min-w-0 flex-1 px-3 py-2 border rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => void lookupGift()}
+                  disabled={lookingUpGift || !giftLookupCode.trim()}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 disabled:opacity-60 dark:border-gray-600 dark:hover:bg-gray-700"
+                >
+                  {t('gift.lookup')}
+                </button>
+              </div>
+              {giftError && <div role="alert" className="mt-2"><FormError message={giftError} /></div>}
+            </>
+          ) : (
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-800 dark:bg-emerald-950">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="text-sm">
+                  <p className="font-medium text-emerald-900 dark:text-emerald-100">
+                    {giftCertificate.kind === 'money' ? t('gift.kindMoney') : t('gift.kindPackage')} ·{' '}
+                    •••• {giftCertificate.code_last4}
+                  </p>
+                  <p className="mt-1 text-emerald-800 dark:text-emerald-200">
+                    {giftCertificate.kind === 'money'
+                      ? `${t('gift.balance')}: ${formatCurrency(giftCertificate.money_balance, currency)}`
+                      : `${t('gift.visitsLeft')}: ${giftCertificate.visits_remaining} / ${giftCertificate.visits_total}`}
+                  </p>
+                  <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">
+                    {t('gift.forService')}:{' '}
+                    {giftScopeIds.length === 0
+                      ? t('gift.anyService')
+                      : giftScopeIds
+                          .map((id) => services.find((service) => service.id === id)?.name ?? `#${id}`)
+                          .join(', ')}
+                  </p>
+                  <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">
+                    {t('gift.validUntil')}: {new Date(giftCertificate.expires_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={resetGift}
+                  className="rounded-md border border-emerald-300 px-3 py-1 text-xs font-medium text-emerald-800 hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-200 dark:hover:bg-emerald-900"
+                >
+                  {t('gift.remove')}
+                </button>
+              </div>
+              {giftCertificate.kind === 'money' && (
+                <label className="mt-3 block text-sm">
+                  <span className="mb-1 block font-medium text-emerald-900 dark:text-emerald-100">
+                    {t('gift.amountToUse')}
+                  </span>
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    max={giftMoneyMax}
+                    value={giftAmount}
+                    onChange={(event) => setGiftAmount(event.target.value)}
+                    placeholder={giftMoneyMax.toFixed(2)}
+                    className="w-full rounded-md border border-emerald-300 px-3 py-2 dark:border-emerald-700 dark:bg-gray-700"
+                  />
+                  <span className="mt-1 block text-xs text-emerald-700 dark:text-emerald-300">
+                    {t('gift.amountHint')}
+                  </span>
+                </label>
+              )}
+              <p className="mt-2 text-sm font-medium text-emerald-900 dark:text-emerald-100">
+                {t('gift.amountDue')}: {formatCurrency(amountDue ?? 0, currency)}
+              </p>
+              {giftScopeMismatch && (
+                <div role="alert" className="mt-2"><FormError message={t('gift.scopeMismatch')} /></div>
+              )}
+              {giftError && <div role="alert" className="mt-2"><FormError message={giftError} /></div>}
+            </div>
+          )}
+        </div>
+      )}
+
       {}
       {currentClientId && clientBalance && (
         <div className="border-t border-gray-200 pt-4 mt-4 dark:border-gray-700">
           <div className="mb-4">
             <h3 className="text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">{t('loyalty.use_points')}</h3>
+            {giftCertificate && (
+              <p className="text-xs text-amber-700 mb-2 dark:text-amber-300">{t('gift.loyaltyDisabled')}</p>
+            )}
             {clientBalance.points > 0 && (
               <p className="text-xs text-gray-600 mb-2 dark:text-gray-400">
                 {t('loyalty.client_balance')}: {clientBalance.points.toFixed(0)} {t('loyalty.points')}
@@ -974,7 +1217,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                 max={clientBalance.points || 0}
                 value={pointsToUse || ''}
                 onChange={(e) => setPointsToUse(e.target.value ? parseFloat(e.target.value) : 0)}
-                className="w-full px-3 py-2 border rounded-md"
+                disabled={Boolean(giftCertificate)}
+                className="w-full px-3 py-2 border rounded-md disabled:opacity-60"
                 placeholder="0"
               />
             </div>
@@ -987,7 +1231,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                 max={clientBalance.cashback || 0}
                 value={cashbackToUse || ''}
                 onChange={(e) => setCashbackToUse(e.target.value ? parseFloat(e.target.value) : 0)}
-                className="w-full px-3 py-2 border rounded-md"
+                disabled={Boolean(giftCertificate)}
+                className="w-full px-3 py-2 border rounded-md disabled:opacity-60"
                 placeholder="0"
               />
             </div>
