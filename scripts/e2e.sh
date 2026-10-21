@@ -75,6 +75,11 @@ JWT_SECRET=$(openssl rand -hex 32)
 # nothing listens on port 1 - the API falls back to no cache / in-memory limits
 export REDIS_URL=redis://localhost:1/0
 export ENVIRONMENT=development
+# local-only mail sink: capture mode keeps messages out of the network and writes them here
+export NOTIFICATION_TRANSPORT=capture
+export CAPTURE_MAIL_FILE="$tmp/capture-mail.jsonl"
+export E2E_API_DIR="$API_DIR"
+export API_PYTHON
 # the suite logs in a lot from one IP
 export RATE_LIMIT_ENABLED=false
 export CORS_ORIGINS="http://localhost:$WEB_PORT,http://127.0.0.1:$WEB_PORT"
