@@ -1808,6 +1808,97 @@ export type TranslationKey =
   | 'gift.scopeMismatch'
   | 'gift.amountDue'
   | 'gift.unusable'
+  | 'nav.campaigns'
+  | 'campaigns.title'
+  | 'campaigns.description'
+  | 'campaigns.noAccess'
+  | 'campaigns.empty'
+  | 'campaigns.selectPrompt'
+  | 'campaigns.new'
+  | 'campaigns.edit'
+  | 'campaigns.editHint'
+  | 'campaigns.name'
+  | 'campaigns.subject'
+  | 'campaigns.body'
+  | 'campaigns.bodyHint'
+  | 'campaigns.inactiveDays'
+  | 'campaigns.inactiveDaysHint'
+  | 'campaigns.schedule'
+  | 'campaigns.scheduleHint'
+  | 'campaigns.create'
+  | 'campaigns.creating'
+  | 'campaigns.save'
+  | 'campaigns.saving'
+  | 'campaigns.createError'
+  | 'campaigns.saveError'
+  | 'campaigns.actionError'
+  | 'campaigns.status.draft'
+  | 'campaigns.status.confirmed'
+  | 'campaigns.status.sending'
+  | 'campaigns.status.sent'
+  | 'campaigns.status.cancelled'
+  | 'campaigns.segmentTitle'
+  | 'campaigns.audience'
+  | 'campaigns.audienceLive'
+  | 'campaigns.audienceFrozen'
+  | 'campaigns.audiencePending'
+  | 'campaigns.willReceive'
+  | 'campaigns.queued'
+  | 'campaigns.sampleHint'
+  | 'campaigns.noRecipients'
+  | 'campaigns.overLimit'
+  | 'campaigns.sendReady'
+  | 'campaigns.providerNotReady'
+  | 'campaigns.notificationsDisabled'
+  | 'campaigns.requiresConfirmation'
+  | 'campaigns.confirm'
+  | 'campaigns.confirmQuestion'
+  | 'campaigns.confirmHint'
+  | 'campaigns.confirming'
+  | 'campaigns.confirmAction'
+  | 'campaigns.confirmError'
+  | 'campaigns.send'
+  | 'campaigns.sendQuestion'
+  | 'campaigns.sendHint'
+  | 'campaigns.sending'
+  | 'campaigns.sendAction'
+  | 'campaigns.sendError'
+  | 'campaigns.cancel'
+  | 'campaigns.cancelQuestion'
+  | 'campaigns.cancelling'
+  | 'campaigns.cancelAction'
+  | 'campaigns.cancelledNotice'
+  | 'campaigns.cancelError'
+  | 'campaigns.statsTitle'
+  | 'campaigns.stat.audience'
+  | 'campaigns.stat.queued'
+  | 'campaigns.stat.pending'
+  | 'campaigns.stat.sent'
+  | 'campaigns.stat.captured'
+  | 'campaigns.stat.failed'
+  | 'campaigns.stat.cancelled'
+  | 'campaigns.stat.unsubscribed'
+  | 'campaigns.excluded'
+  | 'campaigns.noOpens'
+  | 'campaigns.fullText'
+  | 'campaigns.locked'
+  | 'campaigns.previewTitle'
+  | 'campaigns.previewError'
+  | 'unsubscribe.title'
+  | 'unsubscribe.business'
+  | 'unsubscribe.address'
+  | 'unsubscribe.subscribed'
+  | 'unsubscribe.unsubscribed'
+  | 'unsubscribe.action'
+  | 'unsubscribe.working'
+  | 'unsubscribe.done'
+  | 'unsubscribe.already'
+  | 'unsubscribe.invalid'
+  | 'unsubscribe.hint'
+  | 'unsubscribe.error'
+  | 'unsubscribe.missing'
+  | 'unsubscribe.loading'
+  | 'unsubscribe.home'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
@@ -4438,6 +4529,274 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     ru: 'Этот сертификат нельзя использовать.',
     cz: 'Tento certifikát nelze použít.',
   },
+
+  'nav.campaigns': { en: 'Campaigns', ru: 'Рассылки', cz: 'Kampaně' },
+  'campaigns.title': { en: 'Campaigns', ru: 'Рассылки', cz: 'Kampaně' },
+  'campaigns.description': {
+    en: 'Email campaigns to clients who explicitly agreed to marketing. Nothing is sent until you confirm the audience and the text.',
+    ru: 'Email-рассылки клиентам, которые явно согласились на маркетинг. Ничего не отправляется, пока вы не подтвердите аудиторию и текст.',
+    cz: 'E-mailové kampaně klientům, kteří výslovně souhlasili s marketingem. Nic se neodešle, dokud nepotvrdíte publikum a text.',
+  },
+  'campaigns.noAccess': {
+    en: 'You do not have access to campaigns.',
+    ru: 'У вас нет доступа к рассылкам.',
+    cz: 'K kampaním nemáte přístup.',
+  },
+  'campaigns.empty': {
+    en: 'No campaigns yet. Save a draft to see who would receive it.',
+    ru: 'Рассылок пока нет. Сохраните черновик, чтобы увидеть получателей.',
+    cz: 'Zatím žádné kampaně. Uložte koncept a uvidíte příjemce.',
+  },
+  'campaigns.selectPrompt': {
+    en: 'Select a campaign on the left or create a new one.',
+    ru: 'Выберите рассылку слева или создайте новую.',
+    cz: 'Vyberte kampaň vlevo nebo vytvořte novou.',
+  },
+  'campaigns.new': { en: 'New campaign', ru: 'Новая рассылка', cz: 'Nová kampaň' },
+  'campaigns.edit': { en: 'Edit', ru: 'Изменить', cz: 'Upravit' },
+  'campaigns.editHint': {
+    en: 'Editing a confirmed campaign returns it to a draft and requires a new confirmation.',
+    ru: 'Изменение подтверждённой рассылки возвращает её в черновик и требует нового подтверждения.',
+    cz: 'Úprava potvrzené kampaně vrátí kampaň do konceptu a vyžaduje nové potvrzení.',
+  },
+  'campaigns.name': { en: 'Campaign name', ru: 'Название рассылки', cz: 'Název kampaně' },
+  'campaigns.subject': { en: 'Email subject', ru: 'Тема письма', cz: 'Předmět e-mailu' },
+  'campaigns.body': { en: 'Message text', ru: 'Текст сообщения', cz: 'Text zprávy' },
+  'campaigns.bodyHint': {
+    en: 'Use {name} for the client name and {business} for your business name.',
+    ru: 'Используйте {name} для имени клиента и {business} для названия бизнеса.',
+    cz: 'Použijte {name} pro jméno klienta a {business} pro název firmy.',
+  },
+  'campaigns.inactiveDays': { en: 'No visits for, days', ru: 'Нет визитов, дней', cz: 'Bez návštěvy, dní' },
+  'campaigns.inactiveDaysHint': {
+    en: 'Only clients whose last completed visit (or first appearance in the client list) is older than this period are included.',
+    ru: 'Включаются клиенты, у которых последний завершённый визит (или появление в списке клиентов) был раньше этого срока.',
+    cz: 'Zahrnuti jsou klienti, jejichž poslední dokončená návštěva (nebo první výskyt v seznamu klientů) je starší než toto období.',
+  },
+  'campaigns.schedule': { en: 'Send no earlier than', ru: 'Отправить не раньше', cz: 'Odeslat nejdříve' },
+  'campaigns.scheduleHint': {
+    en: 'Leave empty to queue right after you press Send.',
+    ru: 'Оставьте пустым, чтобы поставить в очередь сразу после нажатия «Отправить».',
+    cz: 'Ponechte prázdné pro zařazení hned po stisknutí Odeslat.',
+  },
+  'campaigns.create': { en: 'Save draft', ru: 'Сохранить черновик', cz: 'Uložit koncept' },
+  'campaigns.creating': { en: 'Saving...', ru: 'Сохранение...', cz: 'Ukládání...' },
+  'campaigns.save': { en: 'Save changes', ru: 'Сохранить изменения', cz: 'Uložit změny' },
+  'campaigns.saving': { en: 'Saving...', ru: 'Сохранение...', cz: 'Ukládání...' },
+  'campaigns.createError': {
+    en: 'Could not save the draft.',
+    ru: 'Не удалось сохранить черновик.',
+    cz: 'Koncept se nepodařilo uložit.',
+  },
+  'campaigns.saveError': {
+    en: 'Could not save the campaign.',
+    ru: 'Не удалось сохранить рассылку.',
+    cz: 'Kampaň se nepodařilo uložit.',
+  },
+  'campaigns.actionError': {
+    en: 'Something went wrong. Try again.',
+    ru: 'Что-то пошло не так. Повторите попытку.',
+    cz: 'Něco se pokazilo. Zkuste to znovu.',
+  },
+  'campaigns.status.draft': { en: 'Draft', ru: 'Черновик', cz: 'Koncept' },
+  'campaigns.status.confirmed': { en: 'Confirmed', ru: 'Подтверждена', cz: 'Potvrzeno' },
+  'campaigns.status.sending': { en: 'Sending', ru: 'Отправляется', cz: 'Odesílá se' },
+  'campaigns.status.sent': { en: 'Sent', ru: 'Отправлена', cz: 'Odesláno' },
+  'campaigns.status.cancelled': { en: 'Cancelled', ru: 'Отменена', cz: 'Zrušeno' },
+  'campaigns.segmentTitle': { en: 'Segment', ru: 'Сегмент', cz: 'Segment' },
+  'campaigns.audience': { en: 'Audience', ru: 'Аудитория', cz: 'Publikum' },
+  'campaigns.audienceLive': {
+    en: 'Live audience. It is recalculated until you confirm the campaign.',
+    ru: 'Живая аудитория. Пересчитывается до подтверждения рассылки.',
+    cz: 'Živé publikum. Přepočítává se do potvrzení kampaně.',
+  },
+  'campaigns.audienceFrozen': {
+    en: 'Audience frozen at confirmation.',
+    ru: 'Аудитория зафиксирована при подтверждении.',
+    cz: 'Publikum je potvrzením zmrazeno.',
+  },
+  'campaigns.audiencePending': {
+    en: 'Audience is counted at confirmation',
+    ru: 'Аудитория подсчитается при подтверждении',
+    cz: 'Publikum se spočítá při potvrzení',
+  },
+  'campaigns.willReceive': { en: 'Will receive: {n}', ru: 'Получат: {n}', cz: 'Obdrží: {n}' },
+  'campaigns.queued': { en: 'Queued: {n}', ru: 'В очереди: {n}', cz: 'Ve frontě: {n}' },
+  'campaigns.sampleHint': {
+    en: 'Showing up to {n} masked addresses.',
+    ru: 'Показаны до {n} адресов в маскированном виде.',
+    cz: 'Zobrazeno až {n} maskovaných adres.',
+  },
+  'campaigns.noRecipients': {
+    en: 'No subscribed clients match this segment.',
+    ru: 'В этом сегменте нет клиентов с согласием.',
+    cz: 'Tomuto segmentu neodpovídá žádný klient se souhlasem.',
+  },
+  'campaigns.overLimit': {
+    en: 'The audience exceeds the limit of {n} recipients. Narrow the segment.',
+    ru: 'Аудитория превышает лимит в {n} получателей. Сузьте сегмент.',
+    cz: 'Publikum překračuje limit {n} příjemců. Zúžte segment.',
+  },
+  'campaigns.sendReady': {
+    en: 'Provider connected, notifications enabled, audience confirmed.',
+    ru: 'Провайдер подключён, уведомления включены, аудитория подтверждена.',
+    cz: 'Poskytovatel připojen, oznámení zapnuta, publikum potvrzeno.',
+  },
+  'campaigns.providerNotReady': {
+    en: 'Email provider is not connected, sending is disabled.',
+    ru: 'Email-провайдер не подключён, отправка недоступна.',
+    cz: 'E-mailový poskytovatel není připojen, odesílání je vypnuté.',
+  },
+  'campaigns.notificationsDisabled': {
+    en: 'Client notifications are disabled in settings, sending is disabled.',
+    ru: 'Уведомления клиентам выключены в настройках, отправка недоступна.',
+    cz: 'Oznámení klientům jsou v nastavení vypnutá, odesílání je vypnuté.',
+  },
+  'campaigns.requiresConfirmation': {
+    en: 'Confirm the audience and the text before sending.',
+    ru: 'Перед отправкой подтвердите аудиторию и текст.',
+    cz: 'Před odesláním potvrďte publikum a text.',
+  },
+  'campaigns.confirm': {
+    en: 'Confirm audience and text',
+    ru: 'Подтвердить аудиторию и текст',
+    cz: 'Potvrdit publikum a text',
+  },
+  'campaigns.confirmQuestion': {
+    en: 'Freeze this audience and text?',
+    ru: 'Зафиксировать эту аудиторию и текст?',
+    cz: 'Zmrazit toto publikum a text?',
+  },
+  'campaigns.confirmHint': {
+    en: 'Any later edit returns the campaign to draft. Clients who unsubscribe after confirmation are excluded at sending.',
+    ru: 'Любое последующее изменение вернёт рассылку в черновик. Клиенты, отписавшиеся после подтверждения, исключаются при отправке.',
+    cz: 'Jakákoli pozdější úprava vrátí kampaň do konceptu. Klienti, kteří se po potvrzení odhlásí, budou při odesílání vynecháni.',
+  },
+  'campaigns.confirming': { en: 'Confirming...', ru: 'Подтверждение...', cz: 'Potvrzování...' },
+  'campaigns.confirmAction': { en: 'Confirm', ru: 'Подтвердить', cz: 'Potvrdit' },
+  'campaigns.confirmError': {
+    en: 'Could not confirm the campaign.',
+    ru: 'Не удалось подтвердить рассылку.',
+    cz: 'Kampaň se nepodařilo potvrdit.',
+  },
+  'campaigns.send': { en: 'Send campaign', ru: 'Отправить рассылку', cz: 'Odeslat kampaň' },
+  'campaigns.sendQuestion': {
+    en: 'Queue this campaign for the confirmed recipients?',
+    ru: 'Поставить рассылку в очередь для подтверждённых получателей?',
+    cz: 'Zařadit kampaň do fronty pro potvrzené příjemce?',
+  },
+  'campaigns.sendHint': {
+    en: 'Messages go to the connected email provider through the shared outbox. Nothing is sent before you press this button.',
+    ru: 'Письма уходят подключённому email-провайдеру через общую очередь. До нажатия этой кнопки ничего не отправляется.',
+    cz: 'E-maily odcházejí připojenému poskytovateli přes společnou frontu. Před stisknutím tohoto tlačítka se nic neodešle.',
+  },
+  'campaigns.sending': { en: 'Sending...', ru: 'Отправка...', cz: 'Odesílání...' },
+  'campaigns.sendAction': { en: 'Send', ru: 'Отправить', cz: 'Odeslat' },
+  'campaigns.sendError': {
+    en: 'Could not send the campaign.',
+    ru: 'Не удалось отправить рассылку.',
+    cz: 'Kampaň se nepodařilo odeslat.',
+  },
+  'campaigns.cancel': { en: 'Cancel campaign', ru: 'Отменить рассылку', cz: 'Zrušit kampaň' },
+  'campaigns.cancelQuestion': {
+    en: 'Cancel this campaign and stop unsent messages?',
+    ru: 'Отменить рассылку и остановить неотправленные письма?',
+    cz: 'Zrušit kampaň a zastavit neodeslané zprávy?',
+  },
+  'campaigns.cancelling': { en: 'Cancelling...', ru: 'Отмена...', cz: 'Rušení...' },
+  'campaigns.cancelAction': { en: 'Yes, cancel', ru: 'Да, отменить', cz: 'Ano, zrušit' },
+  'campaigns.cancelledNotice': {
+    en: 'Campaign cancelled. Unsent messages were stopped.',
+    ru: 'Рассылка отменена. Неотправленные письма остановлены.',
+    cz: 'Kampaň zrušena. Neodeslané zprávy byly zastaveny.',
+  },
+  'campaigns.cancelError': {
+    en: 'Could not cancel the campaign.',
+    ru: 'Не удалось отменить рассылку.',
+    cz: 'Kampaň se nepodařilo zrušit.',
+  },
+  'campaigns.statsTitle': { en: 'Delivery summary', ru: 'Сводка доставки', cz: 'Přehled doručení' },
+  'campaigns.stat.audience': { en: 'Audience', ru: 'Аудитория', cz: 'Publikum' },
+  'campaigns.stat.queued': { en: 'Queued', ru: 'В очереди', cz: 'Ve frontě' },
+  'campaigns.stat.pending': { en: 'Pending', ru: 'Ожидают', cz: 'Čeká' },
+  'campaigns.stat.sent': { en: 'Sent', ru: 'Отправлено', cz: 'Odesláno' },
+  'campaigns.stat.captured': { en: 'Captured locally', ru: 'Перехвачено локально', cz: 'Zachyceno lokálně' },
+  'campaigns.stat.failed': { en: 'Errors', ru: 'Ошибки', cz: 'Chyby' },
+  'campaigns.stat.cancelled': { en: 'Cancelled', ru: 'Отменено', cz: 'Zrušeno' },
+  'campaigns.stat.unsubscribed': {
+    en: 'Unsubscribed after this campaign',
+    ru: 'Отписались после рассылки',
+    cz: 'Odhlášeno po kampani',
+  },
+  'campaigns.excluded': {
+    en: 'Excluded after confirmation (unsubscribed)',
+    ru: 'Исключены после подтверждения (отписка)',
+    cz: 'Vynecháni po potvrzení (odhlášeni)',
+  },
+  'campaigns.noOpens': {
+    en: 'Opens and revenue are not tracked, so this summary shows only delivery states.',
+    ru: 'Открытия и выручка не отслеживаются, поэтому сводка показывает только состояния доставки.',
+    cz: 'Otevření a výnosy se nesledují, přehled proto ukazuje pouze stavy doručení.',
+  },
+  'campaigns.fullText': { en: 'Full text', ru: 'Полный текст', cz: 'Celý text' },
+  'campaigns.locked': {
+    en: 'This campaign can no longer be edited or sent.',
+    ru: 'Эту рассылку больше нельзя изменить или отправить.',
+    cz: 'Tuto kampaň už nelze upravit ani odeslat.',
+  },
+  'campaigns.previewTitle': { en: 'Preview', ru: 'Предпросмотр', cz: 'Náhled' },
+  'campaigns.previewError': {
+    en: 'Could not load the preview.',
+    ru: 'Не удалось загрузить предпросмотр.',
+    cz: 'Náhled se nepodařilo načíst.',
+  },
+  'unsubscribe.title': { en: 'Email preferences', ru: 'Настройки рассылки', cz: 'Nastavení e-mailů' },
+  'unsubscribe.business': { en: 'Business', ru: 'Бизнес', cz: 'Firma' },
+  'unsubscribe.address': { en: 'Email address', ru: 'Email-адрес', cz: 'E-mailová adresa' },
+  'unsubscribe.subscribed': {
+    en: 'This address is subscribed to marketing emails.',
+    ru: 'Этот адрес подписан на маркетинговые письма.',
+    cz: 'Tato adresa je přihlášena k marketingovým e-mailům.',
+  },
+  'unsubscribe.unsubscribed': {
+    en: 'This address is unsubscribed from marketing emails.',
+    ru: 'Этот адрес отписан от маркетинговых писем.',
+    cz: 'Tato adresa je odhlášena z marketingových e-mailů.',
+  },
+  'unsubscribe.action': { en: 'Unsubscribe', ru: 'Отписаться', cz: 'Odhlásit odběr' },
+  'unsubscribe.working': { en: 'Unsubscribing...', ru: 'Отписываем...', cz: 'Odhlašování...' },
+  'unsubscribe.done': {
+    en: 'You are unsubscribed. This address will not receive marketing emails.',
+    ru: 'Вы отписаны. Этот адрес больше не будет получать маркетинговые письма.',
+    cz: 'Byli jste odhlášeni. Tato adresa už nebude dostávat marketingové e-maily.',
+  },
+  'unsubscribe.already': {
+    en: 'This address is already unsubscribed.',
+    ru: 'Этот адрес уже отписан.',
+    cz: 'Tato adresa je již odhlášena.',
+  },
+  'unsubscribe.invalid': {
+    en: 'This unsubscribe link is invalid or incomplete.',
+    ru: 'Эта ссылка отписки недействительна или неполна.',
+    cz: 'Tento odhlašovací odkaz je neplatný nebo neúplný.',
+  },
+  'unsubscribe.hint': {
+    en: 'The change applies immediately. You can close this page.',
+    ru: 'Изменение применяется сразу. Страницу можно закрыть.',
+    cz: 'Změna platí okamžitě. Stránku můžete zavřít.',
+  },
+  'unsubscribe.error': {
+    en: 'Could not unsubscribe. Try again.',
+    ru: 'Не удалось отписаться. Повторите попытку.',
+    cz: 'Odhlášení se nezdařilo. Zkuste to znovu.',
+  },
+  'unsubscribe.missing': {
+    en: 'Open the link from the email to manage your subscription.',
+    ru: 'Откройте ссылку из письма, чтобы управлять подпиской.',
+    cz: 'Otevřete odkaz z e-mailu pro správu odběru.',
+  },
+  'unsubscribe.loading': { en: 'Checking the link...', ru: 'Проверяем ссылку...', cz: 'Kontrola odkazu...' },
+  'unsubscribe.home': { en: 'Go to the website', ru: 'Перейти на сайт', cz: 'Přejít na web' },
 }
 
 export default translations

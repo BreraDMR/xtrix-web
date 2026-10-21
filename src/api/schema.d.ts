@@ -584,6 +584,161 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/businesses/me/campaigns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List campaigns */
+        get: operations["list_campaigns_businesses_me_campaigns_get"];
+        put?: never;
+        /** Create a campaign draft */
+        post: operations["create_campaign_businesses_me_campaigns_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/campaigns/{campaign_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a campaign */
+        get: operations["get_campaign_businesses_me_campaigns__campaign_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit a campaign draft */
+        patch: operations["update_campaign_businesses_me_campaigns__campaign_id__patch"];
+        trace?: never;
+    };
+    "/businesses/me/campaigns/{campaign_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a campaign */
+        post: operations["cancel_campaign_businesses_me_campaigns__campaign_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/campaigns/{campaign_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Freeze audience and text */
+        post: operations["confirm_campaign_businesses_me_campaigns__campaign_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/campaigns/{campaign_id}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Preview audience and text */
+        get: operations["preview_campaign_businesses_me_campaigns__campaign_id__preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/campaigns/{campaign_id}/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Queue a confirmed campaign */
+        post: operations["send_campaign_businesses_me_campaigns__campaign_id__send_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/campaigns/{campaign_id}/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Delivery summary */
+        get: operations["campaign_stats_businesses_me_campaigns__campaign_id__stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/clients/{client_id}/marketing-consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read a client's marketing consent */
+        get: operations["get_marketing_consent_businesses_me_clients__client_id__marketing_consent_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/clients/{client_id}/marketing-consent/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke a client's marketing consent */
+        post: operations["revoke_marketing_consent_businesses_me_clients__client_id__marketing_consent_revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/businesses/me/gift-certificates": {
         parameters: {
             query?: never;
@@ -2260,6 +2415,24 @@ export interface paths {
         get: operations["list_public_staff_public_booking__slug__staff_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/campaigns/unsubscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Preview an unsubscribe link */
+        get: operations["preview_unsubscribe_public_campaigns_unsubscribe_get"];
+        put?: never;
+        /** Unsubscribe with a signed link */
+        post: operations["unsubscribe_public_campaigns_unsubscribe_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4050,6 +4223,176 @@ export interface components {
              * @description Period start
              */
             period_start: string;
+        };
+        /** CampaignIn */
+        CampaignIn: {
+            /** Body */
+            body: string;
+            /**
+             * Inactive Days
+             * @default 90
+             */
+            inactive_days: number;
+            /** Name */
+            name: string;
+            /** Scheduled At */
+            scheduled_at?: string | null;
+            /**
+             * Segment Kind
+             * @default no_visits
+             * @constant
+             */
+            segment_kind: "no_visits";
+            /** Subject */
+            subject: string;
+        };
+        /** CampaignOut */
+        CampaignOut: {
+            /** Audience Hash */
+            audience_hash?: string | null;
+            /** Body */
+            body: string;
+            /** Business Id */
+            business_id: number;
+            /** Confirmed At */
+            confirmed_at?: string | null;
+            /** Confirmed By */
+            confirmed_by?: number | null;
+            /** Content Hash */
+            content_hash?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By */
+            created_by?: number | null;
+            /** Id */
+            id: number;
+            /** Inactive Days */
+            inactive_days: number;
+            /** Name */
+            name: string;
+            /** Queued Count */
+            queued_count: number;
+            /** Recipient Count */
+            recipient_count: number;
+            /** Scheduled At */
+            scheduled_at?: string | null;
+            /** Segment Kind */
+            segment_kind: string;
+            /** Status */
+            status: string;
+            /** Subject */
+            subject: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** CampaignPreviewOut */
+        CampaignPreviewOut: {
+            /** Audience Hash */
+            audience_hash: string;
+            /**
+             * Audience Source
+             * @enum {string}
+             */
+            audience_source: "draft" | "frozen";
+            /** Campaign Id */
+            campaign_id: number;
+            /** Content Hash */
+            content_hash: string;
+            /** Excluded After Confirmation */
+            excluded_after_confirmation: number;
+            /** Limit */
+            limit: number;
+            /** Notifications Enabled */
+            notifications_enabled: boolean;
+            /** Over Limit */
+            over_limit: boolean;
+            /** Provider Ready */
+            provider_ready: boolean;
+            /** Recipient Count */
+            recipient_count: number;
+            /** Recipients */
+            recipients?: components["schemas"]["CampaignPreviewRecipient"][];
+            /** Requires Confirmation */
+            requires_confirmation: boolean;
+            /** Send Ready */
+            send_ready: boolean;
+            /** Status */
+            status: string;
+        };
+        /** CampaignPreviewRecipient */
+        CampaignPreviewRecipient: {
+            /** Client Id */
+            client_id: number;
+            /** Email */
+            email: string;
+            /** Last Visit At */
+            last_visit_at?: string | null;
+            /** Name */
+            name: string;
+        };
+        /** CampaignStatsOut */
+        CampaignStatsOut: {
+            /** Audience */
+            audience: number;
+            /** Campaign Id */
+            campaign_id: number;
+            /** Cancelled */
+            cancelled: number;
+            /** Captured */
+            captured: number;
+            /** Delivered */
+            delivered: number;
+            /** Errors */
+            errors: number;
+            /** Excluded After Confirmation */
+            excluded_after_confirmation: number;
+            /** Failed */
+            failed: number;
+            /**
+             * Opens Tracked
+             * @default false
+             */
+            opens_tracked: boolean;
+            /** Pending */
+            pending: number;
+            /** Processing */
+            processing: number;
+            /** Queued */
+            queued: number;
+            /**
+             * Revenue Tracked
+             * @default false
+             */
+            revenue_tracked: boolean;
+            /** Sent */
+            sent: number;
+            /** Skipped */
+            skipped: number;
+            /** Status */
+            status: string;
+            /** Unsubscribed */
+            unsubscribed: number;
+        };
+        /** CampaignUpdate */
+        CampaignUpdate: {
+            /** Body */
+            body?: string | null;
+            /** Inactive Days */
+            inactive_days?: number | null;
+            /** Name */
+            name?: string | null;
+            /** Scheduled At */
+            scheduled_at?: string | null;
+            /** Segment Kind */
+            segment_kind?: "no_visits" | null;
+            /** Subject */
+            subject?: string | null;
         };
         /** CancelVisitPlanned */
         CancelVisitPlanned: {
@@ -6034,6 +6377,23 @@ export interface components {
             /** Visit Id */
             visit_id: number | null;
         };
+        /** MarketingConsentOut */
+        MarketingConsentOut: {
+            /** Channel */
+            channel: string;
+            /** Revoked At */
+            revoked_at?: string | null;
+            /** Revoked Source */
+            revoked_source?: string | null;
+            /** Source */
+            source?: string | null;
+            /** Source Ref */
+            source_ref?: string | null;
+            /** Status */
+            status: string;
+            /** Subscribed At */
+            subscribed_at?: string | null;
+        };
         /** MessageOut */
         MessageOut: {
             /**
@@ -6336,6 +6696,19 @@ export interface components {
         PaginatedResponse_AuditLogOut_: {
             /** Items */
             items: components["schemas"]["AuditLogOut"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** PaginatedResponse[CampaignOut] */
+        PaginatedResponse_CampaignOut_: {
+            /** Items */
+            items: components["schemas"]["CampaignOut"][];
             /** Page */
             page: number;
             /** Pages */
@@ -7184,6 +7557,20 @@ export interface components {
             id: number;
             /** Position */
             position?: string | null;
+        };
+        /** PublicUnsubscribeOut */
+        PublicUnsubscribeOut: {
+            /** Business Name */
+            business_name: string;
+            /** Channel */
+            channel: string;
+            /** Email */
+            email: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "subscribed" | "unsubscribed";
         };
         /** QRCodeAccessRequest */
         QRCodeAccessRequest: {
@@ -8798,6 +9185,11 @@ export interface components {
              * Token
              * @description 6-digit TOTP code
              */
+            token: string;
+        };
+        /** UnsubscribeIn */
+        UnsubscribeIn: {
+            /** Token */
             token: string;
         };
         /** UpdateClientPlanned */
@@ -10734,6 +11126,377 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BusinessOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_campaigns_businesses_me_campaigns_get: {
+        parameters: {
+            query?: {
+                status?: ("draft" | "confirmed" | "sending" | "sent" | "cancelled") | null;
+                page?: number;
+                per_page?: number;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedResponse_CampaignOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_campaign_businesses_me_campaigns_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CampaignIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_campaign_businesses_me_campaigns__campaign_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                campaign_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_campaign_businesses_me_campaigns__campaign_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                campaign_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CampaignUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_campaign_businesses_me_campaigns__campaign_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                campaign_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_campaign_businesses_me_campaigns__campaign_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                campaign_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_campaign_businesses_me_campaigns__campaign_id__preview_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                campaign_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignPreviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    send_campaign_businesses_me_campaigns__campaign_id__send_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                campaign_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    campaign_stats_businesses_me_campaigns__campaign_id__stats_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                campaign_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CampaignStatsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_marketing_consent_businesses_me_clients__client_id__marketing_consent_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketingConsentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_marketing_consent_businesses_me_clients__client_id__marketing_consent_revoke_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketingConsentOut"];
                 };
             };
             /** @description Validation Error */
@@ -15268,6 +16031,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicStaffOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_unsubscribe_public_campaigns_unsubscribe_get: {
+        parameters: {
+            query: {
+                token: string;
+            };
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicUnsubscribeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unsubscribe_public_campaigns_unsubscribe_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UnsubscribeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicUnsubscribeOut"];
                 };
             };
             /** @description Validation Error */

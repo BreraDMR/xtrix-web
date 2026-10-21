@@ -13,6 +13,7 @@ import {
   HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
   HiOutlineClock, HiOutlineClipboardList, HiOutlineMenuAlt2, HiOutlineX,
   HiOutlineChevronRight, HiOutlineChevronLeft, HiOutlineBell, HiOutlineUserAdd,
+  HiOutlineSpeakerphone,
 } from 'react-icons/hi'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -23,6 +24,7 @@ const icons: Record<string, ComponentType<{ className?: string }>> = {
   '/app/employees': HiOutlineUsers, '/app/business': HiOutlineBriefcase, '/app/subscription': HiOutlineDocumentText,
   '/app/my-salary': HiOutlineCurrencyDollar, '/app/settings': HiOutlineCog,
   '/app/notifications': HiOutlineBell, '/app/waitlist': HiOutlineUserAdd,
+  '/app/campaigns': HiOutlineSpeakerphone,
 }
 
 export default function Layout() {
@@ -93,6 +95,7 @@ export default function Layout() {
       { path: '/app/employees', label: t('nav.employees') },
     ] : []),
     ...(managesWaitlist ? [{ path: '/app/waitlist', label: t('nav.waitlist') }] : []),
+    ...(managesBusiness ? [{ path: '/app/campaigns', label: t('nav.campaigns') }] : []),
   ]
   const systemItems = [
     ...(managesBusiness ? [{ path: '/app/business', label: t('nav.business') }] : []),

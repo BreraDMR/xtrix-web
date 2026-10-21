@@ -27,6 +27,8 @@ import Loyalty from './pages/Loyalty'
 import Settings from './pages/Settings'
 import NotificationSettings from './pages/NotificationSettings'
 import Waitlist from './pages/Waitlist'
+import Campaigns from './pages/Campaigns'
+import Unsubscribe from './pages/Unsubscribe'
 import NotFound from './pages/NotFound'
 import BookingPage from './pages/booking/BookingPage'
 import ManageBookingPage from './pages/booking/ManageBooking'
@@ -62,6 +64,7 @@ function App() {
         <Route path="/client" element={<ClientPortal />} />
         <Route path="/client/portal" element={<PortalLogin />} />
         <Route path="/client/history" element={<LegacyHistory />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
 
         {/* Legacy CRM routes redirecting to /app/... while preserving query and hash */}
         <Route path="/clients" element={<LegacyRedirect target="/app/clients" />} />
@@ -116,6 +119,7 @@ function App() {
           <Route path="subscription" element={<Subscription />} />
           <Route path="notifications" element={<NotificationSettings />} />
           <Route path="waitlist" element={<Waitlist />} />
+          <Route path="campaigns" element={<Campaigns />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 
