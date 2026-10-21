@@ -45,6 +45,16 @@ export function apiError(status: number, message: string, detail?: unknown,
 // api.get mock that answers by URL; anything not listed is a 404
 // typed as api.get so it drops straight into vi.mocked(api.get).mockImplementation()
 export function routes(table: Record<string, unknown>) {
+  // Most component tests exercise an active legacy workspace. Pilot tests override
+  // this route explicitly to cover expiry and fail-closed behavior.
+  const defaults = {
+    '/offers': { offers: [], version: 'test', pilot_mode: false, email_available: true, checkout_available: true, registration_requires_invitation: false },
+    '/auth/google/config': { enabled: false, client_id: null },
+    '/subscriptions/access': { crm_mode: 'full', trial_end: null, read_only_until: null,
+      can_export: true, can_use_ai: true, can_manage_billing: true,
+      checkout_available: true, pilot_mode: false, reason: null },
+    ...table,
+  }
   return ((url: string) =>
-    url in table ? Promise.resolve({ data: table[url] }) : Promise.reject(apiError(404, `no mock for ${url}`))) as typeof api.get
+    url in defaults ? Promise.resolve({ data: defaults[url as keyof typeof defaults] }) : Promise.reject(apiError(404, `no mock for ${url}`))) as typeof api.get
 }

@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import { useWorkspaceAccess } from '../hooks/useWorkspaceAccess'
+import PilotSubscription from '../components/subscription/PilotSubscription'
+import QueryError from '../components/QueryError'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
@@ -23,6 +26,14 @@ interface TrialStatus {
 }
 
 export default function Subscription() {
+  const access = useWorkspaceAccess()
+  if (access.isLoading) return <LoadingSpinner />
+  if (access.isError) return <QueryError retry={access.refetch} />
+  if (!access.data) return null
+  return access.data.pilot_mode ? <PilotSubscription access={access.data} /> : <LegacySubscription />
+}
+
+function LegacySubscription() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
   const labels = useLabels()

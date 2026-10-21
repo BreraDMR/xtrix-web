@@ -23,6 +23,7 @@ interface ApiErrorBody {
       code?: string
       existing_client_id?: number
       matched_by?: string
+      limit?: number
     }
   }
   detail?: unknown
@@ -192,6 +193,26 @@ function waitText(seconds: number): string {
   return seconds >= 120 ? tr('time.minutes', { n: Math.ceil(seconds / 60) }) : tr('time.seconds', { n: seconds })
 }
 
+// Access refusals carry only a code; the generic message would read "HTTP error occurred".
+const ACCESS_CODE_KEYS: Record<string, TranslationKey> = {
+  subscription_required: 'errors.subscriptionRequired',
+  no_subscription: 'errors.subscriptionRequired',
+  no_payer: 'errors.subscriptionRequired',
+  trial_expired: 'errors.subscriptionRequired',
+  subscription_expired: 'errors.subscriptionRequired',
+  ai_subscription_required: 'pilot.aiSubscribe',
+  pilot_checkout_unavailable: 'pilot.paymentUnavailable',
+  pilot_google_signup_required: 'pilot.invitation',
+  pilot_invitation_required: 'pilot.invitation',
+}
+
+function accessMessage(err: unknown): string | undefined {
+  const detail = errorObject(err)?.detail
+  if (detail?.code === 'visit_limit_reached' && typeof detail.limit === 'number') return tr('errors.visitLimit', { limit: detail.limit })
+  const key = detail?.code ? ACCESS_CODE_KEYS[detail.code] : undefined
+  return key ? tr(key) : undefined
+}
+
 export function apiErrorMessage(err: unknown, fallback: string): string {
   const status = apiErrorStatus(err)
   const body = errorBody(err)
@@ -203,6 +224,8 @@ export function apiErrorMessage(err: unknown, fallback: string): string {
     return tr(login ? 'errors.loginThrottled' : 'errors.tooManyRequests', { wait: waitText(wait) })
   }
   if (status === 405) return tr('errors.methodNotAllowed')
+  const access = accessMessage(err)
+  if (access) return access
   if (typeof body?.error === 'string') return cleanMessage(body.error)
   const first = validationItems(err)[0]
   if (first) return `${fieldLabel(fieldName(first.field))}: ${validationMessage(first)}`

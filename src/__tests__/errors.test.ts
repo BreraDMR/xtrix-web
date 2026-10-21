@@ -135,6 +135,21 @@ describe('API errors', () => {
     expect(apiErrorStatus(new Error('boom'))).toBeUndefined()
   })
 
+  it('explains subscription and limit refusals that only carry a code', () => {
+    expect(apiErrorMessage(apiError(402, 'HTTP error occurred', { code: 'trial_expired' }), 'fallback'))
+      .toBe('This action is unavailable until a subscription is activated. Your data is kept.')
+    expect(apiErrorMessage(apiError(402, 'HTTP error occurred', { code: 'visit_limit_reached', limit: 300 }), 'fallback'))
+      .toBe('The monthly limit of 300 visits has been reached. Cancelled visits do not count.')
+    expect(apiErrorMessage(apiError(402, 'HTTP error occurred', { code: 'ai_subscription_required' }), 'fallback'))
+      .toBe('Activate a separate AI subscription to use the assistant.')
+    expect(apiErrorMessage(apiError(403, 'HTTP error occurred', { code: 'pilot_google_signup_required' }), 'fallback'))
+      .toContain('by invitation')
+    useLocaleStore.getState().setLocale('ru')
+    expect(apiErrorMessage(apiError(402, 'HTTP error occurred', { code: 'subscription_expired' }), 'fallback'))
+      .toBe('Это действие недоступно до подключения подписки. Ваши данные сохранены.')
+    expect(apiErrorMessage(apiError(402, 'Unknown', { code: 'something_else' }), 'fallback')).toBe('Unknown')
+  })
+
   it('splits validation errors into the fields a form shows and a general message for the rest', () => {
     const err = apiError(422, 'Validation error', {
       validation_errors: [

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import { HiDownload } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import ExportModal from './ExportModal'
@@ -30,7 +31,10 @@ export default function ExportButton<T extends object>({
   selectedRows,
 }: ExportButtonProps<T>) {
   const { t } = useTranslation()
+  const access = useWorkspaceAccessContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  if (access !== undefined && !access?.can_export) return null
 
   const exportData = dataType === 'selected' && selectedRows ? selectedRows : data
 

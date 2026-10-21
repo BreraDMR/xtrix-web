@@ -7,6 +7,11 @@ import { useSyncUiLanguage } from '../hooks/useUiLanguage'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import { useSidebarPreference } from '../hooks/useSidebarPreference'
 import AssistantLauncher from './assistant/AssistantLauncher'
+import { useWorkspaceAccess, WorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
+import AccessNotice from './subscription/AccessNotice'
+import PilotSubscription from './subscription/PilotSubscription'
+import LoadingSpinner from './LoadingSpinner'
+import QueryError from './QueryError'
 import {
   HiOutlineViewGrid, HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineCalendar,
   HiOutlinePaperClip, HiOutlineCurrencyDollar, HiOutlineShoppingCart, HiOutlineChartBar,
@@ -30,7 +35,9 @@ const icons: Record<string, ComponentType<{ className?: string }>> = {
 
 export default function Layout() {
   const { user } = useAuthStore()
-  const { data: business } = useMyBusiness(!!user)
+  const accessQuery = useWorkspaceAccess()
+  const access = accessQuery.data
+  const { data: business } = useMyBusiness(!!user && !!access && access.crm_mode !== 'blocked')
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -86,7 +93,7 @@ export default function Layout() {
     { path: '/app/visits', label: t('nav.visits') }, { path: '/app/calendar', label: t('nav.calendar') },
     ...(managesSchedule ? [{ path: '/app/schedules', label: t('nav.schedule') }] : []),
     { path: '/app/services', label: t('nav.services') },
-    ...(managesQuestionnaires ? [{ path: '/app/questionnaires', label: t('nav.questionnaires') }] : []),
+    ...(managesQuestionnaires && !access?.pilot_mode ? [{ path: '/app/questionnaires', label: t('nav.questionnaires') }] : []),
     ...(managesBusiness ? [{ path: '/app/inventory', label: t('nav.inventory') }, { path: '/app/finance', label: t('nav.finance') }] : []),
   ]
   const managesWaitlist = managesBusiness || (user?.role === 'specialist' && !user.employer_id)
@@ -98,14 +105,14 @@ export default function Layout() {
       { path: '/app/employees', label: t('nav.employees') },
     ] : []),
     ...(managesWaitlist ? [{ path: '/app/waitlist', label: t('nav.waitlist') }] : []),
-    ...(managesBusiness ? [{ path: '/app/campaigns', label: t('nav.campaigns') }] : []),
+    ...(managesBusiness && !access?.pilot_mode ? [{ path: '/app/campaigns', label: t('nav.campaigns') }] : []),
     ...(canReadAudit ? [{ path: '/app/audit', label: t('nav.audit') }] : []),
     ...(canImport ? [{ path: '/app/import', label: t('nav.import') }] : []),
   ]
   const systemItems = [
     ...(managesBusiness ? [{ path: '/app/business', label: t('nav.business') }] : []),
     ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/app/subscription', label: t('nav.subscription') }] : []),
-    ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/app/notifications', label: t('nav.notifications') }] : []),
+    ...(!access?.pilot_mode && (managesBusiness || (user?.role === 'specialist' && !user.employer_id)) ? [{ path: '/app/notifications', label: t('nav.notifications') }] : []),
     ...(user?.role === 'employee' || user?.role === 'specialist' ? [{ path: '/app/my-salary', label: t('nav.my_salary') }] : []),
     { path: '/app/settings', label: t('nav.settings') },
   ]
@@ -122,7 +129,11 @@ export default function Layout() {
     </Link>
   })
 
+  const isBilling = location.pathname === '/app/subscription'
+  const isUnavailable = access?.pilot_mode && ['/app/campaigns', '/app/questionnaires', '/app/notifications'].some(path => location.pathname === path || location.pathname.startsWith(path + '/'))
+
   return (
+    <WorkspaceAccessContext.Provider value={access ?? null}>
     <div className="crm-app min-h-screen" data-sidebar-compact={isCompact}>
       {isMobileMenuOpen && <button className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[3px] lg:hidden"
         aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)} />}
@@ -162,16 +173,24 @@ export default function Layout() {
             <div className="hidden min-w-0 items-center gap-2 text-xs text-gray-500 sm:flex"><span className="max-w-40 truncate">{workspaceName}</span><HiOutlineChevronRight className="h-3 w-3" /><span className="truncate text-gray-800 dark:text-gray-200">{active?.label}</span></div>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-            <AssistantLauncher />
+            {access && access.crm_mode !== 'blocked' && <AssistantLauncher />}
             <div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-[11px] font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(user?.full_name || 'U')}</span><span className="hidden max-w-40 truncate text-xs sm:inline">{user?.full_name}</span></div>
             <button className="rounded-lg px-2 py-2 text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20" onClick={() => { signOut(); navigate('/login', { replace: true }) }}>{t('nav.logout')}</button>
           </div>
         </header>
         <main className="mx-auto w-full min-w-0 max-w-[1540px] flex-1 p-5 pt-8 lg:p-11">
           {offline && <div role="status" className="mb-5 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-900/20 dark:text-amber-100">{t('common.offline')}</div>}
-          <Outlet />
+          {accessQuery.isLoading ? <LoadingSpinner /> : accessQuery.isError ? <QueryError retry={accessQuery.refetch} /> : !access ? null
+            : access.crm_mode === 'blocked' && !isBilling ? <PilotSubscription access={access} />
+              : isUnavailable ? <p role="status" className="rounded-xl border border-gray-200 p-6 dark:border-gray-700">{t('pilot.unavailable')}</p>
+                : <>
+                  {!isBilling && <AccessNotice access={access} />}
+                  {/* read-only keeps search, paging and calendar navigation working; the API refuses changes */}
+                  <Outlet />
+                </>}
         </main>
       </div>
     </div>
+    </WorkspaceAccessContext.Provider>
   )
 }

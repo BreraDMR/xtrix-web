@@ -36,9 +36,9 @@ it('has the assistant button in the header, and the panel opens over any screen'
   signIn({ id: 5, role: 'specialist' })
   renderLayout()
   const header = screen.getByRole('banner')
-  await userEvent.click(within(header).getByRole('button', { name: 'Open the assistant: Sasha' }))
+  await userEvent.click(await within(header).findByRole('button', { name: 'Open the assistant: Sasha' }))
   expect(await screen.findByRole('dialog', { name: 'Sasha' })).toBeInTheDocument()
-  expect(screen.getByRole('heading', { name: 'Home' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Home' })).toBeInTheDocument()
 })
 
 it('has no assistant button for a role the API keeps out', () => {

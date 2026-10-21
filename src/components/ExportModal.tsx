@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import { HiX, HiDownload, HiPrinter } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import FormError from './FormError'
@@ -33,6 +34,7 @@ export default function ExportModal<T extends object>({
   onExportComplete,
 }: ExportModalProps<T>) {
   const { t } = useTranslation()
+  const access = useWorkspaceAccessContext()
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('pdf')
   const [selectedReportType, setSelectedReportType] = useState<string | null>(
     reportTypes?.[0] || null
@@ -49,7 +51,7 @@ export default function ExportModal<T extends object>({
   }, [isOpen])
 
   const handleExport = async () => {
-    if (data.length === 0) return
+    if (data.length === 0 || (access !== undefined && !access?.can_export)) return
 
     setIsExporting(true)
     setExportError('')
@@ -87,7 +89,7 @@ export default function ExportModal<T extends object>({
   }
 
 
-  if (!isOpen) return null
+  if (!isOpen || (access !== undefined && !access?.can_export)) return null
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from '../../hooks/useTranslation'
-import { HiOutlineDocumentText, HiOutlineMail, HiOutlineX } from 'react-icons/hi'
+import { HiOutlineDocumentText, HiOutlineX } from 'react-icons/hi'
 
 export default function PublicFooter() {
   const { t } = useTranslation()
@@ -37,10 +37,7 @@ export default function PublicFooter() {
             >
               {t('landing.footer.terms')}
             </button>
-            <span className="flex items-center gap-1.5 text-slate-500">
-              <HiOutlineMail className="h-4 w-4" />
-              <span>{t('landing.footer.contact_support')}: support@xtrix.app</span>
-            </span>
+
           </div>
         </div>
 

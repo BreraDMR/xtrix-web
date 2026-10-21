@@ -1,3 +1,4 @@
+import GoogleSignIn from '../components/auth/GoogleSignIn'
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
@@ -68,6 +69,7 @@ export default function Login() {
             {t('register.accountCreatedSignIn')}
           </p>
         )}
+        <GoogleSignIn returnTo={returnTo} />
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

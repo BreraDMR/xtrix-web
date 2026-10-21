@@ -54,11 +54,12 @@ for (const copy of locales) {
       expect(await screen.findByText(copy.password)).toBeInTheDocument()
       expect(screen.getByRole('button', { name: copy.copy })).toBeInTheDocument()
     })
-    it('explains the alternative registration contacts without marking both required', () => {
+    it('explains the alternative registration contacts without marking both required', async () => {
       resetStores()
       useLocaleStore.setState({ locale: copy.locale })
       const { container } = renderWithProviders(<Register />)
-      expect(screen.getByText(copy.contact)).toBeInTheDocument()
+      // the form waits for the public catalog, which says whether signup is invite-only
+      expect(await screen.findByText(copy.contact)).toBeInTheDocument()
       for (const id of ['email', 'phone']) {
         expect(container.querySelector(`label[for="${id}"]`)).not.toHaveTextContent('*')
         expect(container.querySelector(`#${id}`)).not.toBeRequired()

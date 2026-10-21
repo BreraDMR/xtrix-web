@@ -515,6 +515,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/google/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Google Config */
+        get: operations["google_config_auth_google_config_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/google/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Google Login */
+        post: operations["google_login_auth_google_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/google/nonce": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Google Nonce */
+        post: operations["google_nonce_auth_google_nonce_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/password-reset/confirm": {
         parameters: {
             query?: never;
@@ -3274,6 +3325,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/subscriptions/access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Access State */
+        get: operations["get_access_state_subscriptions_access_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/subscriptions/checkout/create-session": {
         parameters: {
             query?: never;
@@ -5186,7 +5254,12 @@ export interface components {
         };
         /** CrmUsageOut */
         CrmUsageOut: {
-            /** Active Clients */
+            /**
+             * Active Clients
+             * @deprecated
+             * @description Legacy unique-client report; use visits for billing
+             * @default 0
+             */
             active_clients: number;
             /**
              * Is Within Limit
@@ -5197,6 +5270,8 @@ export interface components {
             limit?: number | null;
             /** Offer Code */
             offer_code?: string | null;
+            /** Visits */
+            visits: number;
         };
         /** EmployeeCreate */
         EmployeeCreate: {
@@ -6028,6 +6103,42 @@ export interface components {
             payments_available: boolean;
             /** Slug */
             slug: string;
+        };
+        /** GoogleConfigOut */
+        GoogleConfigOut: {
+            /** Client Id */
+            client_id: string | null;
+            /** Enabled */
+            enabled: boolean;
+        };
+        /** GoogleLoginIn */
+        GoogleLoginIn: {
+            /** Credential */
+            credential: string;
+            /**
+             * Link Existing
+             * @default false
+             */
+            link_existing: boolean;
+            /** Nonce */
+            nonce: string;
+            /** Password */
+            password?: string | null;
+            /**
+             * Role
+             * @default business_owner
+             * @enum {string}
+             */
+            role: "business_owner" | "specialist";
+            /** Totp Token */
+            totp_token?: string | null;
+        };
+        /** GoogleNonceOut */
+        GoogleNonceOut: {
+            /** Expires In */
+            expires_in: number;
+            /** Nonce */
+            nonce: string;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -6923,10 +7034,30 @@ export interface components {
         /** OfferCatalogOut */
         OfferCatalogOut: {
             /**
+             * Checkout Available
+             * @default false
+             */
+            checkout_available: boolean;
+            /**
+             * Email Available
+             * @default false
+             */
+            email_available: boolean;
+            /**
              * Offers
              * @description List of offers
              */
             offers?: components["schemas"]["OfferOut"][];
+            /**
+             * Pilot Mode
+             * @default false
+             */
+            pilot_mode: boolean;
+            /**
+             * Registration Requires Invitation
+             * @default false
+             */
+            registration_requires_invitation: boolean;
             /**
              * Updated At
              * @description Catalog last update timestamp
@@ -6955,6 +7086,11 @@ export interface components {
              * @description Max active clients allowed in period for CRM
              */
             max_active_clients?: number | null;
+            /**
+             * Max Monthly Visits
+             * @description Maximum visits in a calendar month; repeat visits count separately
+             */
+            max_monthly_visits?: number | null;
         };
         /** OfferOut */
         OfferOut: {
@@ -9285,6 +9421,32 @@ export interface components {
             /** Specialization */
             specialization?: string | null;
         };
+        /** SubscriptionAccessOut */
+        SubscriptionAccessOut: {
+            /** Ai Daily Limit */
+            ai_daily_limit?: number | null;
+            /** Can Export */
+            can_export: boolean;
+            /** Can Manage Billing */
+            can_manage_billing: boolean;
+            /** Can Use Ai */
+            can_use_ai: boolean;
+            /** Checkout Available */
+            checkout_available: boolean;
+            /**
+             * Crm Mode
+             * @enum {string}
+             */
+            crm_mode: "full" | "read_only" | "blocked";
+            /** Pilot Mode */
+            pilot_mode: boolean;
+            /** Read Only Until */
+            read_only_until?: string | null;
+            /** Reason */
+            reason?: string | null;
+            /** Trial End */
+            trial_end?: string | null;
+        };
         /** SubscriptionCancelRequest */
         SubscriptionCancelRequest: {
             /**
@@ -11380,6 +11542,79 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    google_config_auth_google_config_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleConfigOut"];
+                };
+            };
+        };
+    };
+    google_login_auth_google_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoogleLoginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    google_nonce_auth_google_nonce_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleNonceOut"];
                 };
             };
         };
@@ -18633,6 +18868,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_access_state_subscriptions_access_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionAccessOut"];
                 };
             };
         };

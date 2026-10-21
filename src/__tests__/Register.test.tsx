@@ -34,7 +34,7 @@ describe('Register', () => {
       <Route path="/" element={<Register />} />
       <Route path="/login" element={<Login />} />
     </Routes>)
-    await userEvent.type(screen.getByLabelText(/full name/i), 'Jana Owner')
+    await userEvent.type(await screen.findByLabelText(/full name/i), 'Jana Owner')
     await userEvent.type(screen.getByLabelText(/email/i), 'jana@example.com')
     await userEvent.type(screen.getByLabelText(/^password/i), 'Str0ng!pass')
     await userEvent.type(screen.getByLabelText(/confirm password/i), 'Str0ng!pass')
@@ -49,7 +49,7 @@ describe('Register', () => {
   it('keeps signup errors on the registration page without attempting login', async () => {
     vi.mocked(api.post).mockRejectedValue(apiError(400, 'Email already registered'))
     renderWithProviders(<Register />)
-    await userEvent.type(screen.getByLabelText(/full name/i), 'Jana Owner')
+    await userEvent.type(await screen.findByLabelText(/full name/i), 'Jana Owner')
     await userEvent.type(screen.getByLabelText(/email/i), 'jana@example.com')
     await userEvent.type(screen.getByLabelText(/^password/i), 'Str0ng!pass')
     await userEvent.type(screen.getByLabelText(/confirm password/i), 'Str0ng!pass')
@@ -64,7 +64,7 @@ describe('Register', () => {
       validation_errors: [{ field: 'body -> password', message: 'Password must contain at least one digit', code: 'weak_password', params: {} }],
     }))
     renderWithProviders(<Register />)
-    await userEvent.type(screen.getByLabelText(/full name/i), 'Jana Owner')
+    await userEvent.type(await screen.findByLabelText(/full name/i), 'Jana Owner')
     await userEvent.type(screen.getByLabelText(/email/i), 'jana@example.com')
     await userEvent.type(screen.getByLabelText(/^password/i), 'Strong!pass')
     await userEvent.type(screen.getByLabelText(/confirm password/i), 'Strong!pass')
@@ -75,9 +75,9 @@ describe('Register', () => {
     expect(screen.getByLabelText(/^пароль/i)).toHaveAttribute('aria-invalid', 'true')
   })
 
-  it('offers only the roles public signup accepts', () => {
+  it('offers only the roles public signup accepts', async () => {
     renderWithProviders(<Register />)
-    const options = Array.from((screen.getByLabelText(/role/i) as HTMLSelectElement).options).map((o) => o.value)
+    const options = Array.from((await screen.findByLabelText(/role/i) as HTMLSelectElement).options).map((o) => o.value)
     expect(options).toEqual(['specialist', 'business_owner'])
   })
 
@@ -86,7 +86,7 @@ describe('Register', () => {
       Promise.resolve({ data: url === '/users/login' ? { access_token: 'token' } : { id: 5 } })) as typeof api.post)
     renderWithProviders(<Register />)
 
-    await userEvent.type(screen.getByLabelText(/full name/i), 'Jana Owner')
+    await userEvent.type(await screen.findByLabelText(/full name/i), 'Jana Owner')
     await userEvent.type(screen.getByLabelText(/email/i), 'jana@example.com')
     await userEvent.type(screen.getByLabelText(/^password/i), 'Str0ng!pass')
     await userEvent.type(screen.getByLabelText(/confirm password/i), 'Str0ng!pass')

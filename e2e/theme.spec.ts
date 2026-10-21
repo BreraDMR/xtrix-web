@@ -40,7 +40,15 @@ for (const width of [1280, 375]) {
       await openAs(page, owner, path)
       await expect(page.locator('html')).toHaveClass(/dark/)
       await page.waitForLoadState('networkidle')
-      await expect(page).toHaveScreenshot(`dark-${path.slice(1)}-${width}.png`, { fullPage: true })
+      const trialText = page.locator('main > div[role="status"] > p')
+      await expect(trialText).toBeVisible()
+      await expect(trialText).toContainText('300 visits and 50 AI requests per day.')
+      const trialStyle = await page.addStyleTag({ content: 'main > div[role="status"] > p { visibility: hidden !important; }' })
+      try {
+        await expect(page).toHaveScreenshot(`dark-${path.slice(1)}-${width}.png`, { fullPage: true })
+      } finally {
+        await trialStyle.evaluate(element => element.parentNode?.removeChild(element))
+      }
     })
   }
 }

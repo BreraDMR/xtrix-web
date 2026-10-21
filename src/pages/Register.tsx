@@ -1,3 +1,5 @@
+import GoogleSignIn from '../components/auth/GoogleSignIn'
+import QueryError from '../components/QueryError'
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
@@ -9,6 +11,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import SpecialistTypeSelector from '../components/SpecialistTypeSelector'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
+import { useOffers } from '../hooks/useOffers'
 import { logger } from '../utils/logger'
 import { useLabels } from '../i18n/labels'
 
@@ -21,6 +24,7 @@ const SIGNUP_FIELDS = ['full_name', 'email', 'phone', 'password', 'role', 'speci
 
 export default function Register() {
   const { t } = useTranslation()
+  const offers = useOffers()
   const navigate = useNavigate()
   const labels = useLabels()
   const [formData, setFormData] = useState({
@@ -32,6 +36,8 @@ export default function Register() {
     role: 'specialist' as SignupRole,
     specialist_type: '',
   })
+  // Invited pilot accounts are salons first; a solo specialist picks it explicitly.
+  const [pilotRole, setPilotRole] = useState<SignupRole>('business_owner')
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
@@ -122,6 +128,25 @@ export default function Register() {
     }
   }
 
+  if (offers.isLoading) return <LoadingSpinner />
+  if (offers.isError) return <QueryError retry={offers.refetch} />
+  if (offers.data?.pilot_mode) return <main className="flex min-h-screen items-center justify-center bg-gray-50 px-5 py-16 dark:bg-gray-900">
+    <div className="absolute right-4 top-4"><LanguageSwitcher /></div>
+    <div className="ui-card w-full max-w-md space-y-6 p-8">
+      <h1 className="text-center text-3xl font-semibold">Xtrix</h1>
+      <p role="status" className="rounded-xl bg-blue-50 p-4 text-sm text-blue-900 dark:bg-blue-950/40 dark:text-blue-100">{t('pilot.invitation')}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-300">{t('pricing.trial')}</p>
+      <label className="block text-sm font-medium">{t('register.role')}
+        <select value={pilotRole} onChange={event => setPilotRole(event.target.value as SignupRole)} className="mt-2 w-full rounded-xl border border-gray-300 bg-white p-3 dark:border-gray-600 dark:bg-gray-800">
+          <option value="business_owner">{labels.role('business_owner')}</option>
+          <option value="specialist">{labels.role('specialist')}</option>
+        </select>
+      </label>
+      <GoogleSignIn role={pilotRole} registration />
+      <Link to="/login" className="block text-center text-sm font-medium text-blue-600 dark:text-blue-400">{t('login.signIn')}</Link>
+    </div>
+  </main>
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-5 py-16 dark:bg-gray-900">
       <div className="absolute top-4 right-4">
@@ -144,7 +169,9 @@ export default function Register() {
             </p>
           </div>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {offers.data?.registration_requires_invitation && <p role="status" className="mb-6 rounded-xl bg-blue-50 p-4 text-sm text-blue-900 dark:bg-blue-950/40 dark:text-blue-100">{t('pilot.invitation')}</p>}
+        <GoogleSignIn role={formData.role} />
+          <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t('register.fullName')} *

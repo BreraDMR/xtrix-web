@@ -87,7 +87,18 @@ test.describe('screenshots', () => {
         const height = await page.evaluate(() => document.documentElement.scrollHeight)
         await page.setViewportSize({ width, height })
         if (screen.charts) await page.waitForTimeout(CHART_ANIMATION_MS)
-        await expect(page).toHaveScreenshot(`${screen.name}-${width}.png`, { mask: screen.mask?.(page) })
+        if (screen.heading) {
+          const trialText = page.locator('main > div[role="status"] > p')
+          await expect(trialText).toBeVisible()
+          await expect(trialText).toContainText('300 visits and 50 AI requests per day.')
+        }
+        // Only the server-stamped trial text is dynamic. Keep the banner box and link visible.
+        const trialStyle = await page.addStyleTag({ content: 'main > div[role="status"] > p { visibility: hidden !important; }' })
+        try {
+          await expect(page).toHaveScreenshot(`${screen.name}-${width}.png`, { mask: screen.mask?.(page) })
+        } finally {
+          await trialStyle.evaluate(element => element.parentNode?.removeChild(element))
+        }
       })
     }
 
@@ -104,7 +115,16 @@ test.describe('screenshots', () => {
       const panel = page.getByRole('dialog', { name: 'Sasha' })
       await expect(panel.getByText('Sasha is ready to help')).toBeVisible()
       await page.waitForLoadState('networkidle')
-      await expect(page).toHaveScreenshot(`assistant-${width}.png`)
+      const trialText = page.locator('main > div[role="status"] > p')
+      await expect(trialText).toBeVisible()
+      await expect(trialText).toContainText('300 visits and 50 AI requests per day.')
+      // Hide the underlying text only, without masking any part of the overlaid chat.
+      const trialStyle = await page.addStyleTag({ content: 'main > div[role="status"] > p { visibility: hidden !important; }' })
+      try {
+        await expect(page).toHaveScreenshot(`assistant-${width}.png`)
+      } finally {
+        await trialStyle.evaluate(element => element.parentNode?.removeChild(element))
+      }
     })
   }
 })

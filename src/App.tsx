@@ -42,6 +42,7 @@ import PortalLogin from './pages/client/PortalLogin'
 import ClientPortal from './pages/client/Portal'
 import LegacyHistory from './pages/client/LegacyHistory'
 import Layout from './components/Layout'
+import PublicFeatureGate from './components/subscription/PublicFeatureGate'
 import { LegacyRedirect, ParameterizedLegacyRedirect } from './utils/routing'
 
 function App() {
@@ -51,21 +52,21 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<PublicFeatureGate feature="email"><ForgotPassword /></PublicFeatureGate>} />
+        <Route path="/reset-password" element={<PublicFeatureGate feature="email"><ResetPassword /></PublicFeatureGate>} />
         <Route path="/register" element={<Register />} />
         <Route path="/booking/:slug" element={<BookingPage />} />
         <Route path="/manage" element={<ManageBookingPage />} />
         <Route path="/waitlist/offer" element={<WaitlistOfferPage />} />
-        <Route path="/questionnaire" element={<QuestionnairePage />} />
-        <Route path="/payment/sandbox" element={<SandboxCheckout />} />
-        <Route path="/payment/return" element={<PaymentReturn />} />
-        <Route path="/gift/:slug" element={<GiftPurchase />} />
-        <Route path="/gift/checkout" element={<GiftCheckout />} />
-        <Route path="/gift/return" element={<GiftReturn />} />
-        <Route path="/client" element={<ClientPortal />} />
-        <Route path="/client/portal" element={<PortalLogin />} />
-        <Route path="/client/history" element={<LegacyHistory />} />
+        <Route path="/questionnaire" element={<PublicFeatureGate feature="forms"><QuestionnairePage /></PublicFeatureGate>} />
+        <Route path="/payment/sandbox" element={<PublicFeatureGate feature="payments"><SandboxCheckout /></PublicFeatureGate>} />
+        <Route path="/payment/return" element={<PublicFeatureGate feature="payments"><PaymentReturn /></PublicFeatureGate>} />
+        <Route path="/gift/:slug" element={<PublicFeatureGate feature="payments"><GiftPurchase /></PublicFeatureGate>} />
+        <Route path="/gift/checkout" element={<PublicFeatureGate feature="payments"><GiftCheckout /></PublicFeatureGate>} />
+        <Route path="/gift/return" element={<PublicFeatureGate feature="payments"><GiftReturn /></PublicFeatureGate>} />
+        <Route path="/client" element={<PublicFeatureGate feature="email"><ClientPortal /></PublicFeatureGate>} />
+        <Route path="/client/portal" element={<PublicFeatureGate feature="email"><PortalLogin /></PublicFeatureGate>} />
+        <Route path="/client/history" element={<PublicFeatureGate feature="email"><LegacyHistory /></PublicFeatureGate>} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
 
         {/* Legacy CRM routes redirecting to /app/... while preserving query and hash */}

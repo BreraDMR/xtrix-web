@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+import { useWorkspaceAccessContext } from '../../hooks/useWorkspaceAccess'
+import { useTranslation } from '../../hooks/useTranslation'
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useQueryClient, type UseQueryResult } from '@tanstack/react-query'
 import { HiOutlineMicrophone, HiOutlinePaperAirplane, HiOutlineSparkles, HiOutlineStop, HiOutlineTrash, HiOutlineX } from 'react-icons/hi'
@@ -65,6 +68,9 @@ interface AssistantPanelProps {
 }
 
 export default function AssistantPanel({ open, onClose, status, persona }: AssistantPanelProps) {
+  const access = useWorkspaceAccessContext()
+  const { t } = useTranslation()
+  const subscriptionRequired = access !== undefined && !access?.can_use_ai
   const locale = useLocaleStore((state) => state.locale)
   const queryClient = useQueryClient()
   const say: Say = useCallback(
@@ -91,7 +97,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   const busySeconds = useCountdown(busy?.until ?? null)
   const data = status.data
   const off = data?.enabled === false || notConfigured
-  const ready = !!data && !off
+  const ready = !!data && !off && !subscriptionRequired
   const limitReached = (!!data && data.used >= data.limit) || (limitUntil !== null && Date.now() < limitUntil)
   const resetsAt = data?.resets_at ?? (limitUntil ? new Date(limitUntil).toISOString() : null)
 
@@ -229,7 +235,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
     if (!open) discardVoice()
   }, [open, discardVoice])
 
-  const canSend = !!text.trim() && !sending && busySeconds === 0 && !limitReached && !voice.recording && !transcribing
+  const canSend = ready && !!text.trim() && !sending && busySeconds === 0 && !limitReached && !voice.recording && !transcribing
   const micDisabled = sending || transcribing || busySeconds > 0 || limitReached
   // keep the request key with the text it belongs to: a lost answer retried with the same
   // key is replayed by the server instead of spending a second model call
@@ -237,7 +243,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
 
   const send = async () => {
     const typed = text.trim()
-    if (!canSend) return
+    if (!canSend || subscriptionRequired) return
     // the model has no memory: an answer to its questions goes out together with the request it asked about
     const lastPlan = [...entries].reverse().find((e): e is PlanEntry => e.kind === 'plan')
     const asking = lastPlan && lastPlan.phase === 'open' && lastPlan.plan.questions.length > 0 ? lastPlan : null
@@ -364,7 +370,12 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
         </button>
       </div>
 
-      {status.isError && !data ? (
+      {subscriptionRequired ? (
+        <div className="m-4 rounded-xl bg-blue-50 p-4 text-sm text-blue-900 dark:bg-blue-950/30 dark:text-blue-100">
+          <p>{t('pilot.aiSubscribe')}</p>
+          <Link to="/app/subscription" onClick={onClose} className="mt-3 inline-block font-semibold underline">{t('subscription.title')}</Link>
+        </div>
+      ) : status.isError && !data ? (
         <div role="alert" className="m-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
           <p>{say('statusError')}</p>
           <button type="button" onClick={() => void status.refetch()} className="mt-3 rounded border border-red-300 px-3 py-1.5">

@@ -14,7 +14,7 @@ test.describe('Trial lifecycle and expiration', () => {
 
     // Entitlements and usage block is visible
     await expect(page.getByText('Plan Usage and Entitlements')).toBeVisible()
-    await expect(page.getByText('CRM: Active Clients')).toBeVisible()
+    await expect(page.getByText('CRM: Visits this month')).toBeVisible()
     await expect(page.getByText('AI Sasha: Daily Requests')).toBeVisible()
   })
 

@@ -1,4 +1,34 @@
 export type TranslationKey =
+  | 'google.title'
+  | 'google.failed'
+  | 'google.unavailable'
+  | 'google.linkRequired'
+  | 'google.password'
+  | 'google.linkConsent'
+  | 'google.link'
+  | 'pilot.active'
+  | 'pilot.readOnly'
+  | 'pilot.blocked'
+  | 'pilot.paymentUnavailable'
+  | 'pilot.aiOptIn'
+  | 'pilot.unavailable'
+  | 'pilot.invitation'
+  | 'pilot.emailUnavailable'
+  | 'pilot.aiSubscribe'
+  | 'pricing.start'
+  | 'pricing.standard'
+  | 'pricing.business'
+  | 'pricing.largeBusiness'
+  | 'pricing.product'
+  | 'pricing.more'
+  | 'pricing.less'
+  | 'pricing.visits'
+  | 'pricing.requests'
+  | 'pricing.empty'
+  | 'pricing.try'
+  | 'pricing.trial'
+  | 'pilot.signupClosed'
+
   | 'portal.title'
   | 'portal.login.title'
   | 'portal.login.subtitle'
@@ -133,6 +163,8 @@ export type TranslationKey =
   | 'errors.loginThrottledLater'
   | 'errors.notFound'
   | 'errors.methodNotAllowed'
+  | 'errors.subscriptionRequired'
+  | 'errors.visitLimit'
   | 'time.seconds'
   | 'time.minutes'
   | 'validation.code.missing'
@@ -2105,6 +2137,36 @@ export type TranslationKey =
   | 'importWizard.error.rowFailed'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  'google.title': {"en": "Sign in with Google", "ru": "Вход через Google", "cz": "Přihlášení přes Google"},
+  'google.failed': {"en": "Google sign-in failed. Please try again.", "ru": "Не удалось войти через Google. Попробуйте ещё раз.", "cz": "Přihlášení přes Google selhalo. Zkuste to znovu."},
+  'google.unavailable': {"en": "Google sign-in is temporarily unavailable. You can still sign in with your password.", "ru": "Вход через Google временно недоступен. Можно войти с паролем.", "cz": "Přihlášení přes Google je dočasně nedostupné. Stále se můžete přihlásit heslem."},
+  'google.linkRequired': {"en": "An account with this email already exists. Confirm your password to connect Google to that account.", "ru": "Аккаунт с этой почтой уже существует. Подтвердите пароль, чтобы подключить к нему Google.", "cz": "Účet s tímto e-mailem již existuje. Pro propojení s Google potvrďte heslo."},
+  'google.password': {"en": "Your Xtrix account password", "ru": "Пароль вашего аккаунта Xtrix", "cz": "Heslo vašeho účtu Xtrix"},
+  'google.linkConsent': {"en": "I want to connect this Google account to my existing Xtrix account.", "ru": "Я хочу подключить этот Google-аккаунт к моему существующему аккаунту Xtrix.", "cz": "Chci propojit tento účet Google se svým stávajícím účtem Xtrix."},
+  'google.link': {"en": "Connect Google to my account", "ru": "Подключить Google к моему аккаунту", "cz": "Propojit Google s mým účtem"},
+  'pilot.active': {"en": "CRM and AI are free until {date}: 300 visits and 50 AI requests per day.", "ru": "CRM и ИИ бесплатны до {date}: 300 визитов и 50 запросов ИИ в день.", "cz": "CRM a AI jsou zdarma do {date}: 300 návštěv a 50 požadavků AI denně."},
+  'pilot.readOnly': {"en": "The trial has ended. Viewing is available until {date}; editing, AI and exports are disabled.", "ru": "Пробный период закончился. Просмотр доступен до {date}; изменения, ИИ и выгрузка отключены.", "cz": "Zkušební období skončilo. Prohlížení je možné do {date}; úpravy, AI a export jsou vypnuty."},
+  'pilot.blocked': {"en": "Access to workspace data is paused until a subscription is activated.", "ru": "Доступ к данным кабинета закрыт до подключения подписки.", "cz": "Přístup k datům je pozastaven do aktivace předplatného."},
+  'pilot.paymentUnavailable': {"en": "Online payment is not connected yet. No card is required and no payment will be charged during the pilot.", "ru": "Онлайн-оплата пока не подключена. Для пилота карта не нужна, списаний не будет.", "cz": "Online platby zatím nejsou připojeny. Pro pilot nepotřebujete kartu a nic se nestrhne."},
+  'pilot.aiOptIn': {"en": "The first paid CRM month includes AI for free. After that, AI requires a separate subscription that you choose to activate; it will not turn paid automatically.", "ru": "Первый оплаченный месяц CRM включает ИИ бесплатно. Затем ИИ подключается отдельной подпиской по вашему выбору — автоматически платным он не станет.", "cz": "První placený měsíc CRM zahrnuje AI zdarma. Poté si AI aktivujete samostatným předplatným; automaticky se placeným nestane."},
+  'pilot.unavailable': {"en": "This feature is not available in the pilot yet.", "ru": "Эта функция пока недоступна в пилоте.", "cz": "Tato funkce zatím není v pilotu dostupná."},
+  'pilot.invitation': {"en": "The pilot is available by invitation. Sign in with Google using your invited email address.", "ru": "Пилот доступен по приглашению. Войдите через Google с приглашённым адресом почты.", "cz": "Pilot je dostupný na pozvání. Přihlaste se přes Google pomocí pozvaného e-mailu."},
+  'pilot.emailUnavailable': {"en": "Email delivery is not connected yet. Password reset by email is currently unavailable.", "ru": "Отправка писем пока не подключена. Восстановление пароля по почте сейчас недоступно.", "cz": "Odesílání e-mailů zatím není připojeno. Obnovení hesla e-mailem není dostupné."},
+  'pilot.aiSubscribe': {"en": "Activate a separate AI subscription to use the assistant.", "ru": "Для работы с помощником подключите отдельную подписку ИИ.", "cz": "Pro použití asistenta aktivujte samostatné předplatné AI."},
+  'pricing.start': {"en": "Start", "ru": "Старт", "cz": "Start"},
+  'pricing.standard': {"en": "Standard", "ru": "Стандарт", "cz": "Standard"},
+  'pricing.business': {"en": "Business", "ru": "Бизнес", "cz": "Business"},
+  'pricing.largeBusiness': {"en": "Large business", "ru": "Большой бизнес", "cz": "Velký podnik"},
+  'pricing.product': {"en": "Choose a product", "ru": "Выберите продукт", "cz": "Vyberte produkt"},
+  'pricing.more': {"en": "Show more", "ru": "Показать больше", "cz": "Zobrazit více"},
+  'pricing.less': {"en": "Show less", "ru": "Скрыть", "cz": "Zobrazit méně"},
+  'pricing.visits': {"en": "Up to {count} visits per month", "ru": "До {count} визитов в месяц", "cz": "Až {count} návštěv měsíčně"},
+  'pricing.requests': {"en": "Up to {count} requests per day", "ru": "До {count} запросов в день", "cz": "Až {count} požadavků denně"},
+  'pricing.empty': {"en": "No plans are available yet.", "ru": "Тарифы пока недоступны.", "cz": "Tarify zatím nejsou k dispozici."},
+  'pricing.try': {"en": "Try free for 7 days", "ru": "Попробовать 7 дней бесплатно", "cz": "Vyzkoušet 7 dní zdarma"},
+  'pricing.trial': {"en": "7 days of CRM and AI without a card: 300 visits and 50 AI requests per day. CRM and AI are separate subscriptions.", "ru": "7 дней CRM и ИИ без карты: 300 визитов и 50 запросов ИИ в день. CRM и ИИ — отдельные подписки.", "cz": "7 dní CRM a AI bez karty: 300 návštěv a 50 požadavků AI denně. CRM a AI jsou samostatná předplatná."},
+  'pilot.signupClosed': {"en": "Pilot registration is not open yet. Existing users can still sign in.", "ru": "Регистрация в пилот пока закрыта. Существующие пользователи могут войти.", "cz": "Registrace do pilotu zatím není otevřena. Stávající uživatelé se mohou přihlásit."},
+
   "loyalty.businessRequired": {"en": "Create your business first, the loyalty program belongs to it.", "ru": "Сначала создайте бизнес, программа лояльности привязана к нему.", "cz": "Nejprve vytvořte firmu, věrnostní program k ní patří."},
   "common.item": {"en": "Item", "ru": "Показатель", "cz": "Položka"},
   "common.value": {"en": "Value", "ru": "Значение", "cz": "Hodnota"},
@@ -2156,6 +2218,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "errors.loginThrottledLater": {"en": "Too many failed sign-in attempts. Try again a bit later.", "ru": "Слишком много неудачных попыток входа. Повторите чуть позже.", "cz": "Příliš mnoho neúspěšných pokusů o přihlášení. Zkuste to o něco později."},
   "errors.notFound": {"en": "Not found.", "ru": "Не найдено.", "cz": "Nenalezeno."},
   "errors.methodNotAllowed": {"en": "This action is not supported.", "ru": "Это действие не поддерживается.", "cz": "Tato akce není podporována."},
+  "errors.subscriptionRequired": {"en": "This action is unavailable until a subscription is activated. Your data is kept.", "ru": "Это действие недоступно до подключения подписки. Ваши данные сохранены.", "cz": "Tato akce není dostupná do aktivace předplatného. Vaše data zůstávají uložena."},
+  "errors.visitLimit": {"en": "The monthly limit of {limit} visits has been reached. Cancelled visits do not count.", "ru": "Достигнут месячный лимит: {limit} визитов. Отменённые визиты не учитываются.", "cz": "Byl dosažen měsíční limit {limit} návštěv. Zrušené návštěvy se nepočítají."},
   "time.seconds": {"en": "{n} s", "ru": "{n} с", "cz": "{n} s"},
   "time.minutes": {"en": "{n} min", "ru": "{n} мин", "cz": "{n} min"},
   "validation.code.missing": {"en": "Required field", "ru": "Обязательное поле", "cz": "Povinné pole"},
@@ -2711,8 +2775,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   
   'register.title': { en: 'Create your account', ru: 'Создайте свой аккаунт', cz: 'Vytvořte si účet' },
   'register.trial_badge': { en: '7 days CRM trial · No credit card required', ru: '7 дней CRM без карты · Без скрытых списаний', cz: '7 dní CRM zdarma · Bez platební karty' },
-  'register.trial_desc': { en: 'Full access to appointments, schedules, and clients. No payment card needed to start.', ru: 'Полный доступ к онлайн-записи, графику и базе клиентов на 7 дней. Карта не требуется.', cz: 'Plný přístup k online rezervacím, rozvrhu a klientům na 7 dní. Karta není potřeba.' },
-  'register.ai_bonus': { en: 'AI Assistant Sasha: 20 daily requests included for evaluation (D01).', ru: 'ИИ ассистент Сашенька: 20 запросов в день включены в пробный пакет (D01).', cz: 'AI asistentka Sašenka: 20 dotazů denně v rámci zkušebního balíčku (D01).' },
+  'register.trial_desc': {"en": "Try CRM with up to 300 visits and AI for 7 days. No payment card is required.", "ru": "Попробуйте CRM с лимитом 300 визитов и ИИ на 7 дней. Банковская карта не нужна.", "cz": "Vyzkoušejte CRM s limitem 300 návštěv a AI na 7 dní. Platební karta není potřeba."},
+  'register.ai_bonus': {"en": "AI is included for 7 days: 50 requests per day.", "ru": "ИИ включён на 7 дней: 50 запросов в день.", "cz": "AI je zahrnuta na 7 dní: 50 požadavků denně."},
   'register.fullName': { en: 'Full Name', ru: 'Полное имя', cz: 'Celé jméno' },
   'register.email': { en: 'Email', ru: 'Email', cz: 'Email' },
   'register.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
@@ -3328,7 +3392,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'trial.banner_cta': { en: 'Choose Plan', ru: 'Выбрать тариф', cz: 'Vybrat tarif' },
   'trial.banner_expired': { en: 'Trial ended. Your salon data is preserved. Choose a plan to continue.', ru: 'Пробный период завершён. Ваши данные сохранены. Выберите тариф для продолжения.', cz: 'Zkušební období skončilo. Vaše data jsou uložena. Vyberte tarif pro pokračování.' },
   'subscription.usage_title': { en: 'Plan Usage and Entitlements', ru: 'Использование тарифа и лимиты', cz: 'Využití tarifu a limity' },
-  'subscription.crm_usage': { en: 'CRM: Active Clients', ru: 'CRM: активные клиенты', cz: 'CRM: aktivní klienti' },
+  'subscription.crm_usage': {"en": "CRM: Visits this month", "ru": "CRM: визиты за месяц", "cz": "CRM: návštěvy tento měsíc"},
   'subscription.ai_usage': { en: 'AI Sasha: Daily Requests', ru: 'ИИ Сашенька: запросы за сегодня', cz: 'AI Sašenka: dnešní dotazy' },
   'subscription.within_limit': { en: 'Within limit', ru: 'В пределах тарифа', cz: 'V rámci limitu' },
   'subscription.limit_exceeded': { en: 'Limit reached', ru: 'Лимит исчерпан', cz: 'Limit vyčerpán' },
@@ -3653,11 +3717,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     ru: 'Как работает бесплатный пробный период?',
     cz: 'Jak funguje bezplatné zkušební období?',
   },
-  'landing.faq.a1': {
-    en: 'New salons and specialists receive a 7-day CRM trial without needing a bank card. All core features are accessible immediately.',
-    ru: 'Новые салоны и мастера получают 7 дней пробного периода CRM без привязки банковской карты. Все основные функции доступны сразу.',
-    cz: 'Nové salony a mistři získávají 7 dní zkušebního období CRM bez nutnosti zadávat platební kartu. Všechny klíčové funkce jsou ihned k dispozici.',
-  },
+  'landing.faq.a1': {"en": "New salons and specialists receive 7 days of CRM and AI without a card: up to 300 visits and 50 AI requests per day.", "ru": "Новые салоны и мастера получают 7 дней CRM и ИИ без карты: до 300 визитов и 50 запросов ИИ в день.", "cz": "Nové salony a specialisté získají 7 dní CRM a AI bez karty: až 300 návštěv a 50 požadavků AI denně."},
   'landing.faq.q2': {
     en: 'Can solo specialists use Xtrix without hiring employees?',
     ru: 'Может ли частный специалист работать без сотрудников?',
@@ -3673,31 +3733,15 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     ru: 'Как защищены данные клиентов и салона?',
     cz: 'Jak jsou chráněna data klientů a salonu?',
   },
-  'landing.faq.a3': {
-    en: 'Each business operates in complete tenant isolation. Client databases and sensitive records are never shared or mixed across businesses.',
-    ru: 'Каждый салон изолирован в собственном контуре безопасности. Данные клиентов и записи строго защищены и не передаются третьим лицам.',
-    cz: 'Každý salon funguje v izolovaném bezpečnostním kontextu. Klientská data nejsou nikdy sdílena ani míchána.',
-  },
+  'landing.faq.a3': {"en": "Access to salon records is restricted by business and user role. Medical questionnaires are not included in the pilot.", "ru": "Доступ к записям ограничен салоном и ролью пользователя. Медицинские анкеты в пилот не входят.", "cz": "Přístup k záznamům je omezen salonem a rolí uživatele. Lékařské dotazníky nejsou součástí pilotu."},
   'landing.faq.q4': {
     en: 'What happens after the trial ends?',
     ru: 'Что происходит после завершения пробного периода?',
     cz: 'Co se stane po skončení zkušebního období?',
   },
-  'landing.faq.a4': {
-    en: 'Your data is securely preserved. You can log in, view historical records, and activate a subscription when ready.',
-    ru: 'Данные сохраняются в целости. Вы можете входить в кабинет, просматривать историю и подключить подходящий тариф в любое время.',
-    cz: 'Vaše data zůstávají bezpečně uložena. Můžete se přihlásit, prohlížet historii a aktivovat předplatné kdykoliv.',
-  },
-  'landing.faq.q5': {
-    en: 'Can I export my data at any time?',
-    ru: 'Можно ли выгрузить свои данные?',
-    cz: 'Lze kdykoliv exportovat data?',
-  },
-  'landing.faq.a5': {
-    en: 'Yes, you can export client lists, appointments, and financial reports directly from your dashboard.',
-    ru: 'Да, выгрузка клиентской базы, визитов и финансовых отчётов доступна в панели управления.',
-    cz: 'Ano, export klientské databáze, návštěv a finančních přehledů je dostupný v administraci.',
-  },
+  'landing.faq.a4': {"en": "After the 7-day trial, you have 3 days of viewing without editing, AI or exports. Workspace data is then unavailable until a subscription is activated.", "ru": "После 7 дней пробного периода доступны ещё 3 дня просмотра без изменений, ИИ и выгрузки. Затем доступ к данным закрывается до подключения подписки.", "cz": "Po 7denním zkušebním období máte ještě 3 dny prohlížení bez úprav, AI a exportu. Poté jsou data nedostupná do aktivace předplatného."},
+  'landing.faq.q5': {"en": "When can I export data?", "ru": "Когда доступна выгрузка данных?", "cz": "Kdy lze exportovat data?"},
+  'landing.faq.a5': {"en": "Exports are available while your trial or CRM subscription is active. Exports are unavailable during the three-day viewing period and after access is paused.", "ru": "Выгрузка доступна во время активного пробного периода или подписки CRM. В трёхдневном режиме просмотра и после закрытия доступа выгрузка недоступна.", "cz": "Export je dostupný během aktivního zkušebního období nebo předplatného CRM. Během tří dnů prohlížení a po pozastavení přístupu není export dostupný."},
 
   'landing.nav.features': {
     en: 'Features',
