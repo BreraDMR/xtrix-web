@@ -30,6 +30,9 @@ import NotFound from './pages/NotFound'
 import BookingPage from './pages/booking/BookingPage'
 import ManageBookingPage from './pages/booking/ManageBooking'
 import QuestionnairePage from './pages/booking/Questionnaire'
+import PortalLogin from './pages/client/PortalLogin'
+import ClientPortal from './pages/client/Portal'
+import LegacyHistory from './pages/client/LegacyHistory'
 import Layout from './components/Layout'
 import { LegacyRedirect, ParameterizedLegacyRedirect } from './utils/routing'
 
@@ -46,6 +49,9 @@ function App() {
         <Route path="/booking/:slug" element={<BookingPage />} />
         <Route path="/manage" element={<ManageBookingPage />} />
         <Route path="/questionnaire" element={<QuestionnairePage />} />
+        <Route path="/client" element={<ClientPortal />} />
+        <Route path="/client/portal" element={<PortalLogin />} />
+        <Route path="/client/history" element={<LegacyHistory />} />
 
         {/* Legacy CRM routes redirecting to /app/... while preserving query and hash */}
         <Route path="/clients" element={<LegacyRedirect target="/app/clients" />} />

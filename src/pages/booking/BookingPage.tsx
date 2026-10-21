@@ -1,6 +1,6 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 import api from '../../api/client'
 import { apiErrorStatus } from '../../api/errors'
@@ -172,6 +172,7 @@ function BookingSuccess({ booking, onNew }: { booking: PublicBookingOut; onNew: 
 
 export default function BookingPage() {
   const { slug = '' } = useParams<{ slug: string }>()
+  const [searchParams] = useSearchParams()
   const { t } = useTranslation()
   const labels = useLabels()
 
@@ -197,6 +198,8 @@ export default function BookingPage() {
   })
 
   const business = businessQuery.data
+  const presetServiceId = Number(searchParams.get('service'))
+  const presetApplied = useRef(false)
   const servicesQuery = useQuery<PublicServiceOut[]>({
     queryKey: ['public-booking', slug, 'services'],
     queryFn: async () => {
@@ -206,6 +209,15 @@ export default function BookingPage() {
     enabled: Boolean(business),
     retry: false,
   })
+
+  useEffect(() => {
+    if (presetApplied.current || !Number.isInteger(presetServiceId) || presetServiceId <= 0) return
+    const match = servicesQuery.data?.find((service) => service.id === presetServiceId)
+    if (!match) return
+    presetApplied.current = true
+    setSelectedService(match)
+    setStep('staff')
+  }, [presetServiceId, servicesQuery.data])
 
   const staffQuery = useQuery<PublicStaffOut[]>({
     queryKey: ['public-booking', slug, 'staff', selectedService?.id ?? null],

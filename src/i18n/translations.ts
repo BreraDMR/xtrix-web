@@ -1,4 +1,61 @@
 export type TranslationKey =
+  | 'portal.title'
+  | 'portal.login.title'
+  | 'portal.login.subtitle'
+  | 'portal.login.salon'
+  | 'portal.login.salonHint'
+  | 'portal.login.email'
+  | 'portal.login.submit'
+  | 'portal.login.sending'
+  | 'portal.login.sentTitle'
+  | 'portal.login.sent'
+  | 'portal.login.another'
+  | 'portal.login.verifying'
+  | 'portal.login.invalidLink'
+  | 'portal.login.failed'
+  | 'portal.login.needSalon'
+  | 'portal.signedInAs'
+  | 'portal.logout'
+  | 'portal.upcoming'
+  | 'portal.past'
+  | 'portal.noUpcoming'
+  | 'portal.noPast'
+  | 'portal.manage'
+  | 'portal.openingManage'
+  | 'portal.manageError'
+  | 'portal.manageHint'
+  | 'portal.bookAgain'
+  | 'portal.bookingDisabled'
+  | 'portal.loyalty.title'
+  | 'portal.loyalty.points'
+  | 'portal.loyalty.cashback'
+  | 'portal.loyalty.level'
+  | 'portal.loyalty.benefits'
+  | 'portal.loyalty.empty'
+  | 'portal.forms.title'
+  | 'portal.forms.empty'
+  | 'portal.forms.version'
+  | 'portal.forms.answers'
+  | 'portal.forms.noAnswers'
+  | 'portal.sessionExpiredTitle'
+  | 'portal.sessionExpiredText'
+  | 'portal.goToLogin'
+  | 'portal.loadError'
+  | 'portal.visitNumber'
+  | 'legacy.title'
+  | 'legacy.subtitle'
+  | 'legacy.pin'
+  | 'legacy.show'
+  | 'legacy.showing'
+  | 'legacy.invalid'
+  | 'legacy.locked'
+  | 'legacy.missingCode'
+  | 'legacy.client'
+  | 'legacy.visits'
+  | 'legacy.noVisits'
+  | 'legacy.back'
+  | 'legacy.qr'
+  | 'legacy.qrHint'
   | 'visits.savedLoyaltyWarning'
   | 'validation.visitEnd'
   | 'validation.commission'
@@ -1676,6 +1733,63 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.newBooking": {"en": "Book another time", "ru": "Записаться ещё раз", "cz": "Rezervovat další termín"},
   "booking.manageLink": {"en": "Manage this booking", "ru": "Управление записью", "cz": "Spravovat rezervaci"},
   "booking.manageHint": {"en": "Save this link: you can confirm, reschedule or cancel the visit there.", "ru": "Сохраните ссылку: по ней можно подтвердить, перенести или отменить визит.", "cz": "Uložte si odkaz: můžete tam návštěvu potvrdit, přeložit nebo zrušit."},
+  "portal.title": {"en": "Client area", "ru": "Кабинет клиента", "cz": "Klientský portál"},
+  "portal.login.title": {"en": "Sign in to your client area", "ru": "Вход в кабинет клиента", "cz": "Přihlášení do klientského portálu"},
+  "portal.login.subtitle": {"en": "See your visits, points and questionnaires. Sign-in is by a one-time link — no password needed.", "ru": "Смотрите свои визиты, баллы и анкеты. Вход по одноразовой ссылке — пароль не нужен.", "cz": "Prohlédněte si návštěvy, body a dotazníky. Přihlášení je jednorázovým odkazem — bez hesla."},
+  "portal.login.salon": {"en": "Salon code", "ru": "Код салона", "cz": "Kód salonu"},
+  "portal.login.salonHint": {"en": "It is in the address of the page the salon shared with you.", "ru": "Он есть в адресе страницы, которую прислал салон.", "cz": "Najdete ho v adrese stránky, kterou vám salon poslal."},
+  "portal.login.email": {"en": "Email", "ru": "Email", "cz": "E-mail"},
+  "portal.login.submit": {"en": "Email me a sign-in link", "ru": "Отправить ссылку для входа", "cz": "Poslat odkaz pro přihlášení"},
+  "portal.login.sending": {"en": "Sending...", "ru": "Отправляю...", "cz": "Odesílám..."},
+  "portal.login.sentTitle": {"en": "Check your email", "ru": "Проверьте почту", "cz": "Zkontrolujte e-mail"},
+  "portal.login.sent": {"en": "If this email belongs to a client of the salon, a sign-in link has been sent. It is valid for 30 minutes and can be used once.", "ru": "Если этот email принадлежит клиенту салона, ссылка для входа отправлена. Она действует 30 минут и может быть использована один раз.", "cz": "Pokud tento e-mail patří klientovi salonu, odkaz pro přihlášení byl odeslán. Je platný 30 minut a lze jej použít jednou."},
+  "portal.login.another": {"en": "Use another email", "ru": "Использовать другой email", "cz": "Použít jiný e-mail"},
+  "portal.login.verifying": {"en": "Opening your client area...", "ru": "Открываю кабинет...", "cz": "Otevírám klientský portál..."},
+  "portal.login.invalidLink": {"en": "This sign-in link is invalid, has expired, or has already been used. Request a new one.", "ru": "Ссылка для входа недействительна, истекла или уже использована. Запросите новую.", "cz": "Tento odkaz pro přihlášení je neplatný, vypršel nebo byl již použit. Vyžádejte si nový."},
+  "portal.login.failed": {"en": "Couldn't send the sign-in link. Try again.", "ru": "Не удалось отправить ссылку для входа. Попробуйте ещё раз.", "cz": "Odkaz pro přihlášení se nepodařilo odeslat. Zkuste to znovu."},
+  "portal.login.needSalon": {"en": "Open the personal link from the salon's email. To get a new one, enter the salon code and your email.", "ru": "Откройте личную ссылку из письма салона. Чтобы получить новую, укажите код салона и свой email.", "cz": "Otevřete osobní odkaz z e-mailu salonu. Pro nový odkaz zadejte kód salonu a svůj e-mail."},
+  "portal.signedInAs": {"en": "Signed in as", "ru": "Вы вошли как", "cz": "Přihlášen jako"},
+  "portal.logout": {"en": "Sign out", "ru": "Выйти", "cz": "Odhlásit se"},
+  "portal.upcoming": {"en": "Upcoming visits", "ru": "Предстоящие визиты", "cz": "Nadcházející návštěvy"},
+  "portal.past": {"en": "Past visits", "ru": "Прошлые визиты", "cz": "Proběhlé návštěvy"},
+  "portal.noUpcoming": {"en": "No upcoming visits.", "ru": "Предстоящих визитов нет.", "cz": "Žádné nadcházející návštěvy."},
+  "portal.noPast": {"en": "No past visits yet.", "ru": "Прошлых визитов пока нет.", "cz": "Zatím žádné proběhlé návštěvy."},
+  "portal.manage": {"en": "Manage booking", "ru": "Управление записью", "cz": "Spravovat rezervaci"},
+  "portal.openingManage": {"en": "Opening...", "ru": "Открываю...", "cz": "Otevírám..."},
+  "portal.manageError": {"en": "Couldn't open booking management. Try again.", "ru": "Не удалось открыть управление записью. Попробуйте ещё раз.", "cz": "Správu rezervace se nepodařilo otevřít. Zkuste to znovu."},
+  "portal.manageHint": {"en": "Rescheduling and cancellation follow the salon's booking rules.", "ru": "Перенос и отмена выполняются по правилам салона.", "cz": "Přeložení a zrušení se řídí pravidly salonu."},
+  "portal.bookAgain": {"en": "Book again", "ru": "Записаться снова", "cz": "Rezervovat znovu"},
+  "portal.bookingDisabled": {"en": "Online booking is currently off. Contact the salon to book again.", "ru": "Онлайн-запись сейчас выключена. Свяжитесь с салоном, чтобы записаться снова.", "cz": "Online rezervace je momentálně vypnutá. Pro novou rezervaci kontaktujte salon."},
+  "portal.loyalty.title": {"en": "Loyalty", "ru": "Лояльность", "cz": "Věrnostní program"},
+  "portal.loyalty.points": {"en": "Points", "ru": "Баллы", "cz": "Body"},
+  "portal.loyalty.cashback": {"en": "Cashback", "ru": "Кэшбэк", "cz": "Cashback"},
+  "portal.loyalty.level": {"en": "Level", "ru": "Уровень", "cz": "Úroveň"},
+  "portal.loyalty.benefits": {"en": "Benefits", "ru": "Привилегии", "cz": "Výhody"},
+  "portal.loyalty.empty": {"en": "The salon hasn't added loyalty points yet.", "ru": "Салон пока не начислил баллы.", "cz": "Salon zatím nepřidal věrnostní body."},
+  "portal.forms.title": {"en": "My questionnaires", "ru": "Мои анкеты", "cz": "Moje dotazníky"},
+  "portal.forms.empty": {"en": "No submitted questionnaires.", "ru": "Заполненных анкет нет.", "cz": "Žádné vyplněné dotazníky."},
+  "portal.forms.version": {"en": "Version", "ru": "Версия", "cz": "Verze"},
+  "portal.forms.answers": {"en": "Answers", "ru": "Ответы", "cz": "Odpovědi"},
+  "portal.forms.noAnswers": {"en": "No answers", "ru": "Нет ответов", "cz": "Žádné odpovědi"},
+  "portal.sessionExpiredTitle": {"en": "Session ended", "ru": "Сессия завершена", "cz": "Relace skončila"},
+  "portal.sessionExpiredText": {"en": "The client session is invalid or has expired. Request a new sign-in link.", "ru": "Клиентская сессия недействительна или истекла. Запросите новую ссылку для входа.", "cz": "Klientská relace je neplatná nebo vypršela. Vyžádejte si nový odkaz pro přihlášení."},
+  "portal.goToLogin": {"en": "Go to sign-in", "ru": "Перейти ко входу", "cz": "Přejít k přihlášení"},
+  "portal.loadError": {"en": "Couldn't load your client area.", "ru": "Не удалось загрузить кабинет.", "cz": "Klientský portál se nepodařilo načíst."},
+  "portal.visitNumber": {"en": "Visit", "ru": "Визит", "cz": "Návštěva"},
+  "legacy.title": {"en": "Visit history", "ru": "История визитов", "cz": "Historie návštěv"},
+  "legacy.subtitle": {"en": "Enter the PIN from the salon to see the visits linked to this QR code.", "ru": "Введите PIN от салона, чтобы увидеть визиты, привязанные к этому QR-коду.", "cz": "Zadejte PIN od salonu pro zobrazení návštěv spojených s tímto QR kódem."},
+  "legacy.pin": {"en": "PIN", "ru": "PIN", "cz": "PIN"},
+  "legacy.show": {"en": "Show history", "ru": "Показать историю", "cz": "Zobrazit historii"},
+  "legacy.showing": {"en": "Checking...", "ru": "Проверяю...", "cz": "Ověřuji..."},
+  "legacy.invalid": {"en": "The QR code or PIN is invalid. Check the PIN and try again.", "ru": "QR-код или PIN неверный. Проверьте PIN и попробуйте ещё раз.", "cz": "QR kód nebo PIN je neplatný. Zkontrolujte PIN a zkuste to znovu."},
+  "legacy.locked": {"en": "Too many attempts. Try again later or ask the salon.", "ru": "Слишком много попыток. Попробуйте позже или обратитесь в салон.", "cz": "Příliš mnoho pokusů. Zkuste to později nebo kontaktujte salon."},
+  "legacy.missingCode": {"en": "This page needs a QR code from the salon.", "ru": "Для этой страницы нужен QR-код от салона.", "cz": "Tato stránka vyžaduje QR kód od salonu."},
+  "legacy.client": {"en": "Client", "ru": "Клиент", "cz": "Klient"},
+  "legacy.visits": {"en": "Visits", "ru": "Визиты", "cz": "Návštěvy"},
+  "legacy.noVisits": {"en": "No visits yet.", "ru": "Визитов пока нет.", "cz": "Zatím žádné návštěvy."},
+  "legacy.back": {"en": "Client area", "ru": "Кабинет клиента", "cz": "Klientský portál"},
+  "legacy.qr": {"en": "QR code", "ru": "QR-код", "cz": "QR kód"},
+  "legacy.qrHint": {"en": "It is filled in from the link. You can paste it manually if needed.", "ru": "Подставляется из ссылки. При необходимости вставьте вручную.", "cz": "Vyplní se z odkazu. V případě potřeby jej vložte ručně."},
   "validation.code.invalid_assistant_name": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
   "field.assistant_name": {"en": "Assistant name", "ru": "Имя помощника", "cz": "Jméno asistenta"},
   "field.assistant_gender": {"en": "Assistant gender", "ru": "Род помощника", "cz": "Rod asistenta"},

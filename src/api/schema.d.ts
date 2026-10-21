@@ -2061,6 +2061,142 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/public/client-portal/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke the visitor session */
+        post: operations["logout_public_client_portal_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/client-portal/loyalty": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the client's own points and level */
+        get: operations["read_portal_loyalty_public_client_portal_loyalty_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/client-portal/questionnaires": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List questionnaires the client submitted */
+        get: operations["list_portal_questionnaires_public_client_portal_questionnaires_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/client-portal/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the current visitor session */
+        get: operations["read_portal_session_public_client_portal_session_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/client-portal/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Exchange a one-time link for a limited visitor session */
+        post: operations["verify_portal_link_public_client_portal_verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/client-portal/visits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the client's own upcoming and past visits */
+        get: operations["list_portal_visits_public_client_portal_visits_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/client-portal/visits/{visit_id}/manage-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Issue a guest management token for one of the client's visits */
+        post: operations["create_portal_manage_link_public_client_portal_visits__visit_id__manage_link_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/client-portal/{slug}/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Email a one-time visitor portal sign-in link */
+        post: operations["request_portal_link_public_client_portal__slug__request_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/public/questionnaires": {
         parameters: {
             query?: never;
@@ -3720,6 +3856,159 @@ export interface components {
             specialist_name?: string | null;
             /** Status */
             status: string;
+        };
+        /** ClientPortalLoginIn */
+        ClientPortalLoginIn: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+        };
+        /** ClientPortalLoyaltyOut */
+        ClientPortalLoyaltyOut: {
+            /** Cashback */
+            cashback: number;
+            /** Level Benefits */
+            level_benefits?: string | null;
+            /** Level Name */
+            level_name?: string | null;
+            /** Points */
+            points: number;
+        };
+        /** ClientPortalManageLinkOut */
+        ClientPortalManageLinkOut: {
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Token */
+            token: string;
+        };
+        /** ClientPortalMessageOut */
+        ClientPortalMessageOut: {
+            /** Message */
+            message: string;
+        };
+        /** ClientPortalQuestionnaireOut */
+        ClientPortalQuestionnaireOut: {
+            /** Answers */
+            answers: {
+                [key: string]: unknown;
+            };
+            /** Fields */
+            fields: {
+                [key: string]: unknown;
+            }[];
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+            /** Version */
+            version: number;
+            /** Visit Id */
+            visit_id: number;
+        };
+        /** ClientPortalQuestionnairesOut */
+        ClientPortalQuestionnairesOut: {
+            /** Items */
+            items: components["schemas"]["ClientPortalQuestionnaireOut"][];
+        };
+        /** ClientPortalSessionInfoOut */
+        ClientPortalSessionInfoOut: {
+            /** Business Name */
+            business_name: string;
+            /** Business Slug */
+            business_slug?: string | null;
+            /** Client Name */
+            client_name: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Language
+             * @default en
+             */
+            language: string;
+        };
+        /** ClientPortalSessionOut */
+        ClientPortalSessionOut: {
+            /** Business Name */
+            business_name: string;
+            /** Business Slug */
+            business_slug?: string | null;
+            /** Client Name */
+            client_name: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /**
+             * Language
+             * @default en
+             */
+            language: string;
+            /** Session Token */
+            session_token: string;
+        };
+        /** ClientPortalVerifyIn */
+        ClientPortalVerifyIn: {
+            /** Token */
+            token: string;
+        };
+        /** ClientPortalVisitOut */
+        ClientPortalVisitOut: {
+            /**
+             * Can Manage
+             * @default false
+             */
+            can_manage: boolean;
+            /** Date End */
+            date_end?: string | null;
+            /**
+             * Date Start
+             * Format: date-time
+             */
+            date_start: string;
+            /** Id */
+            id: number;
+            /** Price */
+            price?: number | null;
+            /** Service Id */
+            service_id?: number | null;
+            /** Service Name */
+            service_name?: string | null;
+            /** Staff Name */
+            staff_name?: string | null;
+            /** Status */
+            status: string;
+        };
+        /** ClientPortalVisitsOut */
+        ClientPortalVisitsOut: {
+            /**
+             * Booking Enabled
+             * @default false
+             */
+            booking_enabled: boolean;
+            /** Booking Slug */
+            booking_slug?: string | null;
+            /** Currency */
+            currency: string;
+            /** Past */
+            past: components["schemas"]["ClientPortalVisitOut"][];
+            /** Timezone */
+            timezone: string;
+            /** Upcoming */
+            upcoming: components["schemas"]["ClientPortalVisitOut"][];
         };
         /** ClientProfileOut */
         ClientProfileOut: {
@@ -13340,6 +13629,272 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicStaffOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    logout_public_client_portal_logout_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Portal-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientPortalMessageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_portal_loyalty_public_client_portal_loyalty_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Portal-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientPortalLoyaltyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_portal_questionnaires_public_client_portal_questionnaires_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Portal-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientPortalQuestionnairesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_portal_session_public_client_portal_session_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Portal-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientPortalSessionInfoOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_portal_link_public_client_portal_verify_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientPortalVerifyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientPortalSessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_portal_visits_public_client_portal_visits_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Portal-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientPortalVisitsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_portal_manage_link_public_client_portal_visits__visit_id__manage_link_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Portal-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientPortalManageLinkOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_portal_link_public_client_portal__slug__request_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientPortalLoginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientPortalMessageOut"];
                 };
             };
             /** @description Validation Error */
