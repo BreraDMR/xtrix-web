@@ -89,11 +89,18 @@ function newEditable(type: QuestionnaireFieldType): EditableField {
 
 // same rules as the API: plain text, no HTML and no control characters on single lines
 function isPlainLine(value: string): boolean {
-  return !/[\u0000-\u001F\u007F<>]/.test(value)
+  return !Array.from(value).some((char) => {
+    const code = char.charCodeAt(0)
+    return code < 0x20 || code === 0x7f || char === '<' || char === '>'
+  })
 }
 
 function isPlainText(value: string): boolean {
-  return !/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F<>]/.test(value)
+  return !Array.from(value).some((char) => {
+    const code = char.charCodeAt(0)
+    const control = code < 0x20 && code !== 0x09 && code !== 0x0a && code !== 0x0d
+    return control || code === 0x7f || char === '<' || char === '>'
+  })
 }
 
 function slug(value: string): string {

@@ -115,9 +115,13 @@ function answerErrorText(code: string, t: (key: TranslationKey, fallback?: strin
 }
 
 function hasControlChars(value: string, multiline: boolean): boolean {
-  return multiline
-    ? /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/.test(value)
-    : /[\u0000-\u001F\u007F]/.test(value)
+  return Array.from(value).some((char) => {
+    const code = char.charCodeAt(0)
+    if (multiline) {
+      return (code < 0x20 && code !== 0x09 && code !== 0x0a && code !== 0x0d) || code === 0x7f
+    }
+    return code < 0x20 || code === 0x7f
+  })
 }
 
 function validateAnswers(fields: QuestionnaireField[], answers: AnswerMap): Record<string, string> {
