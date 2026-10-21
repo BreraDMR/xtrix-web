@@ -68,3 +68,15 @@ export const isValidTimeWindow = (start: string, end: string, minMinutes = 60): 
   const [endHour, endMinute] = end.split(':').map(Number)
   return (endHour * 60 + endMinute) - (startHour * 60 + startMinute) >= minMinutes
 }
+
+// the business time zone decides which calendar day an instant belongs to
+export function zonedDayKey(value: Date, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(value)
+  const pick = (type: string) => parts.find((part) => part.type === type)?.value ?? ''
+  return `${pick('year')}-${pick('month')}-${pick('day')}`
+}

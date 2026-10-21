@@ -3,10 +3,10 @@ import { addDays, format } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
 import DayGrid, {
   HourAxis,
-  zonedDayKey,
   type CalendarVisit,
   type MovePreview,
 } from './DayGrid'
+import { zonedDayKey } from '../../utils/dates'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
 

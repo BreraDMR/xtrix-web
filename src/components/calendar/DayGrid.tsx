@@ -6,7 +6,7 @@ import { useLabels } from '../../i18n/labels'
 import { useLocaleStore } from '../../store/localeStore'
 import { useBusinessCurrency } from '../../hooks/useBusinessCurrency'
 import { formatCurrency } from '../../utils/currency'
-import { isoToZonedWallTime } from '../../utils/dates'
+import { isoToZonedWallTime, zonedDayKey } from '../../utils/dates'
 import type { DayOverlay, MinuteInterval } from './schedule'
 import type { VisitOut } from '../../api/types'
 
@@ -49,18 +49,6 @@ const HOURS_IN_DAY = 24
 const DEFAULT_HOUR_HEIGHT = 64
 const FALLBACK_MINUTES = 60
 const DRAG_MIME = 'application/x-xtrix-visit'
-
-// the business time zone decides which calendar day an instant belongs to
-export function zonedDayKey(value: Date, timeZone: string): string {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).formatToParts(value)
-  const pick = (type: string) => parts.find((part) => part.type === type)?.value ?? ''
-  return `${pick('year')}-${pick('month')}-${pick('day')}`
-}
 
 const hhmmToMinutes = (value: string): number => {
   const [hour, minute] = value.split(':').map(Number)
