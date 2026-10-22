@@ -6,6 +6,7 @@ import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Tabs from '../ui/Tabs'
+import { formatDays } from '../utils/plural'
 import LoyaltyAnalytics from './LoyaltyAnalytics'
 import GiftOffers from '../components/loyalty/GiftOffers'
 import { showDay } from '../utils/dates'
@@ -184,7 +185,7 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
 }
 
 export default function Loyalty() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<TabType>('program')
@@ -511,7 +512,7 @@ export default function Loyalty() {
                 {program.points_expiry_days && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('loyalty.points_expiry_days')}</label>
-                    <p className="text-gray-900 dark:text-gray-100">{program.points_expiry_days} {t('common.days')}</p>
+                    <p className="text-gray-900 dark:text-gray-100">{formatDays(program.points_expiry_days, locale)}</p>
                   </div>
                 )}
               </div>

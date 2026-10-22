@@ -11,6 +11,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import CheckoutReturn from '../components/CheckoutReturn'
 import TrialBanner from '../components/TrialBanner'
 import { useLabels } from '../i18n/labels'
+import { formatDays } from '../utils/plural'
 import type { Schema, EntitlementsUsageOut } from '../api/types'
 
 type Subscription = Schema<'SubscriptionOut'>
@@ -34,7 +35,7 @@ export default function Subscription() {
 }
 
 function LegacySubscription() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const { user } = useAuthStore()
   const labels = useLabels()
   const queryClient = useQueryClient()
@@ -396,7 +397,7 @@ function LegacySubscription() {
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">{t('subscription.cancellation_date')}:</span>
                 <span className="font-medium text-orange-600">
-                  {formatDate(subscription.current_period_end)} ({getDaysRemaining(subscription.current_period_end)} {t('subscription.days_remaining')})
+                  {formatDate(subscription.current_period_end)} ({t('subscription.days_remaining').replace('{days}', formatDays(getDaysRemaining(subscription.current_period_end) ?? 0, locale))})
                 </span>
               </div>
             )}
@@ -410,7 +411,7 @@ function LegacySubscription() {
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">{t('subscription.trialEnds')}:</span>
                     <span className="font-medium">
-                      {formatDate(subscription.trial_end)} ({getDaysRemaining(subscription.trial_end)} {t('subscription.days_remaining')})
+                      {formatDate(subscription.trial_end)} ({t('subscription.days_remaining').replace('{days}', formatDays(getDaysRemaining(subscription.trial_end) ?? 0, locale))})
                     </span>
                   </div>
                 )}
@@ -489,7 +490,7 @@ function LegacySubscription() {
                   <span className="text-gray-600 dark:text-gray-400">{t(plan.period_days >= 365 ? 'subscription.per_year' : 'subscription.per_month')}</span>
                 </div>
                 <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                  <p>{t('subscription.period_days')}: {plan.period_days} {t('common.days')}</p>
+                  <p>{t('subscription.period_days')}: {formatDays(plan.period_days, locale)}</p>
                 </div>
                 <button
                   onClick={() => handleSubscribe(plan.id)}
