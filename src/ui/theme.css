@@ -134,3 +134,18 @@
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* Older screens paint the accent with blue/purple/primary utilities and often skip the dark:
+   variant, so on the dark theme they end up dark green on dark green. Lift them to the tokens. */
+:root.dark :is(.text-blue-600, .text-blue-700, .text-blue-800, .text-blue-900,
+  .text-purple-600, .text-purple-700, .text-purple-800, .text-purple-900,
+  .text-primary-600, .text-primary-700, .text-primary-800, .text-primary-900) {
+  color: var(--workspace-accent);
+}
+:root.dark :is(.bg-blue-50, .bg-blue-100, .bg-purple-50, .bg-purple-100, .bg-primary-50, .bg-primary-100) {
+  background-color: var(--workspace-accent-soft);
+}
+:root.dark :is(.border-blue-200, .border-blue-300, .border-purple-200, .border-purple-300,
+  .border-primary-200, .border-primary-300) {
+  border-color: var(--workspace-line);
+}
