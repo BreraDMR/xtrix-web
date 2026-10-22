@@ -163,10 +163,7 @@ export default function Services() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--workspace-line)]">
-              {isError ? <tr><td colSpan={4}><QueryError retry={refetch} /></td></tr>
-                : isLoading ? <tr><td colSpan={4} className="py-8"><LoadingSpinner /></td></tr>
-                  : paginatedData.length === 0 ? <tr><td colSpan={4} className="px-5 py-10 text-center text-sm text-[var(--workspace-muted)]">{searchQuery || activeFilter ? t('services.noServicesMatch') : t('services.noServicesFound')}</td></tr>
-                    : paginatedData.map(service => <tr key={service.id} className="hover:bg-[var(--workspace-bg)]">
+              {!isError && !isLoading && paginatedData.map(service => <tr key={service.id} className="hover:bg-[var(--workspace-bg)]">
                       <td className="px-4 py-3 sm:px-5">
                         {canEdit ? <button type="button" onClick={() => handleEdit(service.id)} aria-label={`${t('common.edit')}: ${service.name}`}
                           className="inline-flex max-w-full items-center gap-2 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
@@ -181,6 +178,10 @@ export default function Services() {
                     </tr>)}
             </tbody>
           </table>
+          {/* states sit outside the table: a colSpan over columns hidden on a phone squeezed the name column */}
+          {isError ? <QueryError retry={refetch} />
+            : isLoading ? <div className="py-8"><LoadingSpinner /></div>
+              : paginatedData.length === 0 && <p className="px-5 py-10 text-center text-sm text-[var(--workspace-muted)]">{searchQuery || activeFilter ? t('services.noServicesMatch') : t('services.noServicesFound')}</p>}
         </div>
         {!isLoading && !isError && (totalPages > 1 ? <TablePagination currentPage={currentPage} totalPages={totalPages} totalItems={totalItems}
           perPage={perPage} onPageChange={setCurrentPage} onPerPageChange={value => { setPerPage(value); setCurrentPage(1) }} />

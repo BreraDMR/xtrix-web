@@ -345,17 +345,7 @@ export default function Clients() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--workspace-line)]">
-              {isError ? (
-                <tr><td colSpan={4}><QueryError retry={refetch} /></td></tr>
-              ) : isLoading ? (
-                <tr><td colSpan={4} className="py-8"><LoadingSpinner /></td></tr>
-              ) : paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-4 sm:px-5 py-4 text-center text-[var(--workspace-muted)]">
-                    {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
-                  </td>
-                </tr>
-              ) : (
+              {!isError && !isLoading && (
                 paginatedData.map((client) => (
                 <tr key={client.id} className="hover:bg-[var(--workspace-bg)]">
                   <td className="px-4 py-3 text-sm font-medium sm:px-5">
@@ -383,6 +373,14 @@ export default function Clients() {
               )}
             </tbody>
           </table>
+          {/* states sit outside the table: a colSpan over columns hidden on a phone squeezed the name column */}
+          {isError ? <QueryError retry={refetch} />
+            : isLoading ? <div className="py-8"><LoadingSpinner /></div>
+              : paginatedData.length === 0 && (
+                <p className="px-4 py-4 text-center text-[var(--workspace-muted)] sm:px-5">
+                  {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
+                </p>
+              )}
         </div>
         {totalPages > 1 ? (
           <TablePagination

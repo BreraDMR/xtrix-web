@@ -166,7 +166,7 @@ export default function Inventory() {
 
         <div className="overflow-x-auto">
           <table className="w-full table-fixed">
-            <thead className="bg-[var(--workspace-bg)] text-left text-xs font-medium text-[var(--workspace-muted)]">
+            <thead className="bg-[var(--workspace-bg)] text-left text-xs font-medium uppercase tracking-wide text-[var(--workspace-muted)]">
               <tr>
                 <th className="px-3 py-3 sm:px-5">{t('inventory.name')}</th>
                 <th className="hidden w-[15%] px-4 py-3 md:table-cell">{t('inventory.category')}</th>
@@ -177,10 +177,7 @@ export default function Inventory() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--workspace-line)]">
-              {isError ? <tr><td colSpan={canManage ? 6 : 5}><QueryError retry={refetch} /></td></tr>
-                : isLoading ? <tr><td colSpan={canManage ? 6 : 5} className="py-8"><LoadingSpinner /></td></tr>
-                  : rows.length === 0 ? <tr><td colSpan={canManage ? 6 : 5} className="px-4 py-10 text-center text-sm text-[var(--workspace-muted)]">{t('inventory.no_products')}</td></tr>
-                    : rows.map(product => <tr key={product.id} className="hover:bg-[var(--workspace-bg)]">
+              {!isError && !isLoading && rows.map(product => <tr key={product.id} className="hover:bg-[var(--workspace-bg)]">
                       <td className="px-3 py-3 sm:px-5">
                         {canManage ? <button type="button" aria-label={`${t('inventory.edit')}: ${product.name}`} onClick={() => setShowEditForm(product)}
                           className="inline-flex max-w-full items-center gap-1.5 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
@@ -210,6 +207,10 @@ export default function Inventory() {
                     </tr>)}
             </tbody>
           </table>
+          {/* states live outside the table: a colSpan over columns hidden on a phone squeezed the name column */}
+          {isError ? <QueryError retry={refetch} />
+            : isLoading ? <div className="py-8"><LoadingSpinner /></div>
+              : rows.length === 0 && <p className="px-4 py-10 text-center text-sm text-[var(--workspace-muted)]">{t('inventory.no_products')}</p>}
         </div>
       </Card>
 
