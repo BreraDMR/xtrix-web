@@ -27,4 +27,24 @@ describe('ExportModal', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Error during export. Please try again.')
     expect(onClose).not.toHaveBeenCalled()
   })
+
+  it('loads the complete selection before generating the file', async () => {
+    const rows = Array.from({ length: 125 }, (_, id) => ({ id }))
+    const loadData = vi.fn(async () => rows)
+    renderWithProviders(<ExportModal isOpen onClose={vi.fn()} data={rows.slice(0, 20)}
+      loadData={loadData} totalItems={125} columns={[{ key: 'id', label: 'ID' }]} filename="clients" />)
+    expect(screen.getByText('125 items')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /export/i }))
+    expect(loadData).toHaveBeenCalledOnce()
+    expect(exportData).toHaveBeenCalledWith(expect.objectContaining({ data: rows }))
+  })
+
+  it('does not generate a partial file when a later page fails', async () => {
+    renderWithProviders(<ExportModal isOpen onClose={vi.fn()} data={[{ id: 1 }]}
+      loadData={async () => { throw new Error('Page 2 failed') }} totalItems={125}
+      columns={[{ key: 'id', label: 'ID' }]} filename="clients" />)
+    await userEvent.click(screen.getByRole('button', { name: /export/i }))
+    expect(await screen.findByRole('alert')).toBeInTheDocument()
+    expect(exportData).not.toHaveBeenCalled()
+  })
 })

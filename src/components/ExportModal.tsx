@@ -10,6 +10,8 @@ interface ExportModalProps<T extends object> {
   isOpen: boolean
   onClose: () => void
   data: T[]
+  loadData?: () => Promise<T[]>
+  totalItems?: number
   columns: ExportColumn<T>[]
   filename: string
   title?: string
@@ -24,6 +26,8 @@ export default function ExportModal<T extends object>({
   isOpen,
   onClose,
   data,
+  loadData,
+  totalItems,
   columns,
   filename,
   title,
@@ -59,7 +63,7 @@ export default function ExportModal<T extends object>({
 
     try {
       const options: ExportOptions<T> = {
-        data,
+        data: loadData ? await loadData() : data,
         columns,
         filename: `${filename}-${selectedFormat}`,
         title: title || selectedReportType || undefined,
@@ -208,7 +212,7 @@ export default function ExportModal<T extends object>({
           {}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
             <div className="font-medium mb-1">{t('export.itemsCount')}:</div>
-            <div>{data.length} {t('export.items')}</div>
+            <div>{totalItems ?? data.length} {t('export.items')}</div>
           </div>
         </div>
 

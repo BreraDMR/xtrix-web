@@ -16,6 +16,8 @@ interface ExportButtonProps<T extends object> {
   chartSelectors?: string[]
   dataType?: 'all' | 'filtered' | 'selected'
   selectedRows?: T[]
+  loadData?: () => Promise<T[]>
+  totalItems?: number
 }
 
 export default function ExportButton<T extends object>({
@@ -29,6 +31,8 @@ export default function ExportButton<T extends object>({
   chartSelectors = [],
   dataType = 'all',
   selectedRows,
+  loadData,
+  totalItems,
 }: ExportButtonProps<T>) {
   const { t } = useTranslation()
   const access = useWorkspaceAccessContext()
@@ -54,6 +58,8 @@ export default function ExportButton<T extends object>({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         data={exportData}
+        loadData={dataType === 'selected' ? undefined : loadData}
+        totalItems={dataType === 'selected' ? exportData.length : totalItems}
         columns={columns}
         filename={filename}
         title={title}
