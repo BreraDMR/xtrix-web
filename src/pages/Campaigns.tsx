@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
+import { HiOutlineSpeakerphone } from 'react-icons/hi'
+import EmptyState from '../components/EmptyState'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
 import TablePagination from '../components/TablePagination'
@@ -370,14 +372,25 @@ export default function Campaigns() {
     <div className="space-y-5">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">{t('campaigns.title')}</h1>
-          <p className="mt-1 max-w-3xl text-sm text-slate-500 dark:text-gray-400">
+          <h1 className="page-title">{t('campaigns.title')}</h1>
+          <p className="page-subtitle max-w-3xl">
             {t('campaigns.description')}
           </p>
         </div>
         <Button onClick={openCreate}>{t('campaigns.new')}</Button>
       </header>
 
+      {campaigns.length === 0 && page === 1 ? (
+        // nothing to pick yet, so one clear empty state instead of a list next to a blank panel
+        <Card>
+          <EmptyState
+            icon={<HiOutlineSpeakerphone className="h-10 w-10" />}
+            title={t('campaigns.emptyTitle')}
+            description={t('campaigns.emptyHint')}
+            action={<Button onClick={openCreate}>{t('campaigns.new')}</Button>}
+          />
+        </Card>
+      ) : (
       <div className="grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)]">
         <Card className="overflow-hidden p-0">
           {campaigns.length === 0 ? (
@@ -637,6 +650,7 @@ export default function Campaigns() {
           )}
         </div>
       </div>
+      )}
 
       {formOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 sm:items-center">

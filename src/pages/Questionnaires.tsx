@@ -62,7 +62,7 @@ export default function Questionnaires() {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">{t('questionnaires.title')}</h1>
+        <h1 className="page-title">{t('questionnaires.title')}</h1>
         {editor === null && (
           <button
             onClick={() => setEditor('new')}

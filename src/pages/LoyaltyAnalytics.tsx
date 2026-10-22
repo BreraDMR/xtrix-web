@@ -62,7 +62,7 @@ export default function LoyaltyAnalytics() {
     <div className="space-y-6">
       {}
       <div className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-800">
-        <div className="flex gap-4 items-end">
+        <div className="flex flex-wrap gap-4 items-end">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('analytics.date_from')}</label>
             <input

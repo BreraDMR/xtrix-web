@@ -215,8 +215,8 @@ function LegacySubscription() {
 
   if (isStaff) {
     return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">{t('subscription.title')}</h1>
+      <div>
+        <h1 className="page-title mb-6">{t('subscription.title')}</h1>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <p className="text-green-800">{t('subscription.paidByOwner')}</p>
         </div>
@@ -231,7 +231,7 @@ function LegacySubscription() {
 
   if (!isPayer) {
     return (
-      <div className="p-6">
+      <div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-blue-800">
             {t('subscription.notRequired')}
@@ -262,8 +262,8 @@ function LegacySubscription() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">
+    <div>
+      <h1 className="page-title mb-6">
         {t('subscription.title')}
       </h1>
       <CheckoutReturn />

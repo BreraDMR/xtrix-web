@@ -1870,6 +1870,8 @@ export type TranslationKey =
   | 'campaigns.description'
   | 'campaigns.noAccess'
   | 'campaigns.empty'
+  | 'campaigns.emptyTitle'
+  | 'campaigns.emptyHint'
   | 'campaigns.selectPrompt'
   | 'campaigns.new'
   | 'campaigns.edit'
@@ -4844,6 +4846,16 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     en: 'No campaigns yet. Save a draft to see who would receive it.',
     ru: 'Рассылок пока нет. Сохраните черновик, чтобы увидеть получателей.',
     cz: 'Zatím žádné kampaně. Uložte koncept a uvidíte příjemce.',
+  },
+  'campaigns.emptyTitle': {
+    en: 'No campaigns yet',
+    ru: 'Рассылок пока нет',
+    cz: 'Zatím žádné kampaně',
+  },
+  'campaigns.emptyHint': {
+    en: 'Write the first one and save it as a draft - you will see who would receive it before anything is sent.',
+    ru: 'Напишите первую и сохраните черновиком — до отправки будет видно, кто её получит.',
+    cz: 'Napište první a uložte ji jako koncept - před odesláním uvidíte, kdo ji dostane.',
   },
   'campaigns.selectPrompt': {
     en: 'Select a campaign on the left or create a new one.',

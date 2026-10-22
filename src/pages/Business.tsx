@@ -63,7 +63,7 @@ export default function Business() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('business.title')}</h1>
+        <h1 className="page-title">{t('business.title')}</h1>
         {!showForm && !business && (user?.role === 'admin' || user?.role === 'business_owner') && (
           <button
             onClick={() => {

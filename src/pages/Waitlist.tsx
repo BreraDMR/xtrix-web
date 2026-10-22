@@ -115,8 +115,8 @@ export default function Waitlist() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-2xl font-semibold">{t('waitlist.title')}</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('waitlist.subtitle')}</p>
+        <h1 className="page-title">{t('waitlist.title')}</h1>
+        <p className="page-subtitle">{t('waitlist.subtitle')}</p>
       </header>
 
       <section className="rounded-xl border border-slate-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">

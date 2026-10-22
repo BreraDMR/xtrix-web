@@ -86,7 +86,7 @@ export default function SpecialistProfile() {
 
   if (!profile) {
     return (
-      <div className="p-6">
+      <div>
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p className="text-yellow-800">
             {t('specialistProfile.notFound')}
@@ -100,9 +100,9 @@ export default function SpecialistProfile() {
   const isPending = profile.is_verified === 'pending'
 
   return (
-    <div className="p-6">
+    <div>
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{t('specialistProfile.title')}</h1>
+        <h1 className="page-title">{t('specialistProfile.title')}</h1>
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}

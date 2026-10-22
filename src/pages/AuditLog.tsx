@@ -307,8 +307,8 @@ export default function AuditLog() {
     <div className="space-y-5">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">{t('audit.title')}</h1>
-          <p className="mt-1 max-w-3xl text-sm text-slate-500 dark:text-gray-400">
+          <h1 className="page-title">{t('audit.title')}</h1>
+          <p className="page-subtitle max-w-3xl">
             {t('audit.description')}
           </p>
           <p className="mt-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 dark:bg-gray-700 dark:text-gray-300">
