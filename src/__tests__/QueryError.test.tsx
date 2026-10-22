@@ -1,5 +1,5 @@
 import { beforeEach, expect, it, vi } from 'vitest'
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import Clients from '../pages/Clients'
 import Visits from '../pages/Visits'
 import Employees from '../pages/Employees'
@@ -37,8 +37,9 @@ it.each([Visits, Employees, Services, Inventory, Finance, Dashboard])('shows fai
   vi.mocked(api.get).mockRejectedValue(apiError(500, 'failed'))
   renderWithProviders(<Page />)
   // Finance also renders the deposit desk, which may report its own failure first
-  expect(await screen.findByText('Unable to load data')).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument()
+  const message = await screen.findByText('Unable to load data')
+  expect(message).toBeInTheDocument()
+  expect(within(message.closest('[role="alert"]') as HTMLElement).getByRole('button', { name: 'Retry' })).toBeInTheDocument()
 })
 
 it.each([

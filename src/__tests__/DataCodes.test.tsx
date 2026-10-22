@@ -17,14 +17,14 @@ function answer(url: string) {
   if (url.startsWith('/expenses/?')) return Promise.resolve({ data: { items: [
     { id: 5, amount: 1200, currency: 'EUR', expense_date: '2026-10-05T10:00:00Z', payment_method: 'card', category: rent, description: null, source: null },
     { id: 6, amount: 800, currency: 'EUR', expense_date: '2026-10-06T10:00:00Z', payment_method: 'cash', category: { id: 2, name: 'Salaries', code: 'salaries' }, description: 'October', source: 'salary_payment', employee_id: 4 },
-  ] } })
+  ], page: 1, per_page: 100, total: 2, pages: 1 } })
   if (url === '/expenses/reports/profit') return Promise.resolve({ data: { expenses_by_category: [
     { category_id: 1, category_name: 'Rent', category_code: 'rent', color: '#f00', total: 1200 },
-  ] } })
+  ], page: 1, per_page: 100, total: 2, pages: 1 } })
   if (url.startsWith('/products/')) return Promise.resolve({ data: { items: [
     { id: 3, name: 'Shampoo', unit: 'pcs', quantity: 10, min_quantity: 1 },
     { id: 4, name: 'Oil', unit: 'бутылка', quantity: 2, min_quantity: 1 },
-  ] } })
+  ], page: 1, per_page: 100, total: 2, pages: 1 } })
   if (url === '/businesses/me') return Promise.resolve({ data: { id: 1, currency: 'EUR' } })
   return Promise.resolve({ data: [] })
 }

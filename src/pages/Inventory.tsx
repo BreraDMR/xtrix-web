@@ -1,3 +1,5 @@
+import { allPages } from '../api/allPages'
+import type { Schema } from '../api/types'
 import QueryError from '../components/QueryError'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -13,22 +15,7 @@ import ExportButton from '../components/ExportButton'
 import { today } from '../utils/dates'
 import { UNIT_CODES, useLabels } from '../i18n/labels'
 
-interface Product {
-  id: number
-  name: string
-  description?: string
-  unit: string
-  quantity: number
-  min_quantity: number
-  price_per_unit?: number
-  category?: string
-  barcode?: string
-  supplier?: string
-  location?: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
+type Product = Schema<'ProductOut'>
 
 export default function Inventory() {
   const { t } = useTranslation()
@@ -44,19 +31,21 @@ export default function Inventory() {
   const [addQuantityProduct, setAddQuantityProduct] = useState<Product | null>(null)
   const [addQuantityValue, setAddQuantityValue] = useState('')
 
-  const { data: productsResponse, isLoading, isError, refetch } = useQuery({
+  const { data: products, isLoading, isError, refetch } = useQuery({
     queryKey: ['products', searchTerm, lowStockOnly],
-    queryFn: async () => {
+    queryFn: ({ signal }) => allPages<Product>(async page => {
       const params = new URLSearchParams()
       if (searchTerm) params.append('search', searchTerm)
       if (lowStockOnly) params.append('low_stock_only', 'true')
-      const { data } = await api.get(`/products/?${params.toString()}`)
+      params.set('page', String(page))
+      params.set('per_page', '100')
+      const { data } = await api.get<Schema<'PaginatedResponse_ProductOut_'>>(`/products/?${params.toString()}`, { signal })
       return data
-    },
+    }),
   })
 
-  const products: Product[] = productsResponse?.items || []
-  const lowStockProducts = products.filter(p => p.quantity <= p.min_quantity)
+  const rows = products ?? []
+  const lowStockProducts = rows.filter(p => p.quantity <= p.min_quantity)
   
   const createMutation = useMutation({
     mutationFn: async (product: Partial<Product>) => {
@@ -113,12 +102,6 @@ export default function Inventory() {
     },
   })
 
-  if (isError) return <QueryError retry={refetch} />
-
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -169,9 +152,9 @@ export default function Inventory() {
             />
             <span>{t('inventory.low_stock_only')}</span>
           </label>
-          {products.length > 0 && (
+          {rows.length > 0 && !isError && !isLoading && (
             <ExportButton
-              data={products}
+              data={rows}
               columns={[
                 { key: 'name', label: t('inventory.name') },
                 { key: 'description', label: 'Description' },
@@ -198,6 +181,7 @@ export default function Inventory() {
 
       {}
       <div className="bg-white rounded-lg shadow overflow-hidden dark:bg-gray-800">
+        {isError ? <QueryError retry={refetch} /> : isLoading ? <LoadingSpinner /> : (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-900">
@@ -223,14 +207,14 @@ export default function Inventory() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-              {products.length === 0 ? (
+              {rows.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-2 sm:px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     {t('inventory.no_products')}
                   </td>
                 </tr>
               ) : (
-                products.map((product) => (
+                rows.map((product) => (
               <tr
                 key={product.id}
                 className={product.quantity <= product.min_quantity ? 'bg-yellow-50' : ''}
@@ -306,6 +290,7 @@ export default function Inventory() {
             </tbody>
           </table>
         </div>
+        )}
       </div>
 
       {}
@@ -466,7 +451,7 @@ function ProductForm({
               {t('inventory.description')}
             </label>
             <textarea
-              value={formData.description}
+              value={formData.description ?? ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               rows={3}
@@ -495,7 +480,7 @@ function ProductForm({
               </label>
               <input
                 type="text"
-                value={formData.category}
+                value={formData.category ?? ''}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               />
@@ -551,7 +536,7 @@ function ProductForm({
               </label>
               <input
                 type="text"
-                value={formData.barcode}
+                value={formData.barcode ?? ''}
                 onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               />
@@ -562,7 +547,7 @@ function ProductForm({
               </label>
               <input
                 type="text"
-                value={formData.supplier}
+                value={formData.supplier ?? ''}
                 onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
               />
@@ -574,7 +559,7 @@ function ProductForm({
             </label>
             <input
               type="text"
-              value={formData.location}
+              value={formData.location ?? ''}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
             />

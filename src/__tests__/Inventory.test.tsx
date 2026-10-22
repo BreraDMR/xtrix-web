@@ -13,7 +13,7 @@ describe('Inventory deletion', () => {
     resetStores()
     signIn({ id: 1, role: 'business_owner', business_id: 1 })
     vi.mocked(api.get).mockImplementation(routes({
-      '/products/?': { items: [{ id: 3, name: 'Shampoo', unit: 'pcs', quantity: 10, min_quantity: 1 }] },
+      '/products/?': [{ id: 3, name: 'Shampoo', unit: 'pcs', quantity: 10, min_quantity: 1 }],
       '/businesses/me': { id: 1, currency: 'EUR' },
     }))
     vi.mocked(api.delete).mockResolvedValue({ data: {} })
@@ -38,7 +38,7 @@ describe('Inventory product form errors', () => {
     resetStores()
     signIn({ id: 1, role: 'business_owner', business_id: 1 })
     vi.mocked(api.get).mockImplementation(routes({
-      '/products/?': { items: [{ id: 3, name: 'Shampoo', unit: 'pcs', quantity: 10, min_quantity: 1 }] },
+      '/products/?': [{ id: 3, name: 'Shampoo', unit: 'pcs', quantity: 10, min_quantity: 1 }],
       '/businesses/me': { id: 1, currency: 'EUR' },
     }))
   })

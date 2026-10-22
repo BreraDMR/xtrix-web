@@ -57,10 +57,12 @@ export function routes(table: Record<string, unknown>) {
     ...table,
   }
   return ((url: string, config) => {
-    if (!(url in defaults)) return Promise.reject(apiError(404, `no mock for ${url}`))
-    let data: unknown = defaults[url as keyof typeof defaults]
-    if ((url === '/clients/' || url === '/visits/' || url === '/services/') && Array.isArray(data)) {
-      const params = config?.params as Partial<Pick<ClientPage, 'page' | 'per_page'>> | undefined
+    const routeUrl = url.startsWith('/products/?') && '/products/?' in defaults ? '/products/?' : url
+    if (!(routeUrl in defaults)) return Promise.reject(apiError(404, `no mock for ${url}`))
+    let data: unknown = defaults[routeUrl as keyof typeof defaults]
+    if ((url === '/clients/' || url === '/visits/' || url === '/services/' || routeUrl === '/products/?') && Array.isArray(data)) {
+      const urlParams = new URL(url, 'http://test.local').searchParams
+      const params = (config?.params ?? (urlParams.has('page') ? { page: Number(urlParams.get('page')), per_page: Number(urlParams.get('per_page')) } : undefined)) as Partial<Pick<ClientPage, 'page' | 'per_page'>> | undefined
       const page = params?.page ?? 1
       const per_page = params?.per_page ?? 20
       data = { items: data.slice((page - 1) * per_page, page * per_page),

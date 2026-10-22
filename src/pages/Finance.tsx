@@ -1,3 +1,4 @@
+import { allPages } from '../api/allPages'
 import QueryError from '../components/QueryError'
 import { useState, FormEvent } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -60,17 +61,18 @@ export default function Finance() {
     },
   })
 
-  const { data: expensesResponse, isLoading: isLoadingExpenses, isError: queryError1, refetch: retryQuery1 } = useQuery({
+  const { data: expenses, isLoading: isLoadingExpenses, isError: queryError1, refetch: retryQuery1 } = useQuery({
     queryKey: ['expenses', dateFrom, dateTo, selectedCategory],
-    queryFn: async () => {
+    queryFn: ({ signal }) => allPages<Expense>(async page => {
       const params = new URLSearchParams()
       if (selectedCategory) params.append('category_id', selectedCategory.toString())
       if (dateFrom) params.append('date_from', dayStart(dateFrom))
       if (dateTo) params.append('date_to', dayEnd(dateTo))
-      params.append('per_page', '100')
-      const { data } = await api.get(`/expenses/?${params.toString()}`)
+      params.set('per_page', '100')
+      params.set('page', String(page))
+      const { data } = await api.get<Schema<'PaginatedResponse_ExpenseOut_'>>(`/expenses/?${params.toString()}`, { signal })
       return data
-    },
+    }),
   })
 
   const { data: categories, isError: queryError2, refetch: retryQuery2 } = useQuery({
@@ -94,7 +96,7 @@ export default function Finance() {
     },
   })
 
-  const expenses: Expense[] = expensesResponse?.items || []
+  const expenseRows = expenses ?? []
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -106,7 +108,7 @@ export default function Finance() {
     },
   })
 
-  if (queryError0 || queryError1 || queryError2 || queryError3) return <QueryError retry={() => { void retryQuery0(); void retryQuery1(); void retryQuery2(); void retryQuery3() }} />
+  const retryQueries = () => { void retryQuery0(); void retryQuery1(); void retryQuery2(); void retryQuery3() }
 
   return (
     <div className="animate-fade-in">
@@ -127,6 +129,7 @@ export default function Finance() {
 
       {}
 
+      {(queryError0 || queryError1 || queryError2 || queryError3) && <QueryError retry={retryQueries} />}
       <ServicePayments />
 
       <div className="bg-white p-4 rounded-lg shadow-md mb-6 dark:bg-gray-800">
@@ -353,9 +356,9 @@ export default function Finance() {
       <div className="bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('finance.expenses_list')}</h2>
-          {expenses.length > 0 && (
+          {expenseRows.length > 0 && !queryError1 && !isLoadingExpenses && (
             <ExportButton
-              data={expenses}
+              data={expenseRows}
               columns={[
                 { key: 'expense_date', label: t('finance.date'), format: (val) => new Date(val).toLocaleDateString() },
                 { key: 'category', label: t('finance.category'), format: (val) => labels.expenseCategory(val) || '-' },
@@ -371,11 +374,11 @@ export default function Finance() {
             />
           )}
         </div>
-        {isLoadingExpenses ? (
+        {queryError1 ? null : isLoadingExpenses ? (
           <div className="p-8 text-center">
             <LoadingSpinner />
           </div>
-        ) : expenses.length === 0 ? (
+        ) : expenseRows.length === 0 ? (
           <div className="p-8 text-center text-gray-500 dark:text-gray-400">{t('finance.no_expenses')}</div>
         ) : (
           <div className="overflow-x-auto">
@@ -393,7 +396,7 @@ export default function Finance() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                {expenses.map((expense) => (
+                {expenseRows.map((expense) => (
                   <tr key={expense.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                       {new Date(expense.expense_date).toLocaleDateString()}

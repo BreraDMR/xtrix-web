@@ -10,7 +10,8 @@ describe('finance dates', () => {
   beforeEach(() => {
     resetStores()
     signIn({ id: 1, role: 'business_owner', business_id: 1 })
-    vi.mocked(api.get).mockResolvedValue({ data: [] })
+    vi.mocked(api.get).mockImplementation(url => Promise.resolve({ data: url.startsWith('/expenses/?')
+      ? { items: [], page: 1, per_page: 100, total: 0, pages: 0 } : [] }))
   })
 
   it('requests the whole local calendar month, including the last millisecond', async () => {
