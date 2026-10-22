@@ -170,8 +170,6 @@ export default function Clients() {
     setShowForm(true)
   }
 
-  if (isError) return <QueryError retry={refetch} />
-
 
   return (
     <div>
@@ -202,7 +200,7 @@ export default function Clients() {
         )}
       </div>
 
-      {!showForm && !isLoading && totalItems === 0 && !searchQuery && !genderFilter && (
+      {!showForm && !isLoading && !isError && totalItems === 0 && !searchQuery && !genderFilter && (
         <ContextHint
           hint="clients"
           onAction={() => {
@@ -218,6 +216,7 @@ export default function Clients() {
             <div className="flex-1 w-full sm:max-w-md">
               <Input
                 type="search"
+                maxLength={200}
                 aria-label={t('clients.searchPlaceholder')}
                 placeholder={t('clients.searchPlaceholder')}
                 value={searchQuery}
@@ -350,7 +349,9 @@ export default function Clients() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--workspace-line)]">
-              {isLoading ? (
+              {isError ? (
+                <tr><td colSpan={5}><QueryError retry={refetch} /></td></tr>
+              ) : isLoading ? (
                 <tr><td colSpan={5} className="py-8"><LoadingSpinner /></td></tr>
               ) : paginatedData.length === 0 ? (
                 <tr>

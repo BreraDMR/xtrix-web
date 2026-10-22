@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import Clients from '../pages/Clients'
 import api from '../api/client'
 import type { operations } from '../api/schema'
 type ClientQuery = NonNullable<operations['list_clients_clients__get']['parameters']['query']>
 import { exportData } from '../utils/export'
-import { renderWithProviders, resetStores, routes, signIn } from '../test/render'
+import { apiError, renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), put: vi.fn(), post: vi.fn() } }))
 vi.mock('../utils/export', async importOriginal => ({
@@ -20,6 +21,24 @@ beforeEach(() => {
 })
 
 describe('client directory controls', () => {
+  it.each([`q=${'x'.repeat(201)}`, 'gender=unknown'])('can clear an invalid saved filter without reloading: %s', async query => {
+    vi.mocked(api.get).mockImplementation((url, config) => {
+      if (url !== '/clients/') return routes({})(url, config)
+      const params = (config?.params as ClientQuery | undefined) ?? {}
+      if ((params.q?.length ?? 0) > 200 || (params.gender && params.gender !== 'female')) {
+        return Promise.reject(apiError(422, 'Invalid filter'))
+      }
+      return Promise.resolve({ data: { items: [{ id: 1, full_name: 'Recovered client' }], page: 1,
+        per_page: 20, total: 1, pages: 1 } })
+    })
+    renderWithProviders(<MemoryRouter initialEntries={[`/clients?${query}`]}><Clients /></MemoryRouter>, { router: false })
+    await screen.findByRole('alert')
+    expect(screen.getByRole('searchbox')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /clear filters/i }))
+    expect(await screen.findByText('Recovered client')).toBeInTheDocument()
+    expect(screen.getByRole('searchbox')).toHaveValue('')
+  })
+
   it('searches from the first page and clears both the filter and its visible input', async () => {
     const clients = Array.from({ length: 22 }, (_, index) => ({
       id: index + 1, full_name: `Client ${String(index + 1).padStart(2, '0')}`,
