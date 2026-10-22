@@ -461,6 +461,8 @@ export default function BookingPage() {
           <p className="mt-4 whitespace-pre-line text-sm text-slate-600 dark:text-gray-300">{business.description}</p>
         )}
 
+        {/* a salon that left no contacts shouldn't show an empty Contacts heading */}
+        {(business.address || business.phone || business.email) && (
         <div className="mt-6 border-t border-slate-100 pt-4 dark:border-gray-700">
           <h2 className="text-sm font-semibold text-slate-500 dark:text-gray-400">{t('booking.contacts')}</h2>
           <dl className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
@@ -492,6 +494,7 @@ export default function BookingPage() {
             )}
           </dl>
         </div>
+        )}
       </section>
 
       {step === 'done' && result ? (

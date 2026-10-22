@@ -200,6 +200,8 @@ test('guest books online and the visit appears for the owner', async ({ page, re
     await guest.goto(`/booking/${salon.settings.slug}`)
     await expect(guest.getByRole('heading', { name: salon.name })).toBeVisible()
     await expect(guest.getByText('No account needed')).toBeVisible()
+    // this salon left no address, phone or email, so there is no empty Contacts block
+    await expect(guest.getByRole('heading', { name: 'Contacts' })).toHaveCount(0)
 
     await guest.getByRole('button', { name: new RegExp(SERVICE_NAME) }).click()
     await guest.getByRole('button', { name: 'Continue' }).click()
