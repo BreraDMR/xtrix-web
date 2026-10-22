@@ -322,14 +322,14 @@ export default function Clients() {
                   label={t('clients.name')}
                   currentSort={sortConfig}
                   onSort={handleSort}
-                  className="px-4 sm:px-5 sm:w-[36%]"
+                  className="px-4 sm:px-5 sm:w-[40%] md:w-[30%]"
                 />
                 <TableSortHeader
                   columnKey="contact_phone"
                   label={t('clients.phone')}
                   currentSort={sortConfig}
                   onSort={handleSort}
-                  className="px-4 sm:px-5 hidden sm:table-cell"
+                  className="px-4 sm:px-5 hidden sm:table-cell md:w-[20%]"
                 />
                 <TableSortHeader
                   columnKey="contact_email"
@@ -338,7 +338,7 @@ export default function Clients() {
                   onSort={handleSort}
                   className="px-4 sm:px-5 hidden md:table-cell"
                 />
-                <th className="px-4 sm:px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell dark:text-gray-400">
+                <th className="px-4 sm:px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell lg:w-[12%] dark:text-gray-400">
                   {t('loyalty.points')}
                 </th>
 
