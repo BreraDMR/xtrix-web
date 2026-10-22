@@ -1,7 +1,7 @@
 import { allPages } from '../api/allPages'
 import type { Schema } from '../api/types'
 import QueryError from '../components/QueryError'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
@@ -14,6 +14,11 @@ import { formatCurrency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
 import { today } from '../utils/dates'
 import { UNIT_CODES, useLabels } from '../i18n/labels'
+import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
+import Button from '../ui/Button'
+import Input from '../ui/Input'
+import Card from '../ui/Card'
+import { HiOutlineChevronRight, HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi'
 
 type Product = Schema<'ProductOut'>
 
@@ -21,6 +26,8 @@ export default function Inventory() {
   const { t } = useTranslation()
   const labels = useLabels()
   const { user } = useAuthStore()
+  const access = useWorkspaceAccessContext()
+  const canManage = (user?.role === 'admin' || user?.role === 'business_owner') && (!access || access.crm_mode === 'full')
   const queryClient = useQueryClient()
   const currency = useBusinessCurrency()
   const [showAddForm, setShowAddForm] = useState(false)
@@ -30,6 +37,16 @@ export default function Inventory() {
   const [lowStockOnly, setLowStockOnly] = useState(false)
   const [addQuantityProduct, setAddQuantityProduct] = useState<Product | null>(null)
   const [addQuantityValue, setAddQuantityValue] = useState('')
+
+  useEffect(() => {
+    if (!canManage) {
+      setShowAddForm(false)
+      setShowEditForm(null)
+      setAddQuantityProduct(null)
+      setAddQuantityValue('')
+      setFormError('')
+    }
+  }, [canManage])
 
   const { data: products, isLoading, isError, refetch } = useQuery({
     queryKey: ['products', searchTerm, lowStockOnly],
@@ -103,198 +120,100 @@ export default function Inventory() {
   })
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{t('inventory.title')}</h1>
-        {(user?.role === 'admin' || user?.role === 'business_owner') && (
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            + {t('inventory.add_product')}
-          </button>
-        )}
+    <div>
+      <div className="page-toolbar">
+        <div className="flex min-w-0 items-center gap-3">
+          <h1 className="page-title">{t('inventory.title')}</h1>
+          <span className="shrink-0 rounded border border-[var(--workspace-line)] px-2 py-0.5 text-xs tabular-nums text-[var(--workspace-muted)]">{isLoading || isError ? '—' : rows.length}</span>
+        </div>
+        {canManage && <Button onClick={() => setShowAddForm(true)} className="shrink-0"><HiOutlinePlus />{t('inventory.add_product')}</Button>}
       </div>
 
-      {}
-      {lowStockProducts.length > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <svg className="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            <div>
-              <h3 className="font-semibold text-yellow-900">
-                {t('inventory.low_stock_warning').replace('{count}', lowStockProducts.length.toString())}
-              </h3>
-              <p className="text-sm text-yellow-700">{t('inventory.low_stock_description')}</p>
-            </div>
+      <Card className="overflow-hidden">
+        <div className="flex flex-wrap items-center gap-3 border-b border-[var(--workspace-line)] p-4">
+          <div className="min-w-0 flex-1 basis-60 sm:max-w-sm">
+            <Input type="search" aria-label={t('inventory.search_placeholder')} placeholder={t('inventory.search_placeholder')}
+              value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
           </div>
-        </div>
-      )}
-
-      {}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-        <input
-          type="text"
-          placeholder={t('inventory.search_placeholder')}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600"
-        />
-        <div className="flex gap-4 items-center">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={lowStockOnly}
-              onChange={(e) => setLowStockOnly(e.target.checked)}
-              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-            />
-            <span>{t('inventory.low_stock_only')}</span>
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-[var(--workspace-muted)]">
+            <input type="checkbox" checked={lowStockOnly} onChange={event => setLowStockOnly(event.target.checked)}
+              className="h-4 w-4 rounded border-[var(--workspace-line)] accent-[var(--workspace-accent)]" />
+            {t('inventory.low_stock_only')}
           </label>
-          {rows.length > 0 && !isError && !isLoading && (
-            <ExportButton
-              data={rows}
+          {rows.length > 0 && !isError && !isLoading && <div className="ml-auto">
+            <ExportButton data={rows}
               columns={[
                 { key: 'name', label: t('inventory.name') },
-                { key: 'description', label: 'Description' },
+                { key: 'description', label: t('inventory.description') },
                 { key: 'category', label: t('inventory.category') },
                 { key: 'quantity', label: t('inventory.quantity'), format: (val, row) => `${val} ${labels.unit(row?.unit)}` },
                 { key: 'min_quantity', label: t('inventory.min_quantity'), format: (val, row) => `${val} ${labels.unit(row?.unit)}` },
-                { key: 'price_per_unit', label: t('inventory.price'), format: (val) => val ? formatCurrency(val, currency) : '-' },
-                { key: 'barcode', label: 'Barcode' },
-                { key: 'supplier', label: 'Supplier' },
-                { key: 'is_active', label: 'Status', format: (val) => val ? 'Active' : 'Inactive' },
+                { key: 'price_per_unit', label: t('inventory.price'), format: val => val != null ? formatCurrency(val, currency) : '-' },
+                { key: 'barcode', label: t('inventory.barcode') },
+                { key: 'supplier', label: t('inventory.supplier') },
+                { key: 'is_active', label: t('services.status'), format: val => val ? t('services.active') : t('services.inactive') },
               ]}
-              filename={`inventory-${today()}`}
-              title={t('export.inventoryReport')}
-              reportTypes={[
-                t('export.stockRemaining'),
-                t('export.movements'),
-                t('export.writeoffs'),
-              ]}
-              dataType={(searchTerm || lowStockOnly) ? 'filtered' : 'all'}
-            />
-          )}
+              filename={`inventory-${today()}`} title={t('export.inventoryReport')}
+              reportTypes={[t('export.stockRemaining'), t('export.movements'), t('export.writeoffs')]}
+              dataType={searchTerm || lowStockOnly ? 'filtered' : 'all'} />
+          </div>}
         </div>
-      </div>
 
-      {}
-      <div className="bg-white rounded-lg shadow overflow-hidden dark:bg-gray-800">
-        {isError ? <QueryError retry={refetch} /> : isLoading ? <LoadingSpinner /> : (
+        {!isLoading && !isError && lowStockProducts.length > 0 && <div className="border-b border-[var(--workspace-line)] bg-amber-50/60 px-4 py-3 text-sm dark:bg-amber-950/20">
+          <p className="font-medium text-amber-800 dark:text-amber-200">{t('inventory.low_stock_warning').replace('{count}', String(lowStockProducts.length))}</p>
+          <p className="mt-0.5 text-xs text-[var(--workspace-muted)]">{t('inventory.low_stock_description')}</p>
+        </div>}
+
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900">
+          <table className="w-full table-fixed">
+            <thead className="bg-[var(--workspace-bg)] text-left text-xs font-medium text-[var(--workspace-muted)]">
               <tr>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  {t('inventory.name')}
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell dark:text-gray-400">
-                  {t('inventory.category')}
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  {t('inventory.quantity')}
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell dark:text-gray-400">
-                  {t('inventory.min_quantity')}
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell dark:text-gray-400">
-                  {t('inventory.price')}
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  {t('inventory.actions')}
-                </th>
+                <th className="px-3 py-3 sm:px-5">{t('inventory.name')}</th>
+                <th className="hidden w-[15%] px-4 py-3 md:table-cell">{t('inventory.category')}</th>
+                <th className="w-24 px-2 py-3 sm:w-28 sm:px-4">{t('inventory.quantity')}</th>
+                <th className="hidden w-28 px-4 py-3 xl:table-cell">{t('inventory.min_quantity')}</th>
+                <th className="hidden w-24 px-4 py-3 xl:table-cell">{t('inventory.price')}</th>
+                {canManage && <th className="w-24 px-2 py-3 text-right sm:w-44 sm:px-4">{t('inventory.actions')}</th>}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-2 sm:px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                    {t('inventory.no_products')}
-                  </td>
-                </tr>
-              ) : (
-                rows.map((product) => (
-              <tr
-                key={product.id}
-                className={product.quantity <= product.min_quantity ? 'bg-yellow-50' : ''}
-              >
-                <td className="px-2 sm:px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{product.name}</div>
-                  {product.description && (
-                    <div className="text-xs sm:text-sm text-gray-500 mt-1 dark:text-gray-400">{product.description}</div>
-                  )}
-                  <div className="text-xs text-gray-500 md:hidden mt-1 dark:text-gray-400">
-                    {product.category || '-'}
-                  </div>
-                </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell dark:text-gray-400">
-                  {product.category || '-'}
-                </td>
-                <td className="px-2 sm:px-6 py-4">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                    <span
-                      className={`text-sm font-medium ${
-                        product.quantity <= product.min_quantity ? 'text-red-600' : 'text-gray-900'
-                      }`}
-                    >
-                      {product.quantity} {labels.unit(product.unit)}
-                    </span>
-                    {product.quantity <= product.min_quantity && (
-                      <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
-                        {t('inventory.low_stock')}
-                      </span>
-                    )}
-                    <div className="text-xs text-gray-500 lg:hidden dark:text-gray-400">
-                      {t('inventory.min_quantity')}: {product.min_quantity} {labels.unit(product.unit)}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell dark:text-gray-400">
-                  {product.min_quantity} {labels.unit(product.unit)}
-                </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell dark:text-gray-400">
-                  {product.price_per_unit ? formatCurrency(product.price_per_unit, currency) : '-'}
-                </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1 sm:space-x-2">
-                  {(user?.role === 'admin' || user?.role === 'business_owner') && (
-                    <>
-                      <button
-                        onClick={() => setShowEditForm(product)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        {t('inventory.edit')}
-                      </button>
-                      <button
-                        onClick={() => setAddQuantityProduct(product)}
-                        className="text-green-600 hover:text-green-900"
-                      >
-                        {t('inventory.add_quantity')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (window.confirm(t('inventory.confirm_delete'))) {
-                            deleteMutation.mutate(product.id)
-                          }
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        {t('inventory.delete')}
-                      </button>
-                    </>
-                  )}
-                </td>
-                </tr>
-                ))
-              )}
+            <tbody className="divide-y divide-[var(--workspace-line)]">
+              {isError ? <tr><td colSpan={canManage ? 6 : 5}><QueryError retry={refetch} /></td></tr>
+                : isLoading ? <tr><td colSpan={canManage ? 6 : 5} className="py-8"><LoadingSpinner /></td></tr>
+                  : rows.length === 0 ? <tr><td colSpan={canManage ? 6 : 5} className="px-4 py-10 text-center text-sm text-[var(--workspace-muted)]">{t('inventory.no_products')}</td></tr>
+                    : rows.map(product => <tr key={product.id} className="hover:bg-[var(--workspace-bg)]">
+                      <td className="px-3 py-3 sm:px-5">
+                        {canManage ? <button type="button" aria-label={`${t('inventory.edit')}: ${product.name}`} onClick={() => setShowEditForm(product)}
+                          className="inline-flex max-w-full items-center gap-1.5 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
+                          <span className="min-w-0 [overflow-wrap:anywhere]">{product.name}</span><HiOutlineChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
+                        </button> : <span className="text-sm font-medium [overflow-wrap:anywhere]">{product.name}</span>}
+                        {product.description && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--workspace-muted)] [overflow-wrap:anywhere]" title={product.description}>{product.description}</p>}
+                        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-[var(--workspace-muted)] xl:hidden">
+                          {product.category && <span className="[overflow-wrap:anywhere] md:hidden">{product.category}</span>}
+                          {product.price_per_unit != null && <span>{formatCurrency(product.price_per_unit, currency)}</span>}
+                        </div>
+                      </td>
+                      <td className="hidden px-4 py-3 text-sm text-[var(--workspace-muted)] [overflow-wrap:anywhere] md:table-cell">{product.category || '—'}</td>
+                      <td className="px-2 py-3 sm:px-4">
+                        <div className="text-sm font-medium tabular-nums">{product.quantity} {labels.unit(product.unit)}</div>
+                        {product.quantity <= product.min_quantity && <span className="mt-1 inline-block rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">{t('inventory.low_stock')}</span>}
+                        <p className="mt-1 text-xs text-[var(--workspace-muted)] xl:hidden">{t('inventory.min_quantity')}: {product.min_quantity} {labels.unit(product.unit)}</p>
+                      </td>
+                      <td className="hidden px-4 py-3 text-sm tabular-nums text-[var(--workspace-muted)] xl:table-cell">{product.min_quantity} {labels.unit(product.unit)}</td>
+                      <td className="hidden px-4 py-3 text-sm tabular-nums text-[var(--workspace-muted)] xl:table-cell">{product.price_per_unit != null ? formatCurrency(product.price_per_unit, currency) : '—'}</td>
+                      {canManage && <td className="px-2 py-3 sm:px-4">
+                        <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:justify-end">
+                          <Button variant="quiet" className="min-h-8 whitespace-normal px-1.5 py-1 text-xs" onClick={() => setAddQuantityProduct(product)}>{t('inventory.add_quantity')}</Button>
+                          <Button variant="quiet" aria-label={t('inventory.delete')} title={t('inventory.delete')} className="min-h-8 px-1.5 py-1 text-red-600 dark:text-red-400"
+                            onClick={() => { if (window.confirm(t('inventory.confirm_delete'))) deleteMutation.mutate(product.id) }}><HiOutlineTrash /></Button>
+                        </div>
+                      </td>}
+                    </tr>)}
             </tbody>
           </table>
         </div>
-        )}
-      </div>
+      </Card>
 
-      {}
-      {showAddForm && (
+      {canManage && showAddForm && (
         <ProductForm
           product={undefined}
           isLoading={createMutation.isPending}
@@ -310,8 +229,7 @@ export default function Inventory() {
         />
       )}
 
-      {}
-      {showEditForm && (
+      {canManage && showEditForm && (
         <ProductForm
           product={showEditForm}
           isLoading={updateMutation.isPending}
@@ -327,45 +245,44 @@ export default function Inventory() {
         />
       )}
 
-      {}
-      {addQuantityProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full dark:bg-gray-800">
-            <h3 className="text-lg font-semibold mb-4">
+      {canManage && addQuantityProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <Card className="w-full max-w-md p-5">
+            <h3 className="mb-4 text-base font-semibold [overflow-wrap:anywhere]">
               {t('inventory.add_quantity_to')} {addQuantityProduct.name}
             </h3>
-            <input
+            <label htmlFor="inventory-add-quantity" className="mb-1.5 block text-sm font-medium">{t('inventory.quantity')}</label>
+            <Input
+              id="inventory-add-quantity"
               type="number"
               step="0.01"
               min="0"
               value={addQuantityValue}
               onChange={(e) => setAddQuantityValue(e.target.value)}
               placeholder={t('inventory.quantity')}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 dark:border-gray-600"
+              className="mb-4"
             />
             <div className="flex gap-2 justify-end">
-              <button
+              <Button variant="secondary"
                 onClick={() => {
                   setAddQuantityProduct(null)
                   setAddQuantityValue('')
                 }}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-700"
               >
                 {t('common.cancel')}
-              </button>
-              <button
+              </Button>
+              <Button disabled={addQuantityMutation.isPending || !(parseFloat(addQuantityValue) > 0)}
                 onClick={() => {
                   const quantity = parseFloat(addQuantityValue)
                   if (quantity > 0) {
                     addQuantityMutation.mutate({ id: addQuantityProduct.id, quantity })
                   }
                 }}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
               >
                 {t('common.save')}
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>
