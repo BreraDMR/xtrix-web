@@ -44,9 +44,13 @@ for (const width of [1280, 375]) {
       const trialText = page.locator('main > div[role="status"] > p')
       await expect(trialText).toBeVisible()
       await expect(trialText).toContainText('300 visits and 50 AI requests per day.')
+      // fullPage leaves fixed bits (the phone tab bar) stuck where the first screen ended,
+      // so grow the viewport to the whole page instead, like screenshots.spec does
+      const height = await page.evaluate(() => document.documentElement.scrollHeight)
+      await page.setViewportSize({ width, height })
       const trialStyle = await page.addStyleTag({ content: 'main > div[role="status"] > p { visibility: hidden !important; }' })
       try {
-        await expect(page).toHaveScreenshot(`dark-${path.slice(1)}-${width}.png`, { fullPage: true })
+        await expect(page).toHaveScreenshot(`dark-${path.slice(1)}-${width}.png`)
       } finally {
         await trialStyle.evaluate(element => element.parentNode?.removeChild(element))
       }
