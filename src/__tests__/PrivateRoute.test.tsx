@@ -1,4 +1,5 @@
 import { beforeEach, expect, it, vi } from 'vitest'
+import { useState } from 'react'
 import { act, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -21,6 +22,20 @@ function mount(path: string) {
   </QueryClientProvider>)
 }
 beforeEach(() => { vi.resetAllMocks(); resetStores() })
+
+it('drops local form drafts when another account replaces the current one without navigation', async () => {
+  function Draft() {
+    const [value, setValue] = useState('')
+    return <input aria-label="Private draft" value={value} onChange={event => setValue(event.target.value)} />
+  }
+  useAuthStore.getState().setAuth('first', { id: 1, full_name: 'First owner', role: 'business_owner' })
+  render(<QueryClientProvider client={new QueryClient()}><MemoryRouter>
+    <PrivateRoute><Draft /></PrivateRoute>
+  </MemoryRouter></QueryClientProvider>)
+  await userEvent.type(screen.getByLabelText('Private draft'), 'Previous salon note')
+  act(() => useAuthStore.getState().setAuth('second', { id: 2, full_name: 'Second owner', role: 'business_owner' }))
+  expect(screen.getByLabelText('Private draft')).toHaveValue('')
+})
 
 it('restores the missing user before rendering a private page', async () => {
   useAuthStore.setState({ token: 'saved', user: null })

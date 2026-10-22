@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
@@ -7,7 +7,7 @@ import LoadingSpinner from './LoadingSpinner'
 import QueryError from './QueryError'
 
 export default function PrivateRoute({ children }: { children: ReactNode }) {
-  const { token, user, signedOut } = useAuthStore()
+  const { token, user, signedOut, sessionRevision } = useAuthStore()
   const location = useLocation()
   const session = useQuery({
     queryKey: ['session-user', token],
@@ -33,5 +33,5 @@ export default function PrivateRoute({ children }: { children: ReactNode }) {
     if (session.isError) return <QueryError retry={session.refetch} />
     return <LoadingSpinner />
   }
-  return <>{children}</>
+  return <Fragment key={sessionRevision}>{children}</Fragment>
 }
