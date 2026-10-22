@@ -365,8 +365,8 @@ export default function Analytics() {
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-900">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Period</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Forecasted Value</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">{t('analytics.forecastPeriod')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">{t('analytics.forecastValue')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
@@ -395,7 +395,7 @@ export default function Analytics() {
             <>
               {}
               <div className="bg-white rounded-lg shadow-md overflow-x-auto dark:bg-gray-800">
-                <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200 dark:text-gray-100 dark:border-gray-700">{t('analytics.services_specialists')} - Services</h3>
+                <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200 dark:text-gray-100 dark:border-gray-700">{t('analytics.byService')}</h3>
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-900">
                     <tr>
@@ -426,7 +426,7 @@ export default function Analytics() {
 
               {}
               <div className="bg-white rounded-lg shadow-md overflow-x-auto dark:bg-gray-800">
-                <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200 dark:text-gray-100 dark:border-gray-700">{t('analytics.services_specialists')} - Specialists</h3>
+                <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200 dark:text-gray-100 dark:border-gray-700">{t('analytics.bySpecialist')}</h3>
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-900">
                     <tr>

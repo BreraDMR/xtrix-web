@@ -1230,6 +1230,10 @@ export type TranslationKey =
   | 'analytics.services_specialists'
   | 'analytics.insights'
   | 'analytics.benchmarks'
+  | 'analytics.byService'
+  | 'analytics.bySpecialist'
+  | 'analytics.forecastPeriod'
+  | 'analytics.forecastValue'
   | 'analytics.retention_7_days'
   | 'analytics.retention_30_days'
   | 'analytics.retention_90_days'
@@ -1338,6 +1342,10 @@ export type TranslationKey =
   | 'loyalty.for_specific_client'
   | 'loyalty.client_balance'
   | 'loyalty.points'
+  | 'loyalty.stats.participants'
+  | 'loyalty.stats.earned'
+  | 'loyalty.stats.spent'
+  | 'loyalty.stats.active'
   | 'loyalty.cashback'
   | 'loyalty.current_level'
   | 'loyalty.transaction_history'
@@ -3345,6 +3353,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'analytics.services_specialists': { en: 'Services & Specialists', ru: 'Услуги и мастера', cz: 'Služby a specialisté' },
   'analytics.insights': { en: 'Insights', ru: 'Выводы', cz: 'Poznatky' },
   'analytics.benchmarks': { en: 'Benchmarks', ru: 'Сравнение с рынком', cz: 'Srovnávací hodnoty' },
+  'analytics.byService': { en: 'By service', ru: 'По услугам', cz: 'Podle služeb' },
+  'analytics.bySpecialist': { en: 'By specialist', ru: 'По мастерам', cz: 'Podle specialistů' },
+  'analytics.forecastPeriod': { en: 'Period', ru: 'Период', cz: 'Období' },
+  'analytics.forecastValue': { en: 'Forecast', ru: 'Прогноз', cz: 'Předpověď' },
   'analytics.retention_7_days': { en: '7-Day Retention', ru: 'Удержание за 7 дней', cz: '7denní retence' },
   'analytics.retention_30_days': { en: '30-Day Retention', ru: 'Удержание за 30 дней', cz: '30denní retence' },
   'analytics.retention_90_days': { en: '90-Day Retention', ru: 'Удержание за 90 дней', cz: '90denní retence' },
@@ -3548,6 +3560,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'loyalty.for_specific_client': { en: 'For Specific Client', ru: 'Для конкретного клиента', cz: 'Pro konkrétního klienta' },
   'loyalty.client_balance': { en: 'Client Balance', ru: 'Баланс клиента', cz: 'Zůstatek klienta' },
   'loyalty.points': { en: 'Points', ru: 'Баллы', cz: 'Body' },
+  'loyalty.stats.participants': { en: 'Total Participants', ru: 'Участников', cz: 'Účastníků celkem' },
+  'loyalty.stats.earned': { en: 'Points Earned', ru: 'Начислено баллов', cz: 'Získané body' },
+  'loyalty.stats.spent': { en: 'Points Spent', ru: 'Списано баллов', cz: 'Utracené body' },
+  'loyalty.stats.active': { en: 'Active Points', ru: 'Активные баллы', cz: 'Aktivní body' },
   'loyalty.cashback': { en: 'Cashback', ru: 'Кэшбэк', cz: 'Cashback' },
   'loyalty.current_level': { en: 'Current Level', ru: 'Текущий уровень', cz: 'Aktuální úroveň' },
   'loyalty.transaction_history': { en: 'Transaction History', ru: 'История транзакций', cz: 'Historie transakcí' },
@@ -4007,7 +4023,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'schedule.reasonPlaceholder': { en: 'e.g. vacation', ru: 'например, отпуск', cz: 'např. dovolená' },
   'schedule.confirmDelete': { en: 'Confirm delete', ru: 'Подтвердить удаление', cz: 'Potvrdit smazání' },
   'schedule.error.timeRange': { en: 'The end must be at least an hour after the start.', ru: 'Конец должен быть минимум на час позже начала.', cz: 'Konec musí být alespoň o hodinu po začátku.' },
-  'schedule.error.bufferRange': { en: 'Buffers must be whole minutes from 0 to 1440.', ru: 'Буферы — целые минуты от 0 до 1440.', cz: 'Buffery jsou celé minuty od 0 do 1440.' },
+  'schedule.error.bufferRange': { en: 'Buffers must be whole minutes from 0 to 1440.', ru: 'Буферы — целые минуты от 0 до 1440.', cz: 'Časové rezervy jsou celé minuty od 0 do 1440.' },
   'schedule.error.horizonRange': { en: 'The horizon must be from 1 to 365 days.', ru: 'Горизонт должен быть от 1 до 365 дней.', cz: 'Horizont musí být 1 až 365 dní.' },
   'schedule.error.leadRange': { en: 'Lead time must be from 0 to 10080 minutes.', ru: 'Время до записи должно быть от 0 до 10080 минут.', cz: 'Čas před rezervací musí být 0 až 10080 minut.' },
   'schedule.error.save': { en: 'Could not save the changes. Try again.', ru: 'Не удалось сохранить изменения. Попробуйте ещё раз.', cz: 'Změny se nepodařilo uložit. Zkuste to znovu.' },
@@ -4036,7 +4052,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'schedule.rules.readOnly': { en: 'Only the business owner can change these rules.', ru: 'Эти правила может менять только владелец бизнеса.', cz: 'Tato pravidla může měnit pouze majitel firmy.' },
   'schedule.rules.save': { en: 'Save rules', ru: 'Сохранить правила', cz: 'Uložit pravidla' },
   'schedule.rules.saved': { en: 'Rules saved.', ru: 'Правила сохранены.', cz: 'Pravidla uložena.' },
-  'schedule.buffers.title': { en: 'Service buffers', ru: 'Буферы услуг', cz: 'Buffery služeb' },
+  'schedule.buffers.title': { en: 'Service buffers', ru: 'Буферы услуг', cz: 'Časové rezervy služeb' },
   'schedule.buffers.hint': { en: 'Extra time around a visit for preparation and cleanup. The service duration stays unchanged.', ru: 'Дополнительное время вокруг визита на подготовку и уборку. Длительность услуги не меняется.', cz: 'Dodatečný čas kolem návštěvy na přípravu a úklid. Délka služby zůstává stejná.' },
   'schedule.buffers.duration': { en: 'Service duration', ru: 'Длительность услуги', cz: 'Délka služby' },
   'schedule.buffers.before': { en: 'Before, min', ru: 'До, мин', cz: 'Před, min' },

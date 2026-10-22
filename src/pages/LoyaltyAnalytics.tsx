@@ -90,19 +90,19 @@ export default function LoyaltyAnalytics() {
       ) : statistics ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
-            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">Total Participants</h3>
+            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.participants')}</h3>
             <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{statistics.total_participants || 0}</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
-            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.points')} Earned</h3>
+            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.earned')}</h3>
             <p className="text-3xl font-bold text-blue-600">{statistics.total_points_earned?.toFixed(0) || '0'}</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
-            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.points')} Spent</h3>
+            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.spent')}</h3>
             <p className="text-3xl font-bold text-red-600">{statistics.total_points_spent?.toFixed(0) || '0'}</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
-            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">Active {t('loyalty.points')}</h3>
+            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.active')}</h3>
             <p className="text-3xl font-bold text-green-600">{statistics.active_points_balance?.toFixed(0) || '0'}</p>
           </div>
         </div>
