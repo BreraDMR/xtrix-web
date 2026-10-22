@@ -196,7 +196,7 @@ describe('VisitForm', () => {
       })))
     })
 
-    it('loads an existing chain and updates it as items', async () => {
+    it('loads an existing chain and submits an explicit order change as items', async () => {
       vi.mocked(api.get).mockImplementation(routes({
         ...servicesTable,
         '/visits/21': {
@@ -218,12 +218,13 @@ describe('VisitForm', () => {
 
       await waitFor(() => expect(screen.getByLabelText('Service 1')).toHaveValue('5'))
       expect(screen.getByLabelText('Service 2')).toHaveValue('6')
+      await userEvent.click(screen.getByRole('button', { name: 'Move up 2' }))
       await userEvent.click(screen.getByRole('button', { name: /update visit/i }))
 
       await waitFor(() => expect(api.put).toHaveBeenCalledWith('/visits/21', expect.objectContaining({
         items: [
-          { service_id: 5, specialist_id: 9 },
           { service_id: 6, specialist_id: 9 },
+          { service_id: 5, specialist_id: 9 },
         ],
       })))
     })

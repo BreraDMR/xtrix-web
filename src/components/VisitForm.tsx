@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import FormError from './FormError'
 import { apiErrorMessage, apiErrorStatus, apiFormErrors } from '../api/errors'
-import type { ClientLoyaltyBalance, ClientOut, ClientPage, GiftCertificateDetailOut, Schema, ServiceOut, ServiceSpecialistOut } from '../api/types'
+import type { ClientLoyaltyBalance, ClientOut, ClientPage, GiftCertificateDetailOut, Schema, ServiceOut, ServiceSpecialistOut, VisitOut } from '../api/types'
 import { fetchAllServices } from '../api/services'
 import { allPages } from '../api/allPages'
 import QueryError from './QueryError'
@@ -98,6 +98,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [availableSpecialists, setAvailableSpecialists] = useState<ServiceSpecialistOut[]>([])
   const [itemsMode, setItemsMode] = useState(false)
   const [items, setItems] = useState<VisitItemDraft[]>([])
+  const initialItems = useRef<Pick<VisitItemDraft, 'service_id' | 'specialist_id'>[] | null>(null)
+  const existingPricesUnknown = useRef(false)
   const [clientSearchQuery, setClientSearchQuery] = useState('')
   const [selectedClient, setSelectedClient] = useState<SelectedClient | null>(null)
   const [nameMatches, setNameMatches] = useState<ClientOut[]>([])
@@ -248,9 +250,21 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   const loadVisit = async () => {
     try {
-      const { data } = await api.get(`/visits/${visitId}`)
+      const { data } = await api.get<VisitOut>(`/visits/${visitId}`)
+      // Null can mean redacted, so don't replace an unknown saved price from the catalogue.
+      existingPricesUnknown.current = data.price == null || Boolean(data.items?.some(item => item.price == null))
+      initialItems.current = null
+      setItems([])
+      setItemsMode(false)
       setFormData({
-        ...data,
+        client_id: data.client_id,
+        specialist_id: data.specialist_id,
+        service_id: data.service_id ?? undefined,
+        service_name: data.service_name ?? undefined,
+        note: data.note ?? undefined,
+        price: data.price ?? undefined,
+        payment_method: data.payment_method ?? undefined,
+        status: data.status ?? 'planned',
         date_start: data.date_start ? format(new Date(data.date_start), "yyyy-MM-dd'T'HH:mm") : '',
         date_end: data.date_end ? format(new Date(data.date_end), "yyyy-MM-dd'T'HH:mm") : '',
       })
@@ -291,6 +305,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             }
           }),
         )
+        initialItems.current = drafts.map(({ service_id, specialist_id }) => ({ service_id, specialist_id }))
         setItems(drafts)
         setItemsMode(true)
       }
@@ -371,7 +386,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         specialist_id: specialistId,
         service_name: selected?.name ?? formData.service_name,
         duration_minutes: selected?.duration_minutes ?? undefined,
-        price: selected?.price ?? formData.price,
+        price: formData.price,
         specialists,
       }
       setItems(selected ? [first, { specialist_id: specialistId, specialists: [] }] : [first])
@@ -409,6 +424,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
     setItems((previous) => previous.map((item, position) => {
       if (position !== index) return item
+      const sameService = serviceId === item.service_id
       const preferred = item.specialist_id && specialists.some((person) => person.id === item.specialist_id)
         ? item.specialist_id
         : specialists.some((person) => person.id === formData.specialist_id)
@@ -417,9 +433,9 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       return {
         service_id: serviceId,
         specialist_id: preferred,
-        service_name: selected?.name ?? item.service_name,
-        duration_minutes: selected?.duration_minutes ?? undefined,
-        price: selected?.price ?? undefined,
+        service_name: sameService ? item.service_name : selected?.name ?? item.service_name,
+        duration_minutes: sameService ? item.duration_minutes : selected?.duration_minutes ?? undefined,
+        price: sameService ? item.price : existingPricesUnknown.current ? undefined : selected?.price ?? undefined,
         specialists,
       }
     }))
@@ -463,7 +479,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         updates.specialist_id = selectedService.specialist_id
       }
 
-      if (selectedService.price && (!formData.price || formData.price === 0)) {
+      if (selectedService.price != null && formData.price === undefined && !existingPricesUnknown.current) {
         updates.price = selectedService.price
       }
 
@@ -622,21 +638,31 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         service_id: item.service_id!,
         specialist_id: item.specialist_id,
       }))
-      const submitData = itemsMode
+      // Unchanged items must keep their saved prices, not today's catalogue prices.
+      const itemsChanged = !initialItems.current || initialItems.current.length !== itemPayload.length ||
+        itemPayload.some((item, index) => item.service_id !== initialItems.current![index].service_id ||
+          item.specialist_id !== initialItems.current![index].specialist_id)
+      const { price, payment_method, ...details } = formData
+      const payment = payment_method !== undefined ? { payment_method } : {}
+      const draftPayload = itemsMode
         ? {
             client_id: formData.client_id,
             specialist_id: itemPayload[0].specialist_id,
             date_start: new Date(formData.date_start).toISOString(),
             status: formData.status,
             note: formData.note,
-            payment_method: formData.status === 'completed' ? formData.payment_method : undefined,
-            items: itemPayload,
+            ...(formData.status === 'completed' ? payment : {}),
+            ...(itemsChanged ? { items: itemPayload } : {}),
           }
         : {
-            ...formData,
+            ...details,
+            ...(price !== undefined ? { price } : {}),
+            ...payment,
             date_start: new Date(formData.date_start).toISOString(),
             date_end: formData.date_end ? new Date(formData.date_end).toISOString() : undefined,
           }
+
+      const submitData = Object.fromEntries(Object.entries(draftPayload).filter(([, value]) => value !== undefined))
 
       let savedVisitId = visitId
       if (visitId) {
