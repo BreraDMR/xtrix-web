@@ -115,6 +115,7 @@ test('solo specialist has no business step and can hide the checklist for good',
   await expect(page.getByRole('heading', { name: 'Getting started' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Add service' })).toBeVisible()
   await expect(page.locator('ol').getByText('Add your first service', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Show all steps' }).click()
   await expect(page.getByRole('link', { name: 'Set schedule' })).toBeVisible()
   await expect(page.locator('ol').getByText('Set working hours', { exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Create business' })).toHaveCount(0)

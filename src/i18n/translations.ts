@@ -1433,6 +1433,8 @@ export type TranslationKey =
   | 'onboarding.welcome.start'
   | 'onboarding.welcome.open'
   | 'onboarding.welcome.later'
+  | 'onboarding.checklist.expand'
+  | 'onboarding.checklist.collapse'
   | 'onboarding.checklist.title'
   | 'onboarding.checklist.description'
   | 'onboarding.checklist.progressLabel'
@@ -3894,6 +3896,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.welcome.start': { en: 'Start setup', ru: 'Начать настройку', cz: 'Začít nastavení' },
   'onboarding.welcome.open': { en: 'Open workspace', ru: 'Открыть рабочее пространство', cz: 'Otevřít pracovní prostor' },
   'onboarding.welcome.later': { en: 'Maybe later', ru: 'Позже', cz: 'Později' },
+  'onboarding.checklist.expand': { en: 'Show all steps', ru: 'Все шаги настройки', cz: 'Zobrazit všechny kroky' },
+  'onboarding.checklist.collapse': { en: 'Collapse steps', ru: 'Свернуть шаги', cz: 'Sbalit kroky' },
   'onboarding.checklist.title': { en: 'Getting started', ru: 'С чего начать', cz: 'Jak začít' },
   'onboarding.checklist.description': { en: 'You can return to these steps later.', ru: 'К этим шагам можно вернуться позже.', cz: 'K těmto krokům se můžete vrátit později.' },
   'onboarding.checklist.progressLabel': { en: 'Completed', ru: 'Выполнено', cz: 'Hotovo' },

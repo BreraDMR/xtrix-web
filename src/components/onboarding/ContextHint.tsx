@@ -42,12 +42,12 @@ export default function ContextHint({ hint, onAction, to }: ContextHintProps) {
   const dismiss = () => update.mutate({ dismissed_hints: [...data.dismissed_hints, hint] })
 
   return (
-    <div className="mb-5 flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center sm:justify-between dark:border-amber-900/60 dark:bg-amber-950/30">
+    <div className="mb-5 flex flex-col gap-3 rounded-lg border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
-        <HiOutlineLightBulb className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+        <HiOutlineLightBulb className="mt-0.5 h-5 w-5 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />
         <div className="min-w-0">
-          <p className="font-medium">{t(copy.title)}</p>
-          <p className="mt-0.5 text-sm text-[var(--workspace-muted)]">{t(copy.body)}</p>
+          <p className="text-sm font-medium">{t(copy.title)}</p>
+          <p className="mt-0.5 text-xs leading-relaxed text-[var(--workspace-muted)]">{t(copy.body)}</p>
           {update.isError && (
             <p className="mt-1 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(update.error, t('onboarding.error.save'))}</p>
           )}
