@@ -174,7 +174,7 @@ export default function Layout() {
             <button className="-ml-1 p-1 text-gray-600 lg:hidden dark:text-gray-300"
               aria-label={t('nav.primary')} aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((open) => !open)}><HiOutlineMenuAlt2 className="h-5 w-5" /></button>
-            <div className="min-w-0 items-center gap-2 text-xs text-gray-500 flex"><span className="max-w-28 truncate sm:max-w-40">{workspaceName}</span><HiOutlineChevronRight className="hidden h-3 w-3 sm:block" /><span className="hidden truncate text-gray-800 sm:block dark:text-gray-200">{active?.label}</span></div>
+            <div className="min-w-0 items-center gap-2 text-xs text-gray-500 flex"><span className="max-w-28 truncate sm:max-w-40">{workspaceName}</span>{active && <><HiOutlineChevronRight className="hidden h-3 w-3 sm:block" /><span className="hidden truncate text-gray-800 sm:block dark:text-gray-200">{active.label}</span></>}</div>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             {access && access.crm_mode !== 'blocked' && <AssistantLauncher />}
