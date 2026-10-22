@@ -90,7 +90,7 @@ describe('ImportClientsModal', () => {
       const { container } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} />)
       await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,
         sheet([['Name', 'Phone', 'Email'], ['First Person', '+420123456789', 'first@example.cz'],
-          ['Repeated phone', '+420 123 456 789', ''], ['Repeated email', '', 'FIRST@example.cz']]))
+          ['Repeated phone', '+420-123-456789', ''], ['Repeated email', '', 'FIRST@example.cz']]))
       await userEvent.click(await screen.findByRole('button', { name: /import \(1\)/i }))
       await waitFor(() => expect(api.post).toHaveBeenCalledTimes(1))
       expect(api.post).toHaveBeenCalledWith('/clients/', { full_name: 'First Person', contact_phone: '+420123456789', contact_email: 'first@example.cz' })
