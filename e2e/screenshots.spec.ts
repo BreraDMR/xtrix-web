@@ -1,22 +1,11 @@
 import { test, expect, request as apiRequest, type Locator, type Page } from '@playwright/test'
-import { PASSWORD, apiLogin, apiPost, apiUrl, openAs } from './helpers'
+import { PASSWORD, apiLogin, apiPost, apiUrl, openAs, stabilizeTrialDate } from './helpers'
 
 // Visual baselines for the key screens. All data here is fixed and sits in June 2030, and the
 // browser clock starts in that month (and runs normally, so chart animations finish), so only
 // things the server stamps with "now" move - those get masked. Update after an intended UI change: npm run e2e -- --update-snapshots
 const OWNER = { email: 'shots.owner@example.com', password: PASSWORD }
 const CLOCK_START = new Date('2030-06-15T10:00:00+02:00')
-
-// The API clock is independent of page.clock. Keep the server-stamped expiry
-// fixed too: hiding its text still leaves a variable line count on narrow screens.
-async function stabilizeTrialDate(page: Page) {
-  await page.route('**/subscriptions/access', async route => {
-    const response = await route.fetch()
-    expect(response.ok()).toBeTruthy()
-    const data = await response.json()
-    await route.fulfill({ response, json: { ...data, trial_end: '2026-10-28T19:14:42Z' } })
-  })
-}
 
 async function ensureData() {
   const request = await apiRequest.newContext()

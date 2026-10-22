@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { apiUrl, newOwner, openAs } from './helpers'
+import { apiUrl, newOwner, openAs, stabilizeTrialDate } from './helpers'
 
 test('account theme applies on the dashboard and follows the system when selected', async ({ page, request }) => {
   const owner = await newOwner(request)
@@ -37,6 +37,7 @@ for (const width of [1280, 375]) {
       })
       expect(saved.ok()).toBeTruthy()
       await page.setViewportSize({ width, height: 900 })
+      await stabilizeTrialDate(page)
       await openAs(page, owner, path)
       await expect(page.locator('html')).toHaveClass(/dark/)
       await page.waitForLoadState('networkidle')

@@ -2,6 +2,17 @@ import { expect, test, type APIRequestContext, type Locator, type Page } from '@
 import fs from 'fs'
 
 export const apiUrl = process.env.E2E_API_URL || 'http://localhost:8170'
+// The API clock is independent of page.clock. Keep the server-stamped expiry
+// fixed too: hiding its text still leaves a variable line count on narrow screens.
+export async function stabilizeTrialDate(page: Page) {
+  await page.route('**/subscriptions/access', async route => {
+    const response = await route.fetch()
+    expect(response.ok()).toBeTruthy()
+    const data = await response.json()
+    await route.fulfill({ response, json: { ...data, trial_end: '2026-10-28T19:14:42Z' } })
+  })
+}
+
 // the API refuses "123"/"abc" style runs, keep it that way when editing
 export const PASSWORD = 'Ok!E2e-Owner-58x'
 
