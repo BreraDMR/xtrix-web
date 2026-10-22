@@ -4,7 +4,7 @@ import Select from '../ui/Select'
 import Card from '../ui/Card'
 import QueryError from '../components/QueryError'
 import ContextHint from '../components/onboarding/ContextHint'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
@@ -20,9 +20,11 @@ import { HiPrinter, HiUpload } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
-import { sortData, SortConfig } from '../utils/table'
-import type { ClientOut } from '../api/types'
+import { SortConfig } from '../utils/table'
+import type { ClientOut, ClientPage } from '../api/types'
 import { showDay, today } from '../utils/dates'
+import { allPages } from '../api/allPages'
+import { useAuthStore } from '../store/authStore'
 
 type Client = ClientOut
 
@@ -115,45 +117,32 @@ export default function Clients() {
     })
   }
 
-  const { data: clients, isLoading, isError, refetch } = useQuery<Client[]>({
-    queryKey: ['clients'],
-    queryFn: async () => {
-      const { data } = await api.get('/clients/')
-      return Array.isArray(data) ? data : (data?.items || data?.data || [])
-    },
+  const identity = useAuthStore(state => state.sessionRevision)
+  const user = useAuthStore(state => state.user)
+  const filters = {
+    q: searchQuery || undefined,
+    gender: genderFilter || undefined,
+    sort_by: sortConfig.key ?? 'id',
+    sort_order: sortConfig.direction ?? 'asc',
+  }
+  const { data: result, isLoading, isError, refetch } = useQuery<ClientPage>({
+    queryKey: ['clients', 'directory', identity, user?.id, user?.business_id, user?.employer_id,
+      currentPage, perPage, filters],
+    queryFn: async ({ signal }) => (await api.get<ClientPage>('/clients/', {
+      params: { ...filters, page: currentPage, per_page: perPage }, signal,
+    })).data,
   })
+  const clients = result?.items ?? []
+  const paginatedData = clients
+  const totalItems = result?.total ?? 0
+  const totalPages = result?.pages ?? 0
+  const loadExport = () => allPages<Client>(async page => (await api.get<ClientPage>('/clients/', {
+    params: { ...filters, page, per_page: 100 },
+  })).data)
 
-  const filteredClients = useMemo(() => {
-    if (!clients) return []
-
-    let filtered = clients.filter((client) => {
-      const matchesSearch =
-        searchQuery === '' ||
-        client.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        client.contact_phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        client.contact_email?.toLowerCase().includes(searchQuery.toLowerCase())
-
-      const matchesGender = genderFilter === null || client.gender === genderFilter
-
-      return matchesSearch && matchesGender
-    })
-
-    if (sortConfig.key && sortConfig.direction) {
-      filtered = sortData(filtered, sortConfig)
-    }
-
-    return filtered
-  }, [clients, searchQuery, genderFilter, sortConfig])
-
-  const { paginatedData, totalPages, totalItems } = useMemo(() => {
-    const startIndex = (currentPage - 1) * perPage
-    const endIndex = startIndex + perPage
-    return {
-      paginatedData: filteredClients.slice(startIndex, endIndex),
-      totalPages: Math.ceil(filteredClients.length / perPage),
-      totalItems: filteredClients.length,
-    }
-  }, [filteredClients, currentPage, perPage])
+  useEffect(() => {
+    if (result && currentPage > Math.max(1, result.pages)) setCurrentPage(Math.max(1, result.pages))
+  }, [result, currentPage])
 
   const handleSort = (key: keyof Client) => {
     setSortConfig((prev) => {
@@ -183,20 +172,13 @@ export default function Clients() {
 
   if (isError) return <QueryError retry={refetch} />
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
-  }
 
   return (
     <div>
       <div className="page-toolbar">
         <div className="flex items-center gap-3">
           <h1 className="page-title">{t('clients.title')}</h1>
-          <span className="rounded-full border border-[var(--workspace-line)] px-3 py-1 text-sm tabular-nums text-[var(--workspace-muted)]">{clients?.length ?? 0}</span>
+          <span className="rounded-full border border-[var(--workspace-line)] px-3 py-1 text-sm tabular-nums text-[var(--workspace-muted)]">{totalItems}</span>
         </div>
         {!showForm && (
           <div className="page-actions">
@@ -220,7 +202,7 @@ export default function Clients() {
         )}
       </div>
 
-      {!showForm && clients?.length === 0 && !searchQuery && !genderFilter && (
+      {!showForm && !isLoading && totalItems === 0 && !searchQuery && !genderFilter && (
         <ContextHint
           hint="clients"
           onAction={() => {
@@ -261,9 +243,11 @@ export default function Clients() {
                 <option value="female">{t('clients.female')}</option>
                 <option value="other">{t('clients.other')}</option>
               </Select>
-              {filteredClients.length > 0 && (
+              {totalItems > 0 && (
                 <ExportButton
-                  data={filteredClients}
+                  data={clients}
+                  totalItems={totalItems}
+                  loadData={loadExport}
                   columns={[
                     { key: 'full_name', label: t('clients.name') },
                     { key: 'contact_phone', label: t('clients.phone') },
@@ -366,7 +350,9 @@ export default function Clients() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--workspace-line)]">
-              {paginatedData.length === 0 ? (
+              {isLoading ? (
+                <tr><td colSpan={5} className="py-8"><LoadingSpinner /></td></tr>
+              ) : paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-2 sm:px-6 py-4 text-center text-[var(--workspace-muted)]">
                     {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}

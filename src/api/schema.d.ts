@@ -13517,6 +13517,10 @@ export interface operations {
                 owner_id?: number | null;
                 phone?: string | null;
                 name?: string | null;
+                q?: string | null;
+                gender?: ("male" | "female" | "other") | null;
+                sort_by?: "id" | "full_name" | "contact_phone" | "contact_email" | "gender" | "birth_date" | "created_at";
+                sort_order?: "asc" | "desc";
                 page?: number;
                 per_page?: number;
                 /** @description Include soft-deleted clients */
