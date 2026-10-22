@@ -4,6 +4,7 @@ import api from '../../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
 import Button from '../../ui/Button'
 import LoadingSpinner from '../LoadingSpinner'
+import { useWorkspaceAccessContext } from '../../hooks/useWorkspaceAccess'
 import { useTranslation } from '../../hooks/useTranslation'
 import type { ClientNoteOut } from '../../api/types'
 
@@ -12,6 +13,8 @@ const MAX_NOTE_LENGTH = 2000
 export default function ClientNotes({ clientId }: { clientId: number }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const access = useWorkspaceAccessContext()
+  const canEdit = access == null || access.crm_mode === 'full'
   const queryKey = ['client-notes', clientId]
   const [draft, setDraft] = useState('')
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -92,9 +95,13 @@ export default function ClientNotes({ clientId }: { clientId: number }) {
   })
 
   const submitDraft = () => {
+    if (!canEdit) return
     const body = draft.trim()
     if (body) createNote.mutate(body)
   }
+
+  const visibleNotes = (canEdit || !updateNote.isPending ? notes : updateNote.context?.previous ?? notes)
+    .filter(note => canEdit || note.id > 0)
 
   if (isLoading) {
     return (
@@ -107,16 +114,16 @@ export default function ClientNotes({ clientId }: { clientId: number }) {
     return (
       <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
         <p>{t('common.loadError')}</p>
-        <button type="button" onClick={() => void refetch()} className="mt-2 underline">
+        <Button variant="secondary" onClick={() => void refetch()} className="mt-2 min-h-8 px-3 py-1 text-xs">
           {t('common.retry')}
-        </button>
+        </Button>
       </div>
     )
   }
 
   return (
     <div>
-      <div className="space-y-2">
+      {canEdit && <div className="space-y-2">
         <textarea
           aria-label={t('clientWorkspace.notePlaceholder')}
           placeholder={t('clientWorkspace.notePlaceholder')}
@@ -124,36 +131,36 @@ export default function ClientNotes({ clientId }: { clientId: number }) {
           maxLength={MAX_NOTE_LENGTH}
           onChange={(event) => setDraft(event.target.value)}
           rows={3}
-          className="w-full rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-3 py-2 text-sm text-[var(--workspace-ink)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="ui-input min-h-20 w-full resize-y"
         />
         <div className="flex items-center justify-between gap-3">
           <span className="text-xs tabular-nums text-[var(--workspace-muted)]">
             {draft.length}/{MAX_NOTE_LENGTH}
           </span>
-          <Button onClick={submitDraft} disabled={!draft.trim() || createNote.isPending}>
+          <Button className="min-h-8 px-3 py-1.5 text-xs" onClick={submitDraft} disabled={!draft.trim() || createNote.isPending}>
             {createNote.isPending ? t('common.saving') : t('clientWorkspace.addNote')}
           </Button>
         </div>
-      </div>
+      </div>}
 
-      {error && (
+      {canEdit && error && (
         <p role="alert" className="mt-3 rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-800">
           {error}
         </p>
       )}
 
-      {notes.length === 0 ? (
+      {visibleNotes.length === 0 ? (
         <p className="mt-4 text-sm text-[var(--workspace-muted)]">{t('clientWorkspace.noNotes')}</p>
       ) : (
-        <ul className="mt-4 space-y-3">
-          {notes.map((note) => {
+        <ul className="mt-3 divide-y divide-[var(--workspace-line)]">
+          {visibleNotes.map((note) => {
             const pending = note.id < 0
-            const editing = editingId === note.id
+            const editing = canEdit && editingId === note.id
             return (
               <li
                 key={note.id}
                 aria-busy={pending || undefined}
-                className={`rounded-lg border border-[var(--workspace-line)] p-3 ${pending ? 'opacity-60' : ''}`}
+                className={`py-3 ${pending ? 'opacity-60' : ''}`}
               >
                 {editing ? (
                   <div className="space-y-2">
@@ -163,10 +170,11 @@ export default function ClientNotes({ clientId }: { clientId: number }) {
                       maxLength={MAX_NOTE_LENGTH}
                       onChange={(event) => setEditingBody(event.target.value)}
                       rows={3}
-                      className="w-full rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-3 py-2 text-sm text-[var(--workspace-ink)]"
+                      className="ui-input min-h-20 w-full resize-y"
                     />
                     <div className="flex gap-2">
                       <Button
+                        className="min-h-8 px-3 py-1.5 text-xs"
                         onClick={() => {
                           const body = editingBody.trim()
                           if (body) updateNote.mutate({ id: note.id, body })
@@ -177,6 +185,7 @@ export default function ClientNotes({ clientId }: { clientId: number }) {
                       </Button>
                       <Button
                         variant="quiet"
+                        className="min-h-8 px-2 py-1 text-xs"
                         onClick={() => {
                           setEditingId(null)
                           setEditingBody('')
@@ -188,15 +197,16 @@ export default function ClientNotes({ clientId }: { clientId: number }) {
                   </div>
                 ) : (
                   <>
-                    <p className="whitespace-pre-wrap text-sm text-[var(--workspace-ink)]">{note.body}</p>
+                    <p className="whitespace-pre-wrap break-words text-sm text-[var(--workspace-ink)]">{note.body}</p>
                     <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--workspace-muted)]">
                       <span>
                         {note.author_name || '—'} · {new Date(note.created_at).toLocaleString()}
                       </span>
-                      {!pending && (
+                      {canEdit && !pending && (
                         <span className="flex gap-2">
                           <Button
                             variant="quiet"
+                            className="min-h-8 px-2 py-1 text-xs"
                             onClick={() => {
                               setEditingId(note.id)
                               setEditingBody(note.body)
@@ -207,6 +217,7 @@ export default function ClientNotes({ clientId }: { clientId: number }) {
                           </Button>
                           <Button
                             variant="quiet"
+                            className="min-h-8 px-2 py-1 text-xs"
                             onClick={() => {
                               if (window.confirm(t('clientWorkspace.deleteNoteConfirm'))) {
                                 deleteNote.mutate(note.id)

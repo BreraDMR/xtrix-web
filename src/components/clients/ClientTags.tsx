@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
 import Button from '../../ui/Button'
+import Input from '../../ui/Input'
+import { useWorkspaceAccessContext } from '../../hooks/useWorkspaceAccess'
 import LoadingSpinner from '../LoadingSpinner'
 import { useTranslation } from '../../hooks/useTranslation'
 import type { ClientProfileOut } from '../../api/types'
@@ -14,6 +16,8 @@ const MAX_PREFERENCES_LENGTH = 2000
 export default function ClientTags({ clientId }: { clientId: number }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const access = useWorkspaceAccessContext()
+  const canEdit = access == null || access.crm_mode === 'full'
   const queryKey = ['client-profile', clientId]
   const [tags, setTags] = useState<string[] | null>(null)
   const [preferences, setPreferences] = useState<string | null>(null)
@@ -30,6 +34,7 @@ export default function ClientTags({ clientId }: { clientId: number }) {
 
   const localTags = tags ?? profile?.tags ?? []
   const localPreferences = preferences ?? profile?.preferences ?? ''
+  const displayedTags = canEdit ? localTags : profile?.tags ?? []
   const dirty = tags !== null || preferences !== null
 
   const save = useMutation({
@@ -54,6 +59,7 @@ export default function ClientTags({ clientId }: { clientId: number }) {
   })
 
   const addTag = () => {
+    if (!canEdit) return
     const cleaned = tagDraft.trim().replace(/\s+/g, ' ')
     if (!cleaned || localTags.length >= MAX_TAGS) return
     if (localTags.some((tag) => tag.toLowerCase() === cleaned.toLowerCase())) {
@@ -75,9 +81,9 @@ export default function ClientTags({ clientId }: { clientId: number }) {
     return (
       <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
         <p>{t('common.loadError')}</p>
-        <button type="button" onClick={() => void refetch()} className="mt-2 underline">
+        <Button variant="secondary" onClick={() => void refetch()} className="mt-2 min-h-8 px-3 py-1 text-xs">
           {t('common.retry')}
-        </button>
+        </Button>
       </div>
     )
   }
@@ -85,30 +91,30 @@ export default function ClientTags({ clientId }: { clientId: number }) {
   return (
     <div className="space-y-4">
       <div>
-        {localTags.length === 0 ? (
+        {displayedTags.length === 0 ? (
           <p className="mb-2 text-sm text-[var(--workspace-muted)]">{t('clientWorkspace.noTags')}</p>
         ) : (
           <ul className="mb-2 flex flex-wrap gap-2" aria-label={t('clientWorkspace.tags')}>
-            {localTags.map((tag) => (
+            {displayedTags.map((tag) => (
               <li
                 key={tag}
-                className="flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700 dark:bg-blue-900/30 dark:text-blue-200"
+                className="flex max-w-full items-center gap-1 rounded-md bg-[var(--workspace-accent-soft)] px-2 py-1 text-xs text-[var(--workspace-accent)]"
               >
-                {tag}
-                <button
-                  type="button"
+                <span className="break-all">{tag}</span>
+                {canEdit && <Button
+                  variant="quiet"
                   aria-label={`${t('common.delete')}: ${tag}`}
                   onClick={() => setTags(localTags.filter((item) => item !== tag))}
-                  className="rounded-full px-1 leading-none hover:bg-blue-100 dark:hover:bg-blue-800"
+                  className="min-h-7 shrink-0 px-1.5 py-0 leading-none"
                 >
                   ×
-                </button>
+                </Button>}
               </li>
             ))}
           </ul>
         )}
-        <div className="flex gap-2">
-          <input
+        {canEdit && <div className="flex gap-2">
+          <Input
             type="text"
             aria-label={t('clientWorkspace.tagPlaceholder')}
             placeholder={t('clientWorkspace.tagPlaceholder')}
@@ -122,7 +128,7 @@ export default function ClientTags({ clientId }: { clientId: number }) {
                 addTag()
               }
             }}
-            className="min-w-0 flex-1 rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-3 py-2 text-sm text-[var(--workspace-ink)]"
+            className="min-w-0 flex-1"
           />
           <Button
             variant="secondary"
@@ -131,14 +137,14 @@ export default function ClientTags({ clientId }: { clientId: number }) {
           >
             {t('clientWorkspace.addTag')}
           </Button>
-        </div>
-        {localTags.length >= MAX_TAGS && (
+        </div>}
+        {canEdit && localTags.length >= MAX_TAGS && (
           <p className="mt-1 text-xs text-[var(--workspace-muted)]">{MAX_TAGS}/{MAX_TAGS}</p>
         )}
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-[var(--workspace-ink)]" htmlFor="client-preferences">
+      {canEdit ? <div>
+        <label className="mb-1 block text-xs font-medium text-[var(--workspace-ink)]" htmlFor="client-preferences">
           {t('clientWorkspace.preferences')}
         </label>
         <textarea
@@ -148,21 +154,24 @@ export default function ClientTags({ clientId }: { clientId: number }) {
           placeholder={t('clientWorkspace.preferencesPlaceholder')}
           onChange={(event) => setPreferences(event.target.value)}
           rows={3}
-          className="w-full rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-3 py-2 text-sm text-[var(--workspace-ink)]"
+          className="ui-input min-h-20 w-full resize-y"
         />
-      </div>
+      </div> : <dl>
+        <dt className="mb-1 text-xs font-medium text-[var(--workspace-muted)]">{t('clientWorkspace.preferences')}</dt>
+        <dd className="whitespace-pre-wrap break-words text-sm text-[var(--workspace-ink)]">{profile?.preferences || '—'}</dd>
+      </dl>}
 
-      {error && (
+      {canEdit && error && (
         <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-800">
           {error}
         </p>
       )}
 
-      <div className="flex justify-end">
-        <Button onClick={() => save.mutate()} disabled={!dirty || save.isPending}>
+      {canEdit && <div className="flex justify-end">
+        <Button className="min-h-8 px-3 py-1.5 text-xs" onClick={() => save.mutate()} disabled={!dirty || save.isPending}>
           {save.isPending ? t('common.saving') : t('clientWorkspace.saveProfile')}
         </Button>
-      </div>
+      </div>}
     </div>
   )
 }
