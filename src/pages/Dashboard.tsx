@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { HiOutlineCalendar, HiOutlinePlus } from 'react-icons/hi'
 import api from '../api/client'
+import { apiErrorStatus } from '../api/errors'
 import type { Schema } from '../api/types'
 import Card from '../ui/Card'
 import Button from '../ui/Button'
@@ -43,10 +44,13 @@ function BusinessOverview() {
     retry: false,
   })
   const money = (amount: number | null | undefined) => amount == null ? '—' : formatCurrency(amount, currency)
+  // 403 means this person may not see money (staff without the box ticked, a solo without a
+  // business) - that's not an error to retry, the card just isn't theirs
+  const moneyHidden = profit.isError && apiErrorStatus(profit.error) === 403
   return <section aria-labelledby="business-overview-title" className="mt-8 border-t border-[var(--workspace-line)] pt-6">
     <h2 id="business-overview-title" className="mb-4 text-base font-semibold">{t('dashboard.overview')}</h2>
     <div className="grid items-start gap-4 xl:grid-cols-3">
-      <Card className="p-5">
+      {!moneyHidden && <Card className="p-5">
         <h3 className="mb-4 text-sm font-medium">{t('dashboard.thisMonth')}</h3>
         {profit.isPending ? <LoadingSpinner size="sm" /> : profit.isError ? <QueryError retry={profit.refetch} /> :
           <dl className="space-y-3 text-sm">
@@ -55,7 +59,7 @@ function BusinessOverview() {
             <div className="flex justify-between gap-4 border-t border-[var(--workspace-line)] pt-3"><dt className="text-[var(--workspace-muted)]">{t('dashboard.monthlyProfit')}</dt><dd className="font-semibold tabular-nums">{money(profit.data?.profit)}</dd></div>
             <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.profitMargin')}</dt><dd className="tabular-nums">{profit.data?.profit_margin == null ? '—' : `${profit.data.profit_margin.toFixed(2)}%`}</dd></div>
           </dl>}
-      </Card>
+      </Card>}
       <Card className="p-5">
         <h3 className="mb-4 text-sm font-medium">{t('dashboard.visitHistory')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :

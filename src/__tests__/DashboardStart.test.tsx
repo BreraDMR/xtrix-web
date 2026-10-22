@@ -39,3 +39,17 @@ it('keeps today appointments visible when financial reports fail', async () => {
   expect(await screen.findByText("Today's guest")).toBeInTheDocument()
   expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
 })
+
+it('leaves out the money card for someone who may not see financials instead of showing an error', async () => {
+  signIn({ id: 8, role: 'employee' })
+  const fallback = routes({ '/businesses/me': { id: 1, currency: 'CZK', timezone: 'Europe/Prague' },
+    '/analytics/visits/statistics': { total_visits: 0 }, '/analytics/clients/statistics': { total_clients: 2 },
+    '/employees/': [], '/visits/': [] })
+  vi.mocked(api.get).mockImplementation((url, config) => url === '/expenses/reports/profit'
+    ? Promise.reject(apiError(403, 'Not allowed')) : fallback(url, config))
+  renderWithProviders(<Dashboard />)
+  expect(await screen.findByRole('heading', { name: 'Visit history' })).toBeInTheDocument()
+  await new Promise(resolve => setTimeout(resolve, 50))
+  expect(screen.queryByRole('heading', { name: 'This month' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+})
