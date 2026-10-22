@@ -265,7 +265,7 @@ export default function Visits() {
       </Card>
 
       {canEdit && showForm && (
-        <SidePanel title={editingId === undefined ? t('visits.newVisit') : t('visits.editVisit')} onClose={closeForm}>
+        <SidePanel fallbackFocusId="visit-directory-search" title={editingId === undefined ? t('visits.newVisit') : t('visits.editVisit')} onClose={closeForm}>
           <VisitForm key={editingId ?? 'new'} visitId={editingId} onSuccess={handleSuccess} onCancel={closeForm} />
         </SidePanel>
       )}

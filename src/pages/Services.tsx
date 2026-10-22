@@ -187,7 +187,7 @@ export default function Services() {
           : <p className="border-t border-[var(--workspace-line)] px-5 py-3 text-xs text-[var(--workspace-muted)]">{t('pagination.range').replace('{start}', String(totalItems ? 1 : 0)).replace('{end}', String(totalItems)).replace('{total}', String(totalItems))}</p>)}
       </Card>
 
-      {showForm && canEdit && <SidePanel title={t(editingId ? 'services.editService' : 'services.addService')} onClose={() => { setShowForm(false); setEditingId(undefined) }}>
+      {showForm && canEdit && <SidePanel fallbackFocusId="service-directory-search" title={t(editingId ? 'services.editService' : 'services.addService')} onClose={() => { setShowForm(false); setEditingId(undefined) }}>
         <ServiceForm key={editingId ?? 'new'} serviceId={editingId} onSuccess={handleSuccess} onCancel={() => { setShowForm(false); setEditingId(undefined) }} />
       </SidePanel>}
     </div>

@@ -20,11 +20,15 @@ test('create a client, then edit it', async ({ page, request }) => {
   await expect(row).toBeVisible()
   await expect(row).toContainText('clara.novak@example.com')
 
-  await row.getByRole('button', { name: 'Edit' }).click()
+  await row.getByRole('button', { name: 'Open: Clara Novak', exact: true }).click()
+  const panel = page.getByRole('dialog', { name: 'Client record', exact: true })
+  await panel.getByRole('button', { name: 'Edit', exact: true }).click()
   await waitForFormData(page)
   await expect(page.getByLabel(/^Full Name/)).toHaveValue('Clara Novak')
   await page.getByLabel(/^Full Name/).fill('Clara Novakova')
   await page.getByRole('button', { name: 'Update Client' }).click()
+  await expect(panel.getByRole('heading', { name: 'Clara Novakova', exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
   await expect(page.getByRole('row').filter({ hasText: 'Clara Novakova' })).toBeVisible()
 
   await page.reload()
