@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
-import { HiX, HiDownload, HiPrinter } from 'react-icons/hi'
+import { HiDownload, HiPrinter } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import FormError from './FormError'
+import Modal from '../ui/Modal'
 import { exportData, exportChartToImage, ExportFormat, ExportOptions, type ExportColumn } from '../utils/export'
 import { getExportPreferences, saveExportPreferences } from '../utils/export'
 
@@ -38,6 +39,7 @@ export default function ExportModal<T extends object>({
   onExportComplete,
 }: ExportModalProps<T>) {
   const { t } = useTranslation()
+  const formId = useId()
   const access = useWorkspaceAccessContext()
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('pdf')
   const [selectedReportType, setSelectedReportType] = useState<string | null>(
@@ -96,31 +98,16 @@ export default function ExportModal<T extends object>({
   if (!isOpen || (access !== undefined && !access?.can_export)) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-        {}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {t('export.title')}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-400"
-            disabled={isExporting}
-          >
-            <HiX className="w-6 h-6" />
-          </button>
-        </div>
-
-        {}
+    <Modal title={t('export.title')} onClose={onClose} busy={isExporting}>
         <div className="p-6 space-y-6">
           {exportError && <div role="alert"><FormError message={exportError} /></div>}
           {reportTypes && reportTypes.length > 1 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+              <label htmlFor={`${formId}-type`} className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                 {t('export.reportType')}
               </label>
               <select
+                id={`${formId}-type`}
                 value={selectedReportType || ''}
                 onChange={(e) => setSelectedReportType(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
@@ -197,13 +184,13 @@ export default function ExportModal<T extends object>({
             <div className="flex items-center">
               <input
                 type="checkbox"
-                id="includeCharts"
+                id={`${formId}-charts`}
                 checked={includeChartsOption}
                 onChange={(e) => setIncludeChartsOption(e.target.checked)}
                 disabled={isExporting || selectedFormat === 'print'}
                 className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 dark:border-gray-600"
               />
-              <label htmlFor="includeCharts" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+              <label htmlFor={`${formId}-charts`} className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                 {t('export.includeCharts')}
               </label>
             </div>
@@ -243,7 +230,6 @@ export default function ExportModal<T extends object>({
             )}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   )
 }

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { HiX, HiDownload } from 'react-icons/hi'
+import { HiDownload } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLabels } from '../i18n/labels'
 import api from '../api/client'
@@ -9,6 +9,7 @@ import { synchronizeStoredSession, useAuthStore } from '../store/authStore'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import QueryError from './QueryError'
 import ExportModal from './ExportModal'
+import Modal from '../ui/Modal'
 import LoadingSpinner from './LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -30,6 +31,7 @@ export default function ClientPersonalReportModal({
   clientId,
 }: ClientPersonalReportModalProps) {
   const { t } = useTranslation()
+  const formId = useId()
   const { visitStatus } = useLabels()
   const currency = useBusinessCurrency()
   const { user, sessionRevision } = useAuthStore()
@@ -141,19 +143,19 @@ export default function ClientPersonalReportModal({
           [t('visits.date')]: new Date(visit.date_start).toLocaleDateString(),
           [t('visits.service')]: visit.service_name || '-',
           [t('visits.status')]: visitStatus(visit.status) || '-',
-          [t('visits.price')]: visit.price ? formatCurrency(visit.price, currency) : '-',
+          [t('visits.price')]: visit.price != null ? formatCurrency(visit.price, currency) : '-',
           'Payment Method': visit.payment_method || '-',
         }))
       case 'finance': {
-        const totalSpent = (visits || [])
-          .filter((v) => v.status === 'completed')
-          .reduce((sum, v) => sum + (v.price || 0), 0)
+        const completed = (visits || []).filter(visit => visit.status === 'completed')
+        const totalSpent = completed.some(visit => visit.price == null)
+          ? null : completed.reduce((sum, visit) => sum + (visit.price ?? 0), 0)
         return [
           {
             [t('export.period')]: `${new Date(dateFrom).toLocaleDateString()} - ${new Date(dateTo).toLocaleDateString()}`,
             'Total Visits': (visits || []).length,
-            'Completed': (visits || []).filter((v) => v.status === 'completed').length,
-            'Total Revenue': formatCurrency(totalSpent, currency),
+            'Completed': completed.length,
+            'Total Revenue': totalSpent != null ? formatCurrency(totalSpent, currency) : '-',
             [t('loyalty.points')]: loyaltyBalance?.points || 0,
             [t('loyalty.cashback')]: loyaltyBalance?.cashback ? formatCurrency(loyaltyBalance.cashback, currency) : '-',
           },
@@ -186,29 +188,15 @@ export default function ClientPersonalReportModal({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800">
-          {}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {t('export.personalReport')} - {client?.full_name || ''}
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-400"
-            >
-              <HiX className="w-6 h-6" />
-            </button>
-          </div>
-
-          {}
+      <Modal title={`${t('export.personalReport')} - ${client?.full_name || ''}`} onClose={onClose} wide>
           <div className="p-6 space-y-6">
             {}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+              <label htmlFor={`${formId}-type`} className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                 {t('export.selectReportType')}
               </label>
               <select
+                id={`${formId}-type`}
                 value={selectedReportType}
                 onChange={(e) => { setShowExportModal(false); setSelectedReportType(e.target.value) }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
@@ -224,10 +212,11 @@ export default function ClientPersonalReportModal({
             {(selectedReportType === 'visits' || selectedReportType === 'finance') && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+                  <label htmlFor={`${formId}-from`} className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     {t('export.fromDate')}
                   </label>
                   <input
+                    id={`${formId}-from`}
                     type="date"
                     value={dateFrom}
                     onChange={(e) => { setShowExportModal(false); setDateFrom(e.target.value) }}
@@ -235,10 +224,11 @@ export default function ClientPersonalReportModal({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
+                  <label htmlFor={`${formId}-to`} className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     {t('export.toDate')}
                   </label>
                   <input
+                    id={`${formId}-to`}
                     type="date"
                     value={dateTo}
                     onChange={(e) => { setShowExportModal(false); setDateTo(e.target.value) }}
@@ -320,8 +310,7 @@ export default function ClientPersonalReportModal({
               {t('export.export')} / {t('common.print')}
             </button>
           </div>
-        </div>
-      </div>
+      </Modal>
 
       {}
       {showExportModal && ready && canExport && (

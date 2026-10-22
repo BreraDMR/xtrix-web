@@ -95,9 +95,10 @@ it('fails closed on a late page and retries the complete history before allowing
 
 it('uses the complete history in the finance view and reloads the selected period', async () => {
   serveHistory()
-  const { container } = renderWithProviders(<ClientPersonalReportModal isOpen clientId={5} onClose={vi.fn()} />)
+  renderWithProviders(<ClientPersonalReportModal isOpen clientId={5} onClose={vi.fn()} />)
   await screen.findByText('Service 125')
-  await userEvent.selectOptions(screen.getByRole('combobox'), 'finance')
+  await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Select Report Type' }), 'finance')
+  expect(screen.getByLabelText('To Date')).toHaveValue('2026-12-31')
   let table = screen.getByRole('table')
   expect(within(table).getAllByRole('row')).toHaveLength(2)
   const values = within(within(table).getAllByRole('row')[1]).getAllByRole('cell').map(cell => cell.textContent)
@@ -108,7 +109,7 @@ it('uses the complete history in the finance view and reloads the selected perio
   await waitFor(() => expect(exportData).toHaveBeenCalledOnce())
   expect(vi.mocked(exportData).mock.calls[0][0].data[0]).toMatchObject({ 'Total Visits': 125, Completed: 124 })
   await waitFor(() => expect(screen.queryByRole('button', { name: 'Export' })).not.toBeInTheDocument())
-  fireEvent.change(container.querySelector('input[type="date"]') as HTMLInputElement, { target: { value: '2026-07-01' } })
+  fireEvent.change(screen.getByLabelText('From Date'), { target: { value: '2026-07-01' } })
   await waitFor(() => {
     table = screen.getByRole('table')
     expect(within(within(table).getAllByRole('row')[1]).getAllByRole('cell')[1]).toHaveTextContent('0')
@@ -134,6 +135,36 @@ it('preserves redacted prices and the workspace export permission', async () => 
   expect(screen.getByRole('button', { name: /Export.*Print/ })).toBeDisabled()
   expect(screen.queryByRole('button', { name: 'Export' })).not.toBeInTheDocument()
   expect(exportData).toHaveBeenCalledOnce()
+})
+
+it('keeps an explicit zero visit price distinct from a redacted price in preview and export', async () => {
+  serveHistory(false, [{ ...rows[0], price: 0 }, { ...rows[1], price: null }])
+  renderWithProviders(<ClientPersonalReportModal isOpen clientId={5} onClose={vi.fn()} />)
+  const table = await screen.findByRole('table')
+  const visitRows = within(table).getAllByRole('row').slice(1)
+  expect(within(visitRows[0]).getAllByRole('cell')[3]).toHaveTextContent('0.00 €')
+  expect(within(visitRows[1]).getAllByRole('cell')[3]).toHaveTextContent('-')
+  await userEvent.click(screen.getByRole('button', { name: /Export.*Print/ }))
+  await userEvent.click(screen.getByRole('button', { name: 'Export' }))
+  await waitFor(() => expect(exportData).toHaveBeenCalledOnce())
+  expect(vi.mocked(exportData).mock.calls[0][0].data).toMatchObject([{ Price: '0.00 €' }, { Price: '-' }])
+})
+
+it.each([
+  { name: 'known zero revenue', visits: [{ ...rows[0], price: 0 }], revenue: '0.00 €' },
+  { name: 'mixed known and redacted completed prices', visits: [{ ...rows[0], price: 10 }, { ...rows[1], price: null }], revenue: '-' },
+  { name: 'redacted planned prices outside revenue', visits: [{ ...rows[0], price: 10 }, { ...rows[1], price: null, status: 'planned' as const }], revenue: '10.00 €' },
+  { name: 'no completed visits', visits: [{ ...rows[0], price: null, status: 'planned' as const }], revenue: '0.00 €' },
+])('preserves $name in finance preview and export', async ({ visits, revenue }) => {
+  serveHistory(false, visits)
+  localStorage.setItem('client-report-preferences-5', JSON.stringify({ reportType: 'finance', dateFrom: '2026-01-01', dateTo: '2026-12-31' }))
+  renderWithProviders(<ClientPersonalReportModal isOpen clientId={5} onClose={vi.fn()} />)
+  const table = await screen.findByRole('table')
+  expect(within(within(table).getAllByRole('row')[1]).getAllByRole('cell')[3]).toHaveTextContent(revenue)
+  await userEvent.click(screen.getByRole('button', { name: /Export.*Print/ }))
+  await userEvent.click(screen.getByRole('button', { name: 'Export' }))
+  await waitFor(() => expect(exportData).toHaveBeenCalledOnce())
+  expect(vi.mocked(exportData).mock.calls[0][0].data[0]).toMatchObject({ 'Total Revenue': revenue })
 })
 
 it('never requests a later old-session page with the next account credentials', async () => {

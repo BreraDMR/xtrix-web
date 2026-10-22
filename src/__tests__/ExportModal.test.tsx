@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ExportModal from '../components/ExportModal'
 import { exportData } from '../utils/export'
@@ -46,5 +46,25 @@ describe('ExportModal', () => {
     await userEvent.click(screen.getByRole('button', { name: /export/i }))
     expect(await screen.findByRole('alert')).toBeInTheDocument()
     expect(exportData).not.toHaveBeenCalled()
+  })
+
+  it('cannot dismiss a running export through Escape, backdrop, Close or Cancel', async () => {
+    let complete: (() => void) | undefined
+    vi.mocked(exportData).mockImplementation(() => new Promise<void>(resolve => { complete = resolve }))
+    const onClose = vi.fn()
+    renderWithProviders(<ExportModal isOpen onClose={onClose} data={[{ id: 1 }]}
+      columns={[{ key: 'id', label: 'ID' }]} filename="clients" reportTypes={['Visits', 'Finance']} />)
+    expect(screen.getByRole('combobox', { name: 'Report Type' })).toHaveValue('Visits')
+    await userEvent.click(screen.getByRole('button', { name: 'Export' }))
+    const dialog = screen.getByRole('dialog', { name: 'Export Data' })
+    expect(screen.getByRole('button', { name: 'Close' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    expect(fireEvent(dialog, new Event('cancel', { cancelable: true, bubbles: true }))).toBe(false)
+    fireEvent.click(dialog, { clientX: -1, clientY: -1 })
+    expect(onClose).not.toHaveBeenCalled()
+    expect(dialog).toBeInTheDocument()
+    expect(complete).toBeDefined()
+    await act(async () => { complete?.() })
+    await waitFor(() => expect(onClose).toHaveBeenCalledOnce())
   })
 })
