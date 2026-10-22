@@ -63,21 +63,27 @@ async function fetchVisits(from?: string, to?: string, signal?: AbortSignal): Pr
   })).data)
 }
 
+// Noon on the salon's calendar date. Date maths below runs in the browser zone, and noon keeps
+// the day from slipping when the two zones are hours apart.
+function salonToday(timeZone: string): Date {
+  const [year, month, date] = zonedDayKey(new Date(), timeZone).split('-').map(Number)
+  return new Date(year, month - 1, date, 12)
+}
+
 export default function CalendarPage() {
   const { t } = useTranslation()
   const { user, sessionRevision } = useAuthStore()
   const [view, setView] = useState<CalendarView>('day')
-  const [day, setDay] = useState<Date>(() => {
-    const value = new Date()
-    value.setHours(12, 0, 0, 0)
-    return value
-  })
+  // null = follow the salon's today; it only becomes a fixed date once someone moves through days
+  const [pickedDay, setPickedDay] = useState<Date | null>(null)
   const [selectedVisit, setSelectedVisit] = useState<CalendarVisit | null>(null)
   const [dragPreview, setDragPreview] = useState<DragPreview | null>(null)
   const [moveError, setMoveError] = useState('')
   const [moveSaving, setMoveSaving] = useState(false)
   const { data: business } = useMyBusiness()
   const timeZone = business?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+  const today = useMemo(() => salonToday(timeZone), [timeZone])
+  const day = pickedDay ?? today
   const dayKey = zonedDayKey(day, timeZone)
 
   const isRangeView = view === 'day' || view === 'week'
@@ -262,11 +268,7 @@ export default function CalendarPage() {
     ? !rangeQuery.isLoading && !rangeQuery.isError && (rangeQuery.data?.length ?? 0) === 0
     : !legacyQuery.isLoading && !legacyQuery.isError && Array.isArray(visits) && visits.length === 0
 
-  const goToToday = () => {
-    const value = new Date()
-    value.setHours(12, 0, 0, 0)
-    setDay(value)
-  }
+  const goToToday = () => setPickedDay(null)
 
   return (
     <div>
@@ -291,13 +293,13 @@ export default function CalendarPage() {
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Button
             variant="secondary"
-            onClick={() => setDay((value) => addDays(value, view === 'week' ? -7 : -1))}
+            onClick={() => setPickedDay(addDays(day, view === 'week' ? -7 : -1))}
           >
             {t('calendar.previous')}
           </Button>
           <Button
             variant="secondary"
-            onClick={() => setDay((value) => addDays(value, view === 'week' ? 7 : 1))}
+            onClick={() => setPickedDay(addDays(day, view === 'week' ? 7 : 1))}
           >
             {t('calendar.next')}
           </Button>
