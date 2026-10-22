@@ -10,7 +10,7 @@ test('account theme applies on the dashboard and follows the system when selecte
   await page.emulateMedia({ colorScheme: 'light' })
   await openAs(page, owner)
   await expect(page.locator('html')).toHaveClass(/dark/)
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(22, 22, 24)')
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(22, 28, 25)')
   await page.reload()
   await expect(page.locator('html')).toHaveClass(/dark/)
 
@@ -19,13 +19,13 @@ test('account theme applies on the dashboard and follows the system when selecte
   await expect(page.locator('html')).not.toHaveClass(/dark/)
   await page.emulateMedia({ colorScheme: 'dark' })
   await expect(page.locator('html')).toHaveClass(/dark/)
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(22, 22, 24)')
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(22, 28, 25)')
   await page.goto('/clients')
-  await expect(page.locator('main .ui-card').filter({ has: page.locator('table') })).toHaveCSS('background-color', 'rgb(35, 35, 38)')
+  await expect(page.locator('main .ui-card').filter({ has: page.locator('table') })).toHaveCSS('background-color', 'rgb(30, 39, 34)')
   await expect(page.locator('html')).toHaveClass(/dark/)
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(page.locator('html')).not.toHaveClass(/dark/)
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(245, 245, 247)')
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(247, 247, 243)')
 })
 
 for (const width of [1280, 375]) {

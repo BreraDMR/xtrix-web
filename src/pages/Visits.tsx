@@ -206,7 +206,7 @@ export default function Visits() {
           </div>
         </div>
 
-        <div className="overflow-x-auto" role="region" aria-label={t('visits.title')} tabIndex={0}>
+        <div className="relative overflow-x-auto" role="region" aria-label={t('visits.title')} tabIndex={0}>
           <table role="table" className="w-full min-w-[760px] table-fixed text-sm">
             <caption className="sr-only">{t('visits.title')}</caption>
             <thead role="rowgroup" className="border-b border-[var(--workspace-line)] bg-[var(--workspace-bg)]">
