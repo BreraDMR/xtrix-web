@@ -743,6 +743,8 @@ export type TranslationKey =
   | 'dashboard.reservations'
   | 'dashboard.totalVisits'
   | 'dashboard.completedVisits'
+  | 'dashboard.plannedVisits'
+  | 'dashboard.cancelledVisits'
   | 'dashboard.totalClients'
   | 'dashboard.newClients'
   | 'dashboard.averageSpending'
@@ -2362,10 +2364,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "business.publicBooking.copyError": {"en": "Couldn't copy — select the link and copy it manually", "ru": "Не удалось скопировать — выделите ссылку и скопируйте вручную", "cz": "Kopírování se nepodařilo — odkaz vyberte a zkopírujte ručně"},
   "business.publicBooking.ready": {"en": "Ready to accept bookings", "ru": "Ссылка готова принимать записи", "cz": "Odkaz může přijímat rezervace"},
   "business.publicBooking.notReady": {"en": "Not ready for bookings yet", "ru": "Ссылка пока не готова к записи", "cz": "Odkaz zatím není připraven k rezervacím"},
-  "business.publicBooking.servicesReady": {"en": "There is a bookable service with a master", "ru": "Есть активная услуга с мастером", "cz": "Existuje aktivní služba s mistrem"},
-  "business.publicBooking.servicesMissing": {"en": "No active service with a duration and a master", "ru": "Нет активной услуги с длительностью и мастером", "cz": "Chybí aktivní služba s délkou a mistrem"},
-  "business.publicBooking.scheduleReady": {"en": "The master has working hours", "ru": "У мастера заполнен график", "cz": "Mistr má vyplněný rozvrh"},
-  "business.publicBooking.scheduleMissing": {"en": "The master has no working hours", "ru": "У мастера нет рабочего графика", "cz": "Mistr nemá pracovní rozvrh"},
+  "business.publicBooking.servicesReady": {"en": "There is a bookable service with a master", "ru": "Есть активная услуга с мастером", "cz": "Existuje aktivní služba se specialistou"},
+  "business.publicBooking.servicesMissing": {"en": "No active service with a duration and a master", "ru": "Нет активной услуги с длительностью и мастером", "cz": "Chybí aktivní služba s délkou a specialistou"},
+  "business.publicBooking.scheduleReady": {"en": "The master has working hours", "ru": "У мастера заполнен график", "cz": "Specialista má vyplněný rozvrh"},
+  "business.publicBooking.scheduleMissing": {"en": "The master has no working hours", "ru": "У мастера нет рабочего графика", "cz": "Specialista nemá pracovní rozvrh"},
   "business.publicBooking.setupServices": {"en": "Set up services", "ru": "Настроить услуги", "cz": "Nastavit služby"},
   "business.publicBooking.setupSchedule": {"en": "Set up working hours", "ru": "Настроить график", "cz": "Nastavit rozvrh"},
   "business.publicBooking.disabledHint": {"en": "Guests opening the link see that booking is unavailable.", "ru": "Гости по ссылке увидят, что запись недоступна.", "cz": "Hosté přes odkaz uvidí, že rezervace není dostupná."},
@@ -2448,7 +2450,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "waitlist.status.all": {"en": "All statuses", "ru": "Все статусы", "cz": "Všechny stavy"},
   "waitlist.status.active": {"en": "Active", "ru": "Активна", "cz": "Aktivní"},
   "waitlist.status.cancelled": {"en": "Closed", "ru": "Закрыта", "cz": "Uzavřená"},
-  "waitlist.status.fulfilled": {"en": "Booked", "ru": "Записана", "cz": "Rezervováno"},
+  "waitlist.status.fulfilled": {"en": "Booked", "ru": "Записана", "cz": "Rezervovaná"},
   "waitlist.offer.pending": {"en": "Offer waiting", "ru": "Ожидает ответа", "cz": "Nabídka čeká"},
   "waitlist.offer.accepted": {"en": "Offer accepted", "ru": "Предложение принято", "cz": "Nabídka přijata"},
   "waitlist.offer.declined": {"en": "Offer declined", "ru": "Предложение отклонено", "cz": "Nabídka odmítnuta"},
@@ -2942,6 +2944,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'dashboard.reservations': { en: 'Reservations', ru: 'Бронирования', cz: 'Rezervace' },
   'dashboard.totalVisits': { en: 'Total Visits', ru: 'Всего визитов', cz: 'Celkem návštěv' },
   'dashboard.completedVisits': { en: 'Completed', ru: 'Завершено', cz: 'Dokončeno' },
+  'dashboard.plannedVisits': { en: 'Planned', ru: 'Запланировано', cz: 'Plánováno' },
+  'dashboard.cancelledVisits': { en: 'Cancelled', ru: 'Отменено', cz: 'Zrušeno' },
   'dashboard.totalClients': { en: 'Total Clients', ru: 'Всего клиентов', cz: 'Celkem klientů' },
   'dashboard.newClients': { en: 'New Clients', ru: 'Новые клиенты', cz: 'Noví klienti' },
   'dashboard.averageSpending': { en: 'Average Spending', ru: 'Средние траты', cz: 'Průměrné výdaje' },
@@ -3120,7 +3124,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'employees.commission': { en: 'Commission', ru: 'Комиссия', cz: 'Provize' },
   'employees.base_salary': { en: 'Base Salary', ru: 'Базовая зарплата', cz: 'Základní plat' },
   'employees.status': { en: 'Status', ru: 'Статус', cz: 'Stav' },
-  'employees.hired_at': { en: 'Hired At', ru: 'Нанят', cz: 'Najato' },
+  'employees.hired_at': { en: 'Hired At', ru: 'Дата найма', cz: 'Nástup' },
   'employees.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
   'employees.no_employees': { en: 'No employees found', ru: 'Сотрудники не найдены', cz: 'Žádní zaměstnanci nenalezeni' },
   'employees.unknown': { en: 'Unknown', ru: 'Неизвестно', cz: 'Neznámý' },
@@ -3328,7 +3332,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'inventory.low_stock': { en: 'Low Stock', ru: 'Низкий остаток', cz: 'Nízký stav' },
   'inventory.low_stock_warning': { en: 'Low Stock Warning: {count} product(s) need restocking', ru: 'Предупреждение: {count} товар(ов) нуждается в пополнении', cz: 'Varování: {count} produktů potřebuje doplnění' },
   'inventory.low_stock_description': { en: 'Some products are running low. Please restock to avoid shortages.', ru: 'Некоторые товары заканчиваются. Пожалуйста, пополните склад.', cz: 'Některé produkty docházejí. Prosím doplňte sklad.' },
-  'inventory.low_stock_only': { en: 'Low Stock Only', ru: 'Только низкий остаток', cz: 'Pouze nízký stav' },
+  'inventory.low_stock_only': { en: 'Low Stock Only', ru: 'Только низкий остаток', cz: 'Jen nízká zásoba' },
   'inventory.search_placeholder': { en: 'Search products...', ru: 'Поиск товаров...', cz: 'Hledat produkty...' },
   'inventory.no_products': { en: 'No products found', ru: 'Товары не найдены', cz: 'Produkty nenalezeny' },
   
@@ -3370,7 +3374,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'analytics.ltv_per_client': { en: 'LTV per Client', ru: 'LTV на клиента', cz: 'LTV na klienta' },
   'analytics.visits_per_client': { en: 'Visits per Client', ru: 'Визиты на клиента', cz: 'Návštěvy na klienta' },
   'analytics.specialist_name': { en: 'Specialist', ru: 'Мастер', cz: 'Specialista' },
-  'analytics.avg_check': { en: 'Avg Check', ru: 'Средний чек', cz: 'Průměrný šek' },
+  'analytics.avg_check': { en: 'Avg Check', ru: 'Средний чек', cz: 'Průměrná útrata' },
   'analytics.revenue_per_client': { en: 'Revenue per Client', ru: 'Выручка на клиента', cz: 'Příjem na klienta' },
   'analytics.insight_type_info': { en: 'Info', ru: 'Информация', cz: 'Informace' },
   'analytics.insight_type_warning': { en: 'Warning', ru: 'Предупреждение', cz: 'Varování' },
@@ -3381,7 +3385,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'analytics.benchmarks_available': { en: 'Benchmarks Available', ru: 'Сравнение с рынком доступно', cz: 'Srovnávací hodnoty dostupné' },
   'analytics.benchmarks_not_available': { en: 'Not enough data for benchmarks', ru: 'Недостаточно данных для сравнения с рынком', cz: 'Nedostatek dat pro srovnávací hodnoty' },
   'analytics.business_count': { en: 'Businesses Analyzed', ru: 'Бизнесов проанализировано', cz: 'Analyzovaných podniků' },
-  'analytics.avg_check_benchmark': { en: 'Avg Check', ru: 'Средний чек', cz: 'Průměrný šek' },
+  'analytics.avg_check_benchmark': { en: 'Avg Check', ru: 'Средний чек', cz: 'Průměrná útrata' },
   'analytics.avg_visits_per_client': { en: 'Avg Visits per Client', ru: 'Среднее визитов на клиента', cz: 'Průměr návštěv na klienta' },
   'analytics.avg_retention_rate': { en: 'Avg Retention Rate', ru: 'Средняя удерживаемость', cz: 'Průměrná retence' },
   'analytics.avg_daily_load': { en: 'Avg Daily Load', ru: 'Средняя дневная загрузка', cz: 'Průměrné denní zatížení' },
@@ -3392,7 +3396,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'analytics.metric_revenue': { en: 'Revenue', ru: 'Выручка', cz: 'Příjem' },
   'analytics.metric_clients': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },
   'analytics.metric_visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
-  'analytics.metric_average_check': { en: 'Average Check', ru: 'Средний чек', cz: 'Průměrný šek' },
+  'analytics.metric_average_check': { en: 'Average Check', ru: 'Средний чек', cz: 'Průměrná útrata' },
   'analytics.metric_load': { en: 'Load', ru: 'Загрузка', cz: 'Zatížení' },
   'analytics.comparison_mom': { en: 'Month over Month', ru: 'Месяц к месяцу', cz: 'Měsíc k měsíci' },
   'analytics.comparison_wow': { en: 'Week over Week', ru: 'Неделя к неделе', cz: 'Týden k týdnu' },
@@ -3440,16 +3444,16 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'trial.banner_expired': { en: 'Trial ended. Your salon data is preserved. Choose a plan to continue.', ru: 'Пробный период завершён. Ваши данные сохранены. Выберите тариф для продолжения.', cz: 'Zkušební období skončilo. Vaše data jsou uložena. Vyberte tarif pro pokračování.' },
   'subscription.usage_title': { en: 'Plan Usage and Entitlements', ru: 'Использование тарифа и лимиты', cz: 'Využití tarifu a limity' },
   'subscription.crm_usage': {"en": "CRM: Visits this month", "ru": "CRM: визиты за месяц", "cz": "CRM: návštěvy tento měsíc"},
-  'subscription.ai_usage': { en: 'AI Sasha: Daily Requests', ru: 'ИИ Сашенька: запросы за сегодня', cz: 'AI Sašenka: dnešní dotazy' },
+  'subscription.ai_usage': { en: 'AI Sasha: Daily Requests', ru: 'ИИ Сашенька: запросы за сегодня', cz: 'AI Saška: dnešní dotazy' },
   'subscription.within_limit': { en: 'Within limit', ru: 'В пределах тарифа', cz: 'V rámci limitu' },
   'subscription.limit_exceeded': { en: 'Limit reached', ru: 'Лимит исчерпан', cz: 'Limit vyčerpán' },
   'subscription.notRequired': { en: 'Subscription is not required for your role', ru: 'Подписка не требуется для вашей роли', cz: 'Předplatné není vyžadováno pro vaši roli' },
   'subscription.currentSubscription': { en: 'Current Subscription', ru: 'Текущая подписка', cz: 'Aktuální předplatné' },
   'subscription.trialActive': { en: 'Trial period is active', ru: 'Пробный период активен', cz: 'Zkušební období je aktivní' },
   'subscription.trialEnds': { en: 'Trial ends', ru: 'Пробный период заканчивается', cz: 'Zkušební období končí' },
-  'subscription.availablePlans': { en: 'Available Plans', ru: 'Доступные тарифы', cz: 'Dostupné plány' },
+  'subscription.availablePlans': { en: 'Available Plans', ru: 'Доступные тарифы', cz: 'Dostupné tarify' },
   'subscription.currentPlan': { en: 'Current Plan', ru: 'Текущий план', cz: 'Aktuální plán' },
-  'subscription.subscribe': { en: 'Subscribe', ru: 'Подписаться', cz: 'Přihlásit se' },
+  'subscription.subscribe': { en: 'Subscribe', ru: 'Подписаться', cz: 'Předplatit' },
   'subscription.noSubscription': { en: 'No active subscription', ru: 'Нет активной подписки', cz: 'Žádné aktivní předplatné' },
   'subscription.selectPlan': { en: 'Please select a plan above to subscribe', ru: 'Пожалуйста, выберите план выше для подписки', cz: 'Vyberte prosím plán výše pro předplatné' },
   'subscription.noPlansAvailable': { en: 'No subscription plans available for your role', ru: 'Нет доступных планов для вашей роли', cz: 'Žádné dostupné plány pro vaši roli' },
@@ -3582,12 +3586,12 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'landing.hero.title': {
     en: 'Smart CRM & AI Assistant for Salons and Masters',
     ru: 'Умная CRM и AI-ассистент для салонов и мастеров',
-    cz: 'Chytré CRM a AI asistent pro salony a mistry',
+    cz: 'Chytré CRM a AI asistent pro salony a specialisty',
   },
   'landing.hero.subtitle': {
     en: 'Streamline client booking, schedules, analytics, and assistant tasks in one clean workspace.',
     ru: 'Онлайн-запись, расписание мастеров, клиентская база и ассистент Сашенька в едином рабочем пространстве.',
-    cz: 'Online rezervace, rozvrh mistrů, klientská databáze a asistentka v jednom pracovním prostoru.',
+    cz: 'Online rezervace, rozvrh specialistů, klientská databáze a asistentka v jednom pracovním prostoru.',
   },
   'landing.hero.badge': {
     en: 'All-in-one workspace for beauty businesses',
@@ -3648,7 +3652,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'landing.features.calendar_title': {
     en: 'Master Schedule Grid',
     ru: 'Журнал расписания мастеров',
-    cz: 'Rozvrh a kalendář mistrů',
+    cz: 'Rozvrh a kalendář specialistů',
   },
   'landing.features.calendar_desc': {
     en: 'Visual day and week views showing appointments, buffers, and specialist shifts.',
@@ -3668,7 +3672,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'landing.features.assistant_title': {
     en: 'AI Assistant Sashenka',
     ru: 'AI-ассистент Сашенька',
-    cz: 'AI asistentka Sašenka',
+    cz: 'AI asistentka Saška',
   },
   'landing.features.assistant_desc': {
     en: 'Ask questions about schedule, client history, or routine tasks with natural dialogue.',
@@ -3693,7 +3697,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'landing.features.finance_desc': {
     en: 'Transparent expense tracking, master commission rates, and salary calculation.',
     ru: 'Учёт расходов, прозрачный расчёт комиссий мастеров и заработной платы.',
-    cz: 'Evidence výdajů, transparentní výpočet provizí mistrů a mezd.',
+    cz: 'Evidence výdajů, transparentní výpočet provizí specialistů a mezd.',
   },
 
   'landing.tour.title': {
@@ -3776,7 +3780,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'landing.faq.a2': {
     en: 'Yes, Xtrix is fully adapted for solo practitioners who manage their own bookings, clients, and services.',
     ru: 'Да, Xtrix полностью адаптирован для индивидуальной работы мастера со своими клиентами, услугами и расписанием.',
-    cz: 'Ano, Xtrix je plně přizpůsoben pro samostatnou práci mistra s vlastními klienty, službami a rozvrhem.',
+    cz: 'Ano, Xtrix je plně přizpůsoben pro samostatnou práci specialisty s vlastními klienty, službami a rozvrhem.',
   },
   'landing.faq.q3': {
     en: 'How are client data and privacy protected?',
@@ -3831,7 +3835,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'landing.pricing.ai_tab': {
     en: 'AI Assistant Sasha',
     ru: 'ИИ ассистент Сашенька',
-    cz: 'AI asistentka Sašenka',
+    cz: 'AI asistentka Saška',
   },
   'landing.pricing.per_month': {
     en: '/ month',
@@ -3936,8 +3940,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.step.service.body': { en: 'Price and duration are shown to clients before booking.', ru: 'Цену и длительность клиент видит до записи.', cz: 'Cenu a délku klient uvidí před rezervací.' },
   'onboarding.step.service.cta': { en: 'Add service', ru: 'Добавить услугу', cz: 'Přidat službu' },
   'onboarding.step.staff.title': { en: 'Add your team', ru: 'Добавьте команду', cz: 'Přidejte tým' },
-  'onboarding.step.staff.body': { en: 'Invite a master, or keep the service assigned to you and work on your own.', ru: 'Добавьте мастера или оставьте услугу на себе и работайте сами.', cz: 'Přidejte mistra, nebo si službu nechte a pracujte sami.' },
-  'onboarding.step.staff.cta': { en: 'Add master', ru: 'Добавить мастера', cz: 'Přidat mistra' },
+  'onboarding.step.staff.body': { en: 'Invite a master, or keep the service assigned to you and work on your own.', ru: 'Добавьте мастера или оставьте услугу на себе и работайте сами.', cz: 'Přidejte specialistu, nebo si službu nechte a pracujte sami.' },
+  'onboarding.step.staff.cta': { en: 'Add master', ru: 'Добавить мастера', cz: 'Přidat specialistu' },
   'onboarding.step.staff.soloTitle': { en: 'I work alone', ru: 'Работаю сам', cz: 'Pracuji sám' },
   'onboarding.step.staff.workAlone': { en: 'I work alone', ru: 'Работаю сам', cz: 'Pracuji sám' },
   'onboarding.step.schedule.title': { en: 'Set working hours', ru: 'Настройте рабочие часы', cz: 'Nastavte pracovní hodiny' },
@@ -3963,8 +3967,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.tour.calendar': { en: 'Calendar is your working day.', ru: 'Календарь — ваш рабочий день.', cz: 'Kalendář je váš pracovní den.' },
   'onboarding.tour.dashboardBody': { en: 'The dashboard shows the state of the business at a glance.', ru: 'На дашборде видно состояние бизнеса с первого взгляда.', cz: 'Na přehledu vidíte stav firmy na první pohled.' },
   'onboarding.tour.clientsBody': { en: 'Client cards keep contacts, visits and notes in one place.', ru: 'Карточки клиентов хранят контакты, визиты и заметки вместе.', cz: 'Karty klientů drží kontakty, návštěvy a poznámky na jednom místě.' },
-  'onboarding.tour.calendarBody': { en: 'The calendar shows visits by day and by master.', ru: 'Календарь показывает визиты по дням и мастерам.', cz: 'Kalendář ukazuje návštěvy podle dnů a mistrů.' },
-  'onboarding.tour.assistantBody': { en: 'Sashka helps with plans and everyday questions.', ru: 'Сашенька помогает с планами и повседневными вопросами.', cz: 'Sašenka pomáhá s plány a každodenními otázkami.' },
+  'onboarding.tour.calendarBody': { en: 'The calendar shows visits by day and by master.', ru: 'Календарь показывает визиты по дням и мастерам.', cz: 'Kalendář ukazuje návštěvy podle dnů a specialistů.' },
+  'onboarding.tour.assistantBody': { en: 'Sashka helps with plans and everyday questions.', ru: 'Сашенька помогает с планами и повседневными вопросами.', cz: 'Saška pomáhá s plány a každodenními otázkami.' },
   'onboarding.tour.assistant': { en: 'The assistant plans visits and other actions from plain words.', ru: 'Ассистент планирует визиты и другие действия по тексту.', cz: 'Asistent naplánuje návštěvy a další akce z běžného textu.' },
   'onboarding.tour.next': { en: 'Next', ru: 'Дальше', cz: 'Další' },
   'onboarding.tour.back': { en: 'Back', ru: 'Назад', cz: 'Zpět' },
@@ -3980,9 +3984,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
 
   'nav.schedule': { en: 'Schedule', ru: 'График', cz: 'Rozvrh' },
   'schedule.title': { en: 'Work schedule', ru: 'График работы', cz: 'Pracovní rozvrh' },
-  'schedule.subtitle': { en: 'Weekly hours, days off and booking rules for each master.', ru: 'Недельные часы, выходные и правила записи для каждого мастера.', cz: 'Týdenní hodiny, volné dny a pravidla rezervace pro každého mistra.' },
-  'schedule.noAccess': { en: 'Only the owner or a master can manage work schedules.', ru: 'Графиком могут управлять только владелец или мастер.', cz: 'Rozvrh mohou spravovat pouze majitel nebo mistr.' },
-  'schedule.specialist': { en: 'Master', ru: 'Мастер', cz: 'Mistr' },
+  'schedule.subtitle': { en: 'Weekly hours, days off and booking rules for each master.', ru: 'Недельные часы, выходные и правила записи для каждого мастера.', cz: 'Týdenní hodiny, volné dny a pravidla rezervace pro každého specialistu.' },
+  'schedule.noAccess': { en: 'Only the owner or a master can manage work schedules.', ru: 'Графиком могут управлять только владелец или мастер.', cz: 'Rozvrh mohou spravovat pouze majitel nebo specialista.' },
+  'schedule.specialist': { en: 'Master', ru: 'Мастер', cz: 'Specialista' },
   'schedule.timezone': { en: 'Time zone', ru: 'Часовой пояс', cz: 'Časové pásmo' },
   'schedule.tab.weekly': { en: 'Weekly hours', ru: 'Недельные часы', cz: 'Týdenní hodiny' },
   'schedule.tab.exceptions': { en: 'Days off and blocks', ru: 'Выходные и блоки', cz: 'Volné dny a blokace' },
@@ -4380,7 +4384,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'notifications.testDescription': {
     en: 'The button uses the local capture transport: it shows what would be sent and never contacts a provider.',
     ru: 'Тестовое письмо никуда не уходит: вы увидите, что было бы отправлено, а провайдер не используется.',
-    cz: 'Tlačítko používá lokální capture transport: ukáže, co by se odeslalo, a nikdy nekontaktuje poskytovatele.',
+    cz: 'Testovací e-mail nikam neodchází: uvidíte, co by se odeslalo, a poskytovatel se nepoužije.',
   },
   'notifications.testRun': { en: 'Run test', ru: 'Проверить', cz: 'Otestovat' },
   'notifications.testRunning': { en: 'Testing...', ru: 'Проверка...', cz: 'Testování...' },
@@ -4855,7 +4859,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'campaigns.emptyHint': {
     en: 'Write the first one and save it as a draft - you will see who would receive it before anything is sent.',
     ru: 'Напишите первую и сохраните черновиком — до отправки будет видно, кто её получит.',
-    cz: 'Napište první a uložte ji jako koncept - před odesláním uvidíte, kdo ji dostane.',
+    cz: 'Napište první a uložte ji jako koncept – před odesláním uvidíte, kdo ji dostane.',
   },
   'campaigns.selectPrompt': {
     en: 'Select a campaign on the left or create a new one.',

@@ -66,8 +66,8 @@ function BusinessOverview() {
           <dl className="space-y-3 text-sm">
             <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.totalVisits')}</dt><dd className="font-semibold tabular-nums">{visits.data?.total_visits ?? '—'}</dd></div>
             <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.completedVisits')}</dt><dd className="tabular-nums">{visits.data?.visits_by_status?.completed ?? 0}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('visits.planned')}</dt><dd className="tabular-nums">{visits.data?.visits_by_status?.planned ?? 0}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('visits.cancelled')}</dt><dd className="tabular-nums">{visits.data?.visits_by_status?.cancelled ?? 0}</dd></div>
+            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.plannedVisits')}</dt><dd className="tabular-nums">{visits.data?.visits_by_status?.planned ?? 0}</dd></div>
+            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.cancelledVisits')}</dt><dd className="tabular-nums">{visits.data?.visits_by_status?.cancelled ?? 0}</dd></div>
           </dl>}
       </Card>
       <Card className="p-5">
