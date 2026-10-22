@@ -59,17 +59,24 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 }))
 
-// Other tabs share localStorage: follow their logout, login or token refresh,
-// otherwise this tab keeps working on a session that is already gone.
+// HTTP can finish before the other tab's storage event reaches us.
+export function synchronizeStoredSession() {
+  if (typeof window === 'undefined') return
+  const token = localStorage.getItem('auth_token')
+  const user = token ? savedUser() : null
+  const current = useAuthStore.getState()
+  if (current.token === token && JSON.stringify(current.user) === JSON.stringify(user)) return
+  useAuthStore.setState(previous => ({ token, user, sessionRevision: previous.sessionRevision + (
+    previous.user?.id !== user?.id || previous.user?.business_id !== user?.business_id ||
+    previous.user?.employer_id !== user?.employer_id || previous.user?.role !== user?.role ||
+    (token !== previous.token && (!user || !previous.user)) ? 1 : 0
+  ) }))
+}
+
+// Other tabs share localStorage: follow their logout, login or token refresh.
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', (event) => {
     if (event.key !== null && event.key !== 'auth_token' && event.key !== 'auth_user') return
-    const token = localStorage.getItem('auth_token')
-    const user = token ? savedUser() : null
-    useAuthStore.setState(previous => ({ token, user, sessionRevision: previous.sessionRevision + (
-      previous.user?.id !== user?.id || previous.user?.business_id !== user?.business_id ||
-      previous.user?.employer_id !== user?.employer_id || previous.user?.role !== user?.role ||
-      (token !== previous.token && (!user || !previous.user)) ? 1 : 0
-    ) }))
+    synchronizeStoredSession()
   })
 }

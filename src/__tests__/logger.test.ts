@@ -42,7 +42,7 @@ describe('Debug output', () => {
   })
 
   it('does not print or persist failed API request diagnostics', async () => {
-    localStorage.setItem('auth_token', 'secret')
+    useAuthStore.getState().startSession('secret')
     const failure = apiError(401, 'Unauthorized')
     await expect(api.get('/users/me', { adapter: () => Promise.reject(failure) })).rejects.toBe(failure)
     expect(console.log).not.toHaveBeenCalled()

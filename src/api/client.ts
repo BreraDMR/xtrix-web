@@ -1,5 +1,5 @@
 import axios, { isAxiosError, type InternalAxiosRequestConfig } from 'axios'
-import { useAuthStore } from '../store/authStore'
+import { synchronizeStoredSession, useAuthStore } from '../store/authStore'
 import { useLocaleStore } from '../store/localeStore'
 
 // The API address comes from VITE_API_URL only. In dev it may be left out, then /api goes
@@ -16,8 +16,10 @@ const api = axios.create({
 type SessionRequest = InternalAxiosRequestConfig & { sessionRetried?: boolean; sessionRevision?: number }
 
 api.interceptors.request.use((config: SessionRequest) => {
+  const startedRevision = useAuthStore.getState().sessionRevision
+  synchronizeStoredSession()
   const { token, sessionRevision } = useAuthStore.getState()
-  if (config.sessionRevision !== undefined && config.sessionRevision !== sessionRevision) throw new Error('Session changed')
+  if (startedRevision !== sessionRevision || (config.sessionRevision !== undefined && config.sessionRevision !== sessionRevision)) throw new Error('Session changed')
   config.sessionRevision = sessionRevision
   const locale = useLocaleStore.getState().locale || navigator.language.split('-')[0] || 'en'
 
@@ -27,7 +29,7 @@ api.interceptors.request.use((config: SessionRequest) => {
   config.headers['Accept-Language'] = locale
 
   return config
-})
+}, error => { throw error }, { synchronous: true })
 
 // Access tokens are short-lived. On a 401 we swap the refresh token for a new pair and
 // repeat the request once. Parallel 401s share one refresh call: the server revokes the
@@ -61,6 +63,7 @@ async function rotateTokens(): Promise<string> {
     store.setToken(data.access_token)
     return data.access_token
   } catch (error) {
+    synchronizeStoredSession()
     if (useAuthStore.getState().sessionRevision !== store.sessionRevision) throw error
     // another tab may have rotated the same refresh token a moment earlier
     const latestRefresh = localStorage.getItem('auth_refresh_token')
@@ -80,11 +83,13 @@ const AUTH_ENDPOINT = /^\/?users\/(login|refresh|logout)\/?$/
 
 api.interceptors.response.use(
   response => {
+    synchronizeStoredSession()
     const config = response.config as SessionRequest
     if (config.sessionRevision !== useAuthStore.getState().sessionRevision) throw new Error('Session changed')
     return response
   },
   async error => {
+    synchronizeStoredSession()
     const config = error.config as SessionRequest | undefined
     const sentAuth = config?.headers?.Authorization
     if (error.response?.status !== 401 || !config || !sentAuth || AUTH_ENDPOINT.test(config.url || '')) throw error

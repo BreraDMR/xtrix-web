@@ -14,6 +14,13 @@ function ok(config: InternalAxiosRequestConfig, data: unknown) {
   return { config, data, status: 200, statusText: '', headers: {} }
 }
 
+function otherTabSignsIn() {
+  localStorage.setItem('auth_user', JSON.stringify({ ...user, id: 2 }))
+  localStorage.setItem('auth_token', 'other-access')
+  localStorage.setItem('auth_refresh_token', 'other-refresh')
+  // Intentionally do not dispatch storage: it can arrive after an HTTP response.
+}
+
 describe('session refresh', () => {
   beforeEach(() => { resetStores(); useAuthStore.getState().setAuth('expired', user); localStorage.setItem('auth_refresh_token', 'refresh') })
   afterEach(() => { api.defaults.adapter = originalAdapter })
@@ -165,6 +172,49 @@ describe('session refresh', () => {
     useAuthStore.getState().startSession('other-access', 'other-refresh')
     finish()
     expect(await result).toBe('rejected')
+  })
+
+  it('does not borrow the next account token before its storage event arrives', async () => {
+    let finishRefresh!: () => void
+    const writes: string[] = []
+    api.defaults.adapter = async config => {
+      if (config.url === '/users/refresh') return new Promise(resolve => {
+        finishRefresh = () => resolve(ok(config, { access_token: 'old-renewed', refresh_token: 'old-rotated' }))
+      })
+      writes.push(String(config.headers.Authorization))
+      if (config.headers.Authorization === 'Bearer other-access') return ok(config, {})
+      return fail(config, 401)
+    }
+    const request = api.put('/businesses/me', { name: 'Previous salon' }).then(() => 'accepted', () => 'rejected')
+    await vi.waitFor(() => expect(finishRefresh).toBeTypeOf('function'))
+    otherTabSignsIn()
+    finishRefresh()
+    expect(await request).toBe('rejected')
+    expect(writes).toEqual(['Bearer expired'])
+    expect(useAuthStore.getState()).toMatchObject({ token: 'other-access', user: { id: 2 } })
+    expect(localStorage.getItem('auth_refresh_token')).toBe('other-refresh')
+  })
+
+  it('does not send a queued mutation as the account that replaced it in the same turn', async () => {
+    const writes: string[] = []
+    api.defaults.adapter = async config => {
+      writes.push(String(config.headers.Authorization))
+      return ok(config, {})
+    }
+    const request = api.put('/businesses/me', { name: 'Previous salon' }).catch(() => undefined)
+    useAuthStore.getState().startSession('other-access', 'other-refresh')
+    useAuthStore.getState().setAuth('other-access', { ...user, id: 2 })
+    await request
+    expect(writes).not.toContain('Bearer other-access')
+  })
+
+  it('rejects an action from a stale tab before sending it with the next stored identity', async () => {
+    otherTabSignsIn()
+    const adapter = vi.fn(async (config: InternalAxiosRequestConfig) => ok(config, {}))
+    api.defaults.adapter = adapter
+    await expect(api.put('/businesses/me', { name: 'Previous salon' })).rejects.toThrow('Session changed')
+    expect(adapter).not.toHaveBeenCalled()
+    expect(useAuthStore.getState()).toMatchObject({ token: 'other-access', user: { id: 2 } })
   })
 })
 
