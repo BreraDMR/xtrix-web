@@ -60,7 +60,7 @@ test('switching accounts in one SPA clears the previous salon data', async ({ pa
   await page.getByLabel('Email', { exact: true }).fill(second.email)
   await page.getByLabel('Password', { exact: true }).fill(second.password)
   await page.getByRole('button', { name: 'Sign in', exact: true }).click()
-  await page.getByRole('link', { name: 'Clients', exact: true }).click()
+  await page.locator('#workspace-navigation').getByRole('link', { name: 'Clients', exact: true }).click()
   await expect(page.getByText('Second salon client', { exact: true })).toBeVisible()
   await expect(page.getByText('First salon private client', { exact: true })).toHaveCount(0)
 })

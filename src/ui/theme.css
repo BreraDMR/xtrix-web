@@ -84,6 +84,36 @@
   .crm-navlink:hover { background: var(--workspace-accent-soft); color: var(--workspace-ink); }
   .crm-navlink[aria-current='page'] { background: var(--workspace-panel); color: var(--workspace-accent); font-weight: 550; }
   .crm-navlabel { padding: 0 24px; margin: 24px 0 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .085em; font-weight: 550; color: var(--workspace-muted); }
+  .crm-access {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px;
+    margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--workspace-line);
+    color: var(--workspace-muted); font-size: 12px; line-height: 1.6;
+  }
+  .crm-access p { max-width: 80ch; }
+  .crm-access a { color: var(--workspace-accent); }
+  .crm-access[data-mode='read_only'], .crm-access[data-mode='blocked'] {
+    padding: 16px; background: #fff5de; color: #715313; border: 1px solid #dec38d; border-radius: 6px;
+  }
+  .dark .crm-access[data-mode='read_only'], .dark .crm-access[data-mode='blocked'] {
+    background: #342b18; color: #f4d797; border-color: #69542d;
+  }
+  .crm-mobile-nav { display: none; }
+  @media (max-width: 1023px) {
+    .crm-main { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+    .crm-mobile-nav {
+      position: fixed; inset: auto 0 0; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr);
+      background: var(--workspace-panel); border-top: 1px solid var(--workspace-line);
+      padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
+    }
+    .crm-mobile-nav .crm-navlink, .crm-mobile-nav button {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      min-height: 56px; min-width: 0; margin: 0; padding: 6px 2px; border-radius: 4px;
+      font-size: 10px; line-height: 1.3; color: var(--workspace-muted);
+    }
+    .crm-mobile-nav .crm-navlink[aria-current='page'] { color: var(--workspace-accent); background: var(--workspace-accent-soft); }
+    .crm-mobile-nav .crm-navtext { max-width: 100%; }
+    .crm-access { flex-wrap: wrap; gap: 6px; }
+  }
   @media (min-width: 1024px) {
     .crm-app { --navigation-width: 212px; }
     .crm-app[data-sidebar-compact='true'] { --navigation-width: 68px; }

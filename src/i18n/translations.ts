@@ -1041,6 +1041,8 @@ export type TranslationKey =
   | 'nav.notifications'
   | 'nav.collapse_menu'
   | 'nav.expand_menu'
+  | 'nav.quick'
+  | 'nav.more'
   | 'nav.primary'
   | 'nav.manage'
   | 'nav.system'
@@ -3218,6 +3220,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.notifications': { en: 'Notifications', ru: 'Уведомления', cz: 'Oznámení' },
   'nav.collapse_menu': { en: 'Collapse menu', ru: 'Свернуть меню', cz: 'Sbalit nabídku' },
   'nav.expand_menu': { en: 'Expand menu', ru: 'Развернуть меню', cz: 'Rozbalit nabídku' },
+  'nav.quick': { en: 'Quick navigation', ru: 'Быстрая навигация', cz: 'Rychlá navigace' },
+  'nav.more': { en: 'More', ru: 'Ещё', cz: 'Další' },
   'nav.primary': { en: 'PRIMARY', ru: 'ОСНОВНОЕ', cz: 'ZÁKLADNÍ' },
   'nav.manage': { en: 'MANAGE', ru: 'УПРАВЛЕНИЕ', cz: 'SPRÁVA' },
   'nav.system': { en: 'SYSTEM', ru: 'СИСТЕМА', cz: 'SYSTÉM' },

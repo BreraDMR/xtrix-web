@@ -45,7 +45,6 @@ export default function Layout() {
   const [isCompact, setIsCompact] = useSidebarPreference()
   const [offline, setOffline] = useState(!navigator.onLine)
   const sidebar = useRef<HTMLElement>(null)
-  const menuButton = useRef<HTMLButtonElement>(null)
   useSyncUiLanguage()
 
   useEffect(() => {
@@ -62,7 +61,7 @@ export default function Layout() {
   useEffect(() => setIsMobileMenuOpen(false), [location.pathname])
   useEffect(() => {
     if (!isMobileMenuOpen) return
-    const trigger = menuButton.current
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const oldOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const controls = () => Array.from(sidebar.current?.querySelectorAll<HTMLElement>('a,button') || [])
@@ -88,23 +87,27 @@ export default function Layout() {
   const managesBusiness = user?.role === 'admin' || user?.role === 'business_owner'
   const managesSchedule = managesBusiness || user?.role === 'specialist'
   const managesQuestionnaires = managesBusiness || (user?.role === 'specialist' && !user.employer_id)
-  const primaryItems = [
-    { path: '/app', label: t('nav.dashboard') }, { path: '/app/clients', label: t('nav.clients') },
-    { path: '/app/visits', label: t('nav.visits') }, { path: '/app/calendar', label: t('nav.calendar') },
-    ...(managesSchedule ? [{ path: '/app/schedules', label: t('nav.schedule') }] : []),
-    { path: '/app/services', label: t('nav.services') },
-    ...(managesQuestionnaires && !access?.pilot_mode ? [{ path: '/app/questionnaires', label: t('nav.questionnaires') }] : []),
-    ...(managesBusiness ? [{ path: '/app/inventory', label: t('nav.inventory') }, { path: '/app/finance', label: t('nav.finance') }] : []),
-  ]
   const managesWaitlist = managesBusiness || (user?.role === 'specialist' && !user.employer_id)
   const canReadAudit = managesBusiness || (user?.role === 'specialist' && !user.employer_id)
   const canImport = canReadAudit
-  const manageItems = [
-    ...(managesBusiness ? [
-      { path: '/app/analytics', label: t('nav.analytics') }, { path: '/app/loyalty', label: t('nav.loyalty') },
-      { path: '/app/employees', label: t('nav.employees') },
-    ] : []),
+  const primaryItems = [
+    { path: '/app', label: t('nav.dashboard') },
+    { path: '/app/calendar', label: t('nav.calendar') },
+    { path: '/app/clients', label: t('nav.clients') },
+    { path: '/app/visits', label: t('nav.visits') },
     ...(managesWaitlist ? [{ path: '/app/waitlist', label: t('nav.waitlist') }] : []),
+  ]
+  const manageItems = [
+    { path: '/app/services', label: t('nav.services') },
+    ...(managesSchedule ? [{ path: '/app/schedules', label: t('nav.schedule') }] : []),
+    ...(managesQuestionnaires && !access?.pilot_mode ? [{ path: '/app/questionnaires', label: t('nav.questionnaires') }] : []),
+    ...(managesBusiness ? [
+      { path: '/app/employees', label: t('nav.employees') },
+      { path: '/app/inventory', label: t('nav.inventory') },
+      { path: '/app/finance', label: t('nav.finance') },
+      { path: '/app/analytics', label: t('nav.analytics') },
+      { path: '/app/loyalty', label: t('nav.loyalty') },
+    ] : []),
     ...(managesBusiness && !access?.pilot_mode ? [{ path: '/app/campaigns', label: t('nav.campaigns') }] : []),
     ...(canReadAudit ? [{ path: '/app/audit', label: t('nav.audit') }] : []),
     ...(canImport ? [{ path: '/app/import', label: t('nav.import') }] : []),
@@ -140,25 +143,25 @@ export default function Layout() {
       <aside ref={sidebar} id="workspace-navigation" role={isMobileMenuOpen ? 'dialog' : undefined}
         aria-modal={isMobileMenuOpen || undefined} aria-label={t('nav.primary')}
         className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="crm-brand flex h-[90px] shrink-0 items-center gap-3">
+        <div className="crm-brand flex h-[72px] shrink-0 items-center gap-3">
           <Link to="/app" aria-label="Xtrix" className="flex items-center gap-2.5">
-            <span className="grid h-8 w-8 place-items-center rounded-[11px] bg-gray-900 text-[25px] font-medium leading-none text-white dark:bg-white dark:text-gray-900">x</span>
-            <span className="crm-navtext text-[25px] font-semibold tracking-[-1.2px]">Xtrix</span>
+            <span className="grid h-7 w-7 place-items-center rounded-md bg-gray-900 text-[25px] font-medium leading-none text-white dark:bg-white dark:text-gray-900">x</span>
+            <span className="crm-navtext text-[22px] font-semibold tracking-[-1px]">Xtrix</span>
           </Link>
           <button className="ml-auto p-1 text-gray-500 lg:hidden" aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)}><HiOutlineX className="h-5 w-5" /></button>
         </div>
-        <div title={workspaceName} className="crm-business mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div title={workspaceName} className="crm-business mb-2 flex shrink-0 items-center gap-2.5 rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gray-100 text-[11px] font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(workspaceName)}</span>
           <div className="crm-navtext min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
         </div>
-        <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5">
+        <nav aria-label={t('nav.primary')} className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5">
           <div className="crm-navlabel">{t('nav.primary')}</div>{links(primaryItems)}
           {manageItems.length > 0 && <><div className="crm-navlabel">{t('nav.manage')}</div>{links(manageItems)}</>}
           <div className="crm-navlabel">{t('nav.system')}</div>{links(systemItems)}
         </nav>
       </aside>
       <div className="crm-workspace flex min-h-screen min-w-0 flex-col">
-        <header className="crm-header flex h-16 shrink-0 items-center justify-between gap-3 px-5 lg:h-[76px] lg:px-11">
+        <header className="crm-header flex h-[60px] shrink-0 items-center justify-between gap-3 px-4 lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <button className="hidden rounded-lg p-2 text-gray-600 lg:inline-flex dark:text-gray-300"
               aria-label={t(isCompact ? 'nav.expand_menu' : 'nav.collapse_menu')}
@@ -167,10 +170,10 @@ export default function Layout() {
               onClick={() => setIsCompact((compact) => !compact)}>
               {isCompact ? <HiOutlineChevronRight className="h-5 w-5" /> : <HiOutlineChevronLeft className="h-5 w-5" />}
             </button>
-            <button ref={menuButton} className="-ml-1 p-1 text-gray-600 lg:hidden dark:text-gray-300"
+            <button className="-ml-1 p-1 text-gray-600 lg:hidden dark:text-gray-300"
               aria-label={t('nav.primary')} aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((open) => !open)}><HiOutlineMenuAlt2 className="h-5 w-5" /></button>
-            <div className="hidden min-w-0 items-center gap-2 text-xs text-gray-500 sm:flex"><span className="max-w-40 truncate">{workspaceName}</span><HiOutlineChevronRight className="h-3 w-3" /><span className="truncate text-gray-800 dark:text-gray-200">{active?.label}</span></div>
+            <div className="min-w-0 items-center gap-2 text-xs text-gray-500 flex"><span className="max-w-28 truncate sm:max-w-40">{workspaceName}</span><HiOutlineChevronRight className="hidden h-3 w-3 sm:block" /><span className="hidden truncate text-gray-800 sm:block dark:text-gray-200">{active?.label}</span></div>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             {access && access.crm_mode !== 'blocked' && <AssistantLauncher />}
@@ -178,7 +181,7 @@ export default function Layout() {
             <button className="rounded-lg px-2 py-2 text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20" onClick={() => { signOut(); navigate('/login', { replace: true }) }}>{t('nav.logout')}</button>
           </div>
         </header>
-        <main className="mx-auto w-full min-w-0 max-w-[1540px] flex-1 p-5 pt-8 lg:p-11">
+        <main id="workspace-main" className="crm-main mx-auto w-full min-w-0 max-w-[1540px] flex-1 p-4 pt-6 sm:p-6 lg:p-8">
           {offline && <div role="status" className="mb-5 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-900/20 dark:text-amber-100">{t('common.offline')}</div>}
           {accessQuery.isLoading ? <LoadingSpinner /> : accessQuery.isError ? <QueryError retry={accessQuery.refetch} /> : !access ? null
             : access.crm_mode === 'blocked' && !isBilling ? <PilotSubscription access={access} />
@@ -190,6 +193,13 @@ export default function Layout() {
                 </>}
         </main>
       </div>
+      <nav className="crm-mobile-nav" aria-label={t('nav.quick')}>
+        {links(primaryItems.filter(item => ['/app', '/app/calendar', '/app/clients'].includes(item.path)))}
+        <button type="button" aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen(true)}>
+          <HiOutlineMenuAlt2 className="h-[18px] w-[18px]" /><span>{t('nav.more')}</span>
+        </button>
+      </nav>
     </div>
     </WorkspaceAccessContext.Provider>
   )

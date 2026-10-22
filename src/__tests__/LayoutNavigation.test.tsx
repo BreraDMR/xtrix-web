@@ -37,7 +37,7 @@ it('opens the dashboard from the X logo on the clients screen', async () => {
   expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
   await userEvent.click(screen.getByRole('link', { name: 'Xtrix' }))
   expect(await screen.findByRole('heading', { name: 'Dashboard screen' })).toBeInTheDocument()
-  expect(within(screen.getByRole('navigation')).getByRole('link', { name: 'Dashboard' })).toHaveAttribute('aria-current', 'page')
+  expect(within(screen.getByRole('navigation', { name: 'PRIMARY' })).getByRole('link', { name: 'Dashboard' })).toHaveAttribute('aria-current', 'page')
 })
 
 it('toggles desktop navigation without opening the mobile menu or changing role links', async () => {
@@ -49,7 +49,7 @@ it('toggles desktop navigation without opening the mobile menu or changing role 
   expect(screen.getByRole('button', { name: 'Expand menu' })).toHaveAttribute('aria-expanded', 'false')
   expect(screen.queryByRole('dialog', { name: 'PRIMARY' })).not.toBeInTheDocument()
   expect(screen.queryByRole('link', { name: 'Finance' })).not.toBeInTheDocument()
-  expect(screen.getByRole('link', { name: 'Clients' })).toBeInTheDocument()
+  expect(within(screen.getByRole('navigation', { name: 'PRIMARY' })).getByRole('link', { name: 'Clients' })).toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Expand menu' }))
   expect(screen.getByRole('button', { name: 'Collapse menu' })).toHaveAttribute('aria-expanded', 'true')
 })
@@ -57,7 +57,7 @@ it('toggles desktop navigation without opening the mobile menu or changing role 
 it('keeps icon links named, titled and marked as current in compact mode', async () => {
   renderLayout()
   await userEvent.click(screen.getByRole('button', { name: 'Collapse menu' }))
-  const clients = within(screen.getByRole('navigation')).getByRole('link', { name: 'Clients' })
+  const clients = within(screen.getByRole('navigation', { name: 'PRIMARY' })).getByRole('link', { name: 'Clients' })
   expect(clients).toHaveAttribute('aria-label', 'Clients')
   expect(clients).toHaveAttribute('title', 'Clients')
   expect(clients).toHaveAttribute('aria-current', 'page')
@@ -92,4 +92,18 @@ it('can toggle when browser storage cannot be read or written', async () => {
     get.mockRestore()
     set.mockRestore()
   }
+})
+
+
+it('offers daily destinations on mobile and returns focus to More after closing the full menu', async () => {
+  renderLayout()
+  const quick = screen.getByRole('navigation', { name: 'Quick navigation' })
+  expect(within(quick).getByRole('link', { name: 'Clients' })).toHaveAttribute('aria-current', 'page')
+  expect(within(quick).getByRole('link', { name: 'Calendar' })).toHaveAttribute('href', '/app/calendar')
+  const more = within(quick).getByRole('button', { name: 'More' })
+  await userEvent.click(more)
+  expect(screen.getByRole('dialog', { name: 'PRIMARY' })).toBeInTheDocument()
+  await userEvent.keyboard('{Escape}')
+  expect(screen.queryByRole('dialog', { name: 'PRIMARY' })).not.toBeInTheDocument()
+  expect(more).toHaveFocus()
 })

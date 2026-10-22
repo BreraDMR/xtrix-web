@@ -10,8 +10,8 @@ export default function AccessNotice({ access }: { access: WorkspaceAccess }) {
     : access.crm_mode === 'read_only' ? t('pilot.readOnly').replace('{date}', date)
       : access.trial_end ? t('pilot.active').replace('{date}', date) : null
   if (!message) return null
-  return <div role="status" className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
+  return <div role="status" className="crm-access" data-mode={access.crm_mode}>
     <p>{message}</p>
-    <Link to="/app/subscription" className="mt-3 inline-block font-semibold underline underline-offset-4">{t('subscription.title')}</Link>
+    <Link to="/app/subscription" className="shrink-0 font-medium underline underline-offset-4">{t('subscription.title')}</Link>
   </div>
 }
