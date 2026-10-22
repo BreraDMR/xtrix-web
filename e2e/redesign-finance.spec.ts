@@ -52,7 +52,7 @@ test('finance period, ledger category, real export and confirmed deletion retain
   await expect(row).toContainText('Studio supplies')
   await expect(row).toContainText('card')
   await expect(row).toContainText('2030')
-  await expect(row).toContainText('25.00 EUR')
+  await expect(row).toContainText('25.00 €')
   await expect(expenses).toContainText('40.00 €')
   await expect(payments.getByText('100.00 €', { exact: true })).toBeVisible()
   for (const width of [1280, 768, 375]) {

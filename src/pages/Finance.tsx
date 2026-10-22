@@ -10,7 +10,7 @@ import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import FormError from '../components/FormError'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
-import { formatCurrency } from '../utils/currency'
+import { CURRENCY_SYMBOLS, formatCurrency, type Currency } from '../utils/currency'
 import ExportButton from '../components/ExportButton'
 import ServicePayments from '../components/payments/ServicePayments'
 import { dayEnd, dayNoon, dayStart, today } from '../utils/dates'
@@ -21,6 +21,10 @@ import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Button from '../ui/Button'
 import { HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi'
+
+// an expense keeps its own currency; show the symbol like every other amount, the code only if we don't know it
+const expenseAmount = (amount: number, code: string) =>
+  code in CURRENCY_SYMBOLS ? formatCurrency(amount, code as Currency) : `${amount.toFixed(2)} ${code}`
 
 // system categories and automatic expenses come with codes (category.code, source) we translate
 type Expense = Schema<'ExpenseOut'>
@@ -321,7 +325,7 @@ export default function Finance() {
                         <div><dt className="sr-only">{t('finance.payment_method')}</dt><dd>{expense.payment_method}</dd></div>
                       </dl>
                     </td>
-                    <td className="px-3 py-3 text-right align-top text-sm font-medium tabular-nums [overflow-wrap:anywhere] sm:px-5">{expense.amount.toFixed(2)} {expense.currency}</td>
+                    <td className="px-3 py-3 text-right align-top text-sm font-medium tabular-nums [overflow-wrap:anywhere] sm:px-5">{expenseAmount(expense.amount, expense.currency)}</td>
                     {(user?.role === 'admin' || user?.role === 'business_owner') && <td className="px-1 py-3 text-right align-top sm:px-4">
                       <Button variant="quiet" aria-label={t('common.delete')} title={t('common.delete')} className="min-h-8 px-1.5 py-1 text-red-600 dark:text-red-400"
                         onClick={() => { if (confirm(t('finance.confirm_delete'))) deleteMutation.mutate(expense.id) }}><HiOutlineTrash /></Button>
