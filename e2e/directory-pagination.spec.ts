@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { apiPost, apiUrl, newOwner, openAs } from './helpers'
+import { apiPost, apiUrl, field, newOwner, openAs } from './helpers'
 
 test('client pages, server search and CSV cover the complete salon', async ({ page, request }) => {
   test.setTimeout(120_000)
@@ -39,6 +39,14 @@ test('client pages, server search and CSV cover the complete salon', async ({ pa
   expect(csv).toContain('Directory 125')
   expect(csv).not.toContain('Other salon private')
   expect(csv.match(/Directory \d{3}/g)).toHaveLength(125)
+  await page.goto('/app/visits')
+  await page.getByRole('button', { name: 'New Visit' }).click()
+  await field(page, /^Client/).selectOption({ label: 'Directory 125' })
+  await field(page, /^Start Date & Time/).fill('2030-06-01T10:00')
+  await field(page, /^End Date & Time/).fill('2030-06-01T10:30')
+  await field(page, /^Service Name/).fill('Complete directory booking')
+  await page.getByRole('button', { name: 'Create Visit' }).click()
+  await expect(page.getByRole('row').filter({ hasText: 'Directory 125' })).toBeVisible()
 })
 
 test('switching accounts in one SPA clears the previous salon data', async ({ page, request }) => {

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { addDays, startOfWeek } from 'date-fns'
 import api from '../api/client'
+import { allPages } from '../api/allPages'
 import Calendar from '../components/Calendar'
 import SimpleCalendar from '../components/SimpleCalendar'
 import { zonedDayKey } from '../utils/dates'
@@ -22,7 +23,7 @@ import { zonedWallTimeToIso } from '../utils/dates'
 import ContextHint from '../components/onboarding/ContextHint'
 import type {
   BlockSlotOut,
-  ClientOut,
+  Schema,
   ScheduleExceptionOut,
   VisitOut,
   WorkScheduleOut,
@@ -55,26 +56,15 @@ const visitDurationMinutes = (visit: VisitOut): number => {
 const formatMinutes = (value: number): string =>
   `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`
 
-async function fetchVisitsInRange(from: string, to: string): Promise<VisitOut[]> {
-  const items: VisitOut[] = []
-  let page = 1
-  // a calendar day must be complete even when it has more visits than one page
-  for (;;) {
-    const { data } = await api.get('/visits/', {
-      params: { date_from: from, date_to: to, page, per_page: 100 },
-    })
-    const batch: VisitOut[] = Array.isArray(data) ? data : (data?.items ?? [])
-    items.push(...batch)
-    const total = Array.isArray(data) ? batch.length : Number(data?.total ?? batch.length)
-    if (batch.length === 0 || items.length >= total || page >= 100) break
-    page += 1
-  }
-  return items
+async function fetchVisits(from?: string, to?: string, signal?: AbortSignal): Promise<VisitOut[]> {
+  return allPages<VisitOut>(async page => (await api.get<Schema<'PaginatedResponse_VisitOut_'>>('/visits/', {
+    params: { date_from: from, date_to: to, page, per_page: 100 }, signal,
+  })).data)
 }
 
 export default function CalendarPage() {
   const { t } = useTranslation()
-  const { user } = useAuthStore()
+  const { user, sessionRevision } = useAuthStore()
   const [view, setView] = useState<CalendarView>('day')
   const [day, setDay] = useState<Date>(() => {
     const value = new Date()
@@ -101,27 +91,16 @@ export default function CalendarPage() {
     return { start, end }
   }, [day, weekStart, view, timeZone])
 
-  const { data: visits, refetch } = useQuery<VisitOut[]>({
-    queryKey: ['visits'],
-    queryFn: async () => {
-      const { data } = await api.get('/visits/')
-      return Array.isArray(data) ? data : (data?.items || data?.data || [])
-    },
+  const legacyQuery = useQuery<VisitOut[]>({
+    queryKey: ['visits', 'calendar', 'all', sessionRevision, user?.id, user?.business_id, user?.employer_id],
+    queryFn: ({ signal }) => fetchVisits(undefined, undefined, signal),
     enabled: !isRangeView,
   })
+  const { data: visits, refetch } = legacyQuery
 
   const rangeQuery = useQuery<VisitOut[]>({
-    queryKey: ['visits', 'calendar', range.start, range.end],
-    queryFn: () => fetchVisitsInRange(range.start, range.end),
-    enabled: isRangeView,
-  })
-
-  const { data: clients } = useQuery<ClientOut[]>({
-    queryKey: ['clients', 'calendar'],
-    queryFn: async () => {
-      const { data } = await api.get('/clients/', { params: { per_page: 100 } })
-      return Array.isArray(data) ? data : (data?.items || [])
-    },
+    queryKey: ['visits', 'calendar', 'range', sessionRevision, user?.id, user?.business_id, user?.employer_id, range.start, range.end],
+    queryFn: ({ signal }) => fetchVisits(range.start, range.end, signal),
     enabled: isRangeView,
   })
 
@@ -152,10 +131,13 @@ export default function CalendarPage() {
     return rows
   }, [user, employees, managesStaff])
 
-  const clientNames = useMemo(
-    () => new Map((clients ?? []).map((client) => [client.id, client.full_name])),
-    [clients],
-  )
+  const clientNames = useMemo(() => {
+    const names = new Map<number, string>()
+    for (const visit of rangeQuery.data ?? []) {
+      if (visit.client_name) names.set(visit.client_id, visit.client_name)
+    }
+    return names
+  }, [rangeQuery.data])
 
   const selectedVisitName = selectedVisit
     ? clientNames.get(selectedVisit.client_id)
@@ -283,7 +265,7 @@ export default function CalendarPage() {
 
   const showHint = isRangeView
     ? !rangeQuery.isLoading && !rangeQuery.isError && (rangeQuery.data?.length ?? 0) === 0
-    : Array.isArray(visits) && visits.length === 0
+    : !legacyQuery.isLoading && !legacyQuery.isError && Array.isArray(visits) && visits.length === 0
 
   const goToToday = () => {
     const value = new Date()
@@ -374,12 +356,15 @@ export default function CalendarPage() {
             />
           )
         )}
-        {view === 'simple' && (
+        {!isRangeView && (legacyQuery.isError ? (
+          <QueryError retry={() => refetch()} />
+        ) : legacyQuery.isLoading ? (
+          <div className="flex h-64 items-center justify-center"><LoadingSpinner size="lg" /></div>
+        ) : view === 'simple' ? (
           <SimpleCalendar visits={visits || []} onRefresh={() => refetch()} />
-        )}
-        {view === 'advanced' && (
+        ) : (
           <Calendar visits={visits || []} onRefresh={() => refetch()} />
-        )}
+        ))}
       </div>
 
       {dragPreview && (
