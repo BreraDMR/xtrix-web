@@ -45,36 +45,22 @@ export default function Features() {
   ]
 
   return (
-    <section id="features" className="scroll-mt-16 py-20 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-            {t('landing.features.title')}
-          </h2>
-          <p className="mt-4 text-base text-slate-600 dark:text-slate-300 sm:text-lg">
-            {t('landing.features.subtitle')}
-          </p>
+    <section id="features" className="scroll-mt-24 py-14 sm:py-20">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="grid gap-4 lg:grid-cols-2 lg:gap-16">
+          <h2 className="max-w-xl text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{t('landing.features.title')}</h2>
+          <p className="max-w-xl text-sm leading-relaxed text-[var(--workspace-muted)] sm:text-base">{t('landing.features.subtitle')}</p>
         </div>
-
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 sm:mt-20 lg:max-w-none lg:grid-cols-3">
-          {featureList.map((item) => {
+        <div className="mt-10 grid gap-x-12 sm:grid-cols-2 lg:mt-12 lg:gap-x-16">
+          {featureList.map((item, index) => {
             const Icon = item.icon
-            return (
-              <div
-                key={item.title}
-                className="relative flex flex-col rounded-2xl border border-slate-200/90 bg-slate-50/60 p-8 shadow-sm transition hover:shadow-md dark:border-slate-800 dark:bg-slate-950/60"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
-                  <Icon className="h-6 w-6" aria-hidden="true" />
-                </div>
-                <h3 className="mt-6 text-lg font-semibold text-slate-900 dark:text-white">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                  {item.description}
-                </p>
+            return <article key={item.title} className="flex gap-4 border-t border-[var(--workspace-line)] py-6 sm:py-7">
+              <span className="pt-1 text-[11px] tabular-nums text-[var(--workspace-muted)]" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <div className="min-w-0 flex-1">
+                <h3 className="flex items-start gap-2.5 text-base font-semibold"><Icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />{item.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--workspace-muted)]">{item.description}</p>
               </div>
-            )
+            </article>
           })}
         </div>
       </div>

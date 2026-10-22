@@ -1363,6 +1363,8 @@ export type TranslationKey =
   | 'common.actions'
   | 'common.required_field'
   | 'common.error_saving'
+  | 'landing.preview.sampleNotice'
+  | 'landing.nav.toggleMenu'
   | 'landing.hero.title'
   | 'landing.hero.subtitle'
   | 'landing.hero.badge'
@@ -3571,6 +3573,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.loadError': { en: 'Unable to load data', ru: 'Не удалось загрузить данные', cz: 'Data se nepodařilo načíst' },
   'common.retry': { en: 'Retry', ru: 'Повторить', cz: 'Zkusit znovu' },
   'common.offline': { en: 'No internet connection', ru: 'Нет подключения к сети', cz: 'Bez připojení k internetu' },
+
+  'landing.preview.sampleNotice': { en: 'Illustrative workspace · fictional appointments and clients', ru: 'Пример рабочего пространства · вымышленные визиты и клиенты', cz: 'Ukázka pracovního prostoru · smyšlené návštěvy a klienti' },
+  'landing.nav.toggleMenu': { en: 'Navigation menu', ru: 'Меню навигации', cz: 'Navigační nabídka' },
 
   'landing.hero.title': {
     en: 'Smart CRM & AI Assistant for Salons and Masters',
