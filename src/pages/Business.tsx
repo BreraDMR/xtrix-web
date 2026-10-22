@@ -354,43 +354,55 @@ function PublicBookingCard() {
           )}
 
           <ul className="mt-4 space-y-2 text-sm">
-            <li className="flex flex-wrap items-center gap-2">
+            <li className="flex items-start gap-2">
               {settings.has_bookable_service ? (
                 <HiCheckCircle className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
               ) : (
                 <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
               )}
-              <span className={settings.has_bookable_service ? '' : 'text-amber-700 dark:text-amber-400'}>
-                {t(
-                  settings.has_bookable_service
-                    ? 'business.publicBooking.servicesReady'
-                    : 'business.publicBooking.servicesMissing',
+              {/* text and link wrap next to the icon instead of dropping below it on a phone */}
+              <span className="min-w-0">
+                <span className={settings.has_bookable_service ? '' : 'text-amber-700 dark:text-amber-400'}>
+                  {t(
+                    settings.has_bookable_service
+                      ? 'business.publicBooking.servicesReady'
+                      : 'business.publicBooking.servicesMissing',
+                  )}
+                </span>
+                {!settings.has_bookable_service && (
+                  <>
+                    {' '}
+                    <Link to="/app/services" className="text-primary-600 hover:underline dark:text-primary-400">
+                      {t('business.publicBooking.setupServices')}
+                    </Link>
+                  </>
                 )}
               </span>
-              {!settings.has_bookable_service && (
-                <Link to="/app/services" className="text-primary-600 hover:underline dark:text-primary-400">
-                  {t('business.publicBooking.setupServices')}
-                </Link>
-              )}
             </li>
-            <li className="flex flex-wrap items-center gap-2">
+            <li className="flex items-start gap-2">
               {settings.has_schedule ? (
                 <HiCheckCircle className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
               ) : (
                 <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
               )}
-              <span className={settings.has_schedule ? '' : 'text-amber-700 dark:text-amber-400'}>
-                {t(
-                  settings.has_schedule
-                    ? 'business.publicBooking.scheduleReady'
-                    : 'business.publicBooking.scheduleMissing',
+              {/* text and link wrap next to the icon instead of dropping below it on a phone */}
+              <span className="min-w-0">
+                <span className={settings.has_schedule ? '' : 'text-amber-700 dark:text-amber-400'}>
+                  {t(
+                    settings.has_schedule
+                      ? 'business.publicBooking.scheduleReady'
+                      : 'business.publicBooking.scheduleMissing',
+                  )}
+                </span>
+                {!settings.has_schedule && (
+                  <>
+                    {' '}
+                    <Link to="/app/schedules" className="text-primary-600 hover:underline dark:text-primary-400">
+                      {t('business.publicBooking.setupSchedule')}
+                    </Link>
+                  </>
                 )}
               </span>
-              {!settings.has_schedule && (
-                <Link to="/app/schedules" className="text-primary-600 hover:underline dark:text-primary-400">
-                  {t('business.publicBooking.setupSchedule')}
-                </Link>
-              )}
             </li>
           </ul>
 

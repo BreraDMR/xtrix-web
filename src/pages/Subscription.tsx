@@ -275,7 +275,7 @@ function LegacySubscription() {
             <h2 className="text-xl font-semibold">
               {t('subscription.usage_title')}
             </h2>
-            <span className="text-xs font-mono bg-slate-100 dark:bg-slate-700 px-2.5 py-1 rounded text-slate-600 dark:text-slate-300">
+            <span className="shrink-0 whitespace-nowrap text-xs font-mono bg-slate-100 dark:bg-slate-700 px-2.5 py-1 rounded text-slate-600 dark:text-slate-300">
               {usageData.period}
             </span>
           </div>
