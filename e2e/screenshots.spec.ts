@@ -7,6 +7,17 @@ import { PASSWORD, apiLogin, apiPost, apiUrl, openAs } from './helpers'
 const OWNER = { email: 'shots.owner@example.com', password: PASSWORD }
 const CLOCK_START = new Date('2030-06-15T10:00:00+02:00')
 
+// The API clock is independent of page.clock. Keep the server-stamped expiry
+// fixed too: hiding its text still leaves a variable line count on narrow screens.
+async function stabilizeTrialDate(page: Page) {
+  await page.route('**/subscriptions/access', async route => {
+    const response = await route.fetch()
+    expect(response.ok()).toBeTruthy()
+    const data = await response.json()
+    await route.fulfill({ response, json: { ...data, trial_end: '2026-10-28T19:14:42Z' } })
+  })
+}
+
 async function ensureData() {
   const request = await apiRequest.newContext()
   try {
@@ -76,6 +87,7 @@ test.describe('screenshots', () => {
         await page.clock.install({ time: CLOCK_START })
         await page.clock.resume()
         if (screen.heading) {
+          await stabilizeTrialDate(page)
           await openAs(page, OWNER, screen.path)
           await expect(page.getByRole('heading', { name: screen.heading, level: 1 })).toBeVisible()
         } else {
@@ -107,6 +119,7 @@ test.describe('screenshots', () => {
       await page.setViewportSize({ width, height: width > 400 ? 800 : 812 })
       await page.clock.install({ time: CLOCK_START })
       await page.clock.resume()
+      await stabilizeTrialDate(page)
       await openAs(page, OWNER, '/app')
       await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
       await page.waitForLoadState('networkidle')
