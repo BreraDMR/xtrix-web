@@ -1,4 +1,14 @@
 export type TranslationKey =
+  | 'today.title'
+  | 'today.empty'
+  | 'today.noService'
+  | 'today.timeZone'
+  | 'today.staffUnavailable'
+  | 'today.retryStaff'
+  | 'dashboard.overview'
+  | 'dashboard.visitHistory'
+  | 'dashboard.openCalendar'
+
   | 'google.title'
   | 'google.failed'
   | 'google.unavailable'
@@ -2139,6 +2149,15 @@ export type TranslationKey =
   | 'importWizard.error.rowFailed'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
+  "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
+  "today.empty": {"en": "No appointments today", "ru": "На сегодня записей нет", "cz": "Dnes nejsou žádné návštěvy"},
+  "today.noService": {"en": "Service not specified", "ru": "Услуга не указана", "cz": "Služba není uvedena"},
+  "today.timeZone": {"en": "Business time zone", "ru": "Часовой пояс бизнеса", "cz": "Časové pásmo podniku"},
+  "today.staffUnavailable": {"en": "Specialist names are unavailable. Appointments are still shown.", "ru": "Имена специалистов недоступны. Записи по-прежнему показаны.", "cz": "Jména specialistů nejsou dostupná. Návštěvy se nadále zobrazují."},
+  "today.retryStaff": {"en": "Retry names", "ru": "Загрузить имена повторно", "cz": "Znovu načíst jména"},
+  "dashboard.overview": {"en": "Business overview", "ru": "Обзор бизнеса", "cz": "Přehled podnikání"},
+  "dashboard.visitHistory": {"en": "Visit history", "ru": "История визитов", "cz": "Historie návštěv"},
+  "dashboard.openCalendar": {"en": "Open calendar", "ru": "Открыть календарь", "cz": "Otevřít kalendář"},
   'google.title': {"en": "Sign in with Google", "ru": "Вход через Google", "cz": "Přihlášení přes Google"},
   'google.failed': {"en": "Google sign-in failed. Please try again.", "ru": "Не удалось войти через Google. Попробуйте ещё раз.", "cz": "Přihlášení přes Google selhalo. Zkuste to znovu."},
   'google.unavailable': {"en": "Google sign-in is temporarily unavailable. You can still sign in with your password.", "ru": "Вход через Google временно недоступен. Можно войти с паролем.", "cz": "Přihlášení přes Google je dočasně nedostupné. Stále se můžete přihlásit heslem."},
