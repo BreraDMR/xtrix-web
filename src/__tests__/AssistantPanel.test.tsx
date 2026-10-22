@@ -15,7 +15,7 @@ const persona = (name = 'Sasha', gender: Gender = 'female', is_default = true) =
 
 const status = (over: Record<string, unknown> = {}) => ({
   enabled: true, voice_enabled: false, assistant: persona(), limit: 100, used: 3,
-  resets_at: '2026-11-01T00:00:00Z', ...over,
+  resets_at: '2026-11-01T00:00:00Z', period: 'month', ...over,
 })
 
 const display = (over: Record<string, unknown> = {}) => ({
@@ -120,6 +120,14 @@ describe('assistant launcher', () => {
     expect(await within(panel).findByRole('heading', { name: 'Marek' })).toBeInTheDocument()
     expect(within(panel).getByText('3 of 100 requests this month')).toBeInTheDocument()
     expect(panel).toHaveAccessibleName('Marek')
+  })
+
+  it('counts a pilot daily allowance as today, not as this month', async () => {
+    mockStatus(status({ used: 7, limit: 50, period: 'day', resets_at: '2026-10-23T00:00:00Z' }))
+    renderWithProviders(<AssistantLauncher />)
+    const panel = await openPanel()
+    expect(await within(panel).findByText('7 of 50 requests today')).toBeInTheDocument()
+    expect(within(panel).queryByText(/this month/)).not.toBeInTheDocument()
   })
 
   it("explains that the assistant isn't set up yet and offers no input", async () => {
@@ -472,6 +480,16 @@ describe('errors', () => {
     renderWithProviders(<AssistantLauncher />)
     await openPanel()
     expect(await screen.findByText(/This month's assistant limit is used up/)).toBeInTheDocument()
+    expect(send()).toBeDisabled()
+  })
+
+  it('says a used up daily allowance comes back tomorrow, not next month', async () => {
+    mockStatus(status({ used: 50, limit: 50, period: 'day', resets_at: '2026-10-23T00:00:00Z' }))
+    renderWithProviders(<AssistantLauncher />)
+    await openPanel()
+    const date = new Date('2026-10-23T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    expect(await screen.findByText(`Today's assistant limit is used up. It resets on ${date}.`)).toBeInTheDocument()
+    expect(screen.queryByText(/This month's/)).not.toBeInTheDocument()
     expect(send()).toBeDisabled()
   })
 

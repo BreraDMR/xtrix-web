@@ -100,6 +100,8 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   const ready = !!data && !off && !subscriptionRequired
   const limitReached = (!!data && data.used >= data.limit) || (limitUntil !== null && Date.now() < limitUntil)
   const resetsAt = data?.resets_at ?? (limitUntil ? new Date(limitUntil).toISOString() : null)
+  // the pilot counts requests per day, the paid plans per month - the server says which
+  const daily = data?.period === 'day'
 
   const {
     conversations,
@@ -357,7 +359,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
         </span>
         <div className="min-w-0 flex-1">
           <h2 id={titleId} className="truncate text-base font-semibold">{persona.name}</h2>
-          {data && <p className="text-xs text-gray-500 dark:text-gray-400">{say('usage', { used: data.used, limit: data.limit })}</p>}
+          {data && <p className="text-xs text-gray-500 dark:text-gray-400">{say(daily ? 'usageDay' : 'usage', { used: data.used, limit: data.limit })}</p>}
         </div>
         <button
           ref={closeRef}
@@ -462,7 +464,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
           >
             {limitReached && resetsAt && (
               <p role="status" className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-900/30 dark:text-amber-200">
-                {say('limitReachedUntil', { date: formatDay(resetsAt, locale) })}
+                {say(daily ? 'limitReachedUntilDay' : 'limitReachedUntil', { date: formatDay(resetsAt, locale) })}
               </p>
             )}
             {busy?.fromModel && busySeconds > 0 && (

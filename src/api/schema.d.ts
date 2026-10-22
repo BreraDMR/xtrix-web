@@ -4188,9 +4188,15 @@ export interface components {
             enabled: boolean;
             /**
              * Limit
-             * @description Assistant requests per calendar month (UTC) for whoever pays
+             * @description Assistant requests per period for whoever pays
              */
             limit: number;
+            /**
+             * Period
+             * @description What the limit counts: a UTC calendar month, or a UTC day in the pilot
+             * @enum {string}
+             */
+            period: "day" | "month";
             /**
              * Resets At
              * Format: date-time
@@ -11378,7 +11384,7 @@ export interface operations {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Monthly assistant limit used up (code ai_limit_reached), Retry-After = seconds to the next month; or too many requests a minute */
+            /** @description Assistant limit used up (code ai_limit_reached, period month or day in the pilot), Retry-After = seconds to the next period; or too many requests a minute */
             429: {
                 headers: {
                     [name: string]: unknown;
@@ -11458,7 +11464,7 @@ export interface operations {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Monthly assistant limit used up (code ai_limit_reached), Retry-After = seconds to the next month; or too many requests a minute */
+            /** @description Assistant limit used up (code ai_limit_reached, period month or day in the pilot), Retry-After = seconds to the next period; or too many requests a minute */
             429: {
                 headers: {
                     [name: string]: unknown;
