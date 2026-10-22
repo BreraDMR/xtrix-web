@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import { AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from 'axios'
 import type api from '../api/client'
+import type { ClientPage } from '../api/types'
 import { useAuthStore } from '../store/authStore'
 import { useLocaleStore } from '../store/localeStore'
 
@@ -55,6 +56,16 @@ export function routes(table: Record<string, unknown>) {
       checkout_available: true, pilot_mode: false, reason: null },
     ...table,
   }
-  return ((url: string) =>
-    url in defaults ? Promise.resolve({ data: defaults[url as keyof typeof defaults] }) : Promise.reject(apiError(404, `no mock for ${url}`))) as typeof api.get
+  return ((url: string, config) => {
+    if (!(url in defaults)) return Promise.reject(apiError(404, `no mock for ${url}`))
+    let data: unknown = defaults[url as keyof typeof defaults]
+    if ((url === '/clients/' || url === '/visits/') && Array.isArray(data)) {
+      const params = config?.params as Partial<Pick<ClientPage, 'page' | 'per_page'>> | undefined
+      const page = params?.page ?? 1
+      const per_page = params?.per_page ?? 20
+      data = { items: data.slice((page - 1) * per_page, page * per_page),
+        total: data.length, page, per_page, pages: Math.ceil(data.length / per_page) }
+    }
+    return Promise.resolve({ data })
+  }) as typeof api.get
 }

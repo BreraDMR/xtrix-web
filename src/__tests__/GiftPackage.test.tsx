@@ -328,7 +328,7 @@ describe('gift redemption in the visit form', () => {
   it('saves the visit once and retries the same redemption key after a failure', async () => {
     signIn({ id: 7, role: 'specialist' })
     vi.mocked(api.get).mockImplementation(((url: string) => {
-      if (url === '/clients/') return Promise.resolve({ data: [jana] })
+      if (url === '/clients/') return Promise.resolve({ data: { items: [jana], page: 1, per_page: 100, pages: 1, total: 1 } })
       if (url === '/services/') {
         return Promise.resolve({
           data: [
@@ -406,7 +406,7 @@ describe('gift redemption in the visit form', () => {
   it('blocks a certificate whose service scope does not match the visit', async () => {
     signIn({ id: 7, role: 'specialist' })
     vi.mocked(api.get).mockImplementation(((url: string) => {
-      if (url === '/clients/') return Promise.resolve({ data: [jana] })
+      if (url === '/clients/') return Promise.resolve({ data: { items: [jana], page: 1, per_page: 100, pages: 1, total: 1 } })
       if (url === '/services/') {
         return Promise.resolve({ data: [{ id: 7, name: 'Massage', duration_minutes: 60, price: 40, specialist_id: 7 }] })
       }

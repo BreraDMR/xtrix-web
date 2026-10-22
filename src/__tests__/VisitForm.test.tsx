@@ -22,6 +22,17 @@ describe('VisitForm', () => {
     vi.mocked(api.get).mockImplementation(routes({ '/clients/': [jana], '/services/': [] }))
   })
 
+  it('can select a client beyond the first hundred records', async () => {
+    const clients = Array.from({ length: 125 }, (_, index) => ({ ...jana, id: index + 1,
+      full_name: `Guest ${String(index + 1).padStart(3, '0')}` }))
+    vi.mocked(api.get).mockImplementation(routes({ '/clients/': clients, '/services/': [] }))
+    renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+    const option = await screen.findByRole('option', { name: 'Guest 125' })
+    await userEvent.selectOptions(option.closest('select')!, option)
+    await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({ client_id: 125 })))
+  })
+
   it('books the visit for the current user and shows the 409 reason', async () => {
     vi.mocked(api.post).mockRejectedValue(apiError(409, 'This time is already booked for the specialist'))
     renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
