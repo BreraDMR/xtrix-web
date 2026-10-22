@@ -21,7 +21,7 @@ describe('responsive list cards', () => {
   it('keeps every visit field in one labelled card and a single working edit action', async () => {
     useLocaleStore.setState({ locale: 'cz' })
     vi.mocked(api.get).mockImplementation(routes({
-      '/visits/': [{ id: 1, client_id: 3, specialist_id: 7, date_start: '2026-10-18T10:00:00Z', status: 'planned', price: 20 }],
+      '/visits/': { items: [{ id: 1, client_id: 3, client_name: fullName, specialist_id: 7, date_start: '2026-10-18T10:00:00Z', status: 'planned', price: 20 }], page: 1, per_page: 20, pages: 1, total: 1 },
       '/clients/': [{ id: 3, full_name: fullName }], '/businesses/me': { currency: 'EUR' },
       '/visits/1': { id: 1, client_id: 3, date_start: '2026-10-18T10:00:00Z', date_end: '2026-10-18T11:00:00Z', status: 'planned' },
       '/services/': [],

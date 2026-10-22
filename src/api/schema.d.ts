@@ -10118,6 +10118,8 @@ export interface components {
             client_confirmed_at?: string | null;
             /** Client Id */
             client_id: number;
+            /** Client Name */
+            client_name?: string | null;
             /**
              * Created At
              * Format: date-time
@@ -19976,6 +19978,10 @@ export interface operations {
                 specialist_id?: number | null;
                 date_from?: string | null;
                 date_to?: string | null;
+                q?: string | null;
+                status?: ("planned" | "completed" | "cancelled" | "in_progress") | null;
+                sort_by?: "id" | "date_start" | "service_name" | "client_name" | "status" | "price";
+                sort_order?: "asc" | "desc";
                 page?: number;
                 per_page?: number;
                 /** @description Include soft-deleted visits */

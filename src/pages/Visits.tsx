@@ -1,13 +1,13 @@
 import QueryError from '../components/QueryError'
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { format, isAfter, isBefore, parseISO, startOfDay, endOfDay } from 'date-fns'
+import { format, parseISO, startOfDay, endOfDay } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { cs } from 'date-fns/locale'
 import { enUS } from 'date-fns/locale'
 import api from '../api/client'
 import VisitForm from '../components/VisitForm'
-import SearchBar from '../components/SearchBar'
+import Input from '../ui/Input'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
@@ -17,11 +17,13 @@ import { useLabels } from '../i18n/labels'
 import { useLocaleStore } from '../store/localeStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
-import { sortData, SortConfig } from '../utils/table'
-import type { VisitOut, ClientOut } from '../api/types'
+import { SortConfig } from '../utils/table'
+import type { VisitOut, Schema } from '../api/types'
 import { today } from '../utils/dates'
+import { allPages } from '../api/allPages'
+import { useAuthStore } from '../store/authStore'
 
-type Visit = VisitOut & { client_name?: string }
+type Visit = VisitOut
 
 export default function Visits() {
   const { t } = useTranslation()
@@ -43,72 +45,34 @@ export default function Visits() {
   const [perPage, setPerPage] = useState(20)
   const queryClient = useQueryClient()
 
-  const { data: rawVisits, isLoading, isError, refetch } = useQuery<Visit[]>({
-    queryKey: ['visits'],
-    queryFn: async () => {
-      const { data } = await api.get('/visits/')
-      return Array.isArray(data) ? data : (data?.items || data?.data || [])
-    },
+  const identity = useAuthStore(state => state.sessionRevision)
+  const user = useAuthStore(state => state.user)
+  const filters = {
+    q: searchQuery || undefined,
+    status: statusFilter || undefined,
+    date_from: dateFrom ? startOfDay(parseISO(dateFrom)).toISOString() : undefined,
+    date_to: dateTo ? endOfDay(parseISO(dateTo)).toISOString() : undefined,
+    sort_by: sortConfig.key ?? 'id',
+    sort_order: sortConfig.direction ?? 'asc',
+  }
+  type VisitPage = Schema<'PaginatedResponse_VisitOut_'>
+  const { data: result, isLoading, isError, refetch } = useQuery<VisitPage>({
+    queryKey: ['visits', 'directory', identity, user?.id, user?.business_id, user?.employer_id,
+      currentPage, perPage, filters],
+    queryFn: async ({ signal }) => (await api.get<VisitPage>('/visits/', {
+      params: { ...filters, page: currentPage, per_page: perPage }, signal,
+    })).data,
   })
+  const paginatedData = result?.items ?? []
+  const totalItems = result?.total ?? 0
+  const totalPages = result?.pages ?? 0
+  const loadExport = () => allPages<Visit>(async page => (await api.get<VisitPage>('/visits/', {
+    params: { ...filters, page, per_page: 100 },
+  })).data)
 
-  const { data: clients } = useQuery<ClientOut[]>({
-    queryKey: ['clients'],
-    queryFn: async () => {
-      const { data } = await api.get('/clients/')
-      return Array.isArray(data) ? data : (data?.items || data?.data || [])
-    },
-  })
-
-  const visits = useMemo(() => {
-    const clientNames = new Map(clients?.map(client => [client.id, client.full_name]))
-    return rawVisits?.map(visit => ({
-      ...visit,
-      client_name: clientNames.get(visit.client_id) || visit.client_name,
-    }))
-  }, [rawVisits, clients])
-
-  const filteredVisits = useMemo(() => {
-    if (!visits) return []
-    
-    let filtered = visits.filter((visit) => {
-      const matchesSearch =
-        searchQuery === '' ||
-        visit.service_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        visit.client_name?.toLowerCase().includes(searchQuery.toLowerCase())
-      
-      const matchesStatus = statusFilter === null || visit.status === statusFilter
-      
-      let matchesDate = true
-      if (dateFrom) {
-        const fromDate = startOfDay(parseISO(dateFrom))
-        const visitDate = new Date(visit.date_start)
-        matchesDate = matchesDate && !isBefore(visitDate, fromDate)
-      }
-      if (dateTo) {
-        const toDate = endOfDay(parseISO(dateTo))
-        const visitDate = new Date(visit.date_start)
-        matchesDate = matchesDate && !isAfter(visitDate, toDate)
-      }
-      
-      return matchesSearch && matchesStatus && matchesDate
-    })
-    
-    if (sortConfig.key && sortConfig.direction) {
-      filtered = sortData(filtered, sortConfig)
-    }
-    
-    return filtered
-  }, [visits, searchQuery, statusFilter, dateFrom, dateTo, sortConfig])
-
-  const { paginatedData, totalPages, totalItems } = useMemo(() => {
-    const startIndex = (currentPage - 1) * perPage
-    const endIndex = startIndex + perPage
-    return {
-      paginatedData: filteredVisits.slice(startIndex, endIndex),
-      totalPages: Math.ceil(filteredVisits.length / perPage),
-      totalItems: filteredVisits.length,
-    }
-  }, [filteredVisits, currentPage, perPage])
+  useEffect(() => {
+    if (result && currentPage > Math.max(1, result.pages)) setCurrentPage(Math.max(1, result.pages))
+  }, [result, currentPage])
 
   const handleSort = (key: keyof Visit) => {
     setSortConfig((prev) => {
@@ -137,16 +101,6 @@ export default function Visits() {
     setShowForm(true)
   }
 
-  if (isError) return <QueryError retry={refetch} />
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
-  }
-
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -168,14 +122,19 @@ export default function Visits() {
         <div className="mb-6 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div className="flex-1 w-full sm:max-w-md">
-              <SearchBar
+              <Input
+                type="search"
+                value={searchQuery}
+                aria-label={t('visits.searchPlaceholder')}
                 placeholder={t('visits.searchPlaceholder')}
-                onSearch={setSearchQuery}
+                onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1) }}
               />
             </div>
-            {filteredVisits.length > 0 && (
+            {totalItems > 0 && (
               <ExportButton
-                data={filteredVisits}
+                data={paginatedData}
+                totalItems={totalItems}
+                loadData={loadExport}
                 columns={[
                   { key: 'date_start', label: t('visits.date'), format: (val) => format(new Date(val), 'PP', { locale: dateLocale }) },
                   { key: 'service_name', label: t('visits.service') },
@@ -192,6 +151,7 @@ export default function Visits() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <select
+              aria-label={t('visits.status')}
               value={statusFilter || ''}
               onChange={(e) => {
                 setStatusFilter(e.target.value || null)
@@ -206,9 +166,10 @@ export default function Visits() {
               <option value="cancelled">{t('visits.cancelled')}</option>
             </select>
             <div className="relative">
-              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none dark:bg-gray-800 dark:text-gray-400">{t('visits.fromDate')}</label>
+              <label htmlFor="visits-from" className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none dark:bg-gray-800 dark:text-gray-400">{t('visits.fromDate')}</label>
               <input
                 type="date"
+                id="visits-from"
                 value={dateFrom}
                 onChange={(e) => {
                   setDateFrom(e.target.value)
@@ -218,9 +179,10 @@ export default function Visits() {
               />
             </div>
             <div className="relative">
-              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none dark:bg-gray-800 dark:text-gray-400">{t('visits.toDate')}</label>
+              <label htmlFor="visits-to" className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none dark:bg-gray-800 dark:text-gray-400">{t('visits.toDate')}</label>
               <input
                 type="date"
+                id="visits-to"
                 value={dateTo}
                 onChange={(e) => {
                   setDateTo(e.target.value)
@@ -301,7 +263,11 @@ export default function Visits() {
               </tr>
             </thead>
             <tbody role="rowgroup" className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-              {paginatedData.length === 0 ? (
+              {isError ? (
+                <tr><td colSpan={6}><QueryError retry={refetch} /></td></tr>
+              ) : isLoading ? (
+                <tr><td colSpan={6} className="py-8"><LoadingSpinner /></td></tr>
+              ) : paginatedData.length === 0 ? (
                 <tr role="row">
                   <td role="cell" colSpan={6} className="px-2 sm:px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     {searchQuery || statusFilter || dateFrom || dateTo
