@@ -28,6 +28,7 @@ import type { VisitOut, Schema } from '../api/types'
 import { today } from '../utils/dates'
 import { allPages } from '../api/allPages'
 import { useAuthStore } from '../store/authStore'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 
 type Visit = VisitOut
 
@@ -129,7 +130,9 @@ export default function Visits() {
     }
   }
   const hasFilters = Boolean(searchQuery || statusFilter || dateFrom || dateTo)
-  const columnCount = canEdit ? 6 : 5
+  // on a phone service and status fold into the client and date cells, so nothing scrolls sideways
+  const phone = useMediaQuery('(max-width: 639px)')
+  const columnCount = (phone ? 3 : 5) + (canEdit ? 1 : 0)
 
   return (
     <div className="min-w-0 text-[var(--workspace-ink)]">
@@ -207,16 +210,16 @@ export default function Visits() {
         </div>
 
         <div className="relative overflow-x-auto" role="region" aria-label={t('visits.title')} tabIndex={0}>
-          <table role="table" className="w-full min-w-[760px] table-fixed text-sm">
+          <table role="table" className={`w-full table-fixed text-sm ${phone ? '' : 'min-w-[760px]'}`}>
             <caption className="sr-only">{t('visits.title')}</caption>
             <thead role="rowgroup" className="border-b border-[var(--workspace-line)] bg-[var(--workspace-bg)]">
               <tr role="row">
-                <TableSortHeader columnKey="date_start" label={t('visits.date')} currentSort={sortConfig} onSort={handleSort} className="w-[19%] px-4" />
-                <TableSortHeader columnKey="client_name" label={t('visits.client')} currentSort={sortConfig} onSort={handleSort} className="w-[22%] px-4" />
-                <TableSortHeader columnKey="service_name" label={t('visits.service')} currentSort={sortConfig} onSort={handleSort} className="w-[22%] px-4" />
-                <th scope="col" className="w-[16%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--workspace-muted)]">{t('visits.status')}</th>
-                <TableSortHeader columnKey="price" label={t('services.price')} currentSort={sortConfig} onSort={handleSort} className="w-[13%] px-4" />
-                {canEdit && <th scope="col" className="w-[8%] px-2 py-3"><span className="sr-only">{t('common.actions')}</span></th>}
+                <TableSortHeader columnKey="date_start" label={t('visits.date')} currentSort={sortConfig} onSort={handleSort} className={phone ? 'w-[31%] px-3' : 'w-[19%] px-4'} />
+                <TableSortHeader columnKey="client_name" label={t('visits.client')} currentSort={sortConfig} onSort={handleSort} className={phone ? 'w-[33%] px-3' : 'w-[22%] px-4'} />
+                {!phone && <TableSortHeader columnKey="service_name" label={t('visits.service')} currentSort={sortConfig} onSort={handleSort} className="w-[22%] px-4" />}
+                {!phone && <th scope="col" className="w-[16%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--workspace-muted)]">{t('visits.status')}</th>}
+                <TableSortHeader columnKey="price" label={t('services.price')} currentSort={sortConfig} onSort={handleSort} className={phone ? 'w-[24%] px-2' : 'w-[13%] px-4'} />
+                {canEdit && <th scope="col" className={phone ? 'w-[12%] px-1 py-3' : 'w-[8%] px-2 py-3'}><span className="sr-only">{t('common.actions')}</span></th>}
               </tr>
             </thead>
             <tbody role="rowgroup" className="divide-y divide-[var(--workspace-line)]">
@@ -232,22 +235,28 @@ export default function Visits() {
                 </tr>
               ) : paginatedData.map(visit => (
                 <tr role="row" key={visit.id} className="hover:bg-[var(--workspace-bg)]">
-                  <td role="cell" className="px-4 py-3 align-top">
+                  <td role="cell" className={`${phone ? 'px-3' : 'px-4'} py-3 align-top`}>
                     <time dateTime={visit.date_start} className="flex flex-col gap-0.5">
                       <span>{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
                       <span className="text-xs tabular-nums text-[var(--workspace-muted)]">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
                     </time>
+                    {phone && <span className={`mt-1.5 inline-flex rounded px-2 py-0.5 text-xs font-medium ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>}
                   </td>
-                  <td role="cell" className="break-words px-4 py-3 align-top font-medium [overflow-wrap:anywhere]">{visit.client_name || '-'}</td>
-                  <td role="cell" className="break-words px-4 py-3 align-top text-[var(--workspace-muted)] [overflow-wrap:anywhere]">{visit.service_name || '-'}</td>
-                  <td role="cell" className="px-4 py-3 align-top">
-                    <span className={`inline-flex rounded px-2 py-1 text-xs font-medium ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>
+                  <td role="cell" className={`break-words ${phone ? 'px-3' : 'px-4'} py-3 align-top font-medium [overflow-wrap:anywhere]`}>
+                    {visit.client_name || '-'}
+                    {phone && <span className="mt-0.5 block font-normal text-[var(--workspace-muted)]">{visit.service_name || '-'}</span>}
                   </td>
-                  <td role="cell" className="break-words px-4 py-3 align-top tabular-nums [overflow-wrap:anywhere]">
+                  {!phone && <td role="cell" className="break-words px-4 py-3 align-top text-[var(--workspace-muted)] [overflow-wrap:anywhere]">{visit.service_name || '-'}</td>}
+                  {!phone && (
+                    <td role="cell" className="px-4 py-3 align-top">
+                      <span className={`inline-flex rounded px-2 py-1 text-xs font-medium ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>
+                    </td>
+                  )}
+                  <td role="cell" className={`${phone ? 'whitespace-nowrap px-2' : 'break-words px-4 [overflow-wrap:anywhere]'} py-3 align-top tabular-nums`}>
                     {visit.price == null ? '-' : formatCurrency(visit.price, currency)}
                   </td>
                   {canEdit && (
-                    <td role="cell" className="px-2 py-2 align-top text-center">
+                    <td role="cell" className={`${phone ? 'px-1' : 'px-2'} py-2 align-top text-center`}>
                       <Button variant="quiet" className="!px-2" onClick={() => handleEdit(visit.id)} title={t('common.edit')}>
                         <HiOutlinePencil aria-hidden="true" /><span className="sr-only">{t('common.edit')}</span>
                       </Button>

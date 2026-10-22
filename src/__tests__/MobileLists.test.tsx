@@ -55,6 +55,31 @@ describe('responsive list cards', () => {
     await waitFor(() => expect(document.querySelector<HTMLInputElement>('input[type="datetime-local"]')!.value).toContain('2026-10-18'))
   })
 
+  it('folds service and status into the date and client cells on a phone', async () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query === '(max-width: 639px)', media: query,
+      addEventListener: () => {}, removeEventListener: () => {},
+    }))
+    try {
+      useLocaleStore.setState({ locale: 'cz' })
+      vi.mocked(api.get).mockImplementation(routes({
+        '/visits/': { items: [{ id: 1, client_id: 3, client_name: fullName, specialist_id: 7, date_start: '2026-10-18T10:00:00Z', service_name: 'Konzultace', status: 'planned', price: 20 }], page: 1, per_page: 20, pages: 1, total: 1 },
+        '/clients/': [{ id: 3, full_name: fullName }], '/businesses/me': { currency: 'EUR' }, '/services/': [],
+      }) as never)
+      renderWithProviders(<Visits />)
+      const row = (await screen.findByText(fullName)).closest('tr')!
+      expect(screen.getAllByRole('columnheader').map(header => header.textContent)).toEqual(['Datum', 'Klient', 'Cena', 'Akce'])
+      const cells = within(row).getAllByRole('cell')
+      expect(cells).toHaveLength(4)
+      expect(cells[0]).toHaveTextContent('Plánováno')
+      expect(cells[1]).toHaveTextContent(`${fullName}Konzultace`)
+      expect(screen.getAllByText('Konzultace')).toHaveLength(1)
+      expect(screen.getByRole('table')).not.toHaveClass('min-w-[760px]')
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
   it('keeps complete employee details and actions in a focusable scroll region', async () => {
     vi.mocked(api.get).mockImplementation(routes({
       '/employees/': [{ id: 2, employee_user: { full_name: fullName, email: 'jana@example.cz' }, position: 'Stylist', is_active: true, commission_percentage: 15, base_salary: 1500 }],

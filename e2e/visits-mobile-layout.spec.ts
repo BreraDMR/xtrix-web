@@ -24,6 +24,9 @@ async function checkMobileControls(page: Page, mode: string) {
     tableRegion: await region.evaluate(element => ({ clientWidth: element.clientWidth,
       scrollWidth: element.scrollWidth, scrollLeft: element.scrollLeft })) }
   expect(viewport.scrollWidth - viewport.width).toBeLessThanOrEqual(1)
+  // the phone table folds service and status into other cells instead of scrolling sideways
+  const tableRegion = measured.tableRegion as { clientWidth: number; scrollWidth: number }
+  expect(tableRegion.scrollWidth - tableRegion.clientWidth).toBeLessThanOrEqual(1)
   expect(viewport.scrollX).toBe(0)
   for (const [name, control] of Object.entries(controls)) {
     await expect(control).toBeVisible()
