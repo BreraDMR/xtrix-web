@@ -3,6 +3,7 @@ import { create } from 'zustand'
 export type SessionUser = { id: number; full_name: string; role: string; employer_id?: number | null; business_id?: number | null }
 
 interface AuthState {
+  sessionRevision: number
   token: string | null
   user: SessionUser | null
   // true after the logout button, so login doesn't offer a way back to the last page
@@ -27,20 +28,24 @@ function savedUser(): SessionUser | null {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
+  sessionRevision: 0,
   token: typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null,
   user: typeof window !== 'undefined' ? savedUser() : null,
   signedOut: false,
   setAuth: (token, user) => {
     localStorage.setItem('auth_token', token)
     localStorage.setItem('auth_user', JSON.stringify(user))
-    set({ token, user, signedOut: false })
+    set(previous => ({ token, user, signedOut: false, sessionRevision: previous.sessionRevision + (
+      previous.user && [previous.user.id, previous.user.role, previous.user.business_id, previous.user.employer_id].join(':') !==
+        [user.id, user.role, user.business_id, user.employer_id].join(':') ? 1 : 0
+    ) }))
   },
   startSession: (accessToken, refreshToken) => {
     localStorage.removeItem('auth_user')
     localStorage.setItem('auth_token', accessToken)
     if (refreshToken) localStorage.setItem('auth_refresh_token', refreshToken)
     else localStorage.removeItem('auth_refresh_token')
-    set({ token: accessToken, user: null, signedOut: false })
+    set(previous => ({ token: accessToken, user: null, signedOut: false, sessionRevision: previous.sessionRevision + 1 }))
   },
   setToken: (token) => {
     localStorage.setItem('auth_token', token)
@@ -50,7 +55,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.removeItem('auth_token')
     localStorage.removeItem('auth_refresh_token')
     localStorage.removeItem('auth_user')
-    set({ token: null, user: null, signedOut: byUser })
+    set(previous => ({ token: null, user: null, signedOut: byUser, sessionRevision: previous.sessionRevision + 1 }))
   },
 }))
 
@@ -60,6 +65,11 @@ if (typeof window !== 'undefined') {
   window.addEventListener('storage', (event) => {
     if (event.key !== null && event.key !== 'auth_token' && event.key !== 'auth_user') return
     const token = localStorage.getItem('auth_token')
-    useAuthStore.setState({ token, user: token ? savedUser() : null })
+    const user = token ? savedUser() : null
+    useAuthStore.setState(previous => ({ token, user, sessionRevision: previous.sessionRevision + (
+      previous.user?.id !== user?.id || previous.user?.business_id !== user?.business_id ||
+      previous.user?.employer_id !== user?.employer_id || previous.user?.role !== user?.role ||
+      (token !== previous.token && (!user || !previous.user)) ? 1 : 0
+    ) }))
   })
 }

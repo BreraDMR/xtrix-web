@@ -31,6 +31,20 @@ it('restores the missing user before rendering a private page', async () => {
   expect(useAuthStore.getState().user?.id).toBe(7)
 })
 
+it('does not attach an old profile response to the next login', async () => {
+  useAuthStore.getState().startSession('first-access', 'first-refresh')
+  let finishFirst!: (response: { data: unknown }) => void
+  vi.mocked(api.get).mockImplementationOnce(() => new Promise(resolve => { finishFirst = resolve }))
+    .mockImplementation(() => new Promise(() => {}))
+  mount('/clients')
+  await waitFor(() => expect(finishFirst).toBeTypeOf('function'))
+  act(() => useAuthStore.getState().startSession('second-access', 'second-refresh'))
+  await act(async () => finishFirst({ data: { id: 7, full_name: 'First account', role: 'specialist' } }))
+  expect(useAuthStore.getState().token).toBe('second-access')
+  expect(useAuthStore.getState().user).toBeNull()
+  expect(screen.queryByText(/Protected/)).not.toBeInTheDocument()
+})
+
 it('keeps the private page blocked and offers retry if user loading fails', async () => {
   useAuthStore.setState({ token: 'saved', user: null })
   vi.mocked(api.get).mockRejectedValue(apiError(500, 'Unavailable'))

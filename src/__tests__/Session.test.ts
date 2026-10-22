@@ -111,6 +111,61 @@ describe('session refresh', () => {
     expect(adapter).toHaveBeenCalledTimes(1)
     expect(useAuthStore.getState().token).toBe('expired')
   })
+
+  it('does not replay an old mutation with the next account token', async () => {
+    let rejectOld!: () => void
+    const calls: string[] = []
+    api.defaults.adapter = async config => {
+      calls.push(String(config.headers.Authorization))
+      if (calls.length > 1) return fail(config, 401)
+      return new Promise((_resolve, reject) => {
+        rejectOld = () => { try { fail(config, 401) } catch (error) { reject(error) } }
+      })
+    }
+    const request = api.post('/visits/', { client_id: 10 }).catch(error => error)
+    await vi.waitFor(() => expect(calls).toHaveLength(1))
+    useAuthStore.getState().startSession('other-access', 'other-refresh')
+    useAuthStore.getState().setAuth('other-access', { ...user, id: 2 })
+    rejectOld()
+    await request
+    expect(calls).toEqual(['Bearer expired'])
+    expect(useAuthStore.getState().token).toBe('other-access')
+  })
+
+  it.each(['logout', 'new login'])('does not revive a refresh after %s', async (change) => {
+    let finishRefresh!: () => void
+    api.defaults.adapter = config => {
+      if (config.url !== '/users/refresh') return Promise.reject(new AxiosError('Failed', '401', config, null,
+        { config, status: 401, statusText: '', headers: {}, data: {} }))
+      return new Promise(resolve => { finishRefresh = () => resolve(ok(config, {
+        access_token: 'old-renewed', refresh_token: 'old-rotated',
+      })) })
+    }
+    const request = api.get('/clients/').catch(error => error)
+    await vi.waitFor(() => expect(finishRefresh).toBeTypeOf('function'))
+    if (change === 'logout') useAuthStore.getState().logout()
+    else {
+      useAuthStore.getState().startSession('other-access', 'other-refresh')
+      useAuthStore.getState().setAuth('other-access', { ...user, id: 2 })
+    }
+    finishRefresh()
+    await request
+    expect(useAuthStore.getState().token).toBe(change === 'logout' ? null : 'other-access')
+    expect(useAuthStore.getState().user?.id ?? null).toBe(change === 'logout' ? null : 2)
+  })
+
+  it('rejects an old successful mutation response after switching accounts', async () => {
+    let finish!: () => void
+    api.defaults.adapter = config => new Promise(resolve => {
+      finish = () => resolve(ok(config, { client_id: 10, note: 'Previous salon' }))
+    })
+    const request = api.post('/visits/', { client_id: 10 })
+    const result = request.then(() => 'accepted', () => 'rejected')
+    await vi.waitFor(() => expect(finish).toBeTypeOf('function'))
+    useAuthStore.getState().startSession('other-access', 'other-refresh')
+    finish()
+    expect(await result).toBe('rejected')
+  })
 })
 
 describe('session in other tabs', () => {

@@ -13,8 +13,12 @@ const api = axios.create({
   },
 })
 
-api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token
+type SessionRequest = InternalAxiosRequestConfig & { sessionRetried?: boolean; sessionRevision?: number }
+
+api.interceptors.request.use((config: SessionRequest) => {
+  const { token, sessionRevision } = useAuthStore.getState()
+  if (config.sessionRevision !== undefined && config.sessionRevision !== sessionRevision) throw new Error('Session changed')
+  config.sessionRevision = sessionRevision
   const locale = useLocaleStore.getState().locale || navigator.language.split('-')[0] || 'en'
 
   if (token) {
@@ -28,11 +32,17 @@ api.interceptors.request.use((config) => {
 // Access tokens are short-lived. On a 401 we swap the refresh token for a new pair and
 // repeat the request once. Parallel 401s share one refresh call: the server revokes the
 // old refresh token on use, so a second call with it would end the session.
-let refreshing: Promise<string> | null = null
+let refreshing: { revision: number; promise: Promise<string> } | null = null
 
 function refreshSession(): Promise<string> {
-  refreshing ??= rotateTokens().finally(() => { refreshing = null })
-  return refreshing
+  const revision = useAuthStore.getState().sessionRevision
+  if (!refreshing || refreshing.revision !== revision) {
+    const pending = { revision, promise: rotateTokens().finally(() => {
+      if (refreshing === pending) refreshing = null
+    }) }
+    refreshing = pending
+  }
+  return refreshing.promise
 }
 
 async function rotateTokens(): Promise<string> {
@@ -46,11 +56,12 @@ async function rotateTokens(): Promise<string> {
     const { data } = await api.post('/users/refresh', { refresh_token: refreshToken })
     if (!data?.access_token || !data?.refresh_token) throw new Error('Invalid token response')
     // logged out (or in as someone else) while this was in flight - don't bring it back
-    if (localStorage.getItem('auth_refresh_token') !== refreshToken) throw new Error('Session changed')
+    if (useAuthStore.getState().sessionRevision !== store.sessionRevision || localStorage.getItem('auth_refresh_token') !== refreshToken) throw new Error('Session changed')
     localStorage.setItem('auth_refresh_token', data.refresh_token)
     store.setToken(data.access_token)
     return data.access_token
   } catch (error) {
+    if (useAuthStore.getState().sessionRevision !== store.sessionRevision) throw error
     // another tab may have rotated the same refresh token a moment earlier
     const latestRefresh = localStorage.getItem('auth_refresh_token')
     const latestAccess = localStorage.getItem('auth_token')
@@ -68,11 +79,16 @@ async function rotateTokens(): Promise<string> {
 const AUTH_ENDPOINT = /^\/?users\/(login|refresh|logout)\/?$/
 
 api.interceptors.response.use(
-  response => response,
+  response => {
+    const config = response.config as SessionRequest
+    if (config.sessionRevision !== useAuthStore.getState().sessionRevision) throw new Error('Session changed')
+    return response
+  },
   async error => {
-    const config = error.config as (InternalAxiosRequestConfig & { sessionRetried?: boolean }) | undefined
+    const config = error.config as SessionRequest | undefined
     const sentAuth = config?.headers?.Authorization
     if (error.response?.status !== 401 || !config || !sentAuth || AUTH_ENDPOINT.test(config.url || '')) throw error
+    if (config.sessionRevision !== useAuthStore.getState().sessionRevision) throw error
     if (config.sessionRetried) {
       // a token we just got is refused too, so the session is over (deactivated, logout-all...)
       useAuthStore.getState().logout()

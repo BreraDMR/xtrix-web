@@ -11,6 +11,6 @@ export function bindSessionCache(client: QueryClient) {
   return useAuthStore.subscribe((next, previous) => {
     const changedScope = scope(next.user) !== scope(previous.user)
     const changedUnknownSession = next.token !== previous.token && (!next.user || !previous.user)
-    if (changedScope || changedUnknownSession) client.clear()
+    if (changedScope || changedUnknownSession || next.sessionRevision !== previous.sessionRevision) client.clear()
   })
 }

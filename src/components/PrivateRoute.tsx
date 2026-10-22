@@ -14,9 +14,11 @@ export default function PrivateRoute({ children }: { children: ReactNode }) {
     enabled: !!token && !user,
     retry: false,
     queryFn: async () => {
+      const revision = useAuthStore.getState().sessionRevision
       const { data } = await api.get('/users/me')
-      const currentToken = useAuthStore.getState().token
-      if (currentToken) useAuthStore.getState().setAuth(currentToken, data)
+      const current = useAuthStore.getState()
+      if (!current.token || current.sessionRevision !== revision) throw new Error('Session changed')
+      current.setAuth(current.token, data)
       return data
     },
   })
