@@ -265,10 +265,8 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
 
     const validRows = new Set(
       parsedData
-        .filter((_, index) => {
-          return !validationErrors.some((err) => err.row === parsedData[index].row)
-        })
-        .map((_, index) => parsedData[index].row)
+        .filter((client) => !validationErrors.some((err) => err.row === client.row))
+        .map((client) => client.row)
     )
 
     for (const client of parsedData) {

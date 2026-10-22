@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ImportClientsModal from '../components/ImportClientsModal'
 import * as XLSX from 'xlsx'
@@ -40,6 +40,29 @@ describe('ImportClientsModal', () => {
     expect(screen.queryByText(/this client is already in your list/i)).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: /^open$/i }))
     expect(onOpenClient).toHaveBeenCalledWith(42)
+  })
+
+  it('imports both valid rows after an invalid first row without submitting that row', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: { id: 7 } })
+    const confirmImport = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    try {
+      const { container } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} />)
+      await act(async () => {
+        await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,
+          sheet([['Name', 'Email'], ['Invalid Person', 'bad-email'], ['Second Person', 'second@example.cz'], ['Third Person', 'third@example.cz']]))
+      })
+      const importButton = await screen.findByRole('button', { name: /import \(2\)/i })
+      await act(async () => { await userEvent.click(importButton) })
+
+      await waitFor(() => expect(api.post).toHaveBeenCalledTimes(2))
+      expect(confirmImport).toHaveBeenCalledOnce()
+      expect(vi.mocked(api.post).mock.calls.map(([, body]) => body)).toEqual([
+        { full_name: 'Second Person', contact_phone: undefined, contact_email: 'second@example.cz' },
+        { full_name: 'Third Person', contact_phone: undefined, contact_email: 'third@example.cz' },
+      ])
+    } finally {
+      confirmImport.mockRestore()
+    }
   })
 
   it('says so inline when the sheet has no name column and lets them pick another file', async () => {
