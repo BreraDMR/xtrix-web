@@ -38,3 +38,20 @@ describe('appearance controls', () => {
     expect(screen.getByRole('switch', { name: /email notifications/i })).toBeChecked()
   })
 })
+
+describe('time zone list', () => {
+  it('names the zones in the interface language and keeps the saved id', async () => {
+    const preferences = {
+      id: 1, user_id: 2, language: 'cz', theme: 'light', timezone: 'Europe/Prague', email_notifications: true,
+      push_notifications: false, auto_save_enabled: false, auto_save_interval: 30,
+    }
+    vi.mocked(api.get).mockImplementation(routes({ '/user-preferences/me': preferences }))
+    const { useLocaleStore } = await import('../store/localeStore')
+    useLocaleStore.setState({ locale: 'cz' })
+    renderWithProviders(<Settings />)
+    const zone = await screen.findByRole('combobox', { name: 'Časové pásmo' })
+    const prague = [...(zone as HTMLSelectElement).options].find(option => option.value === 'Europe/Prague')!
+    expect(prague.textContent).toBe('Europe/Prague — středoevropský čas')
+    expect([...(zone as HTMLSelectElement).options].some(option => /Coordinated|CEST/.test(option.textContent ?? ''))).toBe(false)
+  })
+})

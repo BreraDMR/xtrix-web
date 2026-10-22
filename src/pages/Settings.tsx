@@ -22,20 +22,20 @@ import { applyTheme, isTheme } from '../utils/theme'
 import type { Locale } from '../store/localeStore'
 
 
-const TIMEZONES = [
-  { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
-  { value: 'Europe/Prague', label: 'Europe/Prague (CET/CEST)' },
-  { value: 'Europe/Moscow', label: 'Europe/Moscow (MSK)' },
-  { value: 'Europe/Kiev', label: 'Europe/Kiev (EET/EEST)' },
-  { value: 'Europe/London', label: 'Europe/London (GMT/BST)' },
-  { value: 'Europe/Berlin', label: 'Europe/Berlin (CET/CEST)' },
-  { value: 'Europe/Paris', label: 'Europe/Paris (CET/CEST)' },
-  { value: 'America/New_York', label: 'America/New_York (EST/EDT)' },
-  { value: 'America/Chicago', label: 'America/Chicago (CST/CDT)' },
-  { value: 'America/Los_Angeles', label: 'America/Los_Angeles (PST/PDT)' },
-  { value: 'Asia/Tokyo', label: 'Asia/Tokyo (JST)' },
-  { value: 'Asia/Shanghai', label: 'Asia/Shanghai (CST)' },
-]
+const TIMEZONES = ['UTC', 'Europe/Prague', 'Europe/Moscow', 'Europe/Kiev', 'Europe/London', 'Europe/Berlin',
+  'Europe/Paris', 'America/New_York', 'America/Chicago', 'America/Los_Angeles', 'Asia/Tokyo', 'Asia/Shanghai']
+
+// The zone id stays as is (it is what gets saved); the browser names the zone in the chosen language.
+function timeZoneLabel(timeZone: string, locale: Locale): string {
+  if (timeZone === 'UTC') return 'UTC'
+  try {
+    const name = new Intl.DateTimeFormat(locale === 'cz' ? 'cs' : locale, { timeZone, timeZoneName: 'longGeneric' })
+      .formatToParts(new Date()).find((part) => part.type === 'timeZoneName')?.value
+    return name ? `${timeZone} — ${name}` : timeZone
+  } catch {
+    return timeZone
+  }
+}
 
 // options for a preference, typed by what the API accepts for it
 type Option<K extends keyof UserPreferencesUpdate> = { value: NonNullable<UserPreferencesUpdate[K]>; label: string }
@@ -268,8 +268,8 @@ export default function Settings() {
               className="w-full"
             >
               {TIMEZONES.map((tz) => (
-                <option key={tz.value} value={tz.value}>
-                  {tz.label}
+                <option key={tz} value={tz}>
+                  {timeZoneLabel(tz, locale)}
                 </option>
               ))}
             </Select>
