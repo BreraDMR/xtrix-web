@@ -57,7 +57,7 @@ const CHART_ANIMATION_MS = 2500
 
 const screens: { name: string; path: string; heading?: string; charts?: boolean; mask?: (page: Page) => Locator[] }[] = [
   { name: 'login', path: '/login' },
-  { name: 'dashboard', path: '/app', heading: 'Dashboard', charts: true },
+  { name: 'dashboard', path: '/app', heading: 'Workday', charts: true },
   { name: 'clients', path: '/clients', heading: 'Clients' },
   { name: 'visits', path: '/visits', heading: 'Visits' },
   // "Hired At" is the day the employee was made, i.e. the day of the run
@@ -110,7 +110,7 @@ test.describe('screenshots', () => {
       await page.clock.resume()
       await stabilizeTrialDate(page)
       await openAs(page, OWNER, '/app')
-      await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Workday', level: 1 })).toBeVisible()
       await page.waitForLoadState('networkidle')
       await page.waitForTimeout(CHART_ANIMATION_MS)
       await page.getByRole('button', { name: 'Open the assistant: Sasha' }).click()

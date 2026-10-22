@@ -2,7 +2,7 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import Dashboard from '../pages/Dashboard'
 import api from '../api/client'
-import { renderWithProviders, resetStores, routes, signIn } from '../test/render'
+import { apiError, renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn() } }))
 vi.mock('recharts', () => ({ PieChart: () => null, Pie: () => null, Cell: () => null,
@@ -24,4 +24,18 @@ it('loads the dashboard when the owner already has a business', async () => {
     '/analytics/visits/statistics': { total_visits: 0 }, '/analytics/clients/statistics': { total_clients: 0 } }))
   renderWithProviders(<Dashboard />)
   expect(await screen.findByText(/monthly profit/i)).toBeInTheDocument()
+})
+
+
+it('keeps today appointments visible when financial reports fail', async () => {
+  const fallback = routes({ '/businesses/me': { id: 1, currency: 'CZK', timezone: 'Europe/Prague' },
+    '/analytics/visits/statistics': { total_visits: 1, visits_by_status: { planned: 1 } },
+    '/analytics/clients/statistics': { total_clients: 1 }, '/employees/': [],
+    '/visits/': [{ id: 5, client_id: 1, client_name: "Today's guest", specialist_id: 7,
+      date_start: new Date().toISOString(), status: 'planned', items: [] }] })
+  vi.mocked(api.get).mockImplementation((url, config) => url === '/expenses/reports/profit'
+    ? Promise.reject(apiError(503, 'Reports unavailable')) : fallback(url, config))
+  renderWithProviders(<Dashboard />)
+  expect(await screen.findByText("Today's guest")).toBeInTheDocument()
+  expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
 })

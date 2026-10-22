@@ -813,6 +813,7 @@ export type TranslationKey =
   | 'services.inactive'
   | 'services.min'
   | 'visits.title'
+  | 'visits.editVisit'
   | 'visits.newVisit'
   | 'visits.searchPlaceholder'
   | 'visits.allStatuses'
@@ -2914,8 +2915,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     cz: 'Heslo se nepodařilo změnit. Zkuste to později.',
   },
   
-  'dashboard.title': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },
-  'dashboard.subtitle': { en: 'Overview of your business', ru: 'Обзор вашего бизнеса', cz: 'Přehled vašeho podnikání' },
+  'dashboard.title': { en: 'Workday', ru: 'Рабочий день', cz: 'Pracovní den' },
+  'dashboard.subtitle': { en: 'Appointments and the work ahead, in one place.', ru: 'Записи и дела на сегодня — в одном месте.', cz: 'Dnešní návštěvy a práce na jednom místě.' },
   'dashboard.monthlyRevenue': { en: 'Monthly Revenue', ru: 'Месячный доход', cz: 'Měsíční příjem' },
   'dashboard.monthlyProfit': { en: 'Monthly Profit', ru: 'Месячная прибыль', cz: 'Měsíční zisk' },
   'dashboard.monthlyExpenses': { en: 'Monthly Expenses', ru: 'Месячные расходы', cz: 'Měsíční výdaje' },
@@ -3000,6 +3001,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'services.min': { en: 'min', ru: 'мин', cz: 'min' },
   
   'visits.title': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'visits.editVisit': { en: 'Edit visit', ru: 'Редактирование визита', cz: 'Upravit návštěvu' },
   'visits.newVisit': { en: 'New Visit', ru: 'Новый визит', cz: 'Nová návštěva' },
   'visits.searchPlaceholder': { en: 'Search by service or client name...', ru: 'Поиск по услуге или клиенту...', cz: 'Hledat podle služby nebo klienta...' },
   'visits.allStatuses': { en: 'All Statuses', ru: 'Все статусы', cz: 'Všechny stavy' },

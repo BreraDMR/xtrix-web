@@ -78,7 +78,7 @@ test.describe('login and logout', () => {
   test('owner logs in, logs out and private pages send back to login', async ({ page, request }) => {
     const owner = await newOwner(request, { fullName: 'Lena Login' })
     await loginThroughForm(page, owner.email, owner.password)
-    await expect(page.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Workday', level: 1 })).toBeVisible()
     await expect(page.getByText('Lena Login')).toBeVisible()
 
     await page.getByRole('button', { name: 'Logout' }).click()
