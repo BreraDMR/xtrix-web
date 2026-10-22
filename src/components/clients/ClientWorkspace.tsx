@@ -1,11 +1,12 @@
-import { useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { HiArrowLeft, HiPrinter } from 'react-icons/hi'
 import api from '../../api/client'
 import { apiErrorStatus, apiErrorMessage } from '../../api/errors'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLabels } from '../../i18n/labels'
+import { useWorkspaceAccessContext } from '../../hooks/useWorkspaceAccess'
 import { useMyBusiness } from '../../hooks/useMyBusiness'
 import { formatCurrency, type Currency } from '../../utils/currency'
 import { showDay, showZonedDateTime } from '../../utils/dates'
@@ -185,17 +186,28 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   )
 }
 
-export default function ClientWorkspace() {
+export default function ClientWorkspace({ embeddedClientId, onClose }: {
+  embeddedClientId?: number
+  onClose?: () => void
+} = {}) {
   const { t } = useTranslation()
   const { visitStatus } = useLabels()
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
-  const clientId = Number(params.clientId)
+  const clientId = embeddedClientId ?? Number(params.clientId)
+  const embedded = embeddedClientId !== undefined
+  const ClientHeading = embedded ? 'h3' : 'h1'
+  const queryClient = useQueryClient()
+  const access = useWorkspaceAccessContext()
+  const canEdit = !access || access.crm_mode === 'full'
   const { data: business } = useMyBusiness()
   const timeZone = business?.timezone || undefined
   const [showForm, setShowForm] = useState(false)
   const [showReport, setShowReport] = useState(false)
+
+  useEffect(() => { if (!canEdit) setShowForm(false) }, [canEdit])
+  const back = () => { if (embedded && onClose) onClose(); else navigate(backTo) }
 
   const state = location.state as { from?: unknown } | null
   const backTo = typeof state?.from === 'string' && state.from.startsWith('/app/clients') ? state.from : '/app/clients'
@@ -218,7 +230,7 @@ export default function ClientWorkspace() {
   })
 
   if (!Number.isFinite(clientId) || clientId <= 0) {
-    return <QueryError retry={() => navigate(backTo)} />
+    return <QueryError retry={back} />
   }
   if (client.isLoading) {
     return (
@@ -232,7 +244,7 @@ export default function ClientWorkspace() {
     return (
       <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-800">
         <p>{forbidden ? t('clientWorkspace.forbidden') : apiErrorMessage(client.error, t('common.loadError'))}</p>
-        <Button variant="secondary" className="mt-3" onClick={() => navigate(backTo)}>
+        <Button variant="secondary" className="mt-3" onClick={back}>
           {t('clientWorkspace.back')}
         </Button>
       </div>
@@ -252,14 +264,15 @@ export default function ClientWorkspace() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Button variant="quiet" onClick={() => navigate(backTo)}>
-          <HiArrowLeft className="h-4 w-4" />
-          {t('clientWorkspace.back')}
-        </Button>
+        {embedded ? <Link to={`/app/clients/${clientId}`} state={{ from: `${location.pathname}${location.search}` }} className="text-xs text-[var(--workspace-accent)] hover:underline">
+          {t('clientWorkspace.fullPage')}
+        </Link> : <Button variant="quiet" onClick={back}>
+          <HiArrowLeft className="h-4 w-4" />{t('clientWorkspace.back')}
+        </Button>}
         <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => setShowForm((value) => !value)}>
+          {canEdit && <Button variant="secondary" onClick={() => setShowForm((value) => !value)}>
             {t('common.edit')}
-          </Button>
+          </Button>}
           <Button variant="quiet" onClick={() => setShowReport(true)}>
             <HiPrinter className="h-4 w-4" />
             {t('common.print')}
@@ -271,28 +284,30 @@ export default function ClientWorkspace() {
         <div className="flex flex-wrap items-center gap-4">
           <span
             aria-hidden="true"
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-50 text-base font-semibold text-blue-600 dark:bg-blue-900/30 dark:text-blue-300"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[var(--workspace-accent-soft)] text-base font-semibold text-[var(--workspace-accent)]"
           >
             {initials}
           </span>
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-xl font-semibold text-[var(--workspace-ink)]">{data.full_name}</h1>
+            <ClientHeading title={data.full_name} className="break-words text-xl font-semibold text-[var(--workspace-ink)]">{data.full_name}</ClientHeading>
             <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--workspace-muted)]">
               {data.contact_phone && <span>{data.contact_phone}</span>}
-              {data.contact_email && <span>{data.contact_email}</span>}
+              {data.contact_email && <span className="break-all">{data.contact_email}</span>}
               {data.birth_date && <span>{showDay(data.birth_date)}</span>}
             </p>
           </div>
         </div>
       </Card>
 
-      {showForm && (
+      {showForm && canEdit && (
         <Card className="p-5 sm:p-6">
           <ClientForm
             clientId={clientId}
             onSuccess={() => {
               setShowForm(false)
-              void client.refetch()
+              for (const key of [['client', clientId], ['client-overview', clientId], ['clients'], ['clients-statistics'], ['visits']]) {
+                void queryClient.invalidateQueries({ queryKey: key })
+              }
             }}
             onCancel={() => setShowForm(false)}
           />
@@ -306,8 +321,8 @@ export default function ClientWorkspace() {
           <LoadingSpinner size="lg" />
         </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
+        <div className={embedded ? 'space-y-4' : 'grid gap-6 lg:grid-cols-3'}>
+          <div className={embedded ? 'space-y-4' : 'space-y-6 lg:col-span-2'}>
             <Card className="p-5">
               <h2 className="mb-3 text-base font-semibold text-[var(--workspace-ink)]">
                 {t('clientWorkspace.nextVisit')}

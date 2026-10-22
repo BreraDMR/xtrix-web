@@ -69,7 +69,8 @@ async function seedWorkspace(request: APIRequestContext): Promise<WorkspaceFixtu
 async function openWorkspaceFromList(page: Page, name: string) {
   const row = page.getByRole('row').filter({ hasText: name })
   await expect(row).toBeVisible()
-  await row.getByRole('button', { name: 'Open', exact: true }).click()
+  await row.getByRole('button', { name: `Open: ${name}`, exact: true }).click()
+  await page.getByRole('dialog', { name: 'Client record' }).getByRole('link', { name: 'Open full page' }).click()
 }
 
 function stat(page: Page, label: string) {
@@ -207,4 +208,62 @@ test('limited staff sees history but no money and cannot change notes or tags', 
   await expect(tagsCard.getByRole('alert')).toContainText(
     'You do not have permission to change this client',
   )
+})
+
+
+test('client side panel keeps the filtered sorted page and updates it after editing', async ({ page, request }) => {
+  const owner = await newOwner(request)
+  for (let index = 1; index <= 25; index++) {
+    await apiPost(request, owner, '/clients/', { full_name: `Panel Client ${String(index).padStart(2, '0')}`, gender: 'female' })
+  }
+  await openAs(page, owner, '/app/clients?q=Panel&gender=female&per_page=10')
+  await page.getByRole('columnheader', { name: 'Name', exact: true }).click()
+  await page.getByRole('button', { name: '2', exact: true }).click()
+  const opener = page.getByRole('button', { name: 'Open: Panel Client 12', exact: true })
+  await expect(opener).toBeVisible()
+  const address = page.url()
+  const before = await page.locator('tbody tr td:first-child').allTextContents()
+  await opener.focus()
+  await page.keyboard.press('Enter')
+  const panel = page.getByRole('dialog', { name: 'Client record' })
+  await expect(panel.getByRole('heading', { name: 'Panel Client 12', level: 3 })).toBeVisible()
+  await expect(page).toHaveURL(address)
+  await page.keyboard.press('Escape')
+  await expect(panel).toBeHidden()
+  await expect(opener).toBeFocused()
+  expect(await page.locator('tbody tr td:first-child').allTextContents()).toEqual(before)
+  await expect(page.getByRole('searchbox')).toHaveValue('Panel')
+  await opener.click()
+  await panel.getByRole('button', { name: 'Edit', exact: true }).click()
+  await waitForFormData(page)
+  await panel.getByLabel(/^Full Name/).fill('Other Guest')
+  await panel.getByRole('button', { name: 'Update Client' }).click()
+  await expect(panel.getByRole('heading', { name: 'Other Guest', level: 3 })).toBeVisible()
+  await expect(page.locator('tbody tr').filter({ hasText: 'Panel Client 12' })).toHaveCount(0)
+  await page.keyboard.press('Escape')
+  await expect(panel).toBeHidden()
+  await expect(page.getByRole('searchbox')).toBeFocused()
+  await expect(page.getByRole('searchbox')).toHaveValue('Panel')
+  await expect(page).toHaveURL(address)
+  const names = await page.locator('tbody tr td:first-child').allTextContents()
+  expect(names.join(' ')).toContain('Panel Client 11')
+  expect(names.join(' ')).toContain('Panel Client 21')
+  expect(names.join(' ')).not.toContain('Other Guest')
+  await page.screenshot({ path: '.local-checks/redesign-clients-1280.png', fullPage: true })
+
+  await page.setViewportSize({ width: 375, height: 900 })
+  await page.getByRole('button', { name: 'Open: Panel Client 11', exact: true }).click()
+  await expect(panel).toBeVisible()
+  const box = await panel.boundingBox()
+  expect(box!.x).toBeGreaterThanOrEqual(0)
+  expect(box!.width).toBeLessThanOrEqual(375)
+  expect(await panel.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+  await panel.getByRole('button', { name: 'Print', exact: true }).click()
+  const report = panel.getByRole('heading', { name: 'Personal Report - Panel Client 11', exact: true })
+  await expect(report).toBeVisible()
+  await report.locator('..').getByRole('button').click()
+  await expect(report).toBeHidden()
+  await page.screenshot({ path: '.local-checks/redesign-client-panel-375.png' })
+  await page.keyboard.press('Escape')
+  await expect(panel).toBeHidden()
 })

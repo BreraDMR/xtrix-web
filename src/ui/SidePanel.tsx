@@ -2,10 +2,11 @@ import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { HiOutlineX } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 
-export default function SidePanel({ title, onClose, children }: {
+export default function SidePanel({ title, onClose, children, fallbackFocusId }: {
   title: string
   onClose: () => void
   children: ReactNode
+  fallbackFocusId?: string
 }) {
   const { t } = useTranslation()
   const dialog = useRef<HTMLDialogElement>(null)
@@ -21,8 +22,9 @@ export default function SidePanel({ title, onClose, children }: {
       element?.close()
       document.body.style.overflow = previousOverflow
       if (trigger?.isConnected) trigger.focus()
+      else if (fallbackFocusId) document.getElementById(fallbackFocusId)?.focus()
     }
-  }, [])
+  }, [fallbackFocusId])
 
   return <dialog ref={dialog} aria-labelledby={titleId}
     onCancel={event => { event.preventDefault(); onClose() }}

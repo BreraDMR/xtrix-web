@@ -69,7 +69,7 @@ async function fits(page: Page) {
 }
 async function screenshot(page: Page, name: string) {
   await mkdir('.local-checks', { recursive: true })
-  await page.screenshot({ path: `.local-checks/redesign-today-${name}.png`, fullPage: true, animations: 'disabled' })
+  await page.screenshot({ path: `.local-checks/redesign-today-${name}.png`, fullPage: (page.viewportSize()?.width ?? 1280) > 400, animations: 'disabled' })
 }
 
 test('workday filters by Prague day, opens keyboard panels and refreshes after a real creation', async ({ page, request }) => {

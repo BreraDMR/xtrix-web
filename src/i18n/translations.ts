@@ -765,6 +765,8 @@ export type TranslationKey =
   | 'clients.phone'
   | 'clients.email'
   | 'clients.open'
+  | 'clientWorkspace.fullPage'
+  | 'clientWorkspace.record'
   | 'clientWorkspace.back'
   | 'clientWorkspace.totalVisits'
   | 'clientWorkspace.completedVisits'
@@ -2955,6 +2957,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'clients.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
   'clients.email': { en: 'Email', ru: 'Email', cz: 'Email' },
   'clients.open': { en: 'Open', ru: 'Открыть', cz: 'Otevřít' },
+  'clientWorkspace.fullPage': { en: 'Open full page', ru: 'Открыть отдельной страницей', cz: 'Otevřít samostatnou stránku' },
+  'clientWorkspace.record': { en: 'Client record', ru: 'Карточка клиента', cz: 'Karta klienta' },
   'clientWorkspace.back': { en: 'Back to clients', ru: 'К списку клиентов', cz: 'Zpět na klienty' },
   'clientWorkspace.totalVisits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
   'clientWorkspace.completedVisits': { en: 'Completed', ru: 'Завершено', cz: 'Dokončeno' },

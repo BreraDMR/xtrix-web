@@ -47,3 +47,18 @@ it('does not treat a click inside the panel as a backdrop dismissal', async () =
   await userEvent.click(screen.getByRole('button', { name: 'Close' }))
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 })
+
+
+it('uses the supplied fallback when an updated filter removes the opening record', async () => {
+  function FilteredRecord() {
+    const [open, setOpen] = useState(false)
+    return <><input id="record-search" aria-label="Search records" />
+      {!open && <button onClick={() => setOpen(true)}>Open filtered record</button>}
+      {open && <SidePanel title="Filtered record" fallbackFocusId="record-search" onClose={() => setOpen(false)}>Record details</SidePanel>}
+    </>
+  }
+  renderWithProviders(<FilteredRecord />)
+  await userEvent.click(screen.getByRole('button', { name: 'Open filtered record' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+  expect(screen.getByRole('textbox', { name: 'Search records' })).toHaveFocus()
+})
