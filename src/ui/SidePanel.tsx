@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef, type ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { HiOutlineX } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
+import { useNativeDialog } from '../hooks/useNativeDialog'
 
 export default function SidePanel({ title, onClose, children, fallbackFocusId }: {
   title: string
@@ -9,26 +10,14 @@ export default function SidePanel({ title, onClose, children, fallbackFocusId }:
   fallbackFocusId?: string
 }) {
   const { t } = useTranslation()
-  const dialog = useRef<HTMLDialogElement>(null)
-  const opener = useRef(document.activeElement instanceof HTMLElement ? document.activeElement : null)
+  const { dialog, isTopDialog } = useNativeDialog(fallbackFocusId)
   const titleId = useId()
-  useEffect(() => {
-    const element = dialog.current
-    const trigger = opener.current
-    const previousOverflow = document.body.style.overflow
-    element?.showModal()
-    document.body.style.overflow = 'hidden'
-    return () => {
-      element?.close()
-      document.body.style.overflow = previousOverflow
-      if (trigger?.isConnected) trigger.focus()
-      else if (fallbackFocusId) document.getElementById(fallbackFocusId)?.focus()
-    }
-  }, [fallbackFocusId])
 
   return <dialog ref={dialog} aria-labelledby={titleId}
-    onCancel={event => { event.preventDefault(); onClose() }}
+    onCancel={event => { event.preventDefault(); event.stopPropagation(); if (isTopDialog()) onClose() }}
     onClick={event => { if (event.target === event.currentTarget) {
+      event.stopPropagation()
+      if (!isTopDialog()) return
       const rect = event.currentTarget.getBoundingClientRect()
       if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose()
     } }}
