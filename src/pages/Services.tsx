@@ -159,7 +159,7 @@ export default function Services() {
                 <TableSortHeader columnKey="name" label={t('services.name')} currentSort={sortConfig} onSort={handleSort} className="px-4 sm:w-[44%] sm:px-5" />
                 <TableSortHeader columnKey="duration_minutes" label={t('services.duration')} currentSort={sortConfig} onSort={handleSort} className="hidden px-4 sm:table-cell sm:px-5" />
                 <TableSortHeader columnKey="price" label={t('services.price')} currentSort={sortConfig} onSort={handleSort} className="hidden px-4 sm:table-cell sm:px-5" />
-                <th className="w-28 px-4 py-3 text-left text-xs font-medium text-[var(--workspace-muted)] sm:w-auto sm:px-5">{t('services.status')}</th>
+                <th className="w-28 px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--workspace-muted)] sm:w-auto sm:px-5">{t('services.status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--workspace-line)]">
