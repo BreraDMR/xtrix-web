@@ -112,6 +112,8 @@ test('solo specialist has no business step and can hide the checklist for good',
   await expect(page.getByText('Start with the first service. The workspace is already yours')).toBeVisible()
 
   await page.getByRole('button', { name: 'Maybe later' }).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.getByRole('button', { name: 'Skip' }).click()
   await expect(page.getByRole('heading', { name: 'Getting started' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Add service' })).toBeVisible()
   await expect(page.locator('ol').getByText('Add your first service', { exact: true })).toBeVisible()

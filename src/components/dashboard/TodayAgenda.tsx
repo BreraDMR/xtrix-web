@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { HiOutlineChevronRight } from 'react-icons/hi'
 import { useQuery } from '@tanstack/react-query'
 import api from '../../api/client'
 import { allPages } from '../../api/allPages'
@@ -125,24 +126,23 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
         ) : (
           <ul className="divide-y divide-[var(--workspace-line)]">
             {visits.data.map(visit => (
-              <li key={visit.id} className="grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-3 gap-y-2 px-4 py-4 sm:grid-cols-[5rem_minmax(0,1fr)_minmax(7rem,auto)_auto] sm:items-center sm:px-5">
+              <li key={visit.id} className="grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-3 gap-y-1.5 px-4 py-3 sm:grid-cols-[5rem_minmax(0,1fr)_minmax(7rem,auto)] sm:items-center sm:px-5">
                 <div className="row-span-2 text-sm tabular-nums sm:row-span-1">
                   <time dateTime={visit.date_start}>{formatTime(visit.date_start)}</time>
                   {visit.date_end && <time dateTime={visit.date_end} className="block text-xs text-[var(--workspace-muted)]">{formatTime(visit.date_end)}</time>}
                 </div>
                 <div className="min-w-0">
-                  <p className="break-words text-sm font-medium">{visit.client_name || `#${visit.client_id}`}</p>
+                  {canEdit ? <button type="button" aria-label={`${t('common.edit')}: ${visit.client_name || `#${visit.client_id}`}`}
+                    onClick={() => onEdit(visit.id)} className="group inline-flex max-w-full items-center gap-2 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
+                    <span className="break-words">{visit.client_name || `#${visit.client_id}`}</span><HiOutlineChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
+                  </button> : <p className="break-words text-sm font-medium">{visit.client_name || `#${visit.client_id}`}</p>}
                   <p className="mt-1 break-words text-xs text-[var(--workspace-muted)]">{visit.service_name || (visit.service_id ? `#${visit.service_id}` : t('today.noService'))}</p>
                 </div>
                 <div className="col-start-2 flex flex-wrap items-center gap-2 text-xs sm:col-start-auto sm:flex-col sm:items-start">
                   <span className="text-[var(--workspace-muted)]"><span className="sr-only">{t('visits.specialist')}: </span>{staffNames.get(visit.specialist_id) || `#${visit.specialist_id}`}</span>
                   <span className={`rounded px-2 py-1 ${statusClass(visit.status)}`}><span className="sr-only">{t('visits.status')}: </span>{labels.visitStatus(visit.status) || '—'}</span>
                 </div>
-                {canEdit && (
-                  <Button variant="quiet" className="col-start-2 justify-self-start sm:col-start-auto" aria-label={`${t('common.edit')}: ${visit.client_name || `#${visit.client_id}`}`} onClick={() => onEdit(visit.id)}>
-                    {t('common.edit')}
-                  </Button>
-                )}
+
               </li>
             ))}
           </ul>

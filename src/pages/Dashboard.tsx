@@ -104,7 +104,7 @@ export default function Dashboard() {
     <div className="page-toolbar">
       <div><h1 className="page-title">{t('dashboard.title')}</h1><p className="page-subtitle">{t('dashboard.subtitle')}</p></div>
       <div className="page-actions">
-        <Link to="/app/calendar" className="ui-button ui-button-secondary"><HiOutlineCalendar />{t('dashboard.openCalendar')}</Link>
+        <Link to="/app/calendar" aria-label={t('dashboard.openCalendar')} className="ui-button ui-button-secondary"><HiOutlineCalendar />{t('nav.calendar')}</Link>
         {canEdit && <Button onClick={() => setForm({})}><HiOutlinePlus />{t('visits.newVisit')}</Button>}
       </div>
     </div>
