@@ -117,6 +117,11 @@ test('day and week grids keep long names, Prague time and dark theme intact', as
   expect(ownerBox && employeeBox).toBeTruthy()
   expect(ownerBox!.x + ownerBox!.width).toBeLessThanOrEqual(employeeBox!.x + 1)
 
+  // Early appointments choose the initial scroll anchor; midnight is still rendered.
+  await expect(page.locator(`[data-visit-id="${fixture.dragVisitId}"]`)).toBeInViewport()
+  await expect.poll(() => page.locator('[data-calendar-scroll]').evaluate(element => element.scrollTop)).toBeLessThanOrEqual(64)
+  await page.screenshot({ path: '.local-checks/redesign-calendar-dark-1280.png', fullPage: true })
+
   // a long staff name truncates inside its own header instead of widening the page
   const employeeHeader = page.locator(`[title="${EMPLOYEE_NAME}"]`)
   await expect(employeeHeader).toBeVisible()
@@ -132,11 +137,11 @@ test('day and week grids keep long names, Prague time and dark theme intact', as
   expect(cardBackground).not.toBe('rgba(0, 0, 0, 0)')
 
   // the same visit lands on Monday in the week grid
-  await page.getByRole('button', { name: 'Week view', exact: true }).click()
+  await page.getByRole('combobox', { name: 'Calendar view' }).selectOption('week')
   await expect(page.locator('[data-calendar-grid]')).toHaveCount(7)
   await expect(page.locator(`[data-calendar-grid="${DAY}"] [data-visit-id="${fixture.ownerVisitId}"]`)).toBeVisible()
   expect(await pageOverflow(page)).toBeLessThanOrEqual(1)
-  await page.getByRole('button', { name: 'Day view', exact: true }).click()
+  await page.getByRole('combobox', { name: 'Calendar view' }).selectOption('day')
   await expect(page.locator('[data-calendar-grid]')).toHaveCount(2)
 
   // an accessible dialog moves the visit and keeps its duration
@@ -200,6 +205,12 @@ test('the day and week grids and the move dialog fit a 375px screen', async ({ p
   await expect(ownerCard).toHaveAttribute('aria-label', new RegExp(`${CLIENT_NAME}, 10:00–11:00`))
   expect(await pageOverflow(page)).toBeLessThanOrEqual(1)
 
+  const allHours = page.locator('[data-calendar-scroll]')
+  await expect.poll(() => allHours.evaluate(element => element.scrollTop)).toBeGreaterThan(400)
+  await expect(allHours.getByText('00:00', { exact: true })).toHaveCount(1)
+  await expect(allHours.getByText('23:00', { exact: true })).toHaveCount(1)
+  await page.screenshot({ path: '.local-checks/redesign-calendar-light-375.png', fullPage: true })
+
   // two staff columns are wider than a phone, so the grid scrolls inside its own box
   const scrollBox = await page.locator('[data-calendar-grid]').first().evaluate((el) => {
     let node = el.parentElement
@@ -221,7 +232,7 @@ test('the day and week grids and the move dialog fit a 375px screen', async ({ p
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()
 
-  await page.getByRole('button', { name: 'Week view', exact: true }).click()
+  await page.getByRole('combobox', { name: 'Calendar view' }).selectOption('week')
   await expect(page.locator('[data-calendar-grid]')).toHaveCount(7)
   await expect(page.locator(`[data-calendar-grid="${DAY}"] [data-visit-id="${fixture.ownerVisitId}"]`)).toBeVisible()
   expect(await pageOverflow(page)).toBeLessThanOrEqual(1)

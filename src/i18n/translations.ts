@@ -859,6 +859,8 @@ export type TranslationKey =
   | 'visits.clientFromOtherBusiness'
   | 'visits.addToMyBusiness'
   | 'visits.basicMedicalInfo'
+  | 'calendar.view'
+  | 'calendar.timeGrid'
   | 'calendar.title'
   | 'calendar.simpleViewDescription'
   | 'calendar.advancedViewDescription'
@@ -3050,6 +3052,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.selectPaymentMethod': { en: 'Select payment method', ru: 'Выберите способ оплаты', cz: 'Vyberte způsob platby' },
   'visits.paymentOther': { en: 'Other', ru: 'Другое', cz: 'Jiné' },
   
+  'calendar.view': { en: 'Calendar view', ru: 'Вид календаря', cz: 'Zobrazení kalendáře' },
+  'calendar.timeGrid': { en: 'Day schedule, all 24 hours', ru: 'Расписание дня, все 24 часа', cz: 'Denní rozvrh, všech 24 hodin' },
   'calendar.title': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },
   'calendar.simpleViewDescription': { en: 'Click on a date to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на дату, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na datum pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },
   'calendar.advancedViewDescription': { en: 'Click on a time slot to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на временной слот, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na časový slot pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },

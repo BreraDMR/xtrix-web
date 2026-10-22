@@ -127,9 +127,9 @@ function layoutDay(visits: CalendarEvent[], dayKey: string, timeZone: string): D
 
 const STATUS_CLASS: Record<string, string> = {
   planned:
-    'border-sky-300 bg-sky-50 text-sky-950 hover:bg-sky-100 dark:border-sky-700 dark:bg-sky-950/70 dark:text-sky-50 dark:hover:bg-sky-900/70',
-  in_progress:
     'border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950/70 dark:text-amber-50 dark:hover:bg-amber-900/70',
+  in_progress:
+    'border-blue-300 bg-blue-50 text-blue-950 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950/70 dark:text-blue-50 dark:hover:bg-blue-900/70',
   completed:
     'border-emerald-300 bg-emerald-50 text-emerald-950 hover:bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-50 dark:hover:bg-emerald-900/70',
   cancelled:

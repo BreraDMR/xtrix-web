@@ -16,6 +16,7 @@ import type { StaffScheduleData } from '../components/calendar/schedule'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
 import Button from '../ui/Button'
+import Select from '../ui/Select'
 import { useTranslation } from '../hooks/useTranslation'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import { useAuthStore } from '../store/authStore'
@@ -249,12 +250,6 @@ export default function CalendarPage() {
     return byStaff
   }, [staff, scheduleQueries])
 
-  const viewButtonClass = (active: boolean) => `px-4 py-2 rounded-md ${
-    active
-      ? 'bg-primary-600 text-white'
-      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-  }`
-
   const description = view === 'day'
     ? t('calendar.dayViewDescription')
     : view === 'week'
@@ -275,25 +270,21 @@ export default function CalendarPage() {
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="page-toolbar">
         <div>
-          <h1 className="text-2xl font-bold">{t('calendar.title')}</h1>
-          <p className="text-gray-600 mt-2 dark:text-gray-400">{description}</p>
+          <h1 className="page-title">{t('calendar.title')}</h1>
+          <p className="page-subtitle">{description}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => setView('day')} className={viewButtonClass(view === 'day')}>
-            {t('calendar.dayView')}
-          </button>
-          <button onClick={() => setView('week')} className={viewButtonClass(view === 'week')}>
-            {t('calendar.weekView')}
-          </button>
-          <button onClick={() => setView('simple')} className={viewButtonClass(view === 'simple')}>
-            {t('calendar.simpleView')}
-          </button>
-          <button onClick={() => setView('advanced')} className={viewButtonClass(view === 'advanced')}>
-            {t('calendar.advancedView')}
-          </button>
-        </div>
+        <label className="flex w-full items-center gap-3 text-xs text-[var(--workspace-muted)] sm:w-auto">
+          <span className="shrink-0">{t('calendar.view')}</span>
+          <Select aria-label={t('calendar.view')} value={view} className="sm:w-48"
+            onChange={event => setView(event.target.value as CalendarView)}>
+            <option value="day">{t('calendar.dayView')}</option>
+            <option value="week">{t('calendar.weekView')}</option>
+            <option value="simple">{t('calendar.simpleView')}</option>
+            <option value="advanced">{t('calendar.advancedView')}</option>
+          </Select>
+        </label>
       </div>
 
       {isRangeView && (
@@ -324,7 +315,7 @@ export default function CalendarPage() {
         </div>
       )}
 
-      <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
+      <div className="ui-card min-w-0 p-3 sm:p-4">
         {isRangeView && (
           rangeQuery.isError ? (
             <QueryError retry={() => rangeQuery.refetch()} />
@@ -372,7 +363,7 @@ export default function CalendarPage() {
           role="region"
           aria-live="polite"
           aria-label={t('calendar.moveTitle')}
-          className="fixed inset-x-4 bottom-4 z-40 mx-auto max-w-xl rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-4 shadow-xl"
+          className="fixed inset-x-4 bottom-20 z-40 lg:bottom-4 mx-auto max-w-xl rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-4 shadow-xl"
         >
           <p className="text-sm font-medium text-[var(--workspace-ink)]">
             {t('calendar.moveTitle')}: {dragPreviewName}

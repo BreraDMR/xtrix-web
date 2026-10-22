@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { format, parseISO } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
 import DayGrid, {
@@ -7,7 +7,7 @@ import DayGrid, {
   type MovePreview,
 } from './DayGrid'
 import { expandVisit, type CalendarEvent } from './chain'
-import { zonedDayKey } from '../../utils/dates'
+import { isoToZonedWallTime, zonedDayKey } from '../../utils/dates'
 import { buildDayOverlay, type DayOverlay, type StaffScheduleData } from './schedule'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
@@ -90,6 +90,26 @@ export default function StaffColumns({
   }, [columns, dayKey, schedules, visitsByStaff, zone])
   const hasSchedule = overlays.size > 0
 
+  const scroll = useRef<HTMLDivElement>(null)
+  const scrolledDay = useRef('')
+  const firstMinute = useMemo(() => {
+    const starts = events.map(event => {
+      const wall = isoToZonedWallTime(event.date_start, zone)
+      if (wall.day < dayKey) return 0
+      if (wall.day > dayKey) return 24 * 60
+      const [hour, minute] = wall.time.split(':').map(Number)
+      return hour * 60 + minute
+    })
+    for (const overlay of overlays.values()) starts.push(...overlay.working.map(window => window.start))
+    return Math.max(0, Math.min(8 * 60, ...starts) - 30)
+  }, [events, overlays, dayKey, zone])
+  useEffect(() => {
+    if (!scroll.current || scrolledDay.current === dayKey) return
+    // Keep all 24 hours reachable, but open near work instead of an empty midnight.
+    scroll.current.scrollTop = firstMinute / 60 * hourHeight
+    scrolledDay.current = dayKey
+  }, [dayKey, firstMinute, hourHeight, columns.length])
+
   const gridHeight = HOURS_IN_DAY * hourHeight
   const template = `3.5rem repeat(${columns.length}, minmax(12rem, 1fr))`
 
@@ -124,7 +144,7 @@ export default function StaffColumns({
               </span>
             </div>
           )}
-          <div className="max-h-[70vh] overflow-auto rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
+          <div ref={scroll} data-calendar-scroll tabIndex={0} role="region" aria-label={t('calendar.timeGrid')} className="max-h-[65vh] overflow-auto rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
             <div className="grid" style={{ gridTemplateColumns: template }}>
               <div className="sticky left-0 top-0 z-30 border-b border-[var(--workspace-line)] bg-[var(--workspace-panel)]" />
               {columns.map((column) => (
