@@ -1,3 +1,4 @@
+import { fetchCertificates } from '../../api/gifts'
 import { fetchAllServices } from '../../api/services'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -333,12 +334,7 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
 
   const certificatesQuery = useQuery<GiftCertificateOut[]>({
     queryKey: ['gift-certificates', statusFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams({ limit: '100' })
-      if (statusFilter) params.set('status', statusFilter)
-      const { data } = await api.get(`/businesses/me/gift-certificates?${params.toString()}`)
-      return data
-    },
+    queryFn: ({ signal }) => fetchCertificates(statusFilter, signal),
   })
 
   const saveOffer = useMutation({
@@ -556,9 +552,12 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
             <LoadingSpinner />
           </div>
         ) : certificatesQuery.isError ? (
-          <p role="alert" className="mt-4 text-sm text-red-700 dark:text-red-300">
-            {apiErrorMessage(certificatesQuery.error, t('gift.loadError'))}
-          </p>
+          <div role="alert" className="mt-4 text-sm text-red-700 dark:text-red-300">
+            <p>{apiErrorMessage(certificatesQuery.error, t('gift.loadError'))}</p>
+            <button type="button" onClick={() => void certificatesQuery.refetch()} className="mt-2 rounded border px-3 py-1">
+              {t('common.retry')}
+            </button>
+          </div>
         ) : certificates.length === 0 ? (
           <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">{t('gift.noCertificates')}</p>
         ) : (

@@ -254,7 +254,7 @@ describe('gift offers in loyalty', () => {
           },
         })
       }
-      if (url === '/businesses/me/gift-certificates?limit=100') return Promise.resolve({ data: [CERTIFICATE] })
+      if (url === '/businesses/me/gift-certificates?limit=100&offset=0') return Promise.resolve({ data: [CERTIFICATE] })
       if (url === '/businesses/me/gift-certificates/5') return Promise.resolve({ data: detail })
       return Promise.reject(apiError(404, `no mock for ${url}`))
     }) as never)
