@@ -4,12 +4,16 @@ import { HiX, HiDownload } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLabels } from '../i18n/labels'
 import api from '../api/client'
+import { allPages } from '../api/allPages'
+import { synchronizeStoredSession, useAuthStore } from '../store/authStore'
+import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
+import QueryError from './QueryError'
 import ExportModal from './ExportModal'
 import LoadingSpinner from './LoadingSpinner'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { dayEnd, dayStart, showDay, today } from '../utils/dates'
-import type { ClientLoyaltyBalance, ClientOut, VisitOut } from '../api/types'
+import type { ClientLoyaltyBalance, ClientOut, Schema, VisitOut } from '../api/types'
 
 // one line of the report: column title -> cell
 type ReportRow = Record<string, string | number>
@@ -28,6 +32,16 @@ export default function ClientPersonalReportModal({
   const { t } = useTranslation()
   const { visitStatus } = useLabels()
   const currency = useBusinessCurrency()
+  const { user, sessionRevision } = useAuthStore()
+  const access = useWorkspaceAccessContext()
+  const canExport = access === undefined || access?.can_export === true
+  const scope = JSON.stringify([sessionRevision, user?.id, user?.role, user?.business_id, user?.employer_id])
+  const assertSession = (signal: AbortSignal) => {
+    synchronizeStoredSession()
+    const current = useAuthStore.getState()
+    if (signal.aborted || scope !== JSON.stringify([current.sessionRevision, current.user?.id,
+      current.user?.role, current.user?.business_id, current.user?.employer_id])) throw new Error('Session changed')
+  }
   const [selectedReportType, setSelectedReportType] = useState<string>('profile')
   const [dateFrom, setDateFrom] = useState<string>(
     today(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
@@ -37,30 +51,43 @@ export default function ClientPersonalReportModal({
   )
   const [showExportModal, setShowExportModal] = useState(false)
 
-  const { data: client, isLoading: isLoadingClient } = useQuery({
-    queryKey: ['client', clientId],
-    queryFn: async () => {
-      const { data } = await api.get<ClientOut>(`/clients/${clientId}`)
+  const needsHistory = selectedReportType === 'visits' || selectedReportType === 'finance'
+  const clientQuery = useQuery<ClientOut>({
+    queryKey: ['client', clientId, scope],
+    queryFn: async ({ signal }) => {
+      assertSession(signal)
+      const { data } = await api.get<ClientOut>(`/clients/${clientId}`, { signal })
+      assertSession(signal)
       return data
     },
     enabled: isOpen && clientId > 0,
+    retry: false,
   })
+  const client = clientQuery.data
 
-  const { data: visits, isLoading: isLoadingVisits } = useQuery({
-    queryKey: ['client-visits', clientId, dateFrom, dateTo],
-    queryFn: async () => {
-      const params = new URLSearchParams()
-      params.append('client_id', clientId.toString())
-      if (dateFrom) params.append('date_from', dayStart(dateFrom))
-      if (dateTo) params.append('date_to', dayEnd(dateTo))
-      const { data } = await api.get<VisitOut[] | { items?: VisitOut[] }>(`/visits/?${params.toString()}`)
-      return Array.isArray(data) ? data : data?.items || []
-    },
-    enabled: isOpen && clientId > 0 && (selectedReportType === 'visits' || selectedReportType === 'finance'),
+  const history = useQuery({
+    queryKey: ['client-visits', clientId, dateFrom, dateTo, scope],
+    queryFn: ({ signal }) => allPages<VisitOut>(async page => {
+      assertSession(signal)
+      const params = new URLSearchParams({ client_id: String(clientId), page: String(page),
+        per_page: '100', sort_by: 'id', sort_order: 'asc' })
+      if (dateFrom) params.set('date_from', dayStart(dateFrom))
+      if (dateTo) params.set('date_to', dayEnd(dateTo))
+      const { data } = await api.get<Schema<'PaginatedResponse_VisitOut_'>>(`/visits/?${params.toString()}`, { signal })
+      assertSession(signal)
+      return data
+    }),
+    enabled: isOpen && clientId > 0 && needsHistory,
+    retry: false,
   })
+  const visits = history.data
+  const pending = clientQuery.isPending || clientQuery.isFetching
+    || (needsHistory && (history.isPending || history.isFetching))
+  const failed = clientQuery.isError || (needsHistory && history.isError)
+  const ready = !pending && !failed && !!client
 
   const { data: loyaltyBalance } = useQuery({
-    queryKey: ['client-loyalty-balance', clientId],
+    queryKey: ['client-loyalty-balance', clientId, scope],
     queryFn: async () => {
       try {
         const { data } = await api.get<ClientLoyaltyBalance>(`/loyalty/balance/${clientId}`)
@@ -138,6 +165,7 @@ export default function ClientPersonalReportModal({
   }
 
   const handleExport = () => {
+    if (!ready || !canExport || exportData.length === 0) return
     localStorage.setItem(
       `client-report-preferences-${clientId}`,
       JSON.stringify({
@@ -148,6 +176,8 @@ export default function ClientPersonalReportModal({
     )
     setShowExportModal(true)
   }
+
+  useEffect(() => { setShowExportModal(false) }, [scope, clientId, isOpen])
 
   if (!isOpen) return null
 
@@ -180,7 +210,7 @@ export default function ClientPersonalReportModal({
               </label>
               <select
                 value={selectedReportType}
-                onChange={(e) => setSelectedReportType(e.target.value)}
+                onChange={(e) => { setShowExportModal(false); setSelectedReportType(e.target.value) }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
               >
                 <option value="profile">{t('export.clientProfile')}</option>
@@ -200,7 +230,7 @@ export default function ClientPersonalReportModal({
                   <input
                     type="date"
                     value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
+                    onChange={(e) => { setShowExportModal(false); setDateFrom(e.target.value) }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                   />
                 </div>
@@ -211,7 +241,7 @@ export default function ClientPersonalReportModal({
                   <input
                     type="date"
                     value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
+                    onChange={(e) => { setShowExportModal(false); setDateTo(e.target.value) }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600"
                   />
                 </div>
@@ -219,7 +249,12 @@ export default function ClientPersonalReportModal({
             )}
 
             {}
-            {isLoadingClient || isLoadingVisits ? (
+            {failed ? (
+              <QueryError retry={() => {
+                void clientQuery.refetch()
+                if (needsHistory) void history.refetch()
+              }} />
+            ) : pending ? (
               <div className="flex justify-center py-8">
                 <LoadingSpinner />
               </div>
@@ -249,7 +284,7 @@ export default function ClientPersonalReportModal({
                         <tr key={idx}>
                           {columns.map((col) => (
                             <td key={col.key} className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">
-                              {row[col.key] || '-'}
+                              {row[col.key] ?? '-'}
                             </td>
                           ))}
                         </tr>
@@ -278,7 +313,7 @@ export default function ClientPersonalReportModal({
             </button>
             <button
               onClick={handleExport}
-              disabled={exportData.length === 0 || isLoadingClient || isLoadingVisits}
+              disabled={exportData.length === 0 || !ready || !canExport}
               className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
               <HiDownload className="w-4 h-4" />
@@ -289,7 +324,7 @@ export default function ClientPersonalReportModal({
       </div>
 
       {}
-      {showExportModal && (
+      {showExportModal && ready && canExport && (
         <ExportModal
           isOpen={showExportModal}
           onClose={() => setShowExportModal(false)}
