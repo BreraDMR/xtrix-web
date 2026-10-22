@@ -137,3 +137,54 @@ describe('ServiceForm', () => {
     })
   })
 })
+
+
+it('names the editable fields for keyboard and assistive navigation', async () => {
+  vi.clearAllMocks()
+  resetStores(); signIn({ id: 7, role: 'business_owner' })
+  vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': [] }))
+  renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+  expect(screen.getByRole('textbox', { name: /^Service Name/ })).toBeRequired()
+  expect(screen.getByRole('spinbutton', { name: /^Duration/ })).toBeRequired()
+  expect(screen.getByRole('spinbutton', { name: /^Price/ })).toBeRequired()
+  expect(await screen.findByRole('combobox', { name: /^Primary Specialist/ })).toHaveValue('7')
+})
+
+it('does not offer a blank update when loading the saved service fails, and retries its saved values', async () => {
+  vi.clearAllMocks()
+  resetStores(); signIn({ id: 7, role: 'business_owner' })
+  const other = routes({ '/employees/': [], '/users/': [] })
+  vi.mocked(api.get).mockImplementation((url, config) => url === '/services/5'
+    ? Promise.reject(apiError(503, 'Service unavailable')) : other(url, config))
+  renderWithProviders(<ServiceForm serviceId={5} onSuccess={() => {}} onCancel={() => {}} />)
+  expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
+  expect(screen.queryByRole('button', { name: 'Update Service' })).not.toBeInTheDocument()
+  expect(api.put).not.toHaveBeenCalled()
+  vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': [],
+    '/services/5': { id: 5, name: 'Saved service', price: 99, duration_minutes: 45, is_active: false,
+      specialist_id: 7, specialist_ids: [7], buffer_before_minutes: 5, buffer_after_minutes: 10 } }))
+  await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+  expect(await screen.findByRole('textbox', { name: /^Service Name/ })).toHaveValue('Saved service')
+  expect(screen.getByRole('spinbutton', { name: /^Price/ })).toHaveValue(99)
+  expect(screen.getByRole('spinbutton', { name: /^Duration/ })).toHaveValue(45)
+  expect(screen.getByRole('checkbox', { name: 'Active' })).not.toBeChecked()
+  vi.mocked(api.put).mockResolvedValue({ data: {} })
+  await userEvent.click(screen.getByRole('button', { name: 'Update Service' }))
+  await waitFor(() => expect(api.put).toHaveBeenCalledWith('/services/5', expect.objectContaining({ buffer_before_minutes: 5, buffer_after_minutes: 10, is_active: false })))
+})
+
+
+it('keeps all additional specialists selectable after opening the optional team section', async () => {
+  vi.clearAllMocks(); resetStores(); signIn({ id: 7, role: 'business_owner' })
+  const users = Array.from({ length: 125 }, (_, i) => ({ id: i + 100,
+    full_name: `Specialist ${i + 1}`, email: `staff${i + 1}@example.cz`, role: 'specialist' }))
+  vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': users }))
+  vi.mocked(api.post).mockResolvedValue({ data: {} })
+  renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+  await screen.findByRole('option', { name: 'Specialist 125 (staff125@example.cz)' })
+  await userEvent.click(screen.getByText('Additional Specialists (Optional)'))
+  await userEvent.click(screen.getByRole('checkbox', { name: 'Specialist 125 (staff125@example.cz)' }))
+  await userEvent.type(screen.getByRole('textbox', { name: /^Service Name/ }), 'Shared treatment')
+  await userEvent.click(screen.getByRole('button', { name: 'Create Service' }))
+  await waitFor(() => expect(api.post).toHaveBeenCalledWith('/services/', expect.objectContaining({ specialist_id: 7, specialist_ids: [224] })))
+})

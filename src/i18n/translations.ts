@@ -495,6 +495,8 @@ export type TranslationKey =
   | 'validation.code.invalid_assistant_name'
   | 'field.assistant_name'
   | 'field.assistant_gender'
+  | 'serviceForm.details'
+  | 'serviceForm.team'
   | 'serviceForm.name'
   | 'serviceForm.duration'
   | 'serviceForm.primary'
@@ -2633,6 +2635,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "validation.code.invalid_assistant_name": {"en": "No line breaks or special characters", "ru": "Без переносов строк и спецсимволов", "cz": "Bez zalomení řádků a speciálních znaků"},
   "field.assistant_name": {"en": "Assistant name", "ru": "Имя помощника", "cz": "Jméno asistenta"},
   "field.assistant_gender": {"en": "Assistant gender", "ru": "Род помощника", "cz": "Rod asistenta"},
+  "serviceForm.details": {"en": "Service details", "ru": "Параметры услуги", "cz": "Podrobnosti služby"},
+  "serviceForm.team": {"en": "Who can provide this service", "ru": "Кто оказывает услугу", "cz": "Kdo poskytuje tuto službu"},
   "serviceForm.name": {"en": "Service Name", "ru": "Название услуги", "cz": "Název služby"},
   "serviceForm.duration": {"en": "Duration (minutes)", "ru": "Длительность (минуты)", "cz": "Délka (minuty)"},
   "serviceForm.primary": {"en": "Primary Specialist", "ru": "Основной специалист", "cz": "Hlavní specialista"},

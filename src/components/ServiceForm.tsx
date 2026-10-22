@@ -1,11 +1,14 @@
 import { useTranslation } from '../hooks/useTranslation'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useId, useRef } from 'react'
 import api from '../api/client'
 import { allPages } from '../api/allPages'
 import QueryError from './QueryError'
 import FormError from './FormError'
 import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
+import Button from '../ui/Button'
+import Input from '../ui/Input'
+import Select from '../ui/Select'
 import { useAuthStore } from '../store/authStore'
 import type { EmployeeOut, ServiceCreate, ServiceOut, UserOut, UserPage } from '../api/types'
 
@@ -61,9 +64,12 @@ function readServiceDraft(key?: string): Partial<ServiceData> | null {
 
 export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }: ServiceFormProps) {
   const { t } = useTranslation()
+  const formId = useId()
   const { user: currentUser } = useAuthStore()
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
+  const [loadingService, setLoadingService] = useState(!!serviceId)
+  const [serviceFailed, setServiceFailed] = useState(false)
   const [formError, setFormError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [availableSpecialists, setAvailableSpecialists] = useState<Specialist[]>([])
@@ -137,6 +143,8 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
   }
 
   const loadService = async () => {
+    setLoadingService(true)
+    setServiceFailed(false)
     try {
       const { data } = await api.get<ServiceOut>(`/services/${serviceId}`)
       // the API allows a null price/duration, the form doesn't - a null shows up empty and the form asks for it on save
@@ -151,8 +159,10 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
         buffer_before_minutes: data.buffer_before_minutes ?? 0,
         buffer_after_minutes: data.buffer_after_minutes ?? 0,
       })
-    } catch (error) {
-      console.error('Failed to load service:', error)
+    } catch {
+      setServiceFailed(true)
+    } finally {
+      setLoadingService(false)
     }
   }
 
@@ -205,184 +215,107 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
     }
   }
 
+  if (loadingService) return <div role="status" className="flex items-center justify-center gap-3 py-12 text-sm text-[var(--workspace-muted)]"><LoadingSpinner size="sm" />{t('common.loading')}</div>
+  if (serviceFailed) return <div className="space-y-4"><QueryError retry={loadService} /><Button variant="secondary" onClick={onCancel}>{t('common.cancel')}</Button></div>
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {formError && <div role="alert"><FormError message={formError} /></div>}
       {specialistsFailed && (currentUser?.role === 'business_owner' || currentUser?.role === 'admin') && <QueryError retry={loadAvailableSpecialists} />}
-      <div>
-        <label className="block text-sm font-medium mb-1">{t('serviceForm.name')} *</label>
-        <input
-          aria-invalid={fieldErrors.name ? true : undefined}
-          type="text"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
-          className="w-full px-3 py-2 border rounded-md"
-          placeholder={t('serviceForm.placeholder')}
-        />
-        {fieldErrors.name && <FormError message={fieldErrors.name} />}
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
+      <fieldset className="min-w-0 space-y-4">
+        <legend className="mb-4 text-sm font-semibold">{t('serviceForm.details')}</legend>
         <div>
-          <label className="block text-sm font-medium mb-1">{t('serviceForm.duration')} *</label>
-          <input
-            aria-invalid={fieldErrors.duration_minutes ? true : undefined}
-            type="number"
-            min="1"
-            value={formData.duration_minutes}
-            onChange={(e) =>
-              setFormData({ ...formData, duration_minutes: parseInt(e.target.value) || 0 })
-            }
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          {fieldErrors.duration_minutes && <FormError message={fieldErrors.duration_minutes} />}
+          <label htmlFor={`${formId}-name`} className="mb-1.5 block text-xs font-medium">{t('serviceForm.name')} *</label>
+          <Input id={`${formId}-name`} aria-invalid={fieldErrors.name ? true : undefined}
+            aria-describedby={fieldErrors.name ? `${formId}-name-error` : undefined}
+            type="text" value={formData.name} onChange={event => setFormData({ ...formData, name: event.target.value })}
+            required placeholder={t('serviceForm.placeholder')} />
+          {fieldErrors.name && <div id={`${formId}-name-error`}><FormError message={fieldErrors.name} /></div>}
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">{t('services.price')} *</label>
-          <input
-            aria-invalid={fieldErrors.price ? true : undefined}
-            type="number"
-            step="0.01"
-            min="0"
-            value={formData.price}
-            onChange={(e) =>
-              setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })
-            }
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          {fieldErrors.price && <FormError message={fieldErrors.price} />}
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">{t('serviceForm.primary')} *</label>
-        {loadingSpecialists ? (
-          <div className="text-sm text-gray-500 dark:text-gray-400">{t('serviceForm.loading')}</div>
-        ) : (
-          <select
-            aria-invalid={fieldErrors.specialist_id ? true : undefined}
-            value={formData.specialist_id}
-            onChange={(e) => {
-              const newId = parseInt(e.target.value)
-              const specialistIds = formData.specialist_ids || []
-              setFormData({
-                ...formData,
-                specialist_id: newId,
-                specialist_ids: specialistIds.includes(newId) ? specialistIds : [...specialistIds, newId],
-              })
-            }}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          >
-            {availableSpecialists.map((spec) => (
-              <option key={spec.id} value={spec.id}>
-                {spec.full_name} ({spec.email})
-              </option>
-            ))}
-          </select>
-        )}
-        {fieldErrors.specialist_id && <FormError message={fieldErrors.specialist_id} />}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">{t('serviceForm.additional')}</label>
-        <p className="text-xs text-gray-500 mb-2 dark:text-gray-400">{t('serviceForm.hint')}</p>
-        {loadingSpecialists ? (
-          <div className="text-sm text-gray-500 dark:text-gray-400">{t('serviceForm.loading')}</div>
-        ) : (
-          <div className="max-h-40 overflow-y-auto border rounded-md p-2 space-y-2">
-            {availableSpecialists.map((spec) => {
-              const isSelected = (formData.specialist_ids || []).includes(spec.id)
-              const isPrimary = spec.id === formData.specialist_id
-              return (
-                <label key={spec.id} className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isSelected || isPrimary}
-                    disabled={isPrimary}
-                    onChange={(e) => {
-                      const currentIds = formData.specialist_ids || []
-                      if (e.target.checked) {
-                        if (!currentIds.includes(spec.id)) {
-                          setFormData({
-                            ...formData,
-                            specialist_ids: [...currentIds, spec.id],
-                          })
-                        }
-                      } else {
-                        if (!isPrimary) {
-                          setFormData({
-                            ...formData,
-                            specialist_ids: currentIds.filter(id => id !== spec.id),
-                          })
-                        }
-                      }
-                    }}
-                    className="mr-2"
-                  />
-                  <span className={isPrimary ? 'font-medium text-gray-700' : 'text-gray-600'}>
-                    {spec.full_name} ({spec.email})
-                    {isPrimary && <span className="text-xs text-gray-500 ml-1 dark:text-gray-400">{t('serviceForm.primaryBadge')}</span>}
-                  </span>
-                </label>
-              )
-            })}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="min-w-0">
+            <label htmlFor={`${formId}-duration`} className="mb-1.5 block text-xs font-medium">{t('serviceForm.duration')} *</label>
+            <Input id={`${formId}-duration`} aria-invalid={fieldErrors.duration_minutes ? true : undefined}
+              aria-describedby={fieldErrors.duration_minutes ? `${formId}-duration-error` : undefined}
+              type="number" min="1" value={formData.duration_minutes ?? ''}
+              onChange={event => setFormData({ ...formData, duration_minutes: parseInt(event.target.value) || 0 })} required />
+            {fieldErrors.duration_minutes && <div id={`${formId}-duration-error`}><FormError message={fieldErrors.duration_minutes} /></div>}
           </div>
-        )}
-      </div>
-
-      <div>
-        <label htmlFor="service-description" className="block text-sm font-medium mb-1">{t('business.description')}</label>
-        <textarea
-          id="service-description"
-          aria-invalid={fieldErrors.description ? true : undefined}
-          value={formData.description || ''}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          rows={3}
-          className="w-full px-3 py-2 border rounded-md"
-        />
-        {fieldErrors.description && <FormError message={fieldErrors.description} />}
-      </div>
-
-      <div>
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={formData.is_active}
-            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-            className="mr-2"
-          />
-          <span className="text-sm font-medium">{t('services.active')}</span>
+          <div className="min-w-0">
+            <label htmlFor={`${formId}-price`} className="mb-1.5 block text-xs font-medium">{t('services.price')} *</label>
+            <Input id={`${formId}-price`} aria-invalid={fieldErrors.price ? true : undefined}
+              aria-describedby={fieldErrors.price ? `${formId}-price-error` : undefined}
+              type="number" step="0.01" min="0" value={formData.price ?? ''}
+              onChange={event => setFormData({ ...formData, price: parseFloat(event.target.value) || 0 })} required />
+            {fieldErrors.price && <div id={`${formId}-price-error`}><FormError message={fieldErrors.price} /></div>}
+          </div>
+        </div>
+        <div>
+          <label htmlFor={`${formId}-description`} className="mb-1.5 block text-xs font-medium">{t('business.description')}</label>
+          <textarea id={`${formId}-description`} aria-invalid={fieldErrors.description ? true : undefined}
+            aria-describedby={fieldErrors.description ? `${formId}-description-error` : undefined}
+            value={formData.description || ''} onChange={event => setFormData({ ...formData, description: event.target.value })}
+            rows={3} className="ui-input resize-y" />
+          {fieldErrors.description && <div id={`${formId}-description-error`}><FormError message={fieldErrors.description} /></div>}
+        </div>
+        <label className="inline-flex min-h-8 items-center gap-2 text-sm">
+          <input type="checkbox" checked={formData.is_active} onChange={event => setFormData({ ...formData, is_active: event.target.checked })} className="h-4 w-4 accent-[var(--workspace-accent)]" />
+          {t('services.active')}
         </label>
-      </div>
+      </fieldset>
 
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all dark:border-gray-600 dark:hover:bg-gray-900 dark:text-gray-300"
-        >
-          {t('common.cancel')}
-        </button>
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center gap-2"
-        >
-          {loading ? (
-            <>
-              <LoadingSpinner size="sm" />
-              <span>{t('common.saving')}</span>
-            </>
-          ) : (
-            serviceId ? t('serviceForm.update') : t('serviceForm.create')
-          )}
-        </button>
+      <fieldset className="min-w-0 space-y-4 border-t border-[var(--workspace-line)] pt-5">
+        <legend className="px-1 text-sm font-semibold">{t('serviceForm.team')}</legend>
+        <div>
+          <label htmlFor={`${formId}-primary`} className="mb-1.5 block text-xs font-medium">{t('serviceForm.primary')} *</label>
+          {loadingSpecialists ? <p role="status" className="text-xs text-[var(--workspace-muted)]">{t('serviceForm.loading')}</p> :
+            <Select id={`${formId}-primary`} aria-invalid={fieldErrors.specialist_id ? true : undefined}
+              aria-describedby={fieldErrors.specialist_id ? `${formId}-primary-error` : undefined}
+              value={formData.specialist_id} required
+              onChange={event => {
+                const newId = parseInt(event.target.value)
+                const specialistIds = formData.specialist_ids || []
+                setFormData({ ...formData, specialist_id: newId,
+                  specialist_ids: specialistIds.includes(newId) ? specialistIds : [...specialistIds, newId] })
+              }}>
+              {availableSpecialists.map(spec => <option key={spec.id} value={spec.id}>{spec.full_name} ({spec.email})</option>)}
+            </Select>}
+          {fieldErrors.specialist_id && <div id={`${formId}-primary-error`}><FormError message={fieldErrors.specialist_id} /></div>}
+        </div>
+        <details className="rounded-md border border-[var(--workspace-line)]">
+          <summary className="cursor-pointer px-3 py-3 text-xs font-medium">{t('serviceForm.additional')}</summary>
+          <div className="px-3 pb-3">
+            <p className="mb-3 text-xs leading-relaxed text-[var(--workspace-muted)]">{t('serviceForm.hint')}</p>
+            {loadingSpecialists ? <p role="status" className="text-xs text-[var(--workspace-muted)]">{t('serviceForm.loading')}</p> :
+              <div className="max-h-44 space-y-1 overflow-y-auto">
+                {availableSpecialists.map(spec => {
+                  const isSelected = (formData.specialist_ids || []).includes(spec.id)
+                  const isPrimary = spec.id === formData.specialist_id
+                  return <label key={spec.id} className="flex min-h-9 cursor-pointer items-start gap-2 rounded px-1 py-1.5 text-xs hover:bg-[var(--workspace-bg)]">
+                    <input type="checkbox" checked={isSelected || isPrimary} disabled={isPrimary}
+                      className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--workspace-accent)]"
+                      onChange={event => {
+                        const currentIds = formData.specialist_ids || []
+                        if (event.target.checked) {
+                          if (!currentIds.includes(spec.id)) setFormData({ ...formData, specialist_ids: [...currentIds, spec.id] })
+                        } else if (!isPrimary) setFormData({ ...formData, specialist_ids: currentIds.filter(id => id !== spec.id) })
+                      }} />
+                    <span className="min-w-0 [overflow-wrap:anywhere]">{spec.full_name} ({spec.email})
+                      {isPrimary && <span className="ml-1 text-[var(--workspace-muted)]">{t('serviceForm.primaryBadge')}</span>}
+                    </span>
+                  </label>
+                })}
+              </div>}
+          </div>
+        </details>
+      </fieldset>
+
+      <div className="flex justify-end gap-2 border-t border-[var(--workspace-line)] pt-4">
+        <Button variant="secondary" onClick={onCancel} className="flex-1 sm:flex-none">{t('common.cancel')}</Button>
+        <Button type="submit" disabled={loading} className="flex-1 sm:flex-none">
+          {loading ? <><LoadingSpinner size="sm" /><span>{t('common.saving')}</span></> : serviceId ? t('serviceForm.update') : t('serviceForm.create')}
+        </Button>
       </div>
     </form>
   )
 }
-
