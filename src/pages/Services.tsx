@@ -1,10 +1,16 @@
 import { fetchAllServices } from '../api/services'
 import QueryError from '../components/QueryError'
 import ContextHint from '../components/onboarding/ContextHint'
-import { useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import ServiceForm from '../components/ServiceForm'
 import Input from '../ui/Input'
+import Select from '../ui/Select'
+import Card from '../ui/Card'
+import Button from '../ui/Button'
+import SidePanel from '../ui/SidePanel'
+import { HiOutlineChevronRight, HiOutlinePlus } from 'react-icons/hi'
+import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
@@ -21,6 +27,8 @@ type Service = ServiceOut
 export default function Services() {
   const { t } = useTranslation()
   const currency = useBusinessCurrency()
+  const access = useWorkspaceAccessContext()
+  const canEdit = !access || access.crm_mode === 'full'
 
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | undefined>()
@@ -30,6 +38,7 @@ export default function Services() {
   const [currentPage, setCurrentPage] = useState(1)
   const [perPage, setPerPage] = useState(20)
   const queryClient = useQueryClient()
+  useEffect(() => { if (!canEdit) { setShowForm(false); setEditingId(undefined) } }, [canEdit])
 
   const { data: services, isLoading, isError, refetch } = useQuery<Service[]>({
     queryKey: ['services'],
@@ -71,6 +80,10 @@ export default function Services() {
     }
   }, [filteredServices, currentPage, perPage])
 
+  useEffect(() => {
+    if (!isLoading && !isError && currentPage > Math.max(1, totalPages)) setCurrentPage(Math.max(1, totalPages))
+  }, [isLoading, isError, currentPage, totalPages])
+
   const handleSort = (key: keyof Service) => {
     setSortConfig((prev) => {
       if (prev.key === key) {
@@ -96,206 +109,87 @@ export default function Services() {
     setShowForm(true)
   }
 
-  if (isError) return <QueryError retry={refetch} />
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <LoadingSpinner size="lg" />
-      </div>
-    )
-  }
-
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('services.title')}</h1>
-        {!showForm && (
-          <button
-            onClick={() => {
-              setEditingId(undefined)
-              setShowForm(true)
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
-          >
-            {t('services.addService')}
-          </button>
-        )}
+      <div className="page-toolbar">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="page-title">{t('services.title')}</h1>
+            <span className="rounded border border-[var(--workspace-line)] px-2 py-0.5 text-xs tabular-nums text-[var(--workspace-muted)]">{isLoading || isError ? '—' : totalItems}</span>
+          </div>
+          <p className="page-subtitle">{t('services.subtitle')}</p>
+        </div>
+        {canEdit && <Button onClick={() => { setEditingId(undefined); setShowForm(true) }}><HiOutlinePlus />{t('services.addService')}</Button>}
       </div>
 
-      {!showForm && services?.length === 0 && !searchQuery && !activeFilter && (
-        <ContextHint
-          hint="services"
-          onAction={() => {
-            setEditingId(undefined)
-            setShowForm(true)
-          }}
-        />
+      {!isLoading && !isError && canEdit && services?.length === 0 && !searchQuery && !activeFilter && (
+        <ContextHint hint="services" onAction={() => { setEditingId(undefined); setShowForm(true) }} />
       )}
 
-      {!showForm && (
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex-1 w-full sm:max-w-md">
-              <Input
-                type="search"
-                placeholder={t('services.searchPlaceholder')}
-                value={searchQuery}
-                onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1) }}
-              />
-            </div>
-            {filteredServices.length > 0 && (
-              <ExportButton
-                data={filteredServices}
-                columns={[
-                  { key: 'name', label: t('services.name') },
-                  { key: 'duration_minutes', label: t('services.duration'), format: (val) => `${val} ${t('services.min')}` },
-                  { key: 'price', label: t('services.price'), format: (val) => formatCurrency(val, currency) },
-                  { key: 'is_active', label: t('services.status'), format: (val) => val ? t('services.active') : t('services.inactive') },
-                ]}
-                  filename={`services-${today()}`}
-                  title={t('export.servicesReport')}
-                  reportTypes={[t('export.servicesReport')]}
-                  dataType={searchQuery || activeFilter ? 'filtered' : 'all'}
-              />
-            )}
-          </div>
-          <div className="flex gap-4">
-            <select
-              value={activeFilter || ''}
-              onChange={(e) => {
-                setActiveFilter(e.target.value || null)
-                setCurrentPage(1)
-              }}
-              className="px-4 py-2 border rounded-md"
-            >
-              <option value="">{t('services.allServices')}</option>
-              <option value="active">{t('services.activeOnly')}</option>
-              <option value="inactive">{t('services.inactiveOnly')}</option>
-            </select>
-            {(searchQuery || activeFilter) && (
-              <button
-                onClick={() => {
-                  setSearchQuery('')
-                  setActiveFilter(null)
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                {t('services.clearFilters')}
-              </button>
-            )}
-          </div>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="min-w-0 flex-1 basis-64 sm:max-w-sm">
+          <Input id="service-directory-search" type="search" aria-label={t('services.searchPlaceholder')} placeholder={t('services.searchPlaceholder')}
+            value={searchQuery} onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1) }} />
         </div>
-      )}
+        <Select aria-label={t('services.status')} value={activeFilter || ''} className="w-auto max-w-full"
+          onChange={event => { setActiveFilter(event.target.value || null); setCurrentPage(1) }}>
+          <option value="">{t('services.allServices')}</option>
+          <option value="active">{t('services.activeOnly')}</option>
+          <option value="inactive">{t('services.inactiveOnly')}</option>
+        </Select>
+        {(searchQuery || activeFilter) && <Button variant="quiet" onClick={() => { setSearchQuery(''); setActiveFilter(null); setCurrentPage(1) }}>{t('services.clearFilters')}</Button>}
+        {!isLoading && !isError && filteredServices.length > 0 && <div className="ml-auto">
+          <ExportButton data={filteredServices}
+            columns={[
+              { key: 'name', label: t('services.name') },
+              { key: 'duration_minutes', label: t('services.duration'), format: value => `${value} ${t('services.min')}` },
+              { key: 'price', label: t('services.price'), format: value => formatCurrency(value, currency) },
+              { key: 'is_active', label: t('services.status'), format: value => value ? t('services.active') : t('services.inactive') },
+            ]}
+            filename={`services-${today()}`} title={t('export.servicesReport')}
+            reportTypes={[t('export.servicesReport')]} dataType={searchQuery || activeFilter ? 'filtered' : 'all'} />
+        </div>}
+      </div>
 
-      {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
-          <ServiceForm
-            serviceId={editingId}
-            onSuccess={handleSuccess}
-            onCancel={() => {
-              setShowForm(false)
-              setEditingId(undefined)
-            }}
-          />
-        </div>
-      ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden dark:bg-gray-800">
+      <Card className="overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900">
+          <table className="w-full table-fixed">
+            <thead className="bg-[var(--workspace-bg)]">
               <tr>
-                <TableSortHeader
-                  columnKey="name"
-                  label={t('services.name')}
-                  currentSort={sortConfig}
-                  onSort={handleSort}
-                />
-                <TableSortHeader
-                  columnKey="duration_minutes"
-                  label={t('services.duration')}
-                  currentSort={sortConfig}
-                  onSort={handleSort}
-                />
-                <TableSortHeader
-                  columnKey="price"
-                  label={t('services.price')}
-                  currentSort={sortConfig}
-                  onSort={handleSort}
-                />
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                  {t('services.status')}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                  {t('common.actions')}
-                </th>
+                <TableSortHeader columnKey="name" label={t('services.name')} currentSort={sortConfig} onSort={handleSort} className="px-4 sm:w-[44%] sm:px-5" />
+                <TableSortHeader columnKey="duration_minutes" label={t('services.duration')} currentSort={sortConfig} onSort={handleSort} className="hidden px-4 sm:table-cell sm:px-5" />
+                <TableSortHeader columnKey="price" label={t('services.price')} currentSort={sortConfig} onSort={handleSort} className="hidden px-4 sm:table-cell sm:px-5" />
+                <th className="w-28 px-4 py-3 text-left text-xs font-medium text-[var(--workspace-muted)] sm:w-auto sm:px-5">{t('services.status')}</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-              {paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                    {searchQuery || activeFilter
-                      ? t('services.noServicesMatch')
-                      : t('services.noServicesFound')}
-                  </td>
-                </tr>
-              ) : (
-                paginatedData.map((service) => (
-              <tr key={service.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
-                <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {service.name}
-                  {service.description && (
-                    <p className="mt-1 max-w-md text-xs font-normal text-gray-500 line-clamp-2 dark:text-gray-400" title={service.description}>
-                      {service.description}
-                    </p>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {service.duration_minutes} {t('services.min')}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {formatCurrency(service.price, currency)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      service.is_active
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'bg-pink-100 text-pink-700'
-                    }`}
-                  >
-                    {service.is_active ? t('services.active') : t('services.inactive')}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  <button
-                    onClick={() => handleEdit(service.id)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    {t('common.edit')}
-                  </button>
-                </td>
-              </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+            <tbody className="divide-y divide-[var(--workspace-line)]">
+              {isError ? <tr><td colSpan={4}><QueryError retry={refetch} /></td></tr>
+                : isLoading ? <tr><td colSpan={4} className="py-8"><LoadingSpinner /></td></tr>
+                  : paginatedData.length === 0 ? <tr><td colSpan={4} className="px-5 py-10 text-center text-sm text-[var(--workspace-muted)]">{searchQuery || activeFilter ? t('services.noServicesMatch') : t('services.noServicesFound')}</td></tr>
+                    : paginatedData.map(service => <tr key={service.id} className="hover:bg-[var(--workspace-bg)]">
+                      <td className="px-4 py-3 sm:px-5">
+                        {canEdit ? <button type="button" onClick={() => handleEdit(service.id)} aria-label={`${t('common.edit')}: ${service.name}`}
+                          className="inline-flex max-w-full items-center gap-2 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
+                          <span className="min-w-0 [overflow-wrap:anywhere]">{service.name}</span><HiOutlineChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
+                        </button> : <span className="text-sm font-medium [overflow-wrap:anywhere]">{service.name}</span>}
+                        {service.description && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--workspace-muted)] [overflow-wrap:anywhere]" title={service.description}>{service.description}</p>}
+                        <span className="mt-1 block text-xs tabular-nums text-[var(--workspace-muted)] sm:hidden">{service.duration_minutes} {t('services.min')} · {formatCurrency(service.price, currency)}</span>
+                      </td>
+                      <td className="hidden px-4 py-3 text-sm tabular-nums text-[var(--workspace-muted)] sm:table-cell sm:px-5">{service.duration_minutes} {t('services.min')}</td>
+                      <td className="hidden px-4 py-3 text-sm tabular-nums text-[var(--workspace-ink)] sm:table-cell sm:px-5">{formatCurrency(service.price, currency)}</td>
+                      <td className="px-4 py-3 sm:px-5"><span className={`inline-flex rounded px-2 py-1 text-xs ${service.is_active ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]' : 'bg-[var(--workspace-bg)] text-[var(--workspace-muted)]'}`}>{service.is_active ? t('services.active') : t('services.inactive')}</span></td>
+                    </tr>)}
+            </tbody>
+          </table>
         </div>
-        {totalPages > 1 && (
-          <TablePagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalItems={totalItems}
-            perPage={perPage}
-            onPageChange={setCurrentPage}
-            onPerPageChange={setPerPage}
-          />
-        )}
-      </div>
-      )}
+        {!isLoading && !isError && (totalPages > 1 ? <TablePagination currentPage={currentPage} totalPages={totalPages} totalItems={totalItems}
+          perPage={perPage} onPageChange={setCurrentPage} onPerPageChange={value => { setPerPage(value); setCurrentPage(1) }} />
+          : <p className="border-t border-[var(--workspace-line)] px-5 py-3 text-xs text-[var(--workspace-muted)]">{t('pagination.range').replace('{start}', String(totalItems ? 1 : 0)).replace('{end}', String(totalItems)).replace('{total}', String(totalItems))}</p>)}
+      </Card>
+
+      {showForm && canEdit && <SidePanel title={t(editingId ? 'services.editService' : 'services.addService')} onClose={() => { setShowForm(false); setEditingId(undefined) }}>
+        <ServiceForm key={editingId ?? 'new'} serviceId={editingId} onSuccess={handleSuccess} onCancel={() => { setShowForm(false); setEditingId(undefined) }} />
+      </SidePanel>}
     </div>
   )
 }
-

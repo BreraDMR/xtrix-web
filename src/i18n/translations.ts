@@ -798,6 +798,8 @@ export type TranslationKey =
   | 'clientWorkspace.profileError'
   | 'clientWorkspace.forbidden'
   | 'clientWorkspace.dataUnavailable'
+  | 'services.subtitle'
+  | 'services.editService'
   | 'services.title'
   | 'services.addService'
   | 'services.searchPlaceholder'
@@ -2991,6 +2993,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'clientWorkspace.forbidden': { en: 'You do not have permission to change this client', ru: 'Недостаточно прав для изменения клиента', cz: 'Nemáte oprávnění měnit tohoto klienta' },
   'clientWorkspace.dataUnavailable': { en: 'This section is unavailable', ru: 'Этот раздел недоступен', cz: 'Tato část není dostupná' },
   
+  'services.subtitle': { en: 'Your service catalogue, with duration and pricing.', ru: 'Каталог услуг, длительность и стоимость.', cz: 'Katalog služeb, délka a ceny.' },
+  'services.editService': { en: 'Edit service', ru: 'Редактирование услуги', cz: 'Upravit službu' },
   'services.title': { en: 'Services', ru: 'Услуги', cz: 'Služby' },
   'services.addService': { en: 'Add Service', ru: 'Добавить услугу', cz: 'Přidat službu' },
   'services.searchPlaceholder': { en: 'Search by service name...', ru: 'Поиск по названию услуги...', cz: 'Hledat podle názvu služby...' },
