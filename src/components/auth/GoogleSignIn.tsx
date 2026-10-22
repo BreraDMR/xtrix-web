@@ -34,27 +34,29 @@ export default function GoogleSignIn({ role = 'business_owner', returnTo = '/app
     setBusy(true)
     setError('')
     let issuedToken: string | null = null
+    let revision = useAuthStore.getState().sessionRevision
     try {
       const { data } = await api.post<Schema<'LoginResponse'>>('/auth/google/login', {
         credential, nonce, role,
         ...(linking ? { link_existing: true, password, ...(code ? { totp_token: code } : {}) } : {}),
       })
-      if (!mounted.current) return
+      if (!mounted.current || useAuthStore.getState().sessionRevision !== revision) return
       if (data.requires_2fa && !data.access_token) {
         setLink({ credential, nonce }); setNeedsCode(true); return
       }
       if (!data.access_token) throw new Error(t('google.failed'))
       issuedToken = data.access_token
       useAuthStore.getState().startSession(data.access_token, data.refresh_token)
+      revision = useAuthStore.getState().sessionRevision
       const user = (await api.get('/users/me')).data
-      if (!mounted.current) return
+      if (!mounted.current || useAuthStore.getState().sessionRevision !== revision) return
       const token = useAuthStore.getState().token
       if (token !== issuedToken) return
       useAuthStore.getState().setAuth(token, user)
       setPassword(''); setCode(''); setLink(null)
       navigate(returnTo, { replace: true })
     } catch (failure) {
-      if (!mounted.current) return
+      if (!mounted.current || useAuthStore.getState().sessionRevision !== revision) return
       const failureCode = apiErrorCode(failure) ?? apiErrorMessage(failure, '')
       if (apiErrorStatus(failure) === 409 && failureCode !== 'google_identity_already_linked') {
         setLink({ credential, nonce }); setConsent(false)

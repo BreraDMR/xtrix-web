@@ -66,6 +66,7 @@ export default function Register() {
     }
 
     let accountCreated = false
+    let revision = useAuthStore.getState().sessionRevision
     try {
       logger.log('[Register] Attempting registration', { email: formData.email, phone: formData.phone })
       
@@ -94,6 +95,7 @@ export default function Register() {
       }
 
       await api.post('/users/', userDataPayload)
+      if (useAuthStore.getState().sessionRevision !== revision) return
 
       accountCreated = true
       logger.log('[Register] User created successfully')
@@ -103,18 +105,22 @@ export default function Register() {
         phone: formData.phone || undefined,
         password: formData.password,
       })
+      if (useAuthStore.getState().sessionRevision !== revision) return
 
       if (!loginData.access_token) {
         throw new Error('No access token received')
       }
 
       startSession(loginData.access_token, loginData.refresh_token)
+      revision = useAuthStore.getState().sessionRevision
       const { data: user } = await api.get('/users/me')
+      if (useAuthStore.getState().sessionRevision !== revision) return
       const token = useAuthStore.getState().token
       if (!token) throw new Error('Session expired')
       setAuth(token, user)
       navigate('/app', { replace: true })
     } catch (err) {
+      if (useAuthStore.getState().sessionRevision !== revision) return
       if (accountCreated) {
         useAuthStore.getState().logout()
         navigate('/login', { replace: true, state: { accountCreated: true } })

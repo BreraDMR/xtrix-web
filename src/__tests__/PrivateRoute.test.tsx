@@ -45,6 +45,31 @@ it('does not attach an old profile response to the next login', async () => {
   expect(screen.queryByText(/Protected/)).not.toBeInTheDocument()
 })
 
+it.each(['success', 'failure'])('keeps the new account when an earlier login profile returns %s', async (outcome) => {
+  vi.mocked(api.post).mockResolvedValue({ data: { access_token: 'first-access', refresh_token: 'first-refresh' } })
+  let finish!: (response: { data: unknown }) => void
+  let fail!: (reason: unknown) => void
+  vi.mocked(api.get).mockImplementation((url) => url === '/users/me'
+    ? new Promise((resolve, reject) => { finish = resolve; fail = reject })
+    : Promise.resolve({ data: { enabled: false } }))
+  mount('/login')
+  await userEvent.type(screen.getByLabelText(/email/i), 'jane@example.com')
+  await userEvent.type(screen.getByLabelText(/password/i), 'password123')
+  await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
+  await waitFor(() => expect(finish).toBeTypeOf('function'))
+  act(() => {
+    useAuthStore.getState().startSession('second-access', 'second-refresh')
+    useAuthStore.getState().setAuth('second-access', { id: 20, full_name: 'New owner', role: 'business_owner' })
+  })
+  await act(async () => {
+    if (outcome === 'success') finish({ data: { id: 7, full_name: 'Old owner', role: 'specialist' } })
+    else fail(apiError(500, 'Old request failed'))
+  })
+  expect(useAuthStore.getState().token).toBe('second-access')
+  expect(useAuthStore.getState().user?.id).toBe(20)
+  expect(localStorage.getItem('auth_refresh_token')).toBe('second-refresh')
+})
+
 it('keeps the private page blocked and offers retry if user loading fails', async () => {
   useAuthStore.setState({ token: 'saved', user: null })
   vi.mocked(api.get).mockRejectedValue(apiError(500, 'Unavailable'))

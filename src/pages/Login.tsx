@@ -32,20 +32,25 @@ export default function Login() {
     setError('')
     setLoading(true)
 
+    let revision = useAuthStore.getState().sessionRevision
     try {
       const { data } = await api.post('/users/login', needsCode ? { email, password, totp_token: code.trim() } : { email, password })
+      if (useAuthStore.getState().sessionRevision !== revision) return
       if (data?.requires_2fa && !data.access_token) {
         setNeedsCode(true)
         return
       }
       if (!data.access_token) throw new Error('No access token received')
       startSession(data.access_token, data.refresh_token)
+      revision = useAuthStore.getState().sessionRevision
       const { data: user } = await api.get('/users/me')
+      if (useAuthStore.getState().sessionRevision !== revision) return
       const token = useAuthStore.getState().token
       if (!token) throw new Error('Session expired')
       setAuth(token, user)
       navigate(returnTo, { replace: true })
     } catch (err) {
+      if (useAuthStore.getState().sessionRevision !== revision) return
       useAuthStore.getState().logout()
       // with the code step on, a 401 means the code was off (the password passed a moment ago)
       setError(needsCode && apiErrorStatus(err) === 401 ? t('login.twoFactorWrong') : apiErrorMessage(err, t('login.failed')))
