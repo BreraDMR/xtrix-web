@@ -264,8 +264,17 @@ export default function CalendarPage() {
         ? t('calendar.simpleViewDescription')
         : t('calendar.advancedViewDescription')
 
+  const rangeEmpty = isRangeView && !rangeQuery.isLoading && !rangeQuery.isError && (rangeQuery.data?.length ?? 0) === 0
+  // an empty day is not an empty salon: the first-visit hint waits until we know there are none at all
+  const anyVisit = useQuery({
+    queryKey: ['visits', 'calendar', 'any', sessionRevision, user?.id, user?.business_id, user?.employer_id],
+    queryFn: async ({ signal }) => (await api.get<Schema<'PaginatedResponse_VisitOut_'>>('/visits/', {
+      params: { page: 1, per_page: 1 }, signal,
+    })).data.total,
+    enabled: rangeEmpty,
+  })
   const showHint = isRangeView
-    ? !rangeQuery.isLoading && !rangeQuery.isError && (rangeQuery.data?.length ?? 0) === 0
+    ? rangeEmpty && anyVisit.data === 0
     : !legacyQuery.isLoading && !legacyQuery.isError && Array.isArray(visits) && visits.length === 0
 
   const goToToday = () => setPickedDay(null)
