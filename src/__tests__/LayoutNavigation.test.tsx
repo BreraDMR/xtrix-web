@@ -107,3 +107,13 @@ it('offers daily destinations on mobile and returns focus to More after closing 
   expect(screen.queryByRole('dialog', { name: 'PRIMARY' })).not.toBeInTheDocument()
   expect(more).toHaveFocus()
 })
+
+it('offers My Salary to staff but not to a solo specialist who has no employer', () => {
+  signIn({ id: 6, role: 'specialist', employer_id: 9 })
+  const { unmount } = renderLayout()
+  expect(within(screen.getByRole('navigation', { name: 'PRIMARY' })).getByRole('link', { name: 'My Salary' })).toBeInTheDocument()
+  unmount()
+  signIn({ id: 7, role: 'specialist', employer_id: null })
+  renderLayout()
+  expect(within(screen.getByRole('navigation', { name: 'PRIMARY' })).queryByRole('link', { name: 'My Salary' })).not.toBeInTheDocument()
+})

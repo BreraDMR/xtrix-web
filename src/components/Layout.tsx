@@ -116,7 +116,8 @@ export default function Layout() {
     ...(managesBusiness ? [{ path: '/app/business', label: t('nav.business') }] : []),
     ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/app/subscription', label: t('nav.subscription') }] : []),
     ...(!access?.pilot_mode && (managesBusiness || (user?.role === 'specialist' && !user.employer_id)) ? [{ path: '/app/notifications', label: t('nav.notifications') }] : []),
-    ...(user?.role === 'employee' || user?.role === 'specialist' ? [{ path: '/app/my-salary', label: t('nav.my_salary') }] : []),
+    // only people someone pays have a salary - a solo specialist works for themselves
+    ...(user?.role === 'employee' || (user?.role === 'specialist' && user.employer_id) ? [{ path: '/app/my-salary', label: t('nav.my_salary') }] : []),
     { path: '/app/settings', label: t('nav.settings') },
   ]
   const active = [...primaryItems, ...manageItems, ...systemItems].find(({ path }) =>
