@@ -137,13 +137,13 @@ export default function Employees() {
           <table className="w-full min-w-[960px] table-fixed">
             <thead className="bg-[var(--workspace-bg)]">
               <tr>
-                <th scope="col" className="w-[24%] px-4 py-3 text-left text-xs font-medium text-[var(--workspace-muted)]">{t('employees.employee')}</th>
+                <th scope="col" className="w-[24%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--workspace-muted)]">{t('employees.employee')}</th>
                 <TableSortHeader columnKey="position" label={t('employees.position')} currentSort={sortConfig} onSort={handleSort} className="w-[14%] px-4" />
                 <TableSortHeader columnKey="commission_percentage" label={t('employees.commission')} currentSort={sortConfig} onSort={handleSort} className="w-[11%] px-4" />
                 <TableSortHeader columnKey="base_salary" label={t('employees.base_salary')} currentSort={sortConfig} onSort={handleSort} className="w-[14%] px-4" />
-                <th scope="col" className="w-[10%] px-4 py-3 text-left text-xs font-medium text-[var(--workspace-muted)]">{t('employees.status')}</th>
+                <th scope="col" className="w-[10%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--workspace-muted)]">{t('employees.status')}</th>
                 <TableSortHeader columnKey="hired_at" label={t('employees.hired_at')} currentSort={sortConfig} onSort={handleSort} className="w-[12%] px-4" />
-                <th scope="col" className="w-[15%] px-4 py-3 text-right text-xs font-medium text-[var(--workspace-muted)]">{t('employees.actions')}</th>
+                <th scope="col" className="w-[15%] px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-[var(--workspace-muted)]">{t('employees.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--workspace-line)]">
