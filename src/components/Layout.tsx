@@ -181,7 +181,7 @@ export default function Layout() {
             <button className="rounded-lg px-2 py-2 text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20" onClick={() => { signOut(); navigate('/login', { replace: true }) }}>{t('nav.logout')}</button>
           </div>
         </header>
-        <main id="workspace-main" className="crm-main mx-auto w-full min-w-0 max-w-[1540px] flex-1 p-4 pt-6 sm:p-6 lg:p-8">
+        <main id="workspace-main" className="crm-main mx-auto w-full min-w-0 max-w-[1540px] flex-1 p-4 pt-6 pb-[calc(88px+env(safe-area-inset-bottom))] sm:p-6 sm:pb-[calc(88px+env(safe-area-inset-bottom))] lg:p-8">
           {offline && <div role="status" className="mb-5 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-900/20 dark:text-amber-100">{t('common.offline')}</div>}
           {accessQuery.isLoading ? <LoadingSpinner /> : accessQuery.isError ? <QueryError retry={accessQuery.refetch} /> : !access ? null
             : access.crm_mode === 'blocked' && !isBilling ? <PilotSubscription access={access} />

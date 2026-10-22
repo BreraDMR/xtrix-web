@@ -37,7 +37,7 @@ it('opens the dashboard from the X logo on the clients screen', async () => {
   expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
   await userEvent.click(screen.getByRole('link', { name: 'Xtrix' }))
   expect(await screen.findByRole('heading', { name: 'Dashboard screen' })).toBeInTheDocument()
-  expect(within(screen.getByRole('navigation', { name: 'PRIMARY' })).getByRole('link', { name: 'Dashboard' })).toHaveAttribute('aria-current', 'page')
+  expect(within(screen.getByRole('navigation', { name: 'PRIMARY' })).getByRole('link', { name: 'Today' })).toHaveAttribute('aria-current', 'page')
 })
 
 it('toggles desktop navigation without opening the mobile menu or changing role links', async () => {

@@ -2831,7 +2831,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'specialistProfile.languages': { en: 'Languages', ru: 'Языки', cz: 'Jazyky' },
   'specialistProfile.languagesPlaceholder': { en: 'e.g., English, Russian, Czech', ru: 'например, Английский, Русский, Чешский', cz: 'např. Angličtina, Ruština, Čeština' },
   
-  'nav.dashboard': { en: 'Dashboard', ru: 'Панель управления', cz: 'Nástěnka' },
+  'nav.dashboard': { en: 'Today', ru: 'Сегодня', cz: 'Dnes' },
   'nav.clients': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },
   'nav.visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
   'nav.calendar': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },
@@ -3221,7 +3221,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.collapse_menu': { en: 'Collapse menu', ru: 'Свернуть меню', cz: 'Sbalit nabídku' },
   'nav.expand_menu': { en: 'Expand menu', ru: 'Развернуть меню', cz: 'Rozbalit nabídku' },
   'nav.quick': { en: 'Quick navigation', ru: 'Быстрая навигация', cz: 'Rychlá navigace' },
-  'nav.more': { en: 'More', ru: 'Ещё', cz: 'Další' },
+  'nav.more': { en: 'More', ru: 'Ещё', cz: 'Nabídka' },
   'nav.primary': { en: 'PRIMARY', ru: 'ОСНОВНОЕ', cz: 'ZÁKLADNÍ' },
   'nav.manage': { en: 'MANAGE', ru: 'УПРАВЛЕНИЕ', cz: 'SPRÁVA' },
   'nav.system': { en: 'SYSTEM', ru: 'СИСТЕМА', cz: 'SYSTÉM' },
