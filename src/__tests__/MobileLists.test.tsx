@@ -55,15 +55,22 @@ describe('responsive list cards', () => {
     await waitFor(() => expect(document.querySelector<HTMLInputElement>('input[type="datetime-local"]')!.value).toContain('2026-10-18'))
   })
 
-  it('keeps employee details and actions in one labelled card', async () => {
+  it('keeps complete employee details and actions in a focusable scroll region', async () => {
     vi.mocked(api.get).mockImplementation(routes({
       '/employees/': [{ id: 2, employee_user: { full_name: fullName, email: 'jana@example.cz' }, position: 'Stylist', is_active: true, commission_percentage: 15, base_salary: 1500 }],
       '/businesses/me': { currency: 'EUR' },
     }) as never)
     renderWithProviders(<Employees />)
     const row = (await screen.findByText(fullName)).closest('tr')!
-    expect(row.closest('table')).toHaveClass('responsive-card-table')
-    expect(Array.from(row.querySelectorAll('td')).every(cell => Boolean(cell.dataset.label))).toBe(true)
+    const region = screen.getByRole('region', { name: 'Employees' })
+    expect(region).toHaveAttribute('tabindex', '0')
+    expect(region).toContainElement(row)
+    expect(within(row).getAllByRole('cell')).toHaveLength(7)
+    expect(screen.getAllByRole('columnheader').map(header => header.textContent)).toEqual([
+      'Employee', 'Position', 'Commission', 'Base Salary', 'Status', 'Hired At', 'Actions',
+    ])
+    expect(within(row).getByText('Stylist')).toBeInTheDocument()
+    expect(within(row).getByText('15%')).toBeInTheDocument()
     expect(within(row).getByText('jana@example.cz')).toBeInTheDocument()
     expect(within(row).getAllByRole('button')).toHaveLength(3)
     expect(within(row).getByRole('button', { name: 'Edit' })).toBeInTheDocument()
