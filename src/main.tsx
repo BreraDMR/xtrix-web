@@ -5,6 +5,7 @@ import App from './App.tsx'
 import './index.css'
 import './ui/theme.css'
 import { applyTheme, savedTheme } from './utils/theme'
+import { bindSessionCache } from './api/sessionCache'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,6 +15,8 @@ const queryClient = new QueryClient({
     },
   },
 })
+
+bindSessionCache(queryClient)
 
 applyTheme(savedTheme())
 
