@@ -49,7 +49,7 @@ export default function StaffColumns({
   const zone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone
   const dayKey = zonedDayKey(day, zone)
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
-  const title = format(parseISO(dayKey), 'EEEE, d MMMM', { locale: dateLocale })
+  const title = format(parseISO(dayKey), locale === 'cz' ? 'EEEE d. MMMM' : 'EEEE, d MMMM', { locale: dateLocale })
 
   const events = useMemo(() => visits.flatMap(expandVisit), [visits])
 

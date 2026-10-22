@@ -184,7 +184,7 @@ export default function DayGrid({
   const zone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone
   const dayKey = zonedDayKey(day, zone)
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
-  const title = format(parseISO(dayKey), 'EEEE, d MMMM', { locale: dateLocale })
+  const title = format(parseISO(dayKey), locale === 'cz' ? 'EEEE d. MMMM' : 'EEEE, d MMMM', { locale: dateLocale })
   const events = useMemo(() => layoutDay(visits, dayKey, zone), [visits, dayKey, zone])
 
   const previewStyle = preview && preview.dayKey === dayKey
