@@ -58,7 +58,7 @@ test('a captured reset email changes the password and ends old sessions', async 
   expect(oldSession.status()).toBe(200)
 
   await page.goto('/forgot-password')
-  await expect(page.getByRole('heading', { name: 'Xtrix' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Forgot password?', level: 1 })).toBeVisible()
   await page.getByLabel('Email').fill(owner.email)
   const requested = page.waitForResponse(
     (response) => response.url().endsWith('/auth/password-reset/request') && response.request().method() === 'POST',

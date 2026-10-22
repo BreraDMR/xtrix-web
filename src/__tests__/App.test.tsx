@@ -36,7 +36,7 @@ describe('App', () => {
         <App />
       </QueryClientProvider>
     )
-    expect(screen.getByRole('heading', { name: 'Xtrix' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Sign in to your account', level: 1 })).toBeInTheDocument()
     expect(window.location.pathname).toBe('/login')
     expect(localStorage.getItem('app_logs')).toBeNull()
   })

@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { useLocaleStore } from '../store/localeStore'
 
 export default function LanguageSwitcher() {
   const { locale, setLocale } = useLocaleStore()
   const [isOpen, setIsOpen] = useState(false)
+  const menuId = useId()
+  const toggle = useRef<HTMLButtonElement>(null)
 
   const languages = [
     { code: 'cz' as const, label: 'CZ' },
@@ -14,10 +16,21 @@ export default function LanguageSwitcher() {
   const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]
 
   return (
-    <div className="relative">
+    <div className="relative" onKeyDown={event => {
+      if (event.key === 'Escape' && isOpen) {
+        event.preventDefault()
+        event.stopPropagation()
+        setIsOpen(false)
+        toggle.current?.focus()
+      }
+    }}>
       <button
+        type="button"
+        ref={toggle}
+        aria-expanded={isOpen}
+        aria-controls={menuId}
         onClick={() => setIsOpen(!isOpen)}
-        className="px-3 py-1.5 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all flex items-center gap-1 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-900"
+        className="ui-button ui-button-secondary !min-h-9 !gap-1.5 !px-3 !py-1.5 !text-xs"
       >
         <span>{currentLanguage.label}</span>
         <span className="text-xs">▼</span>
@@ -29,18 +42,19 @@ export default function LanguageSwitcher() {
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-20 min-w-[80px] dark:bg-gray-800 dark:border-gray-600">
+          <div id={menuId} className="absolute right-0 top-full z-20 mt-2 w-24 rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-1 shadow-lg">
             {languages.map((lang) => (
               <button
                 key={lang.code}
+                type="button"
                 onClick={() => {
                   setLocale(lang.code)
                   setIsOpen(false)
                 }}
-                className={`w-full text-left px-3 py-2 text-sm font-medium transition-all hover:bg-gray-100 first:rounded-t-md last:rounded-b-md ${
+                className={`w-full rounded px-3 py-2 text-left text-xs font-medium hover:bg-[var(--workspace-accent-soft)] ${
                   locale === lang.code
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-700'
+                    ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]'
+                    : 'text-[var(--workspace-ink)]'
                 }`}
               >
                 {lang.label}

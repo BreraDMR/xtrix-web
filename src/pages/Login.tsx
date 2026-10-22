@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
-import LanguageSwitcher from '../components/LanguageSwitcher'
+import AuthShell from '../components/auth/AuthShell'
 import { useTranslation } from '../hooks/useTranslation'
 import { sanitizeReturnTo } from '../utils/returnTo'
 
@@ -60,15 +60,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-5 py-16 dark:bg-gray-900">
-      <div className="absolute top-4 right-4">
-        <LanguageSwitcher />
-      </div>
-      <div className="ui-card max-w-md w-full space-y-8 p-8 sm:p-10">
-        <div className="text-center">
-          <h2 className="text-4xl font-semibold tracking-[-1.5px] text-gray-900 dark:text-white mb-3">Xtrix</h2>
-          <p className="text-gray-600 dark:text-gray-300">{t('login.subtitle')}</p>
-        </div>
+    <AuthShell title={t('login.subtitle')}>
         {location.state?.accountCreated === true && (
           <p role="status" className="p-3 text-sm text-green-800 bg-green-50 rounded-lg">
             {t('register.accountCreatedSignIn')}
@@ -88,7 +80,7 @@ export default function Login() {
               readOnly={needsCode}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="ui-input"
               placeholder="your@email.com"
             />
           </div>
@@ -104,12 +96,12 @@ export default function Login() {
               readOnly={needsCode}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="ui-input"
               placeholder="••••••••"
             />
             {!needsCode && (
               <div className="mt-2 text-right">
-                <Link to="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                <Link to="/forgot-password" className="text-sm font-medium text-[var(--workspace-accent)] hover:underline">
                   {t('login.forgotPassword')}
                 </Link>
               </div>
@@ -117,7 +109,7 @@ export default function Login() {
           </div>
           {needsCode && (
             <div>
-              <p role="status" className="mb-3 p-3 text-sm text-blue-800 dark:text-blue-200 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <p role="status" className="mb-3 p-3 text-sm text-[var(--workspace-accent)] bg-[var(--workspace-accent-soft)] rounded-lg">
                 {t('login.twoFactorPrompt')}
               </p>
               <label htmlFor="totp" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -135,13 +127,13 @@ export default function Login() {
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
                 required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent tracking-widest"
+                className="ui-input tracking-widest"
                 placeholder="123456"
               />
               <button
                 type="button"
                 onClick={() => { setNeedsCode(false); setCode(''); setPassword(''); setError('') }}
-                className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                className="mt-2 text-sm text-[var(--workspace-accent)] hover:underline"
               >
                 {t('login.twoFactorBack')}
               </button>
@@ -155,7 +147,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            className="ui-button ui-button-primary w-full"
           >
             {loading ? (
               <>
@@ -171,13 +163,12 @@ export default function Login() {
         <div className="text-center">
           <p className="text-sm text-gray-600 dark:text-gray-300">
             {t('login.dontHaveAccount')}{' '}
-            <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+            <Link to="/register" className="text-[var(--workspace-accent)] hover:underline font-medium">
               {t('login.signUp')}
             </Link>
           </p>
         </div>
-      </div>
-    </div>
+    </AuthShell>
   )
 }
 

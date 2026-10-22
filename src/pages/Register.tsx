@@ -9,7 +9,7 @@ import type { Schema } from '../api/types'
 import FormError from '../components/FormError'
 import LoadingSpinner from '../components/LoadingSpinner'
 import SpecialistTypeSelector from '../components/SpecialistTypeSelector'
-import LanguageSwitcher from '../components/LanguageSwitcher'
+import AuthShell from '../components/auth/AuthShell'
 import { useTranslation } from '../hooks/useTranslation'
 import { useOffers } from '../hooks/useOffers'
 import { logger } from '../utils/logger'
@@ -136,11 +136,8 @@ export default function Register() {
 
   if (offers.isLoading) return <LoadingSpinner />
   if (offers.isError) return <QueryError retry={offers.refetch} />
-  if (offers.data?.pilot_mode) return <main className="flex min-h-screen items-center justify-center bg-gray-50 px-5 py-16 dark:bg-gray-900">
-    <div className="absolute right-4 top-4"><LanguageSwitcher /></div>
-    <div className="ui-card w-full max-w-md space-y-6 p-8">
-      <h1 className="text-center text-3xl font-semibold">Xtrix</h1>
-      <p role="status" className="rounded-xl bg-blue-50 p-4 text-sm text-blue-900 dark:bg-blue-950/40 dark:text-blue-100">{t('pilot.invitation')}</p>
+  if (offers.data?.pilot_mode) return <AuthShell title={t('register.title')}>
+      <p role="status" className="rounded-xl bg-[var(--workspace-accent-soft)] p-4 text-sm text-[var(--workspace-ink)]">{t('pilot.invitation')}</p>
       <p className="text-sm text-gray-600 dark:text-gray-300">{t('pricing.trial')}</p>
       <label className="block text-sm font-medium">{t('register.role')}
         <select value={pilotRole} onChange={event => setPilotRole(event.target.value as SignupRole)} className="mt-2 w-full rounded-xl border border-gray-300 bg-white p-3 dark:border-gray-600 dark:bg-gray-800">
@@ -149,33 +146,26 @@ export default function Register() {
         </select>
       </label>
       <GoogleSignIn role={pilotRole} registration />
-      <Link to="/login" className="block text-center text-sm font-medium text-blue-600 dark:text-blue-400">{t('login.signIn')}</Link>
-    </div>
-  </main>
+      <Link to="/login" className="block text-center text-sm font-medium text-[var(--workspace-accent)]">{t('login.signIn')}</Link>
+  </AuthShell>
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-5 py-16 dark:bg-gray-900">
-      <div className="absolute top-4 right-4">
-        <LanguageSwitcher />
-      </div>
-      <div className="ui-card max-w-md w-full space-y-8 p-8 sm:p-10">
+    <AuthShell title={t('register.title')}>
         <div className="text-center">
-          <h2 className="text-4xl font-semibold tracking-[-1.5px] text-gray-900 dark:text-white mb-3">Xtrix</h2>
-          <p className="text-gray-600 dark:text-gray-300">{t('register.title')}</p>
-          <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/80 p-3.5 text-left text-xs text-blue-950 dark:border-blue-900/50 dark:bg-blue-950/40 dark:text-blue-200">
-            <div className="font-semibold flex items-center gap-1.5 text-blue-800 dark:text-blue-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
+          <div className="mt-4 rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-bg)] p-3.5 text-left text-xs text-[var(--workspace-ink)]">
+            <div className="font-semibold flex items-center gap-1.5 text-[var(--workspace-accent)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--workspace-accent)]" />
               {t('register.trial_badge')}
             </div>
             <p className="mt-1 leading-relaxed text-slate-600 dark:text-slate-300">
               {t('register.trial_desc')}
             </p>
-            <p className="mt-1.5 pt-1.5 border-t border-blue-100 dark:border-blue-900/40 text-[11px] text-slate-500 dark:text-slate-400">
+            <p className="mt-1.5 pt-1.5 border-t border-[var(--workspace-line)] text-[11px] text-slate-500 dark:text-slate-400">
               {t('register.ai_bonus')}
             </p>
           </div>
         </div>
-        {offers.data?.registration_requires_invitation && <p role="status" className="mb-6 rounded-xl bg-blue-50 p-4 text-sm text-blue-900 dark:bg-blue-950/40 dark:text-blue-100">{t('pilot.invitation')}</p>}
+        {offers.data?.registration_requires_invitation && <p role="status" className="mb-6 rounded-xl bg-[var(--workspace-accent-soft)] p-4 text-sm text-[var(--workspace-ink)]">{t('pilot.invitation')}</p>}
         <GoogleSignIn role={formData.role} />
           <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -190,7 +180,7 @@ export default function Register() {
               value={formData.full_name}
               onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="ui-input"
               placeholder={t('register.namePlaceholder')}
             />
             {fieldErrors.full_name && <FormError message={fieldErrors.full_name} />}
@@ -207,7 +197,7 @@ export default function Register() {
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="ui-input"
               placeholder="your@email.com"
             />
             {fieldErrors.email && <FormError message={fieldErrors.email} />}
@@ -224,7 +214,7 @@ export default function Register() {
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="ui-input"
               placeholder="+1234567890"
             />
             {fieldErrors.phone && <FormError message={fieldErrors.phone} />}
@@ -245,7 +235,7 @@ export default function Register() {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
               minLength={8}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="ui-input"
               placeholder="••••••••"
             />
             {fieldErrors.password && <FormError message={fieldErrors.password} />}
@@ -265,7 +255,7 @@ export default function Register() {
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="ui-input"
               placeholder="••••••••"
             />
           </div>
@@ -288,7 +278,7 @@ export default function Register() {
                 })
               }}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="ui-input"
             >
               {SIGNUP_ROLES.map((role) => (
                 <option key={role} value={role}>{labels.role(role)}</option>
@@ -319,7 +309,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            className="ui-button ui-button-primary w-full"
           >
             {loading ? (
               <>
@@ -335,13 +325,12 @@ export default function Register() {
         <div className="text-center">
           <p className="text-sm text-gray-600 dark:text-gray-300">
             {t('register.alreadyHaveAccount')}{' '}
-            <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+            <Link to="/login" className="text-[var(--workspace-accent)] hover:underline font-medium">
               {t('register.signIn')}
             </Link>
           </p>
         </div>
-      </div>
-    </div>
+    </AuthShell>
   )
 }
 
