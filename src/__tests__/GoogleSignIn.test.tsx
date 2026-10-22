@@ -75,3 +75,21 @@ it('keeps the session empty if the signed-in profile cannot be loaded', async ()
   expect(useAuthStore.getState().token).toBeNull()
   expect(localStorage.getItem('auth_refresh_token')).toBeNull()
 })
+
+it('asks a linked Google-only account for TOTP without an Xtrix password or new consent', async () => {
+  vi.mocked(api.post).mockImplementation(async (url, body) => {
+    if (url === '/auth/google/nonce') return { data: { nonce: 'server-nonce', expires_in: 600 } }
+    return (body as { totp_token?: string }).totp_token
+      ? { data: { access_token: 'access', refresh_token: 'refresh' } }
+      : { data: { requires_2fa: true } }
+  })
+  mount(); await googleReturnsCredential()
+  await userEvent.type(await screen.findByLabelText('Authentication code'), '123456')
+  expect(screen.queryByLabelText('Your Xtrix account password')).not.toBeInTheDocument()
+  expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+  await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
+  expect(api.post).toHaveBeenLastCalledWith('/auth/google/login', {
+    credential: 'signed-google-credential', nonce: 'server-nonce', role: 'business_owner', totp_token: '123456',
+  })
+  expect(await screen.findByRole('heading', { name: 'Workspace' })).toBeInTheDocument()
+})
