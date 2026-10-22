@@ -92,7 +92,7 @@ test('finance period, ledger category, real export and confirmed deletion retain
 
 const copy = {
   en: { title: 'Financial Reports', from: 'Date From', to: 'Date To', ledger: 'Expenses List', category: 'Category', payments: 'Payments volume' },
-  ru: { title: 'Финансовая отчетность', from: 'Дата от', to: 'Дата до', ledger: 'Список расходов', category: 'Категория', payments: 'Объем платежей' },
+  ru: { title: 'Финансовые отчёты', from: 'Дата от', to: 'Дата до', ledger: 'Список расходов', category: 'Категория', payments: 'Объем платежей' },
   cz: { title: 'Finanční zprávy', from: 'Datum od', to: 'Datum do', ledger: 'Seznam výdajů', category: 'Kategorie', payments: 'Objem plateb' },
 } as const
 
