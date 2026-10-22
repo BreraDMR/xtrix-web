@@ -1,6 +1,6 @@
 import { allPages } from '../api/allPages'
 import QueryError from '../components/QueryError'
-import { useState, FormEvent } from 'react'
+import { useState, useId, FormEvent } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { useTranslation } from '../hooks/useTranslation'
@@ -16,16 +16,22 @@ import ServicePayments from '../components/payments/ServicePayments'
 import { dayEnd, dayNoon, dayStart, today } from '../utils/dates'
 import { useLabels } from '../i18n/labels'
 import type { Schema } from '../api/types'
+import Card from '../ui/Card'
+import Input from '../ui/Input'
+import Select from '../ui/Select'
+import Button from '../ui/Button'
+import { HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi'
 
 // system categories and automatic expenses come with codes (category.code, source) we translate
 type Expense = Schema<'ExpenseOut'>
 type ExpenseCategory = Schema<'ExpenseCategoryOut'>
 type NewExpense = Omit<Schema<'ExpenseCreate'>, 'business_id'>
-// /expenses/reports/profit has no response model in the contract, this is one row of its expenses_by_category
+// one row from the profit report's expenses_by_category
 type CategoryTotal = { category_id: number; category_name: string; category_code: string | null; color: string | null; total: number }
 
 export default function Finance() {
   const { t } = useTranslation()
+  const pageId = useId()
   const labels = useLabels()
   const expenseText = (expense: Expense) => {
     const source = labels.expenseSource(expense.source)
@@ -111,71 +117,60 @@ export default function Finance() {
   const retryQueries = () => { void retryQuery0(); void retryQuery1(); void retryQuery2(); void retryQuery3() }
 
   return (
-    <div className="animate-fade-in">
-      <div className="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 dark:text-gray-100">{t('finance.title')}</h1>
-          <p className="text-gray-600 dark:text-gray-400">{t('finance.subtitle')}</p>
+    <div className="space-y-5">
+      <div className="page-toolbar">
+        <div className="min-w-0">
+          <h1 className="page-title">{t('finance.title')}</h1>
+          <p className="page-subtitle">{t('finance.subtitle')}</p>
         </div>
         {(user?.role === 'admin' || user?.role === 'business_owner') && (
-          <button
-            onClick={() => setShowAddExpense(true)}
-            className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
-          >
-            {t('finance.add_expense')}
-          </button>
+          <Button onClick={() => setShowAddExpense(true)} className="shrink-0"><HiOutlinePlus />{t('finance.add_expense')}</Button>
         )}
       </div>
 
-      {}
-
-      {(queryError0 || queryError1 || queryError2 || queryError3) && <QueryError retry={retryQueries} />}
-      <ServicePayments />
-
-      <div className="bg-white p-4 rounded-lg shadow-md mb-6 dark:bg-gray-800">
-        <div className="flex flex-wrap gap-4 items-end">
-          <div className="min-w-0 w-full sm:w-auto">
-            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('finance.date_from')}</label>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="min-w-0 w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
-            />
+      <Card className="p-4">
+        <div className="grid max-w-lg grid-cols-2 gap-3">
+          <div className="min-w-0">
+            <label htmlFor={`${pageId}-from`} className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">{t('finance.date_from')}</label>
+            <Input id={`${pageId}-from`} type="date" value={dateFrom} onChange={event => setDateFrom(event.target.value)} className="min-w-0 max-w-full" />
           </div>
-          <div className="min-w-0 w-full sm:w-auto">
-            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('finance.date_to')}</label>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="min-w-0 w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
-            />
-          </div>
-          <div className="min-w-0 w-full sm:w-auto">
-            <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('finance.category')}</label>
-            <select
-              value={selectedCategory || ''}
-              onChange={(e) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}
-              className="min-w-0 w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
-            >
-              <option value="">{t('finance.all_categories')}</option>
-              {categories?.map((cat: ExpenseCategory) => (
-                <option key={cat.id} value={cat.id}>
-                  {labels.expenseCategory(cat)}
-                </option>
-              ))}
-            </select>
+          <div className="min-w-0">
+            <label htmlFor={`${pageId}-to`} className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">{t('finance.date_to')}</label>
+            <Input id={`${pageId}-to`} type="date" value={dateTo} onChange={event => setDateTo(event.target.value)} className="min-w-0 max-w-full" />
           </div>
         </div>
-      </div>
+      </Card>
 
-      {}
-      {!isLoadingPayments && paymentStats && (
-        <div className="mb-6">
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700" id="payment-chart">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('finance.payments_volume')}</h3>
+      {(queryError0 || queryError1 || queryError2 || queryError3) && <QueryError retry={retryQueries} />}
+
+      {isLoadingProfit ? <LoadingSpinner /> : profitReport ? (
+        <Card>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-5 p-5 xl:grid-cols-4">
+            <div className="min-w-0">
+              <dt className="text-xs text-[var(--workspace-muted)]">{t('finance.revenue')}</dt>
+              <dd className="mt-2 text-xl font-semibold tabular-nums [overflow-wrap:anywhere] xl:text-2xl">{formatCurrency(profitReport.revenue, currency)}</dd>
+            </div>
+            <div className="min-w-0">
+              <dt className="text-xs text-[var(--workspace-muted)]">{t('finance.expenses')}</dt>
+              <dd className="mt-2 text-xl font-semibold tabular-nums [overflow-wrap:anywhere] xl:text-2xl">{formatCurrency(profitReport.expenses, currency)}</dd>
+            </div>
+            <div className="min-w-0">
+              <dt className="text-xs text-[var(--workspace-muted)]">{t('finance.profit')}</dt>
+              <dd className={`mt-2 text-xl font-semibold tabular-nums [overflow-wrap:anywhere] xl:text-2xl ${(profitReport.profit || 0) >= 0 ? 'text-[var(--workspace-accent)]' : 'text-red-600 dark:text-red-400'}`}>{formatCurrency(profitReport.profit, currency)}</dd>
+            </div>
+            <div className="min-w-0">
+              <dt className="text-xs text-[var(--workspace-muted)]">{t('finance.profit_margin')}</dt>
+              <dd className={`mt-2 text-xl font-semibold tabular-nums [overflow-wrap:anywhere] xl:text-2xl ${(profitReport.profit_margin || 0) >= 0 ? 'text-[var(--workspace-accent)]' : 'text-red-600 dark:text-red-400'}`}>{profitReport.profit_margin?.toFixed(2) || '0.00'}%</dd>
+            </div>
+          </dl>
+        </Card>
+      ) : null}
+
+      <div className="grid items-start gap-4 xl:grid-cols-2">
+        {!isLoadingPayments && paymentStats && (
+          <Card id="payment-chart" role="region" aria-labelledby={`${pageId}-payments`} className="min-w-0 p-4 sm:p-5">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <h2 id={`${pageId}-payments`} className="text-sm font-semibold">{t('finance.payments_volume')}</h2>
               <ExportButton
                 data={[
                   {
@@ -216,8 +211,8 @@ export default function Finance() {
                 chartSelectors={['#payment-chart']}
               />
             </div>
-            <div className="flex items-center gap-8">
-              <div className="flex-shrink-0">
+            <div className="flex min-w-0 flex-col items-center gap-5 sm:flex-row">
+              <div className="shrink-0">
                 <ResponsiveContainer width={140} height={140}>
                   <PieChart>
                     <Pie
@@ -234,129 +229,59 @@ export default function Finance() {
                       endAngle={-270}
                       dataKey="value"
                     >
-                      <Cell fill="#EC4899" />
-                      <Cell fill="#10B981" />
-                      <Cell fill="#F3F4F6" />
+                      <Cell fill="#3F6D54" />
+                      <Cell fill="#94A78C" />
+                      <Cell fill="#D2C8B8" />
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex-1">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-pink-500 rounded"></div>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('finance.payment_card')}</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {formatCurrency(paymentStats.card_payments?.total || 0, currency)}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {Math.round(paymentStats.card_payments?.percentage || 0)}% ({paymentStats.card_payments?.count || 0})
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-green-500 rounded"></div>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('finance.payment_cash')}</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {formatCurrency(paymentStats.cash_payments?.total || 0, currency)}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {Math.round(paymentStats.cash_payments?.percentage || 0)}% ({paymentStats.cash_payments?.count || 0})
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-gray-300 rounded dark:bg-gray-600"></div>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">{t('finance.payment_other')}</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {formatCurrency(paymentStats.other_payments?.total || 0, currency)}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {Math.round(paymentStats.other_payments?.percentage || 0)}% ({paymentStats.other_payments?.count || 0})
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('finance.total')}</span>
-                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                      {formatCurrency(paymentStats.total_payments || 0, currency)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1 dark:text-gray-400">
-                    {paymentStats.total_count || 0} {t('finance.completed')}
-                  </p>
+              <div className="w-full min-w-0 flex-1">
+                <dl className="space-y-3">
+                  {[
+                    { label: t('finance.payment_card'), color: '#3F6D54', stats: paymentStats.card_payments },
+                    { label: t('finance.payment_cash'), color: '#94A78C', stats: paymentStats.cash_payments },
+                    { label: t('finance.payment_other'), color: '#D2C8B8', stats: paymentStats.other_payments },
+                  ].map(method => <div key={method.label} className="flex items-start justify-between gap-3">
+                    <dt className="flex min-w-0 items-center gap-2 text-xs text-[var(--workspace-muted)]"><span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ backgroundColor: method.color }} />{method.label}</dt>
+                    <dd className="text-right tabular-nums">
+                      <p className="text-sm font-medium">{formatCurrency(method.stats?.total || 0, currency)}</p>
+                      <p className="mt-0.5 text-xs text-[var(--workspace-muted)]">{Math.round(method.stats?.percentage || 0)}% ({method.stats?.count || 0})</p>
+                    </dd>
+                  </div>)}
+                </dl>
+                <div className="mt-4 flex items-start justify-between gap-3 border-t border-[var(--workspace-line)] pt-3">
+                  <div><p className="text-xs text-[var(--workspace-muted)]">{t('finance.total')}</p><p className="mt-1 text-xs text-[var(--workspace-muted)]">{paymentStats.total_count || 0} {t('finance.completed')}</p></div>
+                  <p className="text-lg font-semibold tabular-nums">{formatCurrency(paymentStats.total_payments || 0, currency)}</p>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </Card>
+        )}
 
-      {}
-      {isLoadingProfit ? (
-        <LoadingSpinner />
-      ) : profitReport ? (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('finance.revenue')}</h3>
-            <p className="text-3xl font-bold text-green-600">{formatCurrency(profitReport.revenue, currency)}</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('finance.expenses')}</h3>
-            <p className="text-3xl font-bold text-red-600">{formatCurrency(profitReport.expenses, currency)}</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('finance.profit')}</h3>
-            <p className={`text-3xl font-bold ${(profitReport.profit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {formatCurrency(profitReport.profit, currency)}
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('finance.profit_margin')}</h3>
-            <p className={`text-3xl font-bold ${(profitReport.profit_margin || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {profitReport.profit_margin?.toFixed(2) || '0.00'}%
-            </p>
-          </div>
-        </div>
-      ) : null}
+        {profitReport?.expenses_by_category && profitReport.expenses_by_category.length > 0 && (
+          <Card className="min-w-0 p-4 sm:p-5" role="region" aria-labelledby={`${pageId}-categories`}>
+            <h2 id={`${pageId}-categories`} className="mb-4 text-sm font-semibold">{t('finance.expenses_by_category')}</h2>
+            <dl className="divide-y divide-[var(--workspace-line)]">
+              {(profitReport.expenses_by_category as CategoryTotal[]).map(item => <div key={item.category_id} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
+                <dt className="flex min-w-0 items-center gap-2 text-sm"><span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ backgroundColor: item.color || '#6B7280' }} /><span className="[overflow-wrap:anywhere]">{labels.expenseCategory({ code: item.category_code, name: item.category_name })}</span></dt>
+                <dd className="shrink-0 text-sm font-medium tabular-nums">{formatCurrency(item.total, currency)}</dd>
+              </div>)}
+            </dl>
+          </Card>
+        )}
+      </div>
 
-      {}
-      {profitReport?.expenses_by_category && profitReport.expenses_by_category.length > 0 && (
-        <div className="bg-white p-6 rounded-xl shadow-md mb-6 dark:bg-gray-800">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 dark:text-gray-100">{t('finance.expenses_by_category')}</h2>
-          <div className="space-y-3">
-            {(profitReport.expenses_by_category as CategoryTotal[]).map((item) => (
-              <div key={item.category_id} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-4 h-4 rounded"
-                    style={{ backgroundColor: item.color || '#6B7280' }}
-                  />
-                  <span className="font-medium">{labels.expenseCategory({ code: item.category_code, name: item.category_name })}</span>
-                </div>
-                <span className="font-bold text-red-600">{formatCurrency(item.total, currency)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden dark:bg-gray-800">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('finance.expenses_list')}</h2>
-          {expenseRows.length > 0 && !queryError1 && !isLoadingExpenses && (
+      <Card className="overflow-hidden" role="region" aria-labelledby={`${pageId}-expenses`}>
+        <div className="flex flex-wrap items-center gap-3 border-b border-[var(--workspace-line)] p-4">
+          <h2 id={`${pageId}-expenses`} className="text-sm font-semibold">{t('finance.expenses_list')}</h2>
+          <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
+            <label htmlFor={`${pageId}-category`} className="text-xs text-[var(--workspace-muted)]">{t('finance.category')}</label>
+            <Select id={`${pageId}-category`} value={selectedCategory || ''} onChange={event => setSelectedCategory(event.target.value ? parseInt(event.target.value) : null)} className="w-auto max-w-full">
+              <option value="">{t('finance.all_categories')}</option>
+              {categories?.map((category: ExpenseCategory) => <option key={category.id} value={category.id}>{labels.expenseCategory(category)}</option>)}
+            </Select>
+            {expenseRows.length > 0 && !queryError1 && !isLoadingExpenses && (
             <ExportButton
               data={expenseRows}
               columns={[
@@ -372,80 +297,43 @@ export default function Finance() {
               dataType={(dateFrom || dateTo || selectedCategory) ? 'filtered' : 'all'}
               includeCharts={false}
             />
-          )}
+            )}
+          </div>
         </div>
-        {queryError1 ? null : isLoadingExpenses ? (
-          <div className="p-8 text-center">
-            <LoadingSpinner />
-          </div>
-        ) : expenseRows.length === 0 ? (
-          <div className="p-8 text-center text-gray-500 dark:text-gray-400">{t('finance.no_expenses')}</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-900">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">{t('finance.date')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">{t('finance.category')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">{t('finance.description')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">{t('finance.amount')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">{t('finance.payment_method')}</th>
-                  {(user?.role === 'admin' || user?.role === 'business_owner') && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">{t('finance.actions')}</th>
-                  )}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                {expenseRows.map((expense) => (
-                  <tr key={expense.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                      {new Date(expense.expense_date).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {expense.category ? (
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-3 h-3 rounded"
-                            style={{ backgroundColor: expense.category.color || '#6B7280' }}
-                          />
-                          <span className="text-sm text-gray-900 dark:text-gray-100">{labels.expenseCategory(expense.category)}</span>
-                        </div>
-                      ) : (
-                        <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                      {expenseText(expense)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
-                      {expense.amount.toFixed(2)} {expense.currency}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {expense.payment_method}
-                    </td>
-                    {(user?.role === 'admin' || user?.role === 'business_owner') && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => {
-                            if (confirm(t('finance.confirm_delete'))) {
-                              deleteMutation.mutate(expense.id)
-                            }
-                          }}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          {t('common.delete')}
-                        </button>
-                      </td>
-                    )}
+        {queryError1 ? null : isLoadingExpenses ? <div className="p-8 text-center"><LoadingSpinner /></div>
+          : expenseRows.length === 0 ? <div className="p-8 text-center text-sm text-[var(--workspace-muted)]">{t('finance.no_expenses')}</div>
+            : <div className="overflow-x-auto">
+              <table className="w-full table-fixed">
+                <thead className="bg-[var(--workspace-bg)] text-left text-xs font-medium text-[var(--workspace-muted)]">
+                  <tr>
+                    <th className="px-4 py-3 sm:px-5">{t('finance.description')}</th>
+                    <th className="w-28 px-3 py-3 text-right sm:w-36 sm:px-5">{t('finance.amount')}</th>
+                    {(user?.role === 'admin' || user?.role === 'business_owner') && <th className="w-12 px-1 py-3 text-right sm:w-20 sm:px-4">{t('finance.actions')}</th>}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                </thead>
+                <tbody className="divide-y divide-[var(--workspace-line)]">
+                  {expenseRows.map(expense => <tr key={expense.id} className="hover:bg-[var(--workspace-bg)]">
+                    <td className="px-4 py-3 sm:px-5">
+                      <p className="text-sm font-medium [overflow-wrap:anywhere]">{expenseText(expense)}</p>
+                      <dl className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--workspace-muted)]">
+                        <div><dt className="sr-only">{t('finance.date')}</dt><dd>{new Date(expense.expense_date).toLocaleDateString()}</dd></div>
+                        <div><dt className="sr-only">{t('finance.category')}</dt><dd className="flex items-center gap-1.5 [overflow-wrap:anywhere]">{expense.category ? <><span className="h-2 w-2 shrink-0 rounded-sm" style={{ backgroundColor: expense.category.color || '#6B7280' }} />{labels.expenseCategory(expense.category)}</> : '-'}</dd></div>
+                        <div><dt className="sr-only">{t('finance.payment_method')}</dt><dd>{expense.payment_method}</dd></div>
+                      </dl>
+                    </td>
+                    <td className="px-3 py-3 text-right align-top text-sm font-medium tabular-nums [overflow-wrap:anywhere] sm:px-5">{expense.amount.toFixed(2)} {expense.currency}</td>
+                    {(user?.role === 'admin' || user?.role === 'business_owner') && <td className="px-1 py-3 text-right align-top sm:px-4">
+                      <Button variant="quiet" aria-label={t('common.delete')} title={t('common.delete')} className="min-h-8 px-1.5 py-1 text-red-600 dark:text-red-400"
+                        onClick={() => { if (confirm(t('finance.confirm_delete'))) deleteMutation.mutate(expense.id) }}><HiOutlineTrash /></Button>
+                    </td>}
+                  </tr>)}
+                </tbody>
+              </table>
+            </div>}
+      </Card>
 
-      {}
+      <ServicePayments />
+
       {showAddExpense && (
         <ExpenseForm
           categories={categories || []}
