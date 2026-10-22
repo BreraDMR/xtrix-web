@@ -238,7 +238,7 @@ test('a confirmed campaign reaches only consented clients and revocation wins', 
 
   const name = unique('Winback')
   await openAs(page, salon.owner, '/app/campaigns')
-  await expect(page.getByRole('heading', { name: 'Campaigns' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Campaigns', level: 1 })).toBeVisible()
   const campaign = await createDraftThroughUi(page, {
     name,
     subject: 'We miss you, {name}',

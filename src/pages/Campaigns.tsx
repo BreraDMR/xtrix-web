@@ -387,7 +387,6 @@ export default function Campaigns() {
             icon={<HiOutlineSpeakerphone className="h-10 w-10" />}
             title={t('campaigns.emptyTitle')}
             description={t('campaigns.emptyHint')}
-            action={<Button onClick={openCreate}>{t('campaigns.new')}</Button>}
           />
         </Card>
       ) : (
