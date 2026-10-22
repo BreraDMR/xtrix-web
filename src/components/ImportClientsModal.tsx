@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { HiX, HiUpload, HiCheckCircle, HiXCircle, HiExclamationCircle } from 'react-icons/hi'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
+import { useAuthStore } from '../store/authStore'
 import { apiClientExists, apiErrorMessage } from '../api/errors'
 import * as XLSX from 'xlsx'
 import type { ClientOut, ClientPage } from '../api/types'
@@ -192,6 +193,8 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
       }
     }
 
+    const revision = useAuthStore.getState().sessionRevision
+    const sameSession = () => useAuthStore.getState().sessionRevision === revision
     setIsImporting(true)
     setImportResult(null)
 
@@ -208,39 +211,45 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
         .map((client) => client.row)
     )
 
-    for (const client of parsedData) {
-      if (!validRows.has(client.row)) {
-        result.skipped++
-        continue
-      }
-
-      try {
-        await api.post('/clients/', {
-          full_name: client.full_name.trim(),
-          contact_phone: client.contact_phone?.trim() || undefined,
-          contact_email: client.contact_email?.trim() || undefined,
-        })
-        result.success++
-      } catch (error) {
-        result.skipped++
-        const duplicate = apiClientExists(error)
-        if (duplicate) {
-          result.existing.push({ row: client.row, clientId: duplicate.existingClientId })
+    try {
+      for (const client of parsedData) {
+        if (!sameSession()) return
+        if (!validRows.has(client.row)) {
+          result.skipped++
           continue
         }
-        result.errors.push({
-          row: client.row,
-          message:
-            apiErrorMessage(error, t('import.importError')),
-        })
+
+        try {
+          await api.post('/clients/', {
+            full_name: client.full_name.trim(),
+            contact_phone: client.contact_phone?.trim() || undefined,
+            contact_email: client.contact_email?.trim() || undefined,
+          })
+          result.success++
+        } catch (error) {
+          if (!sameSession()) return
+          result.skipped++
+          const duplicate = apiClientExists(error)
+          if (duplicate) {
+            result.existing.push({ row: client.row, clientId: duplicate.existingClientId })
+            continue
+          }
+          result.errors.push({
+            row: client.row,
+            message:
+              apiErrorMessage(error, t('import.importError')),
+          })
+        }
       }
+
+      if (!sameSession()) return
+      setImportResult(result)
+
+      queryClient.invalidateQueries({ queryKey: ['clients'] })
+      queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
+    } finally {
+      setIsImporting(false)
     }
-
-    setImportResult(result)
-    setIsImporting(false)
-
-    queryClient.invalidateQueries({ queryKey: ['clients'] })
-    queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }
 
   const handleReset = () => {

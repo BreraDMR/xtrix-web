@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useAuthStore } from '../store/authStore'
 import ImportClientsModal from '../components/ImportClientsModal'
 import * as XLSX from 'xlsx'
 import api from '../api/client'
@@ -123,6 +124,26 @@ describe('ImportClientsModal', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
     expect(screen.queryByRole('button', { name: /import \(/i })).not.toBeInTheDocument()
     expect(api.post).not.toHaveBeenCalled()
+  })
+
+  it.each(['account', 'logout', 'refresh'] as const)('keeps a running import inside its original session after %s', async change => {
+    let completeFirst!: (value: { data: { id: number } }) => void
+    vi.mocked(api.post).mockImplementationOnce(() => new Promise(resolve => { completeFirst = resolve }))
+      .mockResolvedValue({ data: { id: 9 } })
+    const { container, queryClient } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} />)
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
+    await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,
+      sheet([['Name', 'Email'], ['First Person', 'first@example.cz'], ['Second Person', 'second@example.cz']]))
+    await userEvent.click(await screen.findByRole('button', { name: /import \(2\)/i }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledTimes(1))
+    act(() => {
+      if (change === 'account') useAuthStore.getState().setAuth('other-token', { id: 9, role: 'business_owner', full_name: 'Other owner', business_id: 9, employer_id: null })
+      else if (change === 'logout') useAuthStore.getState().logout()
+      else useAuthStore.getState().setToken('rotated-token')
+    })
+    await act(async () => { completeFirst({ data: { id: 8 } }); await Promise.resolve() })
+    expect(api.post).toHaveBeenCalledTimes(change === 'refresh' ? 2 : 1)
+    if (change !== 'refresh') expect(invalidate).not.toHaveBeenCalled()
   })
 
   it('says so inline when the sheet has no name column and lets them pick another file', async () => {
