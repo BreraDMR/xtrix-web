@@ -169,7 +169,7 @@ export function printElement(selector?: string): void {
           body { font-family: Arial, sans-serif; padding: 20px; }
           table { border-collapse: collapse; width: 100%; }
           th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-          th { background-color: #8b5cf6; color: white; }
+          th { background-color: #245f4b; color: white; }
         </style>
       </head>
       <body>
