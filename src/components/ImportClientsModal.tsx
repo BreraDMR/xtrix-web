@@ -6,6 +6,7 @@ import api from '../api/client'
 import { apiClientExists, apiErrorMessage } from '../api/errors'
 import * as XLSX from 'xlsx'
 import type { ClientOut, ClientPage } from '../api/types'
+import { allPages } from '../api/allPages'
 import FormError from './FormError'
 
 interface ImportClientsModalProps {
@@ -44,7 +45,6 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
   const [isImporting, setIsImporting] = useState(false)
   const [importResult, setImportResult] = useState<ImportResult | null>(null)
-  const [existingClients, setExistingClients] = useState<Set<string>>(new Set())
   const [fileError, setFileError] = useState('')
 
   // a file we can't use: say why and let them pick another one
@@ -55,22 +55,15 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
   }
 
   const loadExistingClients = async () => {
-    try {
-      const { data } = await api.get<ClientPage | ClientOut[]>('/clients/')
-      const clients = Array.isArray(data) ? data : data?.items || []
-      const phoneEmailSet = new Set<string>()
-      clients.forEach((client) => {
-        if (client.contact_phone) {
-          phoneEmailSet.add(`phone:${client.contact_phone}`)
-        }
-        if (client.contact_email) {
-          phoneEmailSet.add(`email:${client.contact_email}`)
-        }
-      })
-      setExistingClients(phoneEmailSet)
-    } catch (error) {
-      console.error('Error loading existing clients:', error)
+    const clients = await allPages<ClientOut>(async page => (await api.get<ClientPage>('/clients/', {
+      params: { page, per_page: 100 },
+    })).data)
+    const contacts = new Set<string>()
+    for (const client of clients) {
+      if (client.contact_phone) contacts.add(`phone:${normalizePhone(client.contact_phone)}`)
+      if (client.contact_email) contacts.add(`email:${normalizeEmail(client.contact_email)}`)
     }
+    return contacts
   }
 
   const validateEmail = (email: string): boolean => {
@@ -93,89 +86,30 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
     return email.trim().toLowerCase()
   }
 
-  const validateData = (data: ParsedClient[]): ValidationError[] => {
+  const validateData = (data: ParsedClient[], existingContacts: Set<string>): ValidationError[] => {
     const errors: ValidationError[] = []
-    const seenPhones = new Map<number, string>()
-    const seenEmails = new Map<number, string>()
+    const seenPhones = new Set<string>()
+    const seenEmails = new Set<string>()
 
-    data.forEach((client, index) => {
+    for (const client of data) {
       const row = client.row
-
-      if (!client.full_name || !client.full_name.trim()) {
-        errors.push({
-          row,
-          field: 'full_name',
-          message: t('import.nameRequired'),
-        })
+      const addError = (field: string, message: string) => errors.push({ row, field, message })
+      if (!client.full_name.trim()) addError('full_name', t('import.nameRequired'))
+      if (client.contact_email && !validateEmail(client.contact_email)) addError('contact_email', t('import.invalidEmail'))
+      if (client.contact_phone && !validatePhone(client.contact_phone)) addError('contact_phone', t('import.invalidPhone'))
+      const phone = client.contact_phone ? normalizePhone(client.contact_phone) : ''
+      const email = client.contact_email ? normalizeEmail(client.contact_email) : ''
+      if (phone && existingContacts.has(`phone:${phone}`)) addError('contact_phone', t('import.duplicateExists'))
+      if (email && existingContacts.has(`email:${email}`)) addError('contact_email', t('import.duplicateExists'))
+      // Only a usable row claims its contacts. An invalid row must not hide a later valid one.
+      if (errors.some(error => error.row === row)) continue
+      if (phone && seenPhones.has(phone)) addError('contact_phone', t('import.duplicateInFile'))
+      if (email && seenEmails.has(email)) addError('contact_email', t('import.duplicateInFile'))
+      if (!errors.some(error => error.row === row)) {
+        if (phone) seenPhones.add(phone)
+        if (email) seenEmails.add(email)
       }
-
-      if (client.contact_email && !validateEmail(client.contact_email)) {
-        errors.push({
-          row,
-          field: 'contact_email',
-          message: t('import.invalidEmail'),
-        })
-      }
-
-      if (client.contact_phone && !validatePhone(client.contact_phone)) {
-        errors.push({
-          row,
-          field: 'contact_phone',
-          message: t('import.invalidPhone'),
-        })
-      }
-
-      if (client.contact_phone) {
-        const normalized = normalizePhone(client.contact_phone)
-        const existing = seenPhones.get(index)
-        if (existing) {
-          errors.push({
-            row,
-            field: 'contact_phone',
-            message: t('import.duplicateInFile'),
-          })
-        } else {
-          seenPhones.set(index, normalized)
-        }
-      }
-
-      if (client.contact_email) {
-        const normalized = normalizeEmail(client.contact_email)
-        const existing = seenEmails.get(index)
-        if (existing) {
-          errors.push({
-            row,
-            field: 'contact_email',
-            message: t('import.duplicateInFile'),
-          })
-        } else {
-          seenEmails.set(index, normalized)
-        }
-      }
-
-      if (client.contact_phone) {
-        const normalized = normalizePhone(client.contact_phone)
-        if (existingClients.has(`phone:${normalized}`)) {
-          errors.push({
-            row,
-            field: 'contact_phone',
-            message: t('import.duplicateExists'),
-          })
-        }
-      }
-
-      if (client.contact_email) {
-        const normalized = normalizeEmail(client.contact_email)
-        if (existingClients.has(`email:${normalized}`)) {
-          errors.push({
-            row,
-            field: 'contact_email',
-            message: t('import.duplicateExists'),
-          })
-        }
-      }
-    })
-
+    }
     return errors
   }
 
@@ -234,10 +168,15 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
         })
       }
 
+      let existingContacts: Set<string>
+      try {
+        existingContacts = await loadExistingClients()
+      } catch {
+        rejectFile(t('common.loadError'))
+        return
+      }
+      const errors = validateData(parsed, existingContacts)
       setParsedData(parsed)
-
-      await loadExistingClients()
-      const errors = validateData(parsed)
       setValidationErrors(errors)
     } catch (error) {
       console.error('Error parsing file:', error)
@@ -309,7 +248,6 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
     setParsedData([])
     setValidationErrors([])
     setImportResult(null)
-    setExistingClients(new Set())
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }

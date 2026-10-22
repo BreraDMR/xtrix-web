@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import ImportClientsModal from '../components/ImportClientsModal'
 import * as XLSX from 'xlsx'
 import api from '../api/client'
-import { apiError, renderWithProviders, resetStores, signIn } from '../test/render'
+import { apiError, renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn() } }))
 
@@ -23,7 +23,7 @@ describe('ImportClientsModal', () => {
     vi.clearAllMocks()
     resetStores()
     signIn({ id: 2, role: 'business_owner', business_id: 1 })
-    vi.mocked(api.get).mockResolvedValue({ data: { items: [] } })
+    vi.mocked(api.get).mockImplementation(routes({ '/clients/': [] }))
   })
 
   it('lists rows the API already has and offers to open that client', async () => {
@@ -63,6 +63,66 @@ describe('ImportClientsModal', () => {
     } finally {
       confirmImport.mockRestore()
     }
+  })
+
+  it('checks normalized contacts beyond the first hundred before showing the first preview', async () => {
+    const clients = Array.from({ length: 125 }, (_, i) => ({ id: i + 1,
+      full_name: `Guest ${i + 1}`, contact_email: `GUEST${i + 1}@EXAMPLE.CZ`, contact_phone: i === 124 ? '+420 123 456 789' : undefined }))
+    vi.mocked(api.get).mockImplementation(routes({ '/clients/': clients }))
+    vi.mocked(api.post).mockResolvedValue({ data: { id: 999 } })
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    try {
+      const { container } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} />)
+      await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,
+        sheet([['Name', 'Phone', 'Email'], ['Duplicate email', '', 'guest125@example.cz'],
+          ['Duplicate phone', '+420123456789', ''], ['New Person', '', 'new@example.cz']]))
+      await userEvent.click(await screen.findByRole('button', { name: /import \(1\)/i }))
+      await waitFor(() => expect(api.post).toHaveBeenCalledTimes(1))
+      expect(api.post).toHaveBeenCalledWith('/clients/', { full_name: 'New Person', contact_phone: undefined, contact_email: 'new@example.cz' })
+    } finally { confirm.mockRestore() }
+  })
+
+  it('detects duplicate contacts inside the sheet and imports only their first row', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: { id: 999 } })
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    try {
+      const { container } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} />)
+      await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,
+        sheet([['Name', 'Phone', 'Email'], ['First Person', '+420123456789', 'first@example.cz'],
+          ['Repeated phone', '+420 123 456 789', ''], ['Repeated email', '', 'FIRST@example.cz']]))
+      await userEvent.click(await screen.findByRole('button', { name: /import \(1\)/i }))
+      await waitFor(() => expect(api.post).toHaveBeenCalledTimes(1))
+      expect(api.post).toHaveBeenCalledWith('/clients/', { full_name: 'First Person', contact_phone: '+420123456789', contact_email: 'first@example.cz' })
+    } finally { confirm.mockRestore() }
+  })
+
+  it('keeps a valid later contact when its earlier row is invalid', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: { id: 999 } })
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    try {
+      const { container } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} />)
+      await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,
+        sheet([['Name', 'Phone', 'Email'], ['Bad row', '+420123456789', 'bad-email'],
+          ['Good row', '+420123456789', 'good@example.cz']]))
+      await userEvent.click(await screen.findByRole('button', { name: /import \(1\)/i }))
+      await waitFor(() => expect(api.post).toHaveBeenCalledTimes(1))
+      expect(api.post).toHaveBeenCalledWith('/clients/', { full_name: 'Good row', contact_phone: '+420123456789', contact_email: 'good@example.cz' })
+    } finally { confirm.mockRestore() }
+  })
+
+  it('does not offer import when a later directory page cannot be checked', async () => {
+    const clients = Array.from({ length: 125 }, (_, i) => ({ id: i + 1, full_name: `Guest ${i + 1}` }))
+    const read = routes({ '/clients/': clients })
+    vi.mocked(api.get).mockImplementation((url, config) => {
+      if ((config?.params as { page?: number } | undefined)?.page === 2) return Promise.reject(apiError(500, 'Unavailable'))
+      return read(url, config)
+    })
+    const { container } = renderWithProviders(<ImportClientsModal isOpen onClose={() => {}} />)
+    await userEvent.upload(container.querySelector('input[type="file"]') as HTMLInputElement,
+      sheet([['Name', 'Email'], ['New Person', 'new@example.cz']]))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
+    expect(screen.queryByRole('button', { name: /import \(/i })).not.toBeInTheDocument()
+    expect(api.post).not.toHaveBeenCalled()
   })
 
   it('says so inline when the sheet has no name column and lets them pick another file', async () => {
