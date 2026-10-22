@@ -8,6 +8,12 @@ import { enUS } from 'date-fns/locale'
 import api from '../api/client'
 import VisitForm from '../components/VisitForm'
 import Input from '../ui/Input'
+import Select from '../ui/Select'
+import Button from '../ui/Button'
+import Card from '../ui/Card'
+import SidePanel from '../ui/SidePanel'
+import { HiOutlinePencil, HiOutlinePlus } from 'react-icons/hi'
+import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
@@ -29,6 +35,8 @@ export default function Visits() {
   const { t } = useTranslation()
   const locale = useLocaleStore((state) => state.locale)
   const currency = useBusinessCurrency()
+  const access = useWorkspaceAccessContext()
+  const canEdit = access === undefined || access?.crm_mode === 'full'
   
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
   
@@ -88,9 +96,20 @@ export default function Visits() {
     setCurrentPage(1)
   }
 
-  const handleSuccess = () => {
+  const closeForm = () => {
     setShowForm(false)
     setEditingId(undefined)
+  }
+
+  useEffect(() => {
+    if (!canEdit) {
+      setShowForm(false)
+      setEditingId(undefined)
+    }
+  }, [canEdit])
+
+  const handleSuccess = () => {
+    closeForm()
     queryClient.invalidateQueries({ queryKey: ['visits'] })
     queryClient.invalidateQueries({ queryKey: ['visits-statistics'] })
     queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
@@ -101,238 +120,155 @@ export default function Visits() {
     setShowForm(true)
   }
 
+  const statusClass = (status: Visit['status']) => {
+    switch (status) {
+      case 'planned': return 'bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-200'
+      case 'in_progress': return 'bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-200'
+      case 'completed': return 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]'
+      default: return 'bg-[var(--workspace-bg)] text-[var(--workspace-muted)]'
+    }
+  }
+  const hasFilters = Boolean(searchQuery || statusFilter || dateFrom || dateTo)
+  const columnCount = canEdit ? 6 : 5
+
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold">{t('visits.title')}</h1>
-        {!showForm && (
-          <button
-            onClick={() => {
-              setEditingId(undefined)
-              setShowForm(true)
-            }}
-            className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
-          >
-            {t('visits.newVisit')}
-          </button>
-        )}
+    <div className="min-w-0 text-[var(--workspace-ink)]">
+      <div className="page-toolbar">
+        <h1 className="page-title">{t('visits.title')}</h1>
+        <div className="page-actions">
+          {!isError && !isLoading && totalItems > 0 && (
+            <ExportButton
+              data={paginatedData}
+              totalItems={totalItems}
+              loadData={loadExport}
+              columns={[
+                { key: 'date_start', label: t('visits.date'), format: (val) => format(new Date(val), 'PP', { locale: dateLocale }) },
+                { key: 'service_name', label: t('visits.service') },
+                { key: 'client_name', label: t('visits.client') },
+                { key: 'status', label: t('visits.status'), format: (val) => getStatusTranslation(val) },
+                { key: 'price', label: t('visits.price'), format: (val) => val == null ? '-' : formatCurrency(val, currency) },
+              ]}
+              filename={`visits-${today()}`}
+              title={t('export.visitsReport')}
+              reportTypes={[t('export.visitsReport')]}
+              dataType={hasFilters ? 'filtered' : 'all'}
+              className="!border-[var(--workspace-line)] !bg-[var(--workspace-panel)] !text-[var(--workspace-ink)] !shadow-none hover:!bg-[var(--workspace-bg)] focus:!ring-[var(--workspace-focus)]"
+            />
+          )}
+          {canEdit && (
+            <Button onClick={() => { setEditingId(undefined); setShowForm(true) }}>
+              <HiOutlinePlus aria-hidden="true" />
+              {t('visits.newVisit')}
+            </Button>
+          )}
+        </div>
       </div>
 
-      {!showForm && (
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex-1 w-full sm:max-w-md">
-              <Input
-                type="search"
-                value={searchQuery}
-                aria-label={t('visits.searchPlaceholder')}
-                placeholder={t('visits.searchPlaceholder')}
-                onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1) }}
-              />
-            </div>
-            {totalItems > 0 && (
-              <ExportButton
-                data={paginatedData}
-                totalItems={totalItems}
-                loadData={loadExport}
-                columns={[
-                  { key: 'date_start', label: t('visits.date'), format: (val) => format(new Date(val), 'PP', { locale: dateLocale }) },
-                  { key: 'service_name', label: t('visits.service') },
-                  { key: 'client_name', label: t('visits.client') },
-                  { key: 'status', label: t('visits.status'), format: (val) => getStatusTranslation(val) },
-                  { key: 'price', label: t('visits.price'), format: (val) => val ? formatCurrency(val, currency) : '-' },
-                ]}
-                filename={`visits-${today()}`}
-                title={t('export.visitsReport')}
-                reportTypes={[t('export.visitsReport')]}
-                dataType={searchQuery || statusFilter || dateFrom || dateTo ? 'filtered' : 'all'}
-              />
-            )}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <select
-              aria-label={t('visits.status')}
-              value={statusFilter || ''}
-              onChange={(e) => {
-                setStatusFilter(e.target.value || null)
-                setCurrentPage(1)
-              }}
-              className="px-4 py-2 border rounded-md"
-            >
-              <option value="">{t('visits.allStatuses')}</option>
-              <option value="planned">{t('visits.planned')}</option>
-              <option value="in_progress">{t('visits.inProgress')}</option>
-              <option value="completed">{t('visits.completed')}</option>
-              <option value="cancelled">{t('visits.cancelled')}</option>
-            </select>
-            <div className="relative">
-              <label htmlFor="visits-from" className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none dark:bg-gray-800 dark:text-gray-400">{t('visits.fromDate')}</label>
-              <input
-                type="date"
-                id="visits-from"
-                value={dateFrom}
-                onChange={(e) => {
-                  setDateFrom(e.target.value)
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 border rounded-md w-full pt-3"
-              />
-            </div>
-            <div className="relative">
-              <label htmlFor="visits-to" className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none dark:bg-gray-800 dark:text-gray-400">{t('visits.toDate')}</label>
-              <input
-                type="date"
-                id="visits-to"
-                value={dateTo}
-                onChange={(e) => {
-                  setDateTo(e.target.value)
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 border rounded-md w-full pt-3"
-              />
-            </div>
-            {(searchQuery || statusFilter || dateFrom || dateTo) && (
-              <button
-                onClick={() => {
-                  setSearchQuery('')
-                  setStatusFilter(null)
-                  setDateFrom('')
-                  setDateTo('')
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                {t('visits.clearFilters')}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
-          <VisitForm
-            visitId={editingId}
-            onSuccess={handleSuccess}
-            onCancel={() => {
-              setShowForm(false)
-              setEditingId(undefined)
-            }}
+      <Card className="overflow-hidden">
+        <div className="space-y-3 border-b border-[var(--workspace-line)] p-4 sm:p-5">
+          <Input
+            id="visit-directory-search"
+            type="search"
+            value={searchQuery}
+            aria-label={t('visits.searchPlaceholder')}
+            placeholder={t('visits.searchPlaceholder')}
+            onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1) }}
+            className="sm:max-w-md"
           />
+          <div className="grid grid-cols-2 items-end gap-3 lg:grid-cols-[minmax(10rem,1fr)_minmax(10rem,1fr)_minmax(10rem,1fr)_auto]">
+            <div className="col-span-2 sm:col-span-1">
+              <span className="mb-1 block text-xs font-medium text-[var(--workspace-muted)]">{t('visits.status')}</span>
+              <Select aria-label={t('visits.status')} value={statusFilter || ''}
+                onChange={event => { setStatusFilter(event.target.value || null); setCurrentPage(1) }}>
+                <option value="">{t('visits.allStatuses')}</option>
+                <option value="planned">{t('visits.planned')}</option>
+                <option value="in_progress">{t('visits.inProgress')}</option>
+                <option value="completed">{t('visits.completed')}</option>
+                <option value="cancelled">{t('visits.cancelled')}</option>
+              </Select>
+            </div>
+            <div className="min-w-0">
+              <label htmlFor="visits-from" className="mb-1 block text-xs font-medium text-[var(--workspace-muted)]">{t('visits.fromDate')}</label>
+              <Input type="date" id="visits-from" value={dateFrom}
+                onChange={event => { setDateFrom(event.target.value); setCurrentPage(1) }} />
+            </div>
+            <div className="min-w-0">
+              <label htmlFor="visits-to" className="mb-1 block text-xs font-medium text-[var(--workspace-muted)]">{t('visits.toDate')}</label>
+              <Input type="date" id="visits-to" value={dateTo}
+                onChange={event => { setDateTo(event.target.value); setCurrentPage(1) }} />
+            </div>
+            {hasFilters && (
+              <Button variant="quiet" className="col-span-2 justify-self-start sm:col-span-1"
+                onClick={() => { setSearchQuery(''); setStatusFilter(null); setDateFrom(''); setDateTo(''); setCurrentPage(1) }}>
+                {t('visits.clearFilters')}
+              </Button>
+            )}
+          </div>
         </div>
-      ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden dark:bg-gray-800">
-        <div className="overflow-x-auto">
-          <table role="table" className="responsive-card-table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead role="rowgroup" className="bg-gray-50 dark:bg-gray-900">
+
+        <div className="overflow-x-auto" role="region" aria-label={t('visits.title')} tabIndex={0}>
+          <table role="table" className="w-full min-w-[760px] table-fixed text-sm">
+            <caption className="sr-only">{t('visits.title')}</caption>
+            <thead role="rowgroup" className="border-b border-[var(--workspace-line)] bg-[var(--workspace-bg)]">
               <tr role="row">
-                <TableSortHeader
-                  columnKey="date_start"
-                  label={t('visits.date')}
-                  currentSort={sortConfig}
-                  onSort={handleSort}
-                  className="px-2 sm:px-6"
-                />
-                <TableSortHeader
-                  columnKey="client_name"
-                  label={t('visits.client')}
-                  currentSort={sortConfig}
-                  onSort={handleSort}
-                  className="px-2 sm:px-6"
-                />
-                <TableSortHeader
-                  columnKey="service_name"
-                  label={t('visits.service')}
-                  currentSort={sortConfig}
-                  onSort={handleSort}
-                  className="px-2 sm:px-6"
-                />
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell dark:text-gray-400">
-                  {t('visits.status')}
-                </th>
-                <TableSortHeader
-                  columnKey="price"
-                  label={t('services.price')}
-                  currentSort={sortConfig}
-                  onSort={handleSort}
-                  className="px-2 sm:px-6 hidden md:table-cell"
-                />
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                  {t('common.actions')}
-                </th>
+                <TableSortHeader columnKey="date_start" label={t('visits.date')} currentSort={sortConfig} onSort={handleSort} className="w-[19%] px-4" />
+                <TableSortHeader columnKey="client_name" label={t('visits.client')} currentSort={sortConfig} onSort={handleSort} className="w-[22%] px-4" />
+                <TableSortHeader columnKey="service_name" label={t('visits.service')} currentSort={sortConfig} onSort={handleSort} className="w-[22%] px-4" />
+                <th scope="col" className="w-[16%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--workspace-muted)]">{t('visits.status')}</th>
+                <TableSortHeader columnKey="price" label={t('services.price')} currentSort={sortConfig} onSort={handleSort} className="w-[13%] px-4" />
+                {canEdit && <th scope="col" className="w-[8%] px-2 py-3"><span className="sr-only">{t('common.actions')}</span></th>}
               </tr>
             </thead>
-            <tbody role="rowgroup" className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+            <tbody role="rowgroup" className="divide-y divide-[var(--workspace-line)]">
               {isError ? (
-                <tr><td colSpan={6}><QueryError retry={refetch} /></td></tr>
+                <tr><td colSpan={columnCount}><QueryError retry={refetch} /></td></tr>
               ) : isLoading ? (
-                <tr><td colSpan={6} className="py-8"><LoadingSpinner /></td></tr>
+                <tr><td colSpan={columnCount} className="py-8"><LoadingSpinner /></td></tr>
               ) : paginatedData.length === 0 ? (
                 <tr role="row">
-                  <td role="cell" colSpan={6} className="px-2 sm:px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                    {searchQuery || statusFilter || dateFrom || dateTo
-                      ? t('visits.noVisitsMatch')
-                      : t('visits.noVisitsFound')}
+                  <td role="cell" colSpan={columnCount} className="px-4 py-10 text-center text-[var(--workspace-muted)]">
+                    {hasFilters ? t('visits.noVisitsMatch') : t('visits.noVisitsFound')}
                   </td>
                 </tr>
-              ) : (
-                paginatedData.map((visit) => (
-                <tr role="row" key={visit.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
-                  <td role="cell" data-label={t('visits.date')} className="px-2 sm:px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                    <div className="flex flex-col">
-                      <span className="whitespace-nowrap">{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
-                      <span className="text-xs text-gray-500 sm:hidden dark:text-gray-400">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
-                    </div>
+              ) : paginatedData.map(visit => (
+                <tr role="row" key={visit.id} className="hover:bg-[var(--workspace-bg)]">
+                  <td role="cell" className="px-4 py-3 align-top">
+                    <time dateTime={visit.date_start} className="flex flex-col gap-0.5">
+                      <span>{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
+                      <span className="text-xs tabular-nums text-[var(--workspace-muted)]">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
+                    </time>
                   </td>
-                  <td role="cell" data-label={t('visits.client')} className="px-2 sm:px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                    {visit.client_name || '-'}
+                  <td role="cell" className="break-words px-4 py-3 align-top font-medium [overflow-wrap:anywhere]">{visit.client_name || '-'}</td>
+                  <td role="cell" className="break-words px-4 py-3 align-top text-[var(--workspace-muted)] [overflow-wrap:anywhere]">{visit.service_name || '-'}</td>
+                  <td role="cell" className="px-4 py-3 align-top">
+                    <span className={`inline-flex rounded px-2 py-1 text-xs font-medium ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>
                   </td>
-                  <td role="cell" data-label={t('visits.service')} className="px-2 sm:px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                    <div className="flex flex-col">
-                      <span>{visit.service_name || '-'}</span>
-                    </div>
+                  <td role="cell" className="break-words px-4 py-3 align-top tabular-nums [overflow-wrap:anywhere]">
+                    {visit.price == null ? '-' : formatCurrency(visit.price, currency)}
                   </td>
-                  <td role="cell" data-label={t('visits.status')} className="px-2 sm:px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      visit.status === 'completed' || visit.status === 'in_progress'
-                        ? 'bg-purple-100 text-purple-700'
-                        : visit.status === 'cancelled'
-                        ? 'bg-pink-100 text-pink-700'
-                        : 'bg-purple-100 text-purple-700'
-                    }`}>
-                      {getStatusTranslation(visit.status)}
-                    </span>
-                  </td>
-                  <td role="cell" data-label={t('services.price')} className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {visit.price ? formatCurrency(visit.price, currency) : '-'}
-                  </td>
-                  <td role="cell" data-label={t('common.actions')} className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    <button
-                      onClick={() => handleEdit(visit.id)}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      {t('common.edit')}
-                    </button>
-                  </td>
+                  {canEdit && (
+                    <td role="cell" className="px-2 py-2 align-top text-center">
+                      <Button variant="quiet" className="!px-2" onClick={() => handleEdit(visit.id)} title={t('common.edit')}>
+                        <HiOutlinePencil aria-hidden="true" /><span className="sr-only">{t('common.edit')}</span>
+                      </Button>
+                    </td>
+                  )}
                 </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
-        {totalPages > 1 && (
-          <TablePagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalItems={totalItems}
-            perPage={perPage}
-            onPageChange={setCurrentPage}
-            onPerPageChange={setPerPage}
-          />
+        {!isError && totalPages > 1 && (
+          <TablePagination currentPage={currentPage} totalPages={totalPages} totalItems={totalItems}
+            perPage={perPage} onPageChange={setCurrentPage} onPerPageChange={setPerPage} />
         )}
-      </div>
+      </Card>
+
+      {canEdit && showForm && (
+        <SidePanel title={editingId === undefined ? t('visits.newVisit') : t('visits.editVisit')} onClose={closeForm}>
+          <VisitForm key={editingId ?? 'new'} visitId={editingId} onSuccess={handleSuccess} onCancel={closeForm} />
+        </SidePanel>
       )}
     </div>
   )
 }
-
