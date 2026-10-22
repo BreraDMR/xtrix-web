@@ -29,8 +29,7 @@ describe('my salary export', () => {
 
   it('opens the real export dialog with the salary rows', async () => {
     renderWithProviders(<MySalary />)
-    const tabs = await screen.findAllByRole('button', { name: 'Export' })
-    await userEvent.click(tabs[0])
+    await userEvent.click(await screen.findByRole('tab', { name: 'Export' }))
     const exportButtons = await screen.findAllByRole('button', { name: /export/i })
     await userEvent.click(exportButtons[exportButtons.length - 1])
     // ten lines: period, visits, completed, revenue, base, commission, adjustments, total, paid, remaining

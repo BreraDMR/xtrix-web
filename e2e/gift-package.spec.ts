@@ -295,7 +295,7 @@ test('a guest buys a certificate and the salon sees it in the gift desk', async 
 
   const ownerPage = await page.context().newPage()
   await openAs(ownerPage, salon.owner, '/app/loyalty')
-  await ownerPage.getByRole('button', { name: 'Gift certificates', exact: true }).click()
+  await ownerPage.getByRole('tab', { name: 'Gift certificates', exact: true }).click()
   await expect(ownerPage.getByRole('heading', { name: 'Gift offers' })).toBeVisible()
   const shopLink = ownerPage.getByRole('link', { name: new RegExp(`/gift/${salon.slug}$`) })
   await expect(shopLink).toHaveAttribute('href', new RegExp(`/gift/${salon.slug}$`))

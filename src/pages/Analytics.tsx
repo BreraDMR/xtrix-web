@@ -7,6 +7,7 @@ import type { Schema } from '../api/types'
 // the contract says "list of dicts" for cohort_table; the rows are CohortData on the API side
 type CohortRow = { cohort_month: string; total_clients: number } & Partial<Record<`month_${number}`, number | null>>
 import LoadingSpinner from '../components/LoadingSpinner'
+import Tabs from '../ui/Tabs'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { dayEnd, dayStart, today } from '../utils/dates'
@@ -124,35 +125,20 @@ export default function Analytics() {
   })
 
   return (
-    <div className="animate-fade-in">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 dark:text-gray-100">{t('analytics.title')}</h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{t('analytics.subtitle')}</p>
-      </div>
-
-      {}
-      <div className="bg-white rounded-lg shadow-md mb-6 overflow-x-auto dark:bg-gray-800">
-        <div className="flex border-b border-gray-200 dark:border-gray-700">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm whitespace-nowrap transition-colors ${
-                activeTab === tab.id
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+    <div>
+      <div className="page-toolbar">
+        <div>
+          <h1 className="page-title">{t('analytics.title')}</h1>
+          <p className="page-subtitle">{t('analytics.subtitle')}</p>
         </div>
       </div>
+
+      <Tabs tabs={tabs} value={activeTab} onChange={setActiveTab} label={t('analytics.title')} />
 
       {}
       {(activeTab === 'retention' || activeTab === 'cohorts' || activeTab === 'services') && (
         <div className="bg-white p-4 rounded-lg shadow-md mb-6 dark:bg-gray-800">
-          <div className="flex gap-4 items-end">
+          <div className="flex flex-wrap gap-4 items-end">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('analytics.date_from')}</label>
               <input
@@ -265,7 +251,7 @@ export default function Analytics() {
       {activeTab === 'trends' && (
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-800">
-            <div className="flex gap-4 items-end">
+            <div className="flex flex-wrap gap-4 items-end">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('analytics.trend_metric')}</label>
                 <select
@@ -335,7 +321,7 @@ export default function Analytics() {
       {activeTab === 'forecast' && (
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-800">
-            <div className="flex gap-4 items-end">
+            <div className="flex flex-wrap gap-4 items-end">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('analytics.forecast_type')}</label>
                 <select

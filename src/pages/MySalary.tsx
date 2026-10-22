@@ -8,6 +8,7 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { HiCheckCircle, HiExclamationCircle, HiXCircle } from 'react-icons/hi'
 import ExportButton from '../components/ExportButton'
+import Tabs from '../ui/Tabs'
 
 interface SalaryAdjustment {
   id: number
@@ -148,36 +149,20 @@ export default function MySalary() {
     : 0
 
   return (
-    <div className="p-6 animate-fade-in">
-      <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            {t('salary.my_salary')}
-          </h1>
-        <p className="text-gray-600 mt-1 dark:text-gray-400">
-          {t('salary.viewSalaryDetails')}
-        </p>
+    <div>
+      <div className="page-toolbar">
+        <div>
+          <h1 className="page-title">{t('salary.my_salary')}</h1>
+          <p className="page-subtitle">{t('salary.viewSalaryDetails')}</p>
+        </div>
       </div>
 
-      {}
-      <div className="border-b border-gray-200 mb-6 dark:border-gray-700">
-        <nav className="-mb-px flex space-x-8">
-          {(['current', 'details', 'history', 'export'] as const).map((tab) => {
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`${
-                  activeTab === tab
-                    ? 'border-purple-500 text-purple-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              >
-                {t(`salary.tabs.${tab}`)}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+      <Tabs
+        tabs={(['current', 'details', 'history', 'export'] as const).map((id) => ({ id, label: t(`salary.tabs.${id}`) }))}
+        value={activeTab}
+        onChange={setActiveTab}
+        label={t('salary.my_salary')}
+      />
 
       {}
       {activeTab === 'current' && (

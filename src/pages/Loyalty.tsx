@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
+import Tabs from '../ui/Tabs'
 import LoyaltyAnalytics from './LoyaltyAnalytics'
 import GiftOffers from '../components/loyalty/GiftOffers'
 import { showDay } from '../utils/dates'
@@ -406,30 +407,15 @@ export default function Loyalty() {
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 dark:text-gray-100">{t('loyalty.title')}</h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{t('loyalty.subtitle')}</p>
-      </div>
-
-      {}
-      <div className="bg-white rounded-lg shadow-md mb-6 overflow-x-auto dark:bg-gray-800">
-        <div className="flex border-b border-gray-200 dark:border-gray-700">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-3 sm:px-6 py-3 sm:py-4 font-medium text-xs sm:text-sm whitespace-nowrap transition-colors ${
-                activeTab === tab.id
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+    <div>
+      <div className="page-toolbar">
+        <div>
+          <h1 className="page-title">{t('loyalty.title')}</h1>
+          <p className="page-subtitle">{t('loyalty.subtitle')}</p>
         </div>
       </div>
+
+      <Tabs tabs={tabs} value={activeTab} onChange={setActiveTab} label={t('loyalty.title')} />
 
       {}
       {activeTab === 'program' && (

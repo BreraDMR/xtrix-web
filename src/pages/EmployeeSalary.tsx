@@ -14,6 +14,8 @@ import { HiPlus, HiTrash, HiCheckCircle, HiXCircle, HiExclamationCircle, HiPenci
 import { dayEnd, dayStart } from '../utils/dates'
 import FormError from '../components/FormError'
 import { apiErrorMessage } from '../api/errors'
+import Button from '../ui/Button'
+import Tabs from '../ui/Tabs'
 
 interface SalaryAdjustment {
   id: number
@@ -235,63 +237,42 @@ export default function EmployeeSalary() {
     : (selectedSalary ? selectedSalary.total_with_adjustments - selectedSalary.paid_amount : 0)
 
   return (
-    <div className="p-6 animate-fade-in">
-      <div className="mb-6 flex items-center justify-between">
+    <div>
+      <div className="page-toolbar">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="page-title">
             {t('employees.salary')}: {employee?.employee_user?.full_name || t('employees.employee')}
           </h1>
           {employee?.position && (
-            <p className="text-gray-600 dark:text-gray-400 mt-1">{employee.position}</p>
+            <p className="page-subtitle">{employee.position}</p>
           )}
           {employee && (
-            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mt-1 text-sm text-[var(--workspace-muted)]">
               <span>{t('employees.base_salary')}: {formatCurrency(employee.base_salary || 0, currency)}</span>
               {' | '}
               <span>{t('employees.commission')}: {employee.commission_percentage || 0}%</span>
             </div>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="page-actions">
           {employee && (
-            <button
-              onClick={() => setShowEditSalaryModal(true)}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
-              title={t('employees.edit_salary')}
-            >
-              <HiPencil className="w-4 h-4" />
+            <Button onClick={() => setShowEditSalaryModal(true)} title={t('employees.edit_salary')}>
+              <HiPencil className="h-4 w-4" aria-hidden="true" />
               {t('employees.edit_salary')}
-            </button>
+            </Button>
           )}
-          <button
-            onClick={() => navigate('/employees')}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-          >
+          <Button variant="secondary" onClick={() => navigate('/employees')}>
             {t('common.cancel')}
-          </button>
+          </Button>
         </div>
       </div>
 
-      {}
-      <div className="border-b border-gray-200 mb-6 dark:border-gray-700">
-        <nav className="-mb-px flex space-x-8">
-          {(['current', 'adjustments', 'payments', 'history'] as const).map((tab) => {
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`${
-                  activeTab === tab
-                    ? 'border-purple-500 text-purple-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              >
-                {t(`salary.tabs.${tab}`)}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+      <Tabs
+        tabs={(['current', 'adjustments', 'payments', 'history'] as const).map((id) => ({ id, label: t(`salary.tabs.${id}`) }))}
+        value={activeTab}
+        onChange={setActiveTab}
+        label={t('employees.salary')}
+      />
 
       {}
       {activeTab === 'current' && (
