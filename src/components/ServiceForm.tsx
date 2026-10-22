@@ -1,6 +1,8 @@
 import { useTranslation } from '../hooks/useTranslation'
 import { useState, useEffect, useRef } from 'react'
 import api from '../api/client'
+import { allPages } from '../api/allPages'
+import QueryError from './QueryError'
 import FormError from './FormError'
 import { apiFormErrors } from '../api/errors'
 import LoadingSpinner from './LoadingSpinner'
@@ -66,6 +68,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [availableSpecialists, setAvailableSpecialists] = useState<Specialist[]>([])
   const [loadingSpecialists, setLoadingSpecialists] = useState(false)
+  const [specialistsFailed, setSpecialistsFailed] = useState(false)
   const [formData, setFormData] = useState<ServiceData>(() => {
     const draft = serviceId ? null : readServiceDraft(draftKey)
     return {
@@ -103,16 +106,16 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
 
   const loadAvailableSpecialists = async () => {
     setLoadingSpecialists(true)
+    setSpecialistsFailed(false)
     const self: Specialist[] = currentUser ? [{ id: currentUser.id, full_name: currentUser.full_name, email: '' }] : []
     try {
       const { data: employeesData } = await api.get<EmployeeOut[]>('/employees/', { params: { is_active: true } })
       const employees = Array.isArray(employeesData) ? employeesData : []
       
-      const { data: usersData } = await api.get<UserPage | UserOut[]>('/users/', { params: { role: 'specialist' } })
-      const allUsers = Array.isArray(usersData) 
-        ? usersData 
-        : (usersData?.items || [])
-      
+      const allUsers = await allPages<UserOut>(async page => (await api.get<UserPage>('/users/', {
+        params: { role: 'specialist', page, per_page: 100 },
+      })).data)
+
       const employeeUserIds = new Set(employees.map((emp) => emp.employee_user_id))
       const allSpecialists = allUsers.filter((u) => 
         u.role === 'specialist' || employeeUserIds.has(u.id)
@@ -126,6 +129,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
       }))])
     } catch (error) {
       console.error('Failed to load specialists:', error)
+      setSpecialistsFailed(true)
       setAvailableSpecialists(self)
     } finally {
       setLoadingSpecialists(false)
@@ -204,6 +208,7 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {formError && <div role="alert"><FormError message={formError} /></div>}
+      {specialistsFailed && (currentUser?.role === 'business_owner' || currentUser?.role === 'admin') && <QueryError retry={loadAvailableSpecialists} />}
       <div>
         <label className="block text-sm font-medium mb-1">{t('serviceForm.name')} *</label>
         <input

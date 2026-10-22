@@ -3,7 +3,7 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ServiceForm from '../components/ServiceForm'
 import api from '../api/client'
-import { renderWithProviders, resetStores, routes, signIn } from '../test/render'
+import { apiError, renderWithProviders, resetStores, routes, signIn } from '../test/render'
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn() } }))
 
@@ -28,6 +28,38 @@ describe('ServiceForm', () => {
     await userEvent.type(screen.getByPlaceholderText(/facial treatment/i), 'Massage')
     await userEvent.click(screen.getByRole('button', { name: /create service/i }))
     await waitFor(() => expect(api.post).toHaveBeenCalledWith('/services/', expect.objectContaining({ specialist_id: 7 })))
+  })
+
+  it('can assign a service to a specialist after the first hundred', async () => {
+    signIn({ id: 7, role: 'business_owner' })
+    const users = Array.from({ length: 125 }, (_, i) => ({ id: i + 100,
+      full_name: `Specialist ${i + 1}`, email: `staff${i + 1}@example.cz`, role: 'specialist' }))
+    vi.mocked(api.get).mockImplementation(routes({ '/employees/': [], '/users/': users }))
+    vi.mocked(api.post).mockResolvedValue({ data: {} })
+    renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+    const option = await screen.findByRole('option', { name: 'Specialist 125 (staff125@example.cz)' })
+    await userEvent.selectOptions(option.closest('select')!, option)
+    await userEvent.type(screen.getByPlaceholderText(/facial treatment/i), 'Massage')
+    await userEvent.click(screen.getByRole('button', { name: /create service/i }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/services/', expect.objectContaining({ specialist_id: 224 })))
+  })
+
+  it('shows a retry instead of a truncated specialist list', async () => {
+    signIn({ id: 7, role: 'business_owner' })
+    const users = Array.from({ length: 125 }, (_, i) => ({ id: i + 100,
+      full_name: `Specialist ${i + 1}`, role: 'specialist' }))
+    const read = routes({ '/employees/': [], '/users/': users })
+    vi.mocked(api.get).mockImplementation((url, config) => {
+      if ((config?.params as { page?: number } | undefined)?.page === 2) return Promise.reject(apiError(500, 'Later staff unavailable'))
+      return read(url, config)
+    })
+    renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
+    expect(screen.queryByRole('option', { name: /Specialist 1 / })).not.toBeInTheDocument()
+    expect(screen.getByRole('option', { name: /Test User/ })).toBeInTheDocument()
+    vi.mocked(api.get).mockImplementation(read)
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+    expect(await screen.findByRole('option', { name: 'Specialist 125 ()' })).toBeInTheDocument()
   })
 
   it('keeps the current user available when staff loading fails', async () => {
