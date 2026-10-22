@@ -1,3 +1,4 @@
+import { fetchAllServices } from '../../api/services'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../../api/client'
@@ -124,10 +125,7 @@ export default function BookingRules({ business, canEdit }: Props) {
 
   const servicesQuery = useQuery<ServiceOut[]>({
     queryKey: ['services'],
-    queryFn: async () => {
-      const { data } = await api.get('/services/')
-      return Array.isArray(data) ? data : (data?.items || [])
-    },
+    queryFn: ({ signal }) => fetchAllServices(signal),
   })
 
   const savePolicy = async () => {

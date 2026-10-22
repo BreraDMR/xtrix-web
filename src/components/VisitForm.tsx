@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import FormError from './FormError'
 import { apiErrorMessage, apiErrorStatus, apiFormErrors } from '../api/errors'
-import type { ClientLoyaltyBalance, ClientOut, ClientPage, GiftCertificateDetailOut, Schema, ServiceOut, ServicePage, ServiceSpecialistOut } from '../api/types'
+import type { ClientLoyaltyBalance, ClientOut, ClientPage, GiftCertificateDetailOut, Schema, ServiceOut, ServiceSpecialistOut } from '../api/types'
+import { fetchAllServices } from '../api/services'
 import { allPages } from '../api/allPages'
 import QueryError from './QueryError'
 import { useAuthStore } from '../store/authStore'
@@ -91,6 +92,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [clients, setClients] = useState<ClientOut[]>([])
   const [clientsLoading, setClientsLoading] = useState(false)
   const [clientsFailed, setClientsFailed] = useState(false)
+  const [servicesLoading, setServicesLoading] = useState(false)
+  const [servicesFailed, setServicesFailed] = useState(false)
   const [services, setServices] = useState<ServiceOut[]>([])
   const [availableSpecialists, setAvailableSpecialists] = useState<ServiceSpecialistOut[]>([])
   const [itemsMode, setItemsMode] = useState(false)
@@ -230,12 +233,16 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   }, [clientSearchQuery])
 
   const loadServices = async () => {
+    setServicesLoading(true)
+    setServicesFailed(false)
+    setServices([])
     try {
-      const { data } = await api.get<ServicePage | ServiceOut[]>('/services/')
-      const items = Array.isArray(data) ? data : (data?.items || [])
-      setServices(items)
+      setServices(await fetchAllServices())
     } catch (error) {
       console.error('Failed to load services:', error)
+      setServicesFailed(true)
+    } finally {
+      setServicesLoading(false)
     }
   }
 
@@ -569,6 +576,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (clientsLoading || clientsFailed || servicesLoading || servicesFailed) return
     if (submitting.current || visitSaved.current) return
     setFormError('')
     setFieldErrors({})
@@ -705,6 +713,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     <form onSubmit={handleSubmit} className="space-y-4">
       {formError && <div role="alert"><FormError message={formError} /></div>}
       {clientsFailed && <QueryError retry={loadClients} />}
+      {servicesFailed && <QueryError retry={loadServices} />}
       <div>
         <label className="block text-sm font-medium mb-1">{t('visits.client')} *</label>
         <div className="space-y-2">
@@ -1276,7 +1285,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         </button>
         <button
           type="submit"
-          disabled={loading || clientsLoading || clientsFailed}
+          disabled={loading || clientsLoading || clientsFailed || servicesLoading || servicesFailed}
           className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center gap-2"
         >
           {loading ? (

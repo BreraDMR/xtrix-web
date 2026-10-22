@@ -59,7 +59,7 @@ export function routes(table: Record<string, unknown>) {
   return ((url: string, config) => {
     if (!(url in defaults)) return Promise.reject(apiError(404, `no mock for ${url}`))
     let data: unknown = defaults[url as keyof typeof defaults]
-    if ((url === '/clients/' || url === '/visits/') && Array.isArray(data)) {
+    if ((url === '/clients/' || url === '/visits/' || url === '/services/') && Array.isArray(data)) {
       const params = config?.params as Partial<Pick<ClientPage, 'page' | 'per_page'>> | undefined
       const page = params?.page ?? 1
       const per_page = params?.per_page ?? 20

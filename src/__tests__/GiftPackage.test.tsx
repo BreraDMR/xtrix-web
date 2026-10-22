@@ -238,7 +238,7 @@ describe('gift offers in loyalty', () => {
     vi.mocked(api.get).mockImplementation(((url: string) => {
       if (url === '/businesses/me/gift-offers') return Promise.resolve({ data: [OFFER] })
       if (url === '/services/') {
-        return Promise.resolve({ data: [{ id: 7, name: 'Massage', duration_minutes: 60, price: 40 }] })
+        return Promise.resolve({ data: { items: [{ id: 7, name: 'Massage', duration_minutes: 60, price: 40 }], page: 1, per_page: 100, total: 1, pages: 1 } })
       }
       if (url === '/businesses/me/public-booking') {
         return Promise.resolve({
@@ -331,7 +331,7 @@ describe('gift redemption in the visit form', () => {
       if (url === '/clients/') return Promise.resolve({ data: { items: [jana], page: 1, per_page: 100, pages: 1, total: 1 } })
       if (url === '/services/') {
         return Promise.resolve({
-          data: [
+          data: { items: [
             {
               id: 7,
               name: 'Massage',
@@ -340,7 +340,7 @@ describe('gift redemption in the visit form', () => {
               specialist_id: 7,
               is_active: true,
             },
-          ],
+          ], page: 1, per_page: 100, total: 1, pages: 1 },
         })
       }
       if (url === '/services/7') {
@@ -408,7 +408,7 @@ describe('gift redemption in the visit form', () => {
     vi.mocked(api.get).mockImplementation(((url: string) => {
       if (url === '/clients/') return Promise.resolve({ data: { items: [jana], page: 1, per_page: 100, pages: 1, total: 1 } })
       if (url === '/services/') {
-        return Promise.resolve({ data: [{ id: 7, name: 'Massage', duration_minutes: 60, price: 40, specialist_id: 7 }] })
+        return Promise.resolve({ data: { items: [{ id: 7, name: 'Massage', duration_minutes: 60, price: 40, specialist_id: 7 }], page: 1, per_page: 100, total: 1, pages: 1 } })
       }
       if (url === '/businesses/me/gift-certificates/lookup') {
         return Promise.resolve({ data: { ...LOOKUP_DETAIL, service_ids: [99] } })

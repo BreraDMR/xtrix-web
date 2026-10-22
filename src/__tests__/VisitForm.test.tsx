@@ -33,6 +33,38 @@ describe('VisitForm', () => {
     await waitFor(() => expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({ client_id: 125 })))
   })
 
+  it('can choose a service beyond the first hundred records', async () => {
+    const services = Array.from({ length: 125 }, (_, i) => ({ id: i + 1,
+      name: `Treatment ${i + 1}`, duration_minutes: 30, price: 20, is_active: true, specialist_id: 7 }))
+    vi.mocked(api.get).mockImplementation(routes({ '/clients/': [jana], '/services/': services,
+      '/services/125': services[124] }))
+    renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+    await pickClient()
+    const option = await screen.findByRole('option', { name: 'Treatment 125 (30 min)' })
+    await userEvent.selectOptions(option.closest('select')!, option)
+    await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/visits/', expect.objectContaining({ service_id: 125 })))
+  })
+
+  it('blocks a visit with incomplete service options and allows retrying the directory', async () => {
+    const services = Array.from({ length: 125 }, (_, i) => ({ id: i + 1,
+      name: `Treatment ${i + 1}`, duration_minutes: 30, price: 20, is_active: true, specialist_id: 7 }))
+    const read = routes({ '/clients/': [jana], '/services/': services })
+    vi.mocked(api.get).mockImplementation((url, config) => {
+      if (url === '/services/' && (config?.params as { page?: number } | undefined)?.page === 2) return Promise.reject(apiError(500, 'Later services unavailable'))
+      return read(url, config)
+    })
+    renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+    await pickClient()
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load data')
+    expect(screen.queryByRole('option', { name: 'Treatment 1 (30 min)' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /create visit/i })).toBeDisabled()
+    vi.mocked(api.get).mockImplementation(read)
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+    expect(await screen.findByRole('option', { name: 'Treatment 125 (30 min)' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /create visit/i })).toBeEnabled()
+  })
+
   it('books the visit for the current user and shows the 409 reason', async () => {
     vi.mocked(api.post).mockRejectedValue(apiError(409, 'This time is already booked for the specialist'))
     renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)

@@ -1,3 +1,4 @@
+import { fetchAllServices } from '../api/services'
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -9,7 +10,7 @@ import TablePagination from '../components/TablePagination'
 import { INTL_LOCALE } from '../components/booking/intl'
 import { useTranslation } from '../hooks/useTranslation'
 import type { TranslationKey } from '../i18n/translations'
-import type { ServiceOut, ServicePage, WaitlistEntryOut, WaitlistPage } from '../api/types'
+import type { ServiceOut, WaitlistEntryOut, WaitlistPage } from '../api/types'
 
 const STATUS_KEYS: Record<string, TranslationKey> = {
   active: 'waitlist.status.active',
@@ -70,10 +71,7 @@ export default function Waitlist() {
 
   const servicesQuery = useQuery<ServiceOut[]>({
     queryKey: ['services'],
-    queryFn: async () => {
-      const { data } = await api.get<ServicePage | ServiceOut[]>('/services/')
-      return Array.isArray(data) ? data : data.items ?? []
-    },
+    queryFn: ({ signal }) => fetchAllServices(signal),
   })
 
   const filters = useMemo(
@@ -142,6 +140,7 @@ export default function Waitlist() {
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t('waitlist.filter.service')}</span>
             <select
+              disabled={servicesQuery.isLoading || servicesQuery.isError}
               value={serviceId}
               onChange={(event) => {
                 setServiceId(event.target.value)
@@ -205,6 +204,7 @@ export default function Waitlist() {
         </div>
       )}
 
+      {servicesQuery.isError && <QueryError retry={servicesQuery.refetch} />}
       {listQuery.isLoading ? (
         <div className="flex h-48 items-center justify-center">
           <LoadingSpinner size="lg" />

@@ -1,3 +1,4 @@
+import { fetchAllServices } from '../../api/services'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -17,6 +18,7 @@ import type {
 import { formatCurrency, type Currency } from '../../utils/currency'
 import { showDay } from '../../utils/dates'
 import LoadingSpinner from '../LoadingSpinner'
+import QueryError from '../QueryError'
 
 type OfferKind = 'money' | 'package'
 
@@ -317,10 +319,7 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
 
   const servicesQuery = useQuery<ServiceOut[]>({
     queryKey: ['services'],
-    queryFn: async () => {
-      const { data } = await api.get('/services/')
-      return Array.isArray(data) ? data : (data?.items ?? [])
-    },
+    queryFn: ({ signal }) => fetchAllServices(signal),
   })
 
   const settingsQuery = useQuery<PublicBookingSettingsOut>({
@@ -404,7 +403,7 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    if (!draft) return
+    if (!draft || servicesQuery.isLoading || servicesQuery.isError) return
     saveOffer.mutate(payloadFrom(draft))
   }
 
@@ -630,6 +629,8 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
           }}
         >
           <form onSubmit={submit} className="space-y-4">
+            {servicesQuery.isError && <QueryError retry={servicesQuery.refetch} />}
+            {servicesQuery.isLoading && <LoadingSpinner />}
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm">
                 <span className="mb-1 block font-medium">{t('gift.name')}</span>
@@ -775,7 +776,7 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
               </button>
               <button
                 type="submit"
-                disabled={saveOffer.isPending}
+                disabled={saveOffer.isPending || servicesQuery.isLoading || servicesQuery.isError}
                 className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
               >
                 {t('gift.save')}

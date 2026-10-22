@@ -1,3 +1,4 @@
+import { fetchAllServices } from '../api/services'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { HiOutlineClipboardList } from 'react-icons/hi'
@@ -28,10 +29,7 @@ export default function Questionnaires() {
 
   const services = useQuery<ServiceOut[]>({
     queryKey: ['services'],
-    queryFn: async () => {
-      const { data } = await api.get('/services/')
-      return Array.isArray(data) ? data : (data?.items || data?.data || [])
-    },
+    queryFn: ({ signal }) => fetchAllServices(signal),
   })
 
   const serviceName = (id: number | null | undefined) => {
@@ -75,7 +73,9 @@ export default function Questionnaires() {
         )}
       </div>
 
-      {editor !== null ? (
+      {editor !== null && services.isError && <QueryError retry={services.refetch} />}
+      {editor !== null && services.isLoading && <LoadingSpinner />}
+      {editor !== null ? (!services.isError && !services.isLoading && (
         <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
           <TemplateEditor
             key={editor === 'new' ? 'new' : editor.id}
@@ -87,7 +87,7 @@ export default function Questionnaires() {
             onClose={() => setEditor(null)}
           />
         </div>
-      ) : items.length === 0 ? (
+      )) : items.length === 0 ? (
         <div className="rounded-lg bg-white shadow dark:bg-gray-800">
           <EmptyState
             icon={<HiOutlineClipboardList className="h-10 w-10" />}

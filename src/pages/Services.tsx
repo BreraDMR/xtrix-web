@@ -1,10 +1,10 @@
+import { fetchAllServices } from '../api/services'
 import QueryError from '../components/QueryError'
 import ContextHint from '../components/onboarding/ContextHint'
 import { useState, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import api from '../api/client'
 import ServiceForm from '../components/ServiceForm'
-import SearchBar from '../components/SearchBar'
+import Input from '../ui/Input'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
@@ -33,10 +33,7 @@ export default function Services() {
 
   const { data: services, isLoading, isError, refetch } = useQuery<Service[]>({
     queryKey: ['services'],
-    queryFn: async () => {
-      const { data } = await api.get('/services/')
-      return Array.isArray(data) ? data : (data?.items || data?.data || [])
-    },
+    queryFn: ({ signal }) => fetchAllServices(signal),
   })
 
   const filteredServices = useMemo(() => {
@@ -140,9 +137,11 @@ export default function Services() {
         <div className="mb-6 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div className="flex-1 w-full sm:max-w-md">
-              <SearchBar
+              <Input
+                type="search"
                 placeholder={t('services.searchPlaceholder')}
-                onSearch={setSearchQuery}
+                value={searchQuery}
+                onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1) }}
               />
             </div>
             {filteredServices.length > 0 && (
