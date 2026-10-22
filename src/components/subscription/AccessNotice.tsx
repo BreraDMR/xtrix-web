@@ -5,7 +5,10 @@ import type { WorkspaceAccess } from '../../hooks/useWorkspaceAccess'
 export default function AccessNotice({ access }: { access: WorkspaceAccess }) {
   const { t, locale } = useTranslation()
   const end = access.crm_mode === 'read_only' ? access.read_only_until : access.trial_end
-  const date = end ? new Date(end).toLocaleString(locale === 'cz' ? 'cs-CZ' : locale) : ''
+  // a day and a minute are enough here - seconds just read like a countdown
+  const date = end
+    ? new Date(end).toLocaleString(locale === 'cz' ? 'cs-CZ' : locale, { dateStyle: 'long', timeStyle: 'short' })
+    : ''
   const message = access.crm_mode === 'blocked' ? t('pilot.blocked')
     : access.crm_mode === 'read_only' ? t('pilot.readOnly').replace('{date}', date)
       : access.trial_end ? t('pilot.active').replace('{date}', date) : null
