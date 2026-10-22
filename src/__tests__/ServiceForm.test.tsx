@@ -188,3 +188,29 @@ it('keeps all additional specialists selectable after opening the optional team 
   await userEvent.click(screen.getByRole('button', { name: 'Create Service' }))
   await waitFor(() => expect(api.post).toHaveBeenCalledWith('/services/', expect.objectContaining({ specialist_id: 7, specialist_ids: [224] })))
 })
+
+
+it('includes an active linked employee absent from the specialist-role directory', async () => {
+  vi.clearAllMocks(); resetStores(); signIn({ id: 7, role: 'business_owner' })
+  vi.mocked(api.get).mockImplementation(routes({ '/users/': [], '/employees/': [{ id: 1,
+    employee_user_id: 88, business_owner_id: 7, is_active: true, base_salary: 0, commission_percentage: 0,
+    employee_user: { id: 88, full_name: 'Alex Legacy', email: 'legacy@example.cz', role: 'employee' } }] }))
+  vi.mocked(api.post).mockResolvedValue({ data: {} })
+  renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+  const legacy = await screen.findByRole('option', { name: 'Alex Legacy (legacy@example.cz)' })
+  await userEvent.selectOptions(legacy.closest('select')!, legacy)
+  await userEvent.type(screen.getByRole('textbox', { name: /^Service Name/ }), 'Legacy staff treatment')
+  await userEvent.click(screen.getByRole('button', { name: 'Create Service' }))
+  await waitFor(() => expect(api.post).toHaveBeenCalledWith('/services/', expect.objectContaining({ specialist_id: 88 })))
+})
+
+it('does not duplicate a linked employee already present in the specialist directory', async () => {
+  vi.clearAllMocks(); resetStores(); signIn({ id: 7, role: 'business_owner' })
+  vi.mocked(api.get).mockImplementation(routes({ '/users/': [{ id: 88, full_name: 'Alex Current', email: 'current@example.cz', role: 'specialist' }],
+    '/employees/': [{ id: 1, employee_user_id: 88, business_owner_id: 7, is_active: true,
+      employee_user: { id: 88, full_name: 'Alex Legacy', email: 'legacy@example.cz', role: 'employee' } }] }))
+  renderWithProviders(<ServiceForm onSuccess={() => {}} onCancel={() => {}} />)
+  await screen.findByRole('option', { name: 'Alex Current (current@example.cz)' })
+  expect(screen.getAllByRole('option').filter(option => option.getAttribute('value') === '88')).toHaveLength(1)
+  expect(screen.queryByRole('option', { name: /Alex Legacy/ })).not.toBeInTheDocument()
+})

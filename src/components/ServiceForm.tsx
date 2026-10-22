@@ -127,12 +127,21 @@ export default function ServiceForm({ serviceId, onSuccess, onCancel, draftKey }
         u.role === 'specialist' || employeeUserIds.has(u.id)
       )
       
-      setAvailableSpecialists([...self, ...allSpecialists.filter((u) => u.id !== currentUser?.id).map((u) => ({
-        id: u.id,
-        full_name: u.full_name || '',
-        email: u.email || '',
-        phone: u.phone ?? undefined,
-      }))])
+      const people = new Map(self.map(person => [person.id, person]))
+      for (const specialist of allSpecialists) {
+        if (people.has(specialist.id)) continue
+        people.set(specialist.id, { id: specialist.id, full_name: specialist.full_name || '',
+          email: specialist.email || '', phone: specialist.phone ?? undefined })
+      }
+      // Some linked staff still have the employee role and are absent from /users/?role=specialist.
+      for (const employee of employees) {
+        const person = employee.employee_user
+        if (people.has(employee.employee_user_id) || !person || typeof person.full_name !== 'string') continue
+        people.set(employee.employee_user_id, { id: employee.employee_user_id, full_name: person.full_name,
+          email: typeof person.email === 'string' ? person.email : '',
+          phone: typeof person.phone === 'string' ? person.phone : undefined })
+      }
+      setAvailableSpecialists([...people.values()])
     } catch (error) {
       console.error('Failed to load specialists:', error)
       setSpecialistsFailed(true)
