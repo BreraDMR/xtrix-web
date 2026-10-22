@@ -137,7 +137,7 @@ export default function Settings() {
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="min-w-0">
       <div className="page-toolbar">
         <div>
           <h1 className="page-title">{t('settings.title')}</h1>
@@ -145,8 +145,25 @@ export default function Settings() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-2">
-        <Card className="p-5 sm:p-6">
+      <div className="grid min-w-0 items-start gap-6 xl:grid-cols-[180px_minmax(0,1fr)]">
+        <nav aria-label={t('settings.title')} className="flex flex-wrap gap-1 rounded-lg border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-2 xl:sticky xl:top-6 xl:flex-col">
+          {[
+            { id: 'language', label: 'settings.language', visible: true },
+            { id: 'currency', label: 'settings.currency', visible: !!business },
+            { id: 'theme', label: 'settings.theme', visible: !!preferences },
+            { id: 'timezone', label: 'settings.timezone', visible: !!preferences },
+            { id: 'formats', label: 'settings.date_time_format', visible: !!preferences },
+            { id: 'notifications', label: 'settings.notifications', visible: !!preferences },
+            { id: 'autosave', label: 'settings.auto_save', visible: !!preferences },
+            { id: 'export', label: 'settings.export_format', visible: !!preferences },
+            { id: 'onboarding', label: 'onboarding.settings.title', visible: true },
+          ].filter(section => section.visible).map(section => <a key={section.id} href={`#settings-${section.id}`}
+            className="rounded-md px-3 py-2 text-xs leading-relaxed text-[var(--workspace-muted)] hover:bg-[var(--workspace-accent-soft)] hover:text-[var(--workspace-accent)]">
+            {t(section.label as TranslationKey)}
+          </a>)}
+        </nav>
+        <div className="grid min-w-0 max-w-4xl gap-4">
+        <Card id="settings-language" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
           <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.language')}</h2>
           <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.language_description')}</p>
           <div className="grid grid-cols-3 gap-3">
@@ -156,9 +173,9 @@ export default function Settings() {
                 key={lang.code}
                 aria-pressed={locale === lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
-                className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-xl border transition-colors text-left ${
+                className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-md border transition-colors text-left ${
                   locale === lang.code
-                    ? 'border-[var(--workspace-accent)] bg-blue-50 dark:bg-blue-900/20 text-[var(--workspace-ink)]'
+                    ? 'border-[var(--workspace-accent)] bg-[var(--workspace-accent-soft)] text-[var(--workspace-ink)]'
                     : 'border-[var(--workspace-line)] hover:bg-[var(--workspace-bg)] text-[var(--workspace-ink)]'
                 }`}
               >
@@ -168,47 +185,10 @@ export default function Settings() {
           </div>
         </Card>
 
-        <Card className="p-5 sm:p-6">
-          <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('onboarding.settings.title')}</h2>
-          <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('onboarding.settings.description')}</p>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setOnboardingSaved(false)
-                updateOnboarding.mutate(
-                  { tour_completed: false, tour_dismissed: false, welcome_dismissed: true },
-                  { onSuccess: () => { setOnboardingSaved(true); navigate('/app') } },
-                )
-              }}
-              disabled={updateOnboarding.isPending}
-            >
-              {t('onboarding.settings.showTour')}
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setOnboardingSaved(false)
-                updateOnboarding.mutate(
-                  { checklist_dismissed: false, welcome_dismissed: true, dismissed_hints: [] },
-                  { onSuccess: () => setOnboardingSaved(true) },
-                )
-              }}
-              disabled={updateOnboarding.isPending}
-            >
-              {t('onboarding.settings.showChecklist')}
-            </Button>
-          </div>
-          {onboardingSaved && (
-            <p className="mt-3 text-sm text-green-600 dark:text-green-400">{t('onboarding.settings.saved')}</p>
-          )}
-          {updateOnboarding.isError && (
-            <p className="mt-3 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(updateOnboarding.error, t('onboarding.settings.saveError'))}</p>
-          )}
-        </Card>
+
 
         {business && (
-        <Card className="p-5 sm:p-6">
+        <Card id="settings-currency" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
             <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.currency')}</h2>
             <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.currency_description')}</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -219,9 +199,9 @@ export default function Settings() {
                   aria-pressed={currentCurrency === currency}
                   onClick={() => handleCurrencyChange(currency)}
                   disabled={updateCurrencyMutation.isPending}
-                  className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-xl border transition-colors text-left ${
+                  className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-md border transition-colors text-left ${
                     currentCurrency === currency
-                      ? 'border-[var(--workspace-accent)] bg-blue-50 dark:bg-blue-900/20 text-[var(--workspace-ink)]'
+                      ? 'border-[var(--workspace-accent)] bg-[var(--workspace-accent-soft)] text-[var(--workspace-ink)]'
                       : 'border-[var(--workspace-line)] hover:bg-[var(--workspace-bg)] text-[var(--workspace-ink)]'
                   } ${updateCurrencyMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
@@ -249,7 +229,7 @@ export default function Settings() {
         )}
 
         {preferences && (
-        <Card className="p-5 sm:p-6">
+        <Card id="settings-theme" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
             <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.theme')}</h2>
             <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.theme_description')}</p>
             <div className="grid grid-cols-3 gap-3">
@@ -260,14 +240,14 @@ export default function Settings() {
                   aria-pressed={preferences.theme === theme.value}
                   onClick={() => handlePreferenceChange('theme', theme.value)}
                   disabled={updatePreferencesMutation.isPending}
-                  className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-xl border transition-colors text-left ${
+                  className={`w-full min-w-0 flex-col !items-stretch px-3 py-3 rounded-md border transition-colors text-left ${
                     preferences.theme === theme.value
-                      ? 'border-[var(--workspace-accent)] bg-blue-50 dark:bg-blue-900/20 text-[var(--workspace-ink)]'
+                      ? 'border-[var(--workspace-accent)] bg-[var(--workspace-accent-soft)] text-[var(--workspace-ink)]'
                       : 'border-[var(--workspace-line)] hover:bg-[var(--workspace-bg)] text-[var(--workspace-ink)]'
                   } ${updatePreferencesMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <div aria-hidden="true" className={`mb-3 h-16 overflow-hidden rounded-lg border border-[var(--workspace-line)] p-2 ${theme.value === 'dark' ? 'bg-[#232326]' : theme.value === 'system' ? 'bg-gradient-to-r from-[#f5f5f7] from-50% to-[#232326] to-50%' : 'bg-[#f5f5f7]'}`}>
-                    <div className="flex h-full gap-2"><div className="w-1/4 rounded bg-blue-400/25" /><div className="flex-1 space-y-2 py-1"><div className="h-1.5 w-3/4 rounded bg-blue-400/50" /><div className="h-1.5 rounded bg-gray-400/30" /><div className="h-1.5 w-1/2 rounded bg-gray-400/30" /></div></div>
+                  <div aria-hidden="true" className={`mb-3 h-16 overflow-hidden rounded-lg border border-[var(--workspace-line)] p-2 ${theme.value === 'dark' ? 'bg-[#1e2722]' : theme.value === 'system' ? 'bg-gradient-to-r from-[#f7f7f3] from-50% to-[#1e2722] to-50%' : 'bg-[#f7f7f3]'}`}>
+                    <div className="flex h-full gap-2"><div className="w-1/4 rounded bg-[var(--workspace-accent)]/15" /><div className="flex-1 space-y-2 py-1"><div className="h-1.5 w-3/4 rounded bg-[var(--workspace-accent)]/40" /><div className="h-1.5 rounded bg-gray-400/30" /><div className="h-1.5 w-1/2 rounded bg-gray-400/30" /></div></div>
                   </div>
                   <div className="text-center text-sm font-medium">{t(`settings.theme_${theme.value}` as TranslationKey)}</div>
                 </Button>
@@ -277,7 +257,7 @@ export default function Settings() {
         )}
 
         {preferences && (
-        <Card className="p-5 sm:p-6">
+        <Card id="settings-timezone" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
             <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.timezone')}</h2>
             <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.timezone_description')}</p>
             <Select
@@ -297,7 +277,7 @@ export default function Settings() {
         )}
 
         {preferences && (
-        <Card className="p-5 sm:p-6">
+        <Card id="settings-formats" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
             <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.date_time_format')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -337,7 +317,7 @@ export default function Settings() {
         )}
 
         {preferences && (
-        <Card className="p-5 sm:p-6">
+        <Card id="settings-notifications" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
             <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.notifications')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -391,7 +371,7 @@ export default function Settings() {
         )}
 
         {preferences && (
-        <Card className="p-5 sm:p-6">
+        <Card id="settings-autosave" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
             <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.auto_save')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -439,7 +419,7 @@ export default function Settings() {
         )}
 
         {preferences && (
-        <Card className="p-5 sm:p-6">
+        <Card id="settings-export" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
             <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('settings.export_format')}</h2>
             <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('settings.export_format_description')}</p>
             <Select
@@ -458,6 +438,45 @@ export default function Settings() {
           </Card>
         )}
 
+        <Card id="settings-onboarding" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
+          <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('onboarding.settings.title')}</h2>
+          <p className="text-xs leading-relaxed text-[var(--workspace-muted)] mb-4">{t('onboarding.settings.description')}</p>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setOnboardingSaved(false)
+                updateOnboarding.mutate(
+                  { tour_completed: false, tour_dismissed: false, welcome_dismissed: true },
+                  { onSuccess: () => { setOnboardingSaved(true); navigate('/app') } },
+                )
+              }}
+              disabled={updateOnboarding.isPending}
+            >
+              {t('onboarding.settings.showTour')}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setOnboardingSaved(false)
+                updateOnboarding.mutate(
+                  { checklist_dismissed: false, welcome_dismissed: true, dismissed_hints: [] },
+                  { onSuccess: () => setOnboardingSaved(true) },
+                )
+              }}
+              disabled={updateOnboarding.isPending}
+            >
+              {t('onboarding.settings.showChecklist')}
+            </Button>
+          </div>
+          {onboardingSaved && (
+            <p className="mt-3 text-sm text-green-600 dark:text-green-400">{t('onboarding.settings.saved')}</p>
+          )}
+          {updateOnboarding.isError && (
+            <p className="mt-3 text-sm text-red-600 dark:text-red-400">{apiErrorMessage(updateOnboarding.error, t('onboarding.settings.saveError'))}</p>
+          )}
+        </Card>
+
         {updatePreferencesMutation.isPending && (
           <div className="flex items-center justify-center gap-2 text-sm text-[var(--workspace-muted)]">
             <LoadingSpinner size="sm" />
@@ -470,6 +489,7 @@ export default function Settings() {
         {updatePreferencesMutation.isError && (
           <div className="text-center text-sm text-red-600 dark:text-red-400">{t('settings.error_saving')}</div>
         )}
+        </div>
       </div>
     </div>
   )
