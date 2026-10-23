@@ -137,7 +137,7 @@ export default function Register() {
   if (offers.isLoading) return <LoadingSpinner />
   if (offers.isError) return <QueryError retry={offers.refetch} />
   if (offers.data?.pilot_mode) return <AuthShell title={t('register.title')}>
-      <p role="status" className="rounded-xl bg-[var(--workspace-accent-soft)] p-4 text-sm text-[var(--workspace-ink)]">{t('pilot.invitation')}</p>
+      {offers.data.registration_requires_invitation && <p role="status" className="rounded-xl bg-[var(--workspace-accent-soft)] p-4 text-sm text-[var(--workspace-ink)]">{t('pilot.invitation')}</p>}
       <p className="text-sm text-gray-600 dark:text-gray-300">{t('pricing.trial')}</p>
       <label className="block text-sm font-medium">{t('register.role')}
         <select value={pilotRole} onChange={event => setPilotRole(event.target.value as SignupRole)} className="mt-2 w-full rounded-xl border border-gray-300 bg-white p-3 dark:border-gray-600 dark:bg-gray-800">
