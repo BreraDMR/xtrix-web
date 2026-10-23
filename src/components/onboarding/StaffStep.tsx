@@ -38,7 +38,7 @@ export default function StaffStep() {
   })
 
   if (!data || data.persona !== 'owner' || !staffStep?.completed || dismissed) return null
-  if (!employees || employees.length > 0) return null
+  if (!showForm && (!employees || employees.length > 0)) return null
 
   const dismiss = () => {
     setDismissed(true)
