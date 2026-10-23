@@ -171,8 +171,28 @@ export default function Portal() {
   const visitsQuery = useQuery<ClientPortalVisitsOut>({
     queryKey: ['client-portal', 'visits', token],
     queryFn: async () => {
-      const { data } = await api.get('/public/client-portal/visits', { headers: portalHeaders(token ?? '') })
-      return data
+      let offset = 0
+      let result: ClientPortalVisitsOut | undefined
+      const ids = new Set<number>()
+      while (offset <= 1000000) {
+        const { data } = await api.get<ClientPortalVisitsOut>('/public/client-portal/visits', {
+          headers: portalHeaders(token ?? ''), params: { limit: 100, offset },
+        })
+        for (const visit of [...data.upcoming, ...data.past]) {
+          if (ids.has(visit.id)) throw new Error('Portal visits changed during loading')
+          ids.add(visit.id)
+        }
+        if (!result) result = { ...data, upcoming: [], past: [] }
+        result.upcoming.push(...data.upcoming)
+        result.past.push(...data.past)
+        if (data.next_offset == null) return { ...result, next_offset: null }
+        const count = data.upcoming.length + data.past.length
+        if (count === 0 || data.next_offset !== offset + count || data.next_offset > 1000000) {
+          throw new Error('Incomplete portal visits')
+        }
+        offset = data.next_offset
+      }
+      throw new Error('Incomplete portal visits')
     },
     enabled: Boolean(token),
     retry: false,

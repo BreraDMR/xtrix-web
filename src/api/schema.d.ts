@@ -5005,6 +5005,8 @@ export interface components {
             booking_slug?: string | null;
             /** Currency */
             currency: string;
+            /** Next Offset */
+            next_offset?: number | null;
             /** Past */
             past: components["schemas"]["ClientPortalVisitOut"][];
             /** Timezone */
@@ -17299,7 +17301,10 @@ export interface operations {
     };
     list_portal_visits_public_client_portal_visits_get: {
         parameters: {
-            query?: never;
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
             header?: {
                 "X-Portal-Token"?: string | null;
                 "Accept-Language"?: string | null;

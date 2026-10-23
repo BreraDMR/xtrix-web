@@ -186,6 +186,26 @@ describe('client portal', () => {
     expect(queryClient.getQueryData(['client-portal', 'visits', TOKEN])).toBeUndefined()
   })
 
+  it.each(['complete', 'failure', 'repeated'])('loads the complete portal visit pages without accepting %s partial data', async mode => {
+    sessionStorage.setItem('client_portal_token', TOKEN)
+    const read = routes({ '/public/client-portal/session': session,
+      '/public/client-portal/loyalty': loyalty, '/public/client-portal/questionnaires': questionnaires })
+    vi.mocked(api.get).mockImplementation(async (url, config) => {
+      if (url !== '/public/client-portal/visits') return read(url, config)
+      const offset = (config?.params as { offset?: number } | undefined)?.offset ?? 0
+      if (offset === 0) return { data: { ...visits, past: [], next_offset: 1 } }
+      if (mode === 'failure') throw apiError(500, 'Later page unavailable')
+      return { data: { ...visits, upcoming: mode === 'repeated' ? visits.upcoming : [],
+        past: mode === 'repeated' ? [] : [{ ...visits.past[0], service_name: 'Earlier appointment' }], next_offset: null } }
+    })
+    renderPortal()
+    if (mode === 'complete') expect(await screen.findByText('Earlier appointment')).toBeInTheDocument()
+    else {
+      expect(await screen.findByRole('alert')).toBeInTheDocument()
+      expect(screen.queryByText('Portal Cut')).not.toBeInTheDocument()
+    }
+  })
+
   it('opens manage booking through a fresh MANAGE token instead of repeating the rules', async () => {
     sessionStorage.setItem('client_portal_token', TOKEN)
     mockPortalData()
