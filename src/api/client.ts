@@ -15,6 +15,10 @@ const api = axios.create({
 
 type SessionRequest = InternalAxiosRequestConfig & { sessionRetried?: boolean; sessionRevision?: number }
 
+// Guest links and Google credentials have their own authentication lifecycle.
+const SEPARATE_AUTH = /^\/?(?:public(?:\/|$)|auth\/google(?:\/|$))/
+
+
 api.interceptors.request.use((config: SessionRequest) => {
   const startedRevision = useAuthStore.getState().sessionRevision
   synchronizeStoredSession()
@@ -23,7 +27,9 @@ api.interceptors.request.use((config: SessionRequest) => {
   config.sessionRevision = sessionRevision
   const locale = useLocaleStore.getState().locale || navigator.language.split('-')[0] || 'en'
 
-  if (token) {
+  if (SEPARATE_AUTH.test(config.url || '')) {
+    config.headers.delete('Authorization')
+  } else if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
   config.headers['Accept-Language'] = locale

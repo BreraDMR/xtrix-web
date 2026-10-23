@@ -119,6 +119,23 @@ describe('session refresh', () => {
     expect(useAuthStore.getState().token).toBe('expired')
   })
 
+  it.each(['/public/client-portal/session', '/public/client-portal/verify', '/auth/google/login', '/public/booking-management'])('keeps a separate credential failure outside the CRM session: %s', async url => {
+    const requests: InternalAxiosRequestConfig[] = []
+    api.defaults.adapter = async config => {
+      requests.push(config)
+      if (config.url === '/users/refresh') return ok(config, { access_token: 'renewed', refresh_token: 'rotated' })
+      return fail(config, 401)
+    }
+    await expect(api.post(url, { token: 'expired-guest-token' }, {
+      headers: { 'X-Portal-Token': 'expired-portal-token' },
+    })).rejects.toThrow('Failed')
+    expect(requests.map(request => request.url)).toEqual([url])
+    expect(requests[0].headers.Authorization).toBeUndefined()
+    expect(requests[0].headers['X-Portal-Token']).toBe('expired-portal-token')
+    expect(useAuthStore.getState()).toMatchObject({ token: 'expired', user })
+    expect(localStorage.getItem('auth_refresh_token')).toBe('refresh')
+  })
+
   it('does not replay an old mutation with the next account token', async () => {
     let rejectOld!: () => void
     const calls: string[] = []
