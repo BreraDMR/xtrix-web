@@ -283,6 +283,9 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
       queryClient.invalidateQueries({ queryKey: ASSISTANT_STATUS_KEY })
       queryClient.invalidateQueries({ queryKey: [...MESSAGES_KEY, targetConvId] })
     } catch (err) {
+      // These responses confirm a failed generation; replaying its key only replays the error.
+      // Keep the key on a lost response, where the original outcome is still unknown.
+      if (['ai_busy', 'ai_unavailable'].includes(apiErrorCode(err) || '')) pendingRequest.current = null
       // give the text back so it can be sent again, unless something new was typed meanwhile
       setText((current) => current || typed)
       handleError(err)

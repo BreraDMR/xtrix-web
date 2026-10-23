@@ -525,6 +525,30 @@ describe('errors', () => {
     expect(await input()).toHaveValue('Book Clara')
   })
 
+  it.each(['ai_busy', 'ai_unavailable', 'network'])('retries unchanged text with the right idempotency key after %s', async kind => {
+    const keys: string[] = []
+    vi.mocked(api.post).mockImplementation(async (_url, body) => {
+      const key = (body as { client_request_id: string }).client_request_id
+      keys.push(key)
+      if (keys.length === 1) {
+        if (kind === 'network') throw networkError()
+        throw apiError(503, 'Try later', { code: kind, retry_after: 1 }, { headers: { 'retry-after': '1' } })
+      }
+      if (kind !== 'network' && key === keys[0]) throw apiError(503, 'Cached failure', { code: kind })
+      return { data: bookingPlan() }
+    })
+    renderWithProviders(<AssistantLauncher />)
+    await openPanel()
+    await ask('Book Clara')
+    expect(await input()).toHaveValue('Book Clara')
+    await waitFor(() => expect(send()).toBeEnabled(), { timeout: 4000 })
+    await userEvent.click(send())
+    await waitFor(() => expect(keys).toHaveLength(2))
+    if (kind === 'network') expect(keys[1]).toBe(keys[0])
+    else expect(keys[1]).not.toBe(keys[0])
+    expect(await screen.findByText('Book Clara for a haircut')).toBeInTheDocument()
+  })
+
   it('a network error keeps the text so it can be sent again', async () => {
     vi.mocked(api.post).mockRejectedValueOnce(networkError())
     renderWithProviders(<AssistantLauncher />)
