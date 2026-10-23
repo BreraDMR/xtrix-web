@@ -117,3 +117,16 @@ it('offers My Salary to staff but not to a solo specialist who has no employer',
   renderLayout()
   expect(within(screen.getByRole('navigation', { name: 'PRIMARY' })).queryByRole('link', { name: 'My Salary' })).not.toBeInTheDocument()
 })
+
+it('links the specialist profile only for specialists', async () => {
+  signIn({ id: 6, role: 'specialist' })
+  const { unmount } = renderLayout()
+  const nav = () => within(screen.getByRole('navigation', { name: 'PRIMARY' }))
+  expect(await nav().findByRole('link', { name: 'Profile' })).toHaveAttribute('href', '/app/profile')
+  unmount()
+
+  signIn({ id: 5, role: 'business_owner' })
+  renderLayout()
+  expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
+  expect(nav().queryByRole('link', { name: 'Profile' })).not.toBeInTheDocument()
+})

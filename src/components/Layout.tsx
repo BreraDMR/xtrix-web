@@ -18,7 +18,7 @@ import {
   HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
   HiOutlineClock, HiOutlineClipboardList, HiOutlineMenuAlt2, HiOutlineX,
   HiOutlineChevronRight, HiOutlineChevronLeft, HiOutlineBell, HiOutlineUserAdd,
-  HiOutlineSpeakerphone, HiOutlineShieldCheck, HiOutlineUpload,
+  HiOutlineSpeakerphone, HiOutlineShieldCheck, HiOutlineUpload, HiOutlineIdentification,
 } from 'react-icons/hi'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -30,7 +30,7 @@ const icons: Record<string, ComponentType<{ className?: string }>> = {
   '/app/my-salary': HiOutlineCurrencyDollar, '/app/settings': HiOutlineCog,
   '/app/notifications': HiOutlineBell, '/app/waitlist': HiOutlineUserAdd,
   '/app/campaigns': HiOutlineSpeakerphone, '/app/audit': HiOutlineShieldCheck,
-  '/app/import': HiOutlineUpload,
+  '/app/import': HiOutlineUpload, '/app/profile': HiOutlineIdentification,
 }
 
 export default function Layout() {
@@ -118,6 +118,7 @@ export default function Layout() {
     ...(!access?.pilot_mode && (managesBusiness || (user?.role === 'specialist' && !user.employer_id)) ? [{ path: '/app/notifications', label: t('nav.notifications') }] : []),
     // only people someone pays have a salary - a solo specialist works for themselves
     ...(user?.role === 'employee' || (user?.role === 'specialist' && user.employer_id) ? [{ path: '/app/my-salary', label: t('nav.my_salary') }] : []),
+    ...(user?.role === 'specialist' ? [{ path: '/app/profile', label: t('nav.profile') }] : []),
     { path: '/app/settings', label: t('nav.settings') },
   ]
   const active = [...primaryItems, ...manageItems, ...systemItems].find(({ path }) =>
