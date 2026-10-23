@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { StrictMode } from 'react'
+import { act } from '@testing-library/react'
 import { screen, waitFor, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import EmployeeForm from '../components/EmployeeForm'
@@ -73,5 +75,23 @@ describe('EmployeeForm', () => {
     expect(vi.mocked(api.put).mock.calls[0][0]).toBe('/employees/4')
     expect(body).toMatchObject({ position: 'Barber', base_salary: 1000, commission_percentage: 10 })
     expect(body).not.toHaveProperty('employee_user_id')
+  })
+
+  it('ignores the cancelled initial load after a user starts editing', async () => {
+    let finishOldLoad!: (value: { data: unknown }) => void
+    const employee = { id: 4, position: 'Barber', base_salary: 1000, commission_percentage: 10,
+      employee_user: { id: 9, full_name: 'Petr Novák' } }
+    vi.mocked(api.get).mockReset()
+    vi.mocked(api.get).mockImplementationOnce(() => new Promise(resolve => { finishOldLoad = resolve }))
+      .mockResolvedValue({ data: employee })
+    vi.mocked(api.put).mockResolvedValue({ data: {} })
+    const { container } = renderWithProviders(<StrictMode><EmployeeForm employeeId={4} onSuccess={() => {}} onCancel={() => {}} /></StrictMode>)
+    await screen.findByText('Petr Novák')
+    const position = container.querySelector<HTMLInputElement>('input[type="text"]')!
+    fireEvent.change(position, { target: { value: 'Senior Barber' } })
+    await act(async () => finishOldLoad({ data: employee }))
+    expect(position).toHaveValue('Senior Barber')
+    await userEvent.click(screen.getByRole('button', { name: /save/i }))
+    expect(api.put).toHaveBeenCalledWith('/employees/4', expect.objectContaining({ position: 'Senior Barber' }))
   })
 })

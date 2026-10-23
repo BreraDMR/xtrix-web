@@ -77,27 +77,27 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
   })
 
   useEffect(() => {
-    if (employeeId) {
-      loadEmployee()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- loaders are plain functions, rerun only on these
-  }, [employeeId])
-
-  const loadEmployee = async () => {
     if (!employeeId) return
-    try {
-      const { data } = await api.get<Schema<'EmployeeOut'>>(`/employees/${employeeId}`)
-      setEmployeeName(String(data.employee_user?.full_name ?? ''))
-      setFormData({
-        position: data.position || '',
-        commission_percentage: data.commission_percentage ?? undefined,
-        base_salary: data.base_salary ?? undefined,
-        permissions: (data.permissions as Permissions | null) || DEFAULT_PERMISSIONS,
-      })
-    } catch (error) {
-      console.error('Failed to load employee:', error)
+    const controller = new AbortController()
+    const loadEmployee = async () => {
+      try {
+        const { data } = await api.get<Schema<'EmployeeOut'>>(`/employees/${employeeId}`, { signal: controller.signal })
+        // A cancelled effect may finish after the active load and the user's edits.
+        if (controller.signal.aborted) return
+        setEmployeeName(String(data.employee_user?.full_name ?? ''))
+        setFormData({
+          position: data.position || '',
+          commission_percentage: data.commission_percentage ?? undefined,
+          base_salary: data.base_salary ?? undefined,
+          permissions: (data.permissions as Permissions | null) || DEFAULT_PERMISSIONS,
+        })
+      } catch (error) {
+        if (!controller.signal.aborted) console.error('Failed to load employee:', error)
+      }
     }
-  }
+    void loadEmployee()
+    return () => controller.abort()
+  }, [employeeId])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
