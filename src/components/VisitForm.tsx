@@ -355,8 +355,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const giftScopeIds = giftCertificate?.service_ids ?? []
   const giftScopeMismatch =
     giftScopeIds.length > 0 &&
-    visitServiceIds.length > 0 &&
-    !visitServiceIds.some((id) => giftScopeIds.includes(id))
+    (visitServiceIds.length === 0 || !visitServiceIds.every((id) => giftScopeIds.includes(id)))
   const giftMoneyMax = giftCertificate?.kind === 'money'
     ? Math.min(
         giftCertificate.money_balance,

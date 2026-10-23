@@ -7,7 +7,7 @@ import api from '../api/client'
 import GiftOffers from '../components/loyalty/GiftOffers'
 import VisitForm from '../components/VisitForm'
 import { GiftCheckout, GiftPurchase, GiftReturn } from '../pages/booking/GiftPurchase'
-import { apiError, renderWithProviders, resetStores, signIn } from '../test/render'
+import { apiError, renderWithProviders, resetStores, signIn, routes } from '../test/render'
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn() } }))
 
@@ -432,4 +432,34 @@ describe('gift redemption in the visit form', () => {
 
     expect(api.post).not.toHaveBeenCalled()
   })
+})
+
+
+it.each([false, true])('requires the certificate to cover every procedure (full scope: %s)', async coversAll => {
+  signIn({ id: 7, role: 'specialist' })
+  const services = [7, 8].map(id => ({ id, name: `Treatment ${id}`, duration_minutes: 30,
+    price: 40, specialist_id: 7, is_active: true, specialists: [{ id: 7, full_name: 'Test User' }] }))
+  vi.mocked(api.get).mockImplementation(routes({
+    '/clients/': [jana], '/services/': services, '/services/7': services[0], '/services/8': services[1],
+    '/businesses/me/gift-certificates/lookup': { ...LOOKUP_DETAIL, service_ids: coversAll ? [7, 8] : [7] },
+  }))
+  vi.mocked(api.post).mockResolvedValue({ data: { id: 9, applied_amount: 20 } })
+  renderWithProviders(<VisitForm onSuccess={() => {}} onCancel={() => {}} />)
+  const option = await screen.findByRole('option', { name: 'Jana Nováková' })
+  await userEvent.selectOptions(option.closest('select')!, option)
+  const treatment = await screen.findByRole('option', { name: /Treatment 7/ })
+  await userEvent.selectOptions(treatment.closest('select')!, '7')
+  await userEvent.click(screen.getByRole('button', { name: /add service/i }))
+  await userEvent.selectOptions(screen.getByLabelText('Service 2'), '8')
+  await waitFor(() => expect(screen.getByLabelText('Specialist 2')).toHaveValue('7'))
+  await userEvent.type(screen.getByLabelText('Certificate code'), 'GIFT-ABCD-1234')
+  await userEvent.click(screen.getByRole('button', { name: 'Find' }))
+  await screen.findByText(/Balance.*50/)
+  await userEvent.type(screen.getByLabelText(/Amount to use/), '20')
+  await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
+  if (coversAll) await waitFor(() => expect(api.post).toHaveBeenCalledWith('/visits/', expect.anything()))
+  else {
+    expect(await screen.findAllByText('This certificate does not cover the services of this visit.')).not.toHaveLength(0)
+    expect(api.post).not.toHaveBeenCalled()
+  }
 })
