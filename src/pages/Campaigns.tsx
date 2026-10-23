@@ -231,8 +231,12 @@ export default function Campaigns() {
 
   const confirm = useMutation({
     mutationFn: async () => {
+      const seen = previewQuery.data
+      if (!seen) throw new Error('preview missing')
+      // send back what the owner looked at; the server refuses if text or audience moved since
       const { data } = await api.post<CampaignOut>(
         `/businesses/me/campaigns/${selectedId}/confirm`,
+        { audience_hash: seen.audience_hash, content_hash: seen.content_hash },
       )
       return data
     },

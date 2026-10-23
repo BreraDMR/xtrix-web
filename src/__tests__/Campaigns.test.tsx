@@ -154,7 +154,11 @@ describe('campaign workspace', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
 
     await waitFor(() => {
-      expect(api.post).toHaveBeenCalledWith('/businesses/me/campaigns/1/confirm')
+      // the server checks these against the live campaign, so a stale screen can't be confirmed
+      expect(api.post).toHaveBeenCalledWith('/businesses/me/campaigns/1/confirm', {
+        audience_hash: 'audience-hash',
+        content_hash: 'content-hash',
+      })
     })
 
     const send = await screen.findByRole('button', { name: 'Send campaign' })

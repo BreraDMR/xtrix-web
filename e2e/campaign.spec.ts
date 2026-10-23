@@ -35,6 +35,7 @@ interface CampaignRow {
   recipient_count: number
   queued_count: number
   audience_hash: string | null
+  content_hash: string | null
 }
 
 interface CampaignStats {
@@ -262,7 +263,7 @@ test('a confirmed campaign reaches only consented clients and revocation wins', 
   ))
   const repeated = await json<CampaignRow>(await request.post(
     `${apiUrl}/businesses/me/campaigns/${campaign.id}/confirm`,
-    { headers: salon.owner.headers },
+    { headers: salon.owner.headers, data: { audience_hash: frozen.audience_hash, content_hash: frozen.content_hash } },
   ))
   expect(repeated.recipient_count).toBe(2)
   expect(repeated.audience_hash).toBe(frozen.audience_hash)
@@ -353,9 +354,13 @@ test('cancelling a queued campaign stops the captured delivery', async ({ page, 
       inactive_days: INACTIVE_DAYS,
     },
   }))
+  const seen = await json<{ audience_hash: string; content_hash: string }>(await request.get(
+    `${apiUrl}/businesses/me/campaigns/${campaign.id}/preview`,
+    { headers: salon.owner.headers },
+  ))
   await json(await request.post(
     `${apiUrl}/businesses/me/campaigns/${campaign.id}/confirm`,
-    { headers: salon.owner.headers },
+    { headers: salon.owner.headers, data: { audience_hash: seen.audience_hash, content_hash: seen.content_hash } },
   ))
 
   await openAs(page, salon.owner, '/app/campaigns')
