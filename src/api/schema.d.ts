@@ -4485,6 +4485,16 @@ export interface components {
              */
             period_start: string;
         };
+        /**
+         * CampaignConfirmIn
+         * @description The fingerprints from the preview the owner actually looked at.
+         */
+        CampaignConfirmIn: {
+            /** Audience Hash */
+            audience_hash: string;
+            /** Content Hash */
+            content_hash: string;
+        };
         /** CampaignIn */
         CampaignIn: {
             /** Body */
@@ -12060,7 +12070,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CampaignConfirmIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -19009,7 +19023,9 @@ export interface operations {
     };
     my_subscription_subscriptions_me_get: {
         parameters: {
-            query?: never;
+            query?: {
+                product?: ("crm" | "ai") | null;
+            };
             header?: {
                 "Accept-Language"?: string | null;
             };

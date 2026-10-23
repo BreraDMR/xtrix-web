@@ -26,7 +26,7 @@ describe('checkout return', () => {
 
   it('waits for the webhook and then refreshes the subscription', async () => {
     vi.mocked(api.get).mockImplementation(async (url) => ({ data: url.includes('/checkout/session/')
-      ? { status: 'paid', subscription_id: 'sub_1' }
+      ? { status: 'paid', subscription_id: 'sub_1', subscription_ready: true }
       : { external_id: 'sub_1', status: 'active', is_trial: false } }))
     const { queryClient } = show()
     const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
@@ -34,9 +34,18 @@ describe('checkout return', () => {
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ['subscription'] })
   })
 
+  it('accepts the verified AI checkout even when the default subscription is CRM', async () => {
+    vi.mocked(api.get).mockImplementation(async url => ({ data: url.includes('/checkout/session/')
+      ? { status: 'paid', subscription_id: 'sub_ai', subscription_ready: true }
+      : { external_id: 'sub_crm', status: 'active', is_trial: false } }))
+    show()
+    expect(await screen.findByText('Your paid subscription is active.')).toBeInTheDocument()
+    expect(api.get).not.toHaveBeenCalledWith('/subscriptions/me')
+  })
+
   it('does not mistake an existing trial for a paid subscription', async () => {
     vi.mocked(api.get).mockImplementation(async (url) => ({ data: url.includes('/checkout/session/')
-      ? { status: 'paid', subscription_id: 'sub_1' }
+      ? { status: 'paid', subscription_id: 'sub_1', subscription_ready: false }
       : { status: 'active', is_trial: true } }))
     show()
     expect(await screen.findByText('Payment received. Waiting for subscription activation…')).toBeInTheDocument()

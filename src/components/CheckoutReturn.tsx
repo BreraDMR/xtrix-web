@@ -3,7 +3,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import api from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
-import type { Schema } from '../api/types'
 
 export default function CheckoutReturn() {
   const [params] = useSearchParams()
@@ -18,13 +17,11 @@ export default function CheckoutReturn() {
     retry: false,
     queryFn: async () => {
       attempts.current += 1
-      const { data: session } = await api.get<{ status: string; subscription_id: string | null }>(
+      const { data: session } = await api.get<{ status: string; subscription_id: string | null; subscription_ready: boolean }>(
         `/subscriptions/checkout/session/${encodeURIComponent(sessionId!)}`
       )
       if (session.status !== 'paid') return 'unpaid' as const
-      const { data: subscription } = await api.get<Schema<'SubscriptionOut'> | null>('/subscriptions/me')
-      return subscription && !subscription.is_trial && subscription.status === 'active'
-        && subscription.external_id === session.subscription_id ? 'active' as const : 'pending' as const
+      return session.subscription_ready ? 'active' as const : 'pending' as const
     },
     // A successful redirect isn't proof of payment. Wait up to a minute for the webhook.
     refetchInterval: (query) => query.state.data === 'pending' && attempts.current < 30 ? 2000 : false,

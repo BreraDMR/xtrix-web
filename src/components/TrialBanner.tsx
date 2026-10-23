@@ -19,10 +19,10 @@ export default function TrialBanner() {
   const { t } = useTranslation()
 
   const { data: subscription } = useQuery<Subscription | null>({
-    queryKey: ['subscription'],
+    queryKey: ['subscription', 'crm'],
     queryFn: async () => {
       try {
-        const { data } = await api.get('/subscriptions/me')
+        const { data } = await api.get('/subscriptions/me', { params: { product: 'crm' } })
         return data
       } catch {
         return null
