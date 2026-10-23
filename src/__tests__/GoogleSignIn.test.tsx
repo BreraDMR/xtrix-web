@@ -93,3 +93,23 @@ it('asks a linked Google-only account for TOTP without an Xtrix password or new 
   })
   expect(await screen.findByRole('heading', { name: 'Workspace' })).toBeInTheDocument()
 })
+
+it('finishes the sign-in even when the page swaps the button for a spinner mid-way', async () => {
+  // the register page shows a spinner while the session reset refetches its queries
+  function RegisterLike() {
+    const token = useAuthStore(state => state.token)
+    const user = useAuthStore(state => state.user)
+    return token && !user ? <p>Loading</p> : <GoogleSignIn registration />
+  }
+  let profileArrives: (value: unknown) => void = () => {}
+  const config = routes({ '/auth/google/config': { enabled: true, client_id: 'client.apps.googleusercontent.com' } })
+  vi.mocked(api.get).mockImplementation(((url: string, options?: Parameters<typeof config>[1]) => url === '/users/me'
+    ? new Promise(resolve => { profileArrives = resolve })
+    : config(url, options)) as never)
+  renderWithProviders(<Routes><Route path="/" element={<RegisterLike />} /><Route path="/app" element={<h1>Workspace</h1>} /></Routes>)
+  await googleReturnsCredential()
+  expect(await screen.findByText('Loading')).toBeInTheDocument()
+  await act(async () => profileArrives({ data: { id: 9, full_name: 'Jane', role: 'business_owner' } }))
+  expect(await screen.findByRole('heading', { name: 'Workspace' })).toBeInTheDocument()
+  expect(useAuthStore.getState().user?.id).toBe(9)
+})

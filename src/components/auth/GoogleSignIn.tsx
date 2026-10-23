@@ -41,7 +41,9 @@ export default function GoogleSignIn({ role = 'business_owner', returnTo = '/app
         ...(linking ? { link_existing: true, password } : {}),
         ...(code ? { totp_token: code } : {}),
       })
-      if (!mounted.current || useAuthStore.getState().sessionRevision !== revision) return
+      // only a newer session cancels us. The page may swap this button for a spinner while
+      // the session reset refetches, and the sign-in still has to finish
+      if (useAuthStore.getState().sessionRevision !== revision) return
       if (data.requires_2fa && !data.access_token) {
         setLink({ credential, nonce, linking }); setNeedsCode(true); return
       }
@@ -50,14 +52,14 @@ export default function GoogleSignIn({ role = 'business_owner', returnTo = '/app
       useAuthStore.getState().startSession(data.access_token, data.refresh_token)
       revision = useAuthStore.getState().sessionRevision
       const user = (await api.get('/users/me')).data
-      if (!mounted.current || useAuthStore.getState().sessionRevision !== revision) return
+      if (useAuthStore.getState().sessionRevision !== revision) return
       const token = useAuthStore.getState().token
       if (token !== issuedToken) return
       useAuthStore.getState().setAuth(token, user)
       setPassword(''); setCode(''); setLink(null)
       navigate(returnTo, { replace: true })
     } catch (failure) {
-      if (!mounted.current || useAuthStore.getState().sessionRevision !== revision) return
+      if (useAuthStore.getState().sessionRevision !== revision) return
       const failureCode = apiErrorCode(failure) ?? apiErrorMessage(failure, '')
       if (apiErrorStatus(failure) === 409 && failureCode !== 'google_identity_already_linked') {
         setLink({ credential, nonce, linking: true }); setConsent(false)
