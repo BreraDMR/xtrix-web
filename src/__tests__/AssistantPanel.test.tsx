@@ -525,7 +525,7 @@ describe('errors', () => {
     expect(await input()).toHaveValue('Book Clara')
   })
 
-  it.each(['ai_busy', 'ai_unavailable', 'network'])('retries unchanged text with the right idempotency key after %s', async kind => {
+  it.each(['ai_busy', 'ai_unavailable', 'ai_limit_reached', 'network'])('retries unchanged text with the right idempotency key after %s', async kind => {
     const keys: string[] = []
     vi.mocked(api.post).mockImplementation(async (_url, body) => {
       const key = (body as { client_request_id: string }).client_request_id
@@ -541,6 +541,11 @@ describe('errors', () => {
     await openPanel()
     await ask('Book Clara')
     expect(await input()).toHaveValue('Book Clara')
+    if (kind === 'ai_limit_reached') {
+      await new Promise(resolve => setTimeout(resolve, 1100))
+      // A status refetch or input event renders the now-reset quota without changing the request.
+      await userEvent.type(await input(), ' ')
+    }
     await waitFor(() => expect(send()).toBeEnabled(), { timeout: 4000 })
     await userEvent.click(send())
     await waitFor(() => expect(keys).toHaveLength(2))

@@ -285,7 +285,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
     } catch (err) {
       // These responses confirm a failed generation; replaying its key only replays the error.
       // Keep the key on a lost response, where the original outcome is still unknown.
-      if (['ai_busy', 'ai_unavailable'].includes(apiErrorCode(err) || '')) pendingRequest.current = null
+      if (['ai_busy', 'ai_unavailable', 'ai_limit_reached'].includes(apiErrorCode(err) || '')) pendingRequest.current = null
       // give the text back so it can be sent again, unless something new was typed meanwhile
       setText((current) => current || typed)
       handleError(err)
