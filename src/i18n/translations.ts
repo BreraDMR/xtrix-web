@@ -1446,6 +1446,7 @@ export type TranslationKey =
   | 'notfound.to_app'
   | 'onboarding.welcome.ownerTitle'
   | 'onboarding.welcome.ownerBody'
+  | 'onboarding.welcome.ownerContinueBody'
   | 'onboarding.welcome.soloTitle'
   | 'onboarding.welcome.soloBody'
   | 'onboarding.welcome.staffTitle'
@@ -3932,6 +3933,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   },
   'onboarding.welcome.ownerTitle': { en: 'Welcome to Xtrix', ru: 'Добро пожаловать в Xtrix', cz: 'Vítejte v Xtrixu' },
   'onboarding.welcome.ownerBody': { en: 'Create your business, add the first service and set working hours. You can stop and continue later.', ru: 'Создайте бизнес, добавьте первую услугу и настройте рабочие часы. Можно остановиться и продолжить позже.', cz: 'Vytvořte firmu, přidejte první službu a nastavte pracovní hodiny. Můžete přestat a pokračovat později.' },
+  'onboarding.welcome.ownerContinueBody': { en: 'Your business is set up. A few setup steps are left, pick up where you stopped.', ru: 'Бизнес уже создан. Осталось несколько шагов настройки, продолжите с того места, где остановились.', cz: 'Firma je založená. Zbývá pár kroků nastavení, pokračujte tam, kde jste skončili.' },
   'onboarding.welcome.soloTitle': { en: 'Welcome to Xtrix', ru: 'Добро пожаловать в Xtrix', cz: 'Vítejte v Xtrixu' },
   'onboarding.welcome.soloBody': { en: 'Start with the first service. The workspace is already yours — no employee needed.', ru: 'Начните с первой услуги. Рабочее пространство уже ваше — сотрудник не обязателен.', cz: 'Začněte první službou. Pracovní prostor je váš — zaměstnanec není potřeba.' },
   'onboarding.welcome.staffTitle': { en: 'Welcome to the team workspace', ru: 'Добро пожаловать в рабочее пространство команды', cz: 'Vítejte v týmovém pracovním prostoru' },

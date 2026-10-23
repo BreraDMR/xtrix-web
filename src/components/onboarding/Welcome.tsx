@@ -19,10 +19,12 @@ export default function Welcome() {
   const { data } = useOnboarding()
   const update = useUpdateOnboarding()
 
-  if (!data || data.welcome_dismissed) return null
+  // nothing left to set up means nothing to welcome the user to
+  if (!data || data.welcome_dismissed || (data.persona !== 'staff' && data.next_step == null)) return null
 
+  const businessDone = data.steps.some(step => step.key === 'business' && step.completed)
   const copy = data.persona === 'owner'
-    ? { title: t('onboarding.welcome.ownerTitle'), body: t('onboarding.welcome.ownerBody') }
+    ? { title: t('onboarding.welcome.ownerTitle'), body: t(businessDone ? 'onboarding.welcome.ownerContinueBody' : 'onboarding.welcome.ownerBody') }
     : data.persona === 'solo'
       ? { title: t('onboarding.welcome.soloTitle'), body: t('onboarding.welcome.soloBody') }
       : { title: t('onboarding.welcome.staffTitle'), body: t('onboarding.welcome.staffBody') }
