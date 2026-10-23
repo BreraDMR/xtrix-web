@@ -30,6 +30,7 @@ import Waitlist from './pages/Waitlist'
 import Campaigns from './pages/Campaigns'
 import AuditLog from './pages/AuditLog'
 import ImportWizard from './components/import/ImportWizard'
+import Privacy from './pages/Privacy'
 import Unsubscribe from './pages/Unsubscribe'
 import NotFound from './pages/NotFound'
 import BookingPage from './pages/booking/BookingPage'
@@ -68,6 +69,7 @@ function App() {
         <Route path="/client/portal" element={<PublicFeatureGate feature="email"><PortalLogin /></PublicFeatureGate>} />
         <Route path="/client/history" element={<PublicFeatureGate feature="email"><LegacyHistory /></PublicFeatureGate>} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
+        <Route path="/privacy" element={<Privacy />} />
 
         {/* Legacy CRM routes redirecting to /app/... while preserving query and hash */}
         <Route path="/clients" element={<LegacyRedirect target="/app/clients" />} />
