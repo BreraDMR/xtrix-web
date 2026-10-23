@@ -6,7 +6,8 @@ import { useLabels } from '../../i18n/labels'
 import { useLocaleStore } from '../../store/localeStore'
 import { useBusinessCurrency } from '../../hooks/useBusinessCurrency'
 import { formatCurrency } from '../../utils/currency'
-import { isoToZonedWallTime, zonedDayKey } from '../../utils/dates'
+import { zonedDayKey } from '../../utils/dates'
+import { dayTimeline, timelineIso, timelineLabel } from './timeline'
 import type { DayOverlay, MinuteInterval } from './schedule'
 import type { CalendarEvent } from './chain'
 
@@ -45,44 +46,24 @@ interface DayEvent {
   lanes: number
 }
 
-const HOURS_IN_DAY = 24
 const DEFAULT_HOUR_HEIGHT = 64
 const FALLBACK_MINUTES = 60
 const DRAG_MIME = 'application/x-xtrix-visit'
 
-const hhmmToMinutes = (value: string): number => {
-  const [hour, minute] = value.split(':').map(Number)
-  return hour * 60 + minute
-}
-
-const minutesToHHMM = (value: number): string => {
-  const hour = Math.floor(value / 60)
-  const minute = value % 60
-  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-}
-
 function rangeForDay(visit: CalendarEvent, dayKey: string, timeZone: string) {
-  const start = new Date(visit.date_start)
-  if (Number.isNaN(start.getTime())) return null
-  let end = visit.date_end ? new Date(visit.date_end) : null
-  if (!end || Number.isNaN(end.getTime()) || end.getTime() <= start.getTime()) {
-    end = new Date(start.getTime() + FALLBACK_MINUTES * 60_000)
-  }
-  const startWall = isoToZonedWallTime(start.toISOString(), timeZone)
-  const endWall = isoToZonedWallTime(end.toISOString(), timeZone)
-  const dayIndex = Date.parse(`${dayKey}T00:00:00Z`)
-  const startIndex = Date.parse(`${startWall.day}T00:00:00Z`)
-  const endIndex = Date.parse(`${endWall.day}T00:00:00Z`)
-  // the grid owns the half-open [00:00, 24:00) interval of its own day
-  if (startIndex > dayIndex || endIndex < dayIndex) return null
-  const startMin = startIndex < dayIndex ? 0 : hhmmToMinutes(startWall.time)
-  const endMin = endIndex > dayIndex ? HOURS_IN_DAY * 60 : hhmmToMinutes(endWall.time)
-  if (endMin <= startMin) return null
+  const start = Date.parse(visit.date_start)
+  if (!Number.isFinite(start)) return null
+  let end = visit.date_end ? Date.parse(visit.date_end) : NaN
+  if (!Number.isFinite(end) || end <= start) end = start + FALLBACK_MINUTES * 60_000
+  const day = dayTimeline(dayKey, timeZone)
+  const clippedStart = Math.max(start, day.start)
+  const clippedEnd = Math.min(end, day.end)
+  if (clippedEnd <= clippedStart) return null
   return {
-    startMin,
-    endMin,
-    labelStart: startWall.time,
-    labelEnd: endWall.time,
+    startMin: (clippedStart - day.start) / 60_000,
+    endMin: (clippedEnd - day.start) / 60_000,
+    labelStart: timelineLabel(new Date(start).toISOString(), timeZone, day.minutes !== 1440),
+    labelEnd: timelineLabel(new Date(end).toISOString(), timeZone, day.minutes !== 1440),
   }
 }
 
@@ -143,10 +124,13 @@ const overlayStyle = (interval: MinuteInterval, hourHeight: number) => ({
   height: ((interval.end - interval.start) / 60) * hourHeight,
 })
 
-export function HourAxis({ hourHeight = DEFAULT_HOUR_HEIGHT }: { hourHeight?: number }) {
+export function HourAxis({ hourHeight = DEFAULT_HOUR_HEIGHT, dayKey, timeZone }: {
+  hourHeight?: number; dayKey?: string; timeZone?: string
+}) {
+  const minutes = dayKey && timeZone ? dayTimeline(dayKey, timeZone).minutes : 1440
   return (
     <div className="relative h-full w-full" aria-hidden="true">
-      {Array.from({ length: HOURS_IN_DAY }, (_, hour) => (
+      {Array.from({ length: minutes / 60 }, (_, hour) => (
         <span
           key={hour}
           className={`absolute right-2 text-[11px] tabular-nums text-[var(--workspace-muted)] ${
@@ -154,7 +138,7 @@ export function HourAxis({ hourHeight = DEFAULT_HOUR_HEIGHT }: { hourHeight?: nu
           }`}
           style={{ top: hour * hourHeight + (hour === 0 ? 2 : 0) }}
         >
-          {minutesToHHMM(hour * 60)}
+          {dayKey && timeZone ? timelineLabel(timelineIso(dayKey, hour * 60, timeZone), timeZone, minutes !== 1440) : `${String(hour).padStart(2, '0')}:00`}
         </span>
       ))}
     </div>
@@ -183,14 +167,15 @@ export default function DayGrid({
 
   const zone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone
   const dayKey = zonedDayKey(day, zone)
+  const timeline = dayTimeline(dayKey, zone)
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
   const title = format(parseISO(dayKey), locale === 'cz' ? 'EEEE d. MMMM' : 'EEEE, d MMMM', { locale: dateLocale })
   const events = useMemo(() => layoutDay(visits, dayKey, zone), [visits, dayKey, zone])
 
   const previewStyle = preview && preview.dayKey === dayKey
     ? {
-        top: (preview.startMin / 60) * hourHeight,
-        height: Math.max(((preview.endMin - preview.startMin) / 60) * hourHeight, 30),
+        top: (Math.max(0, preview.startMin) / 60) * hourHeight,
+        height: Math.max(((Math.min(timeline.minutes, preview.endMin) - Math.max(0, preview.startMin)) / 60) * hourHeight, 30),
       }
     : null
 
@@ -207,7 +192,8 @@ export default function DayGrid({
         JSON.stringify({
           id: visit.id,
           grabOffsetMinutes: grabOffset,
-          chainOffsetMinutes: visit.segment?.offsetMinutes ?? 0,
+          chainOffsetMinutes: (visit.segment?.offsetMinutes ?? 0)
+            + Math.max(0, (timeline.start - Date.parse(visit.date_start)) / 60_000),
         }),
       )
       dragEvent.dataTransfer.effectAllowed = 'move'
@@ -233,10 +219,10 @@ export default function DayGrid({
   }
 
   const body = (
-    <div className="flex" style={{ height: HOURS_IN_DAY * hourHeight }}>
+    <div className="flex" style={{ height: timeline.minutes / 60 * hourHeight }}>
       {showAxis && (
         <div className="w-14 shrink-0">
-          <HourAxis hourHeight={hourHeight} />
+          <HourAxis hourHeight={hourHeight} dayKey={dayKey} timeZone={zone} />
         </div>
       )}
 
@@ -250,7 +236,7 @@ export default function DayGrid({
         }}
         onDrop={handleDrop}
       >
-        {Array.from({ length: HOURS_IN_DAY }, (_, hour) => (
+        {Array.from({ length: timeline.minutes / 60 }, (_, hour) => (
           <div
             key={hour}
             aria-hidden="true"

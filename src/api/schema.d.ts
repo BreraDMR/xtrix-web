@@ -20011,6 +20011,8 @@ export interface operations {
                 sort_order?: "asc" | "desc";
                 page?: number;
                 per_page?: number;
+                /** @description Calendar interval overlap; date_to is exclusive */
+                calendar_overlap?: boolean;
                 /** @description Include soft-deleted visits */
                 include_deleted?: boolean;
                 /** @description Include archived visits */

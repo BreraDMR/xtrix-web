@@ -1,5 +1,5 @@
 import { parseISO } from 'date-fns'
-import { isoToZonedWallTime } from '../../utils/dates'
+import { dayTimeline, wallIntervals } from './timeline'
 import type {
   BlockSlotOut,
   ScheduleExceptionOut,
@@ -27,7 +27,6 @@ export interface StaffScheduleData {
   complete: boolean
 }
 
-const DAY_MINUTES = 24 * 60
 const FALLBACK_VISIT_MINUTES = 60
 
 const toMinutes = (value: string): number => {
@@ -46,14 +45,9 @@ function intervalOnDay(
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end.getTime() <= start.getTime()) {
     return null
   }
-  const startWall = isoToZonedWallTime(start.toISOString(), timeZone)
-  const endWall = isoToZonedWallTime(end.toISOString(), timeZone)
-  const dayIndex = Date.parse(`${dayKey}T00:00:00Z`)
-  const startIndex = Date.parse(`${startWall.day}T00:00:00Z`)
-  const endIndex = Date.parse(`${endWall.day}T00:00:00Z`)
-  if (startIndex > dayIndex || endIndex < dayIndex) return null
-  const startMin = startIndex < dayIndex ? 0 : toMinutes(startWall.time)
-  const endMin = endIndex > dayIndex ? DAY_MINUTES : toMinutes(endWall.time)
+  const day = dayTimeline(dayKey, timeZone)
+  const startMin = (Math.max(start.getTime(), day.start) - day.start) / 60_000
+  const endMin = (Math.min(end.getTime(), day.end) - day.start) / 60_000
   return endMin > startMin ? { start: startMin, end: endMin } : null
 }
 
@@ -74,16 +68,16 @@ function mergeIntervals(intervals: MinuteInterval[]): MinuteInterval[] {
   return merged
 }
 
-function complement(intervals: MinuteInterval[]): MinuteInterval[] {
+function complement(intervals: MinuteInterval[], dayMinutes: number): MinuteInterval[] {
   const merged = mergeIntervals(intervals)
   const gaps: MinuteInterval[] = []
   let cursor = 0
   for (const interval of merged) {
-    if (interval.start > cursor) gaps.push({ start: cursor, end: Math.min(interval.start, DAY_MINUTES) })
+    if (interval.start > cursor) gaps.push({ start: cursor, end: Math.min(interval.start, dayMinutes) })
     cursor = Math.max(cursor, interval.end)
-    if (cursor >= DAY_MINUTES) break
+    if (cursor >= dayMinutes) break
   }
-  if (cursor < DAY_MINUTES) gaps.push({ start: cursor, end: DAY_MINUTES })
+  if (cursor < dayMinutes) gaps.push({ start: cursor, end: dayMinutes })
   return gaps
 }
 
@@ -141,7 +135,7 @@ export function buildDayOverlay(
   data: StaffScheduleData,
   visits: VisitOut[],
 ): DayOverlay {
-  const working = mergeIntervals(workingIntervals(dayKey, data))
+  const working = mergeIntervals(wallIntervals(dayKey, timeZone, workingIntervals(dayKey, data)))
   const blocks = data.blocks.flatMap((block) => {
     const interval = intervalOnDay(block.start, block.end, dayKey, timeZone)
     return interval ? [{ ...interval, label: block.reason ?? undefined }] : []
@@ -149,7 +143,7 @@ export function buildDayOverlay(
   const busy = mergeIntervals([...blocks, ...visitIntervals(visits, dayKey, timeZone)])
   return {
     working,
-    nonWorking: complement(working),
+    nonWorking: complement(working, dayTimeline(dayKey, timeZone).minutes),
     blocks,
     free: subtractIntervals(working, busy),
   }

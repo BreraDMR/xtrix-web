@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { useQueries, useQuery } from '@tanstack/react-query'
-import { addDays, startOfWeek } from 'date-fns'
 import api from '../api/client'
 import { allPages } from '../api/allPages'
 import Calendar from '../components/Calendar'
@@ -20,7 +19,7 @@ import Select from '../ui/Select'
 import { useTranslation } from '../hooks/useTranslation'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import { useAuthStore } from '../store/authStore'
-import { zonedWallTimeToIso } from '../utils/dates'
+import { addCalendarDays, calendarDate, dayTimeline, timelineIso, timelineLabel } from '../components/calendar/timeline'
 import ContextHint from '../components/onboarding/ContextHint'
 import type {
   BlockSlotOut,
@@ -44,30 +43,18 @@ interface DragPreview {
   endMin: number
 }
 
-const MINUTES_IN_DAY = 24 * 60
-
 const visitDurationMinutes = (visit: VisitOut): number => {
   const start = new Date(visit.date_start).getTime()
   const end = visit.date_end ? new Date(visit.date_end).getTime() : Number.NaN
   const minutes = (end - start) / 60_000
   // a visit without a usable end is previewed and moved as one hour, like the grid draws it
-  return Number.isFinite(minutes) && minutes > 0 ? Math.min(Math.round(minutes), MINUTES_IN_DAY) : 60
+  return Number.isFinite(minutes) && minutes > 0 ? minutes : 60
 }
-
-const formatMinutes = (value: number): string =>
-  `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`
 
 async function fetchVisits(from?: string, to?: string, signal?: AbortSignal): Promise<VisitOut[]> {
   return allPages<VisitOut>(async page => (await api.get<Schema<'PaginatedResponse_VisitOut_'>>('/visits/', {
-    params: { date_from: from, date_to: to, page, per_page: 100 }, signal,
+    params: { date_from: from, date_to: to, calendar_overlap: from && to ? true : undefined, page, per_page: 100 }, signal,
   })).data)
-}
-
-// Noon on the salon's calendar date. Date maths below runs in the browser zone, and noon keeps
-// the day from slipping when the two zones are hours apart.
-function salonToday(timeZone: string): Date {
-  const [year, month, date] = zonedDayKey(new Date(), timeZone).split('-').map(Number)
-  return new Date(year, month - 1, date, 12)
 }
 
 export default function CalendarPage() {
@@ -75,28 +62,23 @@ export default function CalendarPage() {
   const { user, sessionRevision } = useAuthStore()
   const [view, setView] = useState<CalendarView>('day')
   // null = follow the salon's today; it only becomes a fixed date once someone moves through days
-  const [pickedDay, setPickedDay] = useState<Date | null>(null)
+  const [pickedDay, setPickedDay] = useState<string | null>(null)
   const [selectedVisit, setSelectedVisit] = useState<CalendarVisit | null>(null)
   const [dragPreview, setDragPreview] = useState<DragPreview | null>(null)
   const [moveError, setMoveError] = useState('')
   const [moveSaving, setMoveSaving] = useState(false)
   const { data: business } = useMyBusiness()
   const timeZone = business?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
-  const today = useMemo(() => salonToday(timeZone), [timeZone])
-  const day = pickedDay ?? today
-  const dayKey = zonedDayKey(day, timeZone)
-
+  const today = zonedDayKey(new Date(), timeZone)
+  const dayKey = pickedDay ?? today
+  const day = useMemo(() => calendarDate(dayKey, timeZone), [dayKey, timeZone])
   const isRangeView = view === 'day' || view === 'week'
-  const weekStart = useMemo(() => startOfWeek(day, { weekStartsOn: 1 }), [day])
+  const weekKey = addCalendarDays(dayKey, -((new Date(`${dayKey}T12:00:00Z`).getUTCDay() + 6) % 7))
+  const weekStart = useMemo(() => calendarDate(weekKey, timeZone), [weekKey, timeZone])
   const range = useMemo(() => {
-    const startDate = view === 'week' ? weekStart : day
-    const endDate = view === 'week' ? addDays(weekStart, 7) : addDays(day, 1)
-    const start = zonedWallTimeToIso(zonedDayKey(startDate, timeZone), '00:00', timeZone)
-    const end = new Date(
-      new Date(zonedWallTimeToIso(zonedDayKey(endDate, timeZone), '00:00', timeZone)).getTime() - 1,
-    ).toISOString()
-    return { start, end }
-  }, [day, weekStart, view, timeZone])
+    const first = view === 'week' ? weekKey : dayKey
+    return { start: timelineIso(first, 0, timeZone), end: timelineIso(addCalendarDays(first, view === 'week' ? 7 : 1), 0, timeZone) }
+  }, [dayKey, weekKey, view, timeZone])
 
   const legacyQuery = useQuery<VisitOut[]>({
     queryKey: ['visits', 'calendar', 'all', sessionRevision, user?.id, user?.business_id, user?.employer_id],
@@ -165,7 +147,7 @@ export default function CalendarPage() {
     if (!visit) return
     const duration = visitDurationMinutes(visit)
     const snapped = Math.round(rawStartMin / 5) * 5
-    const startMin = Math.max(0, Math.min(MINUTES_IN_DAY - duration, snapped))
+    const startMin = snapped
     setMoveError('')
     setDragPreview({ visit, dayKey: targetDayKey, startMin, endMin: startMin + duration })
   }
@@ -178,11 +160,7 @@ export default function CalendarPage() {
 
   const confirmDragMove = async () => {
     if (!dragPreview || moveSaving) return
-    const startIso = zonedWallTimeToIso(
-      dragPreview.dayKey,
-      formatMinutes(dragPreview.startMin),
-      timeZone,
-    )
+    const startIso = timelineIso(dragPreview.dayKey, dragPreview.startMin, timeZone)
     const payload: { date_start: string; date_end?: string } = { date_start: startIso }
     if (dragPreview.visit.date_end) {
       const duration = dragPreview.endMin - dragPreview.startMin
@@ -213,7 +191,7 @@ export default function CalendarPage() {
         dayKey: dragPreview.dayKey,
         startMin: dragPreview.startMin,
         endMin: dragPreview.endMin,
-        label: `${t('calendar.moveSubmit')} ${formatMinutes(dragPreview.startMin)}–${formatMinutes(dragPreview.endMin)}`,
+        label: `${t('calendar.moveSubmit')} ${timelineLabel(timelineIso(dragPreview.dayKey, dragPreview.startMin, timeZone), timeZone, dayTimeline(dragPreview.dayKey, timeZone).minutes !== 1440)}–${timelineLabel(timelineIso(dragPreview.dayKey, dragPreview.endMin, timeZone), timeZone, dayTimeline(dragPreview.dayKey, timeZone).minutes !== 1440)}`,
       }
     : undefined
 
@@ -302,13 +280,13 @@ export default function CalendarPage() {
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Button
             variant="secondary"
-            onClick={() => setPickedDay(addDays(day, view === 'week' ? -7 : -1))}
+            onClick={() => setPickedDay(addCalendarDays(dayKey, view === 'week' ? -7 : -1))}
           >
             {t('calendar.previous')}
           </Button>
           <Button
             variant="secondary"
-            onClick={() => setPickedDay(addDays(day, view === 'week' ? 7 : 1))}
+            onClick={() => setPickedDay(addCalendarDays(dayKey, view === 'week' ? 7 : 1))}
           >
             {t('calendar.next')}
           </Button>
@@ -380,7 +358,7 @@ export default function CalendarPage() {
             {t('calendar.moveTitle')}: {dragPreviewName}
           </p>
           <p className="mt-1 text-xs text-[var(--workspace-muted)]">
-            {dragPreview.dayKey} · {formatMinutes(dragPreview.startMin)}–{formatMinutes(dragPreview.endMin)}
+            {dragPreview.dayKey} · {timelineLabel(timelineIso(dragPreview.dayKey, dragPreview.startMin, timeZone), timeZone, dayTimeline(dragPreview.dayKey, timeZone).minutes !== 1440)}–{timelineLabel(timelineIso(dragPreview.dayKey, dragPreview.endMin, timeZone), timeZone, dayTimeline(dragPreview.dayKey, timeZone).minutes !== 1440)}
           </p>
           <div className="mt-3 flex justify-end gap-2">
             <Button variant="secondary" onClick={cancelDragPreview} disabled={moveSaving}>

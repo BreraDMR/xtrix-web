@@ -7,7 +7,8 @@ import DayGrid, {
   type MovePreview,
 } from './DayGrid'
 import { expandVisit, type CalendarEvent } from './chain'
-import { isoToZonedWallTime, zonedDayKey } from '../../utils/dates'
+import { zonedDayKey } from '../../utils/dates'
+import { dayTimeline } from './timeline'
 import { buildDayOverlay, type DayOverlay, type StaffScheduleData } from './schedule'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
@@ -30,7 +31,6 @@ interface StaffColumnsProps {
   hourHeight?: number
 }
 
-const HOURS_IN_DAY = 24
 
 export default function StaffColumns({
   day,
@@ -94,11 +94,8 @@ export default function StaffColumns({
   const scrolledDay = useRef('')
   const firstMinute = useMemo(() => {
     const starts = events.map(event => {
-      const wall = isoToZonedWallTime(event.date_start, zone)
-      if (wall.day < dayKey) return 0
-      if (wall.day > dayKey) return 24 * 60
-      const [hour, minute] = wall.time.split(':').map(Number)
-      return hour * 60 + minute
+      const timeline = dayTimeline(dayKey, zone)
+      return Math.max(0, Math.min(timeline.minutes, (Date.parse(event.date_start) - timeline.start) / 60_000))
     })
     for (const overlay of overlays.values()) starts.push(...overlay.working.map(window => window.start))
     return Math.max(0, Math.min(8 * 60, ...starts) - 30)
@@ -110,7 +107,7 @@ export default function StaffColumns({
     scrolledDay.current = dayKey
   }, [dayKey, firstMinute, hourHeight, columns.length])
 
-  const gridHeight = HOURS_IN_DAY * hourHeight
+  const gridHeight = dayTimeline(dayKey, zone).minutes / 60 * hourHeight
   const template = `3.5rem repeat(${columns.length}, minmax(12rem, 1fr))`
 
   return (
@@ -158,7 +155,7 @@ export default function StaffColumns({
               ))}
 
               <div className="sticky left-0 z-10 bg-[var(--workspace-panel)]" style={{ height: gridHeight }}>
-                <HourAxis hourHeight={hourHeight} />
+                <HourAxis hourHeight={hourHeight} dayKey={dayKey} timeZone={zone} />
               </div>
               {columns.map((column) => (
                 <div

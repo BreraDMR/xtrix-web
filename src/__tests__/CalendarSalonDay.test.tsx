@@ -34,3 +34,14 @@ it("opens on the salon's today, not the browser's, and Today comes back to it", 
   await userEvent.click(screen.getByRole('button', { name: 'Today' }))
   await waitFor(() => expect(requestedFrom()).toContain('2026-10-22T10:00:00.000Z'))
 })
+
+it('requests overlapping visits through the exclusive next salon midnight', async () => {
+  renderWithProviders(<CalendarPage />)
+  await waitFor(() => expect(api.get).toHaveBeenCalledWith('/visits/', expect.objectContaining({
+    params: expect.objectContaining({
+      date_from: '2026-10-22T10:00:00.000Z',
+      date_to: '2026-10-23T10:00:00.000Z',
+      calendar_overlap: true,
+    }),
+  })))
+})

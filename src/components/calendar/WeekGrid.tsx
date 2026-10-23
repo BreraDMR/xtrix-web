@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { addDays, format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
 import DayGrid, {
   HourAxis,
@@ -7,6 +7,7 @@ import DayGrid, {
   type MovePreview,
 } from './DayGrid'
 import { chainOverview } from './chain'
+import { addCalendarDays, calendarDate, dayTimeline } from './timeline'
 import { zonedDayKey } from '../../utils/dates'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
@@ -23,7 +24,6 @@ interface WeekGridProps {
 }
 
 const DAYS_IN_WEEK = 7
-const HOURS_IN_DAY = 24
 
 export default function WeekGrid({
   weekStart,
@@ -41,17 +41,18 @@ export default function WeekGrid({
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
 
   const days = useMemo(
-    () => Array.from({ length: DAYS_IN_WEEK }, (_, index) => addDays(weekStart, index)),
-    [weekStart],
+    () => Array.from({ length: DAYS_IN_WEEK }, (_, index) => calendarDate(addCalendarDays(zonedDayKey(weekStart, zone), index), zone)),
+    [weekStart, zone],
   )
   const events = useMemo(() => visits.map(chainOverview), [visits])
   const todayKey = zonedDayKey(new Date(), zone)
-  const title = `${format(weekStart, 'd MMM', { locale: dateLocale })} – ${format(
-    addDays(weekStart, DAYS_IN_WEEK - 1),
+  const title = `${format(parseISO(zonedDayKey(weekStart, zone)), 'd MMM', { locale: dateLocale })} – ${format(
+    parseISO(addCalendarDays(zonedDayKey(weekStart, zone), DAYS_IN_WEEK - 1)),
     'd MMM yyyy',
     { locale: dateLocale },
   )}`
-  const gridHeight = HOURS_IN_DAY * hourHeight
+  const gridHeight = Math.max(...days.map(date => dayTimeline(zonedDayKey(date, zone), zone).minutes)) / 60 * hourHeight
+  const variedDays = days.some(date => dayTimeline(zonedDayKey(date, zone), zone).minutes !== 1440)
 
   return (
     <section aria-label={`${t('calendar.weekView')} ${title}`}>
@@ -77,13 +78,13 @@ export default function WeekGrid({
                   isToday ? 'text-[var(--workspace-accent)]' : 'text-[var(--workspace-ink)]'
                 }`}
               >
-                {format(date, 'EEE d', { locale: dateLocale })}
+                {format(parseISO(zonedDayKey(date, zone)), 'EEE d', { locale: dateLocale })}
               </div>
             )
           })}
 
           <div className="sticky left-0 z-10 bg-[var(--workspace-panel)]" style={{ height: gridHeight }}>
-            <HourAxis hourHeight={hourHeight} />
+            {!variedDays && <HourAxis hourHeight={hourHeight} />}
           </div>
           {days.map((date) => (
             <div
@@ -101,7 +102,7 @@ export default function WeekGrid({
                 onDropVisit={onDropVisit}
                 hourHeight={hourHeight}
                 showHeader={false}
-                showAxis={false}
+                showAxis={variedDays}
                 contained={false}
               />
             </div>
