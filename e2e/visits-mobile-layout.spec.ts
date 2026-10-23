@@ -5,6 +5,8 @@ import { apiPost, field, newOwner, openAs, stabilizeTrialDate, waitForFormData }
 async function checkMobileControls(page: Page, mode: string) {
   await page.evaluate(() => document.fonts.ready)
   const region = page.getByRole('region', { name: 'Visits', exact: true })
+  // The viewport changes before React commits the matchMedia-driven columns.
+  await expect(region.getByRole('columnheader')).toHaveCount(4)
   const card = region.locator('..')
   const viewport = await page.evaluate(() => ({ width: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth, scrollX: window.scrollX }))
