@@ -2,6 +2,7 @@ import { useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import api from '../../api/client'
+import { useLinkToken } from '../../hooks/useLinkToken'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
 import FormError from '../../components/FormError'
 import LanguageSwitcher from '../../components/LanguageSwitcher'
@@ -25,6 +26,7 @@ const STATUS_KEYS: Record<string, TranslationKey> = {
 type BusyAction = 'confirm' | 'reschedule' | 'cancel' | null
 
 function initialToken(): string | null {
+  const hadFragment = window.location.hash.length > 1
   let fromHash = ''
   try {
     const params = new URLSearchParams(window.location.hash.replace(/^#/, ''))
@@ -43,11 +45,15 @@ function initialToken(): string | null {
       // private windows may reject storage, the page still works
     }
     try {
-      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`)
+      window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`)
     } catch {
       // ignore
     }
     return token
+  }
+  if (hadFragment) {
+    try { sessionStorage.removeItem(TOKEN_KEY) } catch { /* storage may be unavailable */ }
+    return null
   }
   try {
     return sessionStorage.getItem(TOKEN_KEY)
@@ -143,9 +149,13 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function ManageBookingPage() {
+  const token = useLinkToken(initialToken)
+  return <ManageBookingSession key={token ?? 'missing'} token={token} />
+}
+
+function ManageBookingSession({ token }: { token: string | null }) {
   const { t, locale } = useTranslation()
   const queryClient = useQueryClient()
-  const [token] = useState(initialToken)
   const [busy, setBusy] = useState<BusyAction>(null)
   const [notice, setNotice] = useState('')
   const [actionError, setActionError] = useState('')
