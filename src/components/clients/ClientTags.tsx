@@ -14,6 +14,10 @@ const MAX_TAG_LENGTH = 40
 const MAX_PREFERENCES_LENGTH = 2000
 
 export default function ClientTags({ clientId }: { clientId: number }) {
+  return <ClientTagsEditor key={clientId} clientId={clientId} />
+}
+
+function ClientTagsEditor({ clientId }: { clientId: number }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const access = useWorkspaceAccessContext()

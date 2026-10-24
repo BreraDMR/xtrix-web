@@ -11,6 +11,10 @@ import type { ClientNoteOut } from '../../api/types'
 const MAX_NOTE_LENGTH = 2000
 
 export default function ClientNotes({ clientId }: { clientId: number }) {
+  return <ClientNotesEditor key={clientId} clientId={clientId} />
+}
+
+function ClientNotesEditor({ clientId }: { clientId: number }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const access = useWorkspaceAccessContext()
