@@ -20159,8 +20159,8 @@ export interface operations {
                 specialist_id: number;
                 service_id?: number | null;
                 duration_minutes?: number | null;
-                work_start?: string;
-                work_end?: string;
+                work_start?: string | null;
+                work_end?: string | null;
                 break_start?: string | null;
                 break_end?: string | null;
             };
