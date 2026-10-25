@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { apiPost, assistantOn, newOwner, openAs } from './helpers'
+import { apiPost, configureAssistantHours, assistantOn, newOwner, openAs } from './helpers'
 
 const CLIENT = 'Alice Assistant'
 
 test('assistant history: send -> navigate -> close -> reload -> new chat -> old chat with isolated history', async ({ page, request, browser }) => {
   const owner = await newOwner(request)
   await assistantOn(request, owner)
+  await configureAssistantHours(request, owner)
   await apiPost<{ id: number }>(request, owner, '/clients/', { full_name: CLIENT, contact_phone: '+420777100200' })
 
   await openAs(page, owner, '/visits')

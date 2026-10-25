@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { apiPost, apiUrl, assistantOn, newOwner, openAs } from './helpers'
+import { apiPost, configureAssistantHours, apiUrl, assistantOn, newOwner, openAs } from './helpers'
 
 // scripts/e2e.sh runs the API with LLM_PROVIDER=fake: the "model" answers with
 // e2e/fixtures/assistant-plan.json, which names the client instead of using ids. Nothing goes
@@ -9,6 +9,7 @@ const CLIENT = 'Alice Assistant'
 test('ask the assistant in text, check the plan, confirm, and the visit shows up', async ({ page, request }) => {
   const owner = await newOwner(request)
   await assistantOn(request, owner)
+  await configureAssistantHours(request, owner)
   const client = await apiPost<{ id: number }>(request, owner, '/clients/', { full_name: CLIENT, contact_phone: '+420777100200' })
   await openAs(page, owner, '/visits')
   await expect(page.getByRole('heading', { name: 'Visits', level: 1 })).toBeVisible()

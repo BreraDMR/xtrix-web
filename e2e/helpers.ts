@@ -119,3 +119,27 @@ export async function assistantOn(request: APIRequestContext, s: Session) {
   expect(response.ok(), await response.text()).toBeTruthy()
   expect((await response.json()).enabled, 'the API should run with LLM_PROVIDER=fake').toBe(true)
 }
+
+// Booking through the assistant needs the same working hours as any other booking.
+export async function configureAssistantHours(request: APIRequestContext, owner: Session) {
+  const params = { specialist_id: owner.user.id, duration_minutes: 60 }
+  const before = await request.get(`${apiUrl}/visits/next_slot`, { headers: owner.headers, params })
+  expect(before.status(), await before.text()).toBe(404)
+  const business = await request.put(`${apiUrl}/businesses/${owner.user.business_id}`, {
+    headers: owner.headers,
+    data: { timezone: 'Europe/Prague', booking_horizon_days: 30, booking_lead_time_minutes: 0 },
+  })
+  expect(business.ok(), await business.text()).toBeTruthy()
+  for (let weekday = 0; weekday < 7; weekday++) {
+    await apiPost(request, owner, '/schedules/work', {
+      specialist_id: owner.user.id, weekday, start_time: '09:00', end_time: '18:00',
+    })
+  }
+  const schedule = await request.get(`${apiUrl}/schedules/work`, {
+    headers: owner.headers, params: { specialist_id: owner.user.id },
+  })
+  expect(schedule.ok(), await schedule.text()).toBeTruthy()
+  expect(await schedule.json()).toHaveLength(7)
+  const after = await request.get(`${apiUrl}/visits/next_slot`, { headers: owner.headers, params })
+  expect(after.status(), await after.text()).toBe(200)
+}
