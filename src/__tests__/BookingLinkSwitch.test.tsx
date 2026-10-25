@@ -1,3 +1,4 @@
+import {StrictMode} from 'react'
 import {beforeEach,it,expect,vi} from 'vitest'
 import {BrowserRouter,Routes,Route,Link} from 'react-router-dom'
 import {screen,act,waitFor,fireEvent} from '@testing-library/react'
@@ -9,7 +10,7 @@ import {apiError,renderWithProviders,resetStores} from '../test/render'
 vi.mock('../api/client',()=>({default:{get:vi.fn(),post:vi.fn()}}))
 const booking=(token:string)=>({booking_id:token==='token-A'?1:2,business_name:token==='token-A'?'Business A':'Business B',business_address:'Test address',business_phone:null,service_name:'Service',staff_name:'Master',start:'2030-06-01T10:00:00Z',end:'2030-06-01T11:00:00Z',timezone:'UTC',status:'planned',confirmed_at:null,price:30,currency:'EUR',token_expires_at:'2030-06-01T09:00:00Z'})
 const form=(token:string)=>({version:1,name:token==='token-A'?'Questionnaire A':'Questionnaire B',description:'',fields:[{key:'preference',label:'Preference',type:'text',required:true,max_length:200}],expires_at:'2030-01-01T00:00:00Z',submitted_at:null})
-function mount(path:string){window.history.replaceState({idx:0,key:'seed'},'',path+'#token=token-A');return renderWithProviders(<BrowserRouter><Link to={path+'#token=token-B'}>Open B link</Link><Routes><Route path={path} element={path==='/manage'?<ManageBookingPage/>:<QuestionnairePage/>}/></Routes></BrowserRouter>,{router:false})}
+function mount(path:string,strict=false){window.history.replaceState({idx:0,key:'seed'},'',path+'#token=token-A');const page=<BrowserRouter><Link to={path+'#token=token-B'}>Open B link</Link><Routes><Route path={path} element={path==='/manage'?<ManageBookingPage/>:<QuestionnairePage/>}/></Routes></BrowserRouter>;return renderWithProviders(strict?<StrictMode>{page}</StrictMode>:page,{router:false})}
 async function next(method:'native'|'router'){if(method==='router')await userEvent.click(screen.getByRole('link',{name:'Open B link'}));else await act(async()=>{window.location.hash='token=token-B';await new Promise(resolve=>setTimeout(resolve,10))})}
 function deferred(){let resolve!:(value:unknown)=>void;let reject!:(value:unknown)=>void;const promise=new Promise((a,b)=>{resolve=a;reject=b});return{promise,resolve,reject}}
 beforeEach(()=>{vi.clearAllMocks();resetStores();sessionStorage.clear();vi.mocked(api.get).mockImplementation(async(url,config)=>{const token=String(config?.headers?.[url==='/public/questionnaires'?'X-Questionnaire-Token':'X-Booking-Token']);return{data:url==='/public/questionnaires'?form(token):booking(token)}});vi.mocked(api.post).mockImplementation(async(_url,_body,config)=>({data:booking(String(config?.headers?.['X-Booking-Token']))}))})
@@ -51,4 +52,33 @@ it.each(['/questionnaire','/manage'])('clears the old guest session for an expli
  expect(sessionStorage.getItem(path==='/manage'?'booking_manage_token':'questionnaire_token')).toBeNull();
  expect(screen.queryByRole('button',{name:path==='/manage'?'Confirm booking':'Send answers'})).not.toBeInTheDocument();expect(api.post).not.toHaveBeenCalled();
  expect(vi.mocked(api.get).mock.calls.every(call=>String(call[1]?.headers?.[path==='/manage'?'X-Booking-Token':'X-Questionnaire-Token'])==='token-A')).toBe(true);
+})
+
+it.each(['/questionnaire','/manage'])('keeps a fragment credential when tab storage is blocked at %s',async path=>{
+ const original=Storage.prototype.setItem; const originalGet=Storage.prototype.getItem;
+ Storage.prototype.setItem=function(){throw new DOMException('Blocked','SecurityError')};
+ Storage.prototype.getItem=function(){throw new DOMException('Blocked','SecurityError')};
+ try{mount(path);await screen.findByText(path==='/manage'?'Business A':'Questionnaire A');expect(window.location.hash).toBe('');}
+ finally{Storage.prototype.setItem=original;Storage.prototype.getItem=originalGet;}
+});
+
+it.each(['/questionnaire','/manage'])('keeps the credential through strict effect replay without storage at %s',async path=>{
+ const get=vi.spyOn(Storage.prototype,'getItem').mockImplementation(()=>{throw new DOMException('Blocked','SecurityError')});
+ const set=vi.spyOn(Storage.prototype,'setItem').mockImplementation(()=>{throw new DOMException('Blocked','SecurityError')});
+ try{mount(path,true);await screen.findByText(path==='/manage'?'Business A':'Questionnaire A');expect(window.location.hash).toBe('');}
+ finally{get.mockRestore();set.mockRestore();}
+})
+it.each([['/questionnaire','native'],['/questionnaire','router'],['/manage','native'],['/manage','router']] as const)('switches credentials and clears an empty link without storage at %s via %s',async(path,method)=>{
+ const get=vi.spyOn(Storage.prototype,'getItem').mockImplementation(()=>{throw new DOMException('Blocked','SecurityError')});
+ const set=vi.spyOn(Storage.prototype,'setItem').mockImplementation(()=>{throw new DOMException('Blocked','SecurityError')});
+ try{
+ mount(path);await screen.findByText(path==='/manage'?'Business A':'Questionnaire A');await next(method);
+ const title=path==='/manage'?'Business B':'Questionnaire B';await screen.findByText(title);
+ if(path==='/manage')await userEvent.click(screen.getByRole('button',{name:'Confirm booking'}));
+ else{await userEvent.type(screen.getByRole('textbox'),'B answer');await userEvent.click(screen.getByRole('button',{name:'Send answers'}));}
+ await waitFor(()=>expect(api.post).toHaveBeenCalled());
+ expect(vi.mocked(api.post).mock.calls[0][2]?.headers?.[path==='/manage'?'X-Booking-Token':'X-Questionnaire-Token']).toBe('token-B');
+ await act(async()=>{window.location.hash='token=';await new Promise(resolve=>setTimeout(resolve,10))});
+ await waitFor(()=>expect(screen.queryByText(title)).not.toBeInTheDocument());
+ }finally{get.mockRestore();set.mockRestore();}
 })
