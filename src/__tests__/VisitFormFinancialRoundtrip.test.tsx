@@ -1,5 +1,5 @@
-import { beforeEach, expect, it, vi } from 'vitest'
-import { screen, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import VisitForm from '../components/VisitForm'
 import api from '../api/client'
@@ -178,3 +178,65 @@ it('saves a custom zero-price visit without echoing its nullable read-only item 
   expect(payload).not.toHaveProperty('payment_method')
   await waitFor(() => expect(success).toHaveBeenCalledOnce())
 })
+
+afterEach(()=>vi.useRealTimers())
+it('DST proof creates a 60 minute service across the autumn fold using real UTC endpoints', async()=>{
+ vi.useFakeTimers({toFake:['Date']});vi.setSystemTime(new Date('2026-10-25T00:15:00Z'));serve();
+ renderWithProviders(<VisitForm onSuccess={()=>{}} onCancel={()=>{}}/>);
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Jana Nováková'})).closest('select')!,'3');
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Massage (60 min)'})).closest('select')!,'5');
+ await userEvent.click(screen.getByRole('button',{name:'Create Visit'}));
+ await waitFor(()=>expect(api.post).toHaveBeenCalledWith('/visits/',expect.objectContaining({date_start:'2026-10-25T00:15:00.000Z',date_end:'2026-10-25T01:15:00.000Z'})));
+});
+it('DST proof preserves second-fold start passed from calendar when creating a visit',async()=>{
+ serve();renderWithProviders(<VisitForm initialDateStart={new Date('2026-10-25T01:15:00Z')} onSuccess={()=>{}} onCancel={()=>{}}/>);
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Jana Nováková'})).closest('select')!,'3');
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Massage (60 min)'})).closest('select')!,'5');
+ await userEvent.click(screen.getByRole('button',{name:'Create Visit'}));
+ await waitFor(()=>expect(api.post).toHaveBeenCalledWith('/visits/',expect.objectContaining({date_start:'2026-10-25T01:15:00.000Z',date_end:'2026-10-25T02:15:00.000Z'})));
+});
+it('DST proof preserves both original instants on second-fold note-only edit',async()=>{
+ serve({...hidden,date_start:'2026-10-25T01:15:00Z',date_end:'2026-10-25T02:15:00Z'});
+ renderWithProviders(<VisitForm visitId={21} onSuccess={()=>{}} onCancel={()=>{}}/>);await noteEdit();
+ expect(await save()).toMatchObject({date_start:'2026-10-25T01:15:00.000Z',date_end:'2026-10-25T02:15:00.000Z'});
+});
+
+it('DST proof preserves the current second-fold instant on a new default-time visit', async()=>{
+ vi.useFakeTimers({toFake:['Date']});vi.setSystemTime(new Date('2026-10-25T01:15:00Z'));serve();
+ renderWithProviders(<VisitForm onSuccess={()=>{}} onCancel={()=>{}}/>);
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Jana Nováková'})).closest('select')!,'3');
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Massage (60 min)'})).closest('select')!,'5');
+ await userEvent.click(screen.getByRole('button',{name:'Create Visit'}));
+ await waitFor(()=>expect(api.post).toHaveBeenCalledWith('/visits/',expect.objectContaining({date_start:'2026-10-25T01:15:00.000Z',date_end:'2026-10-25T02:15:00.000Z'})));
+});
+
+it('DST control preserves second-fold chain start on a note-only edit',async()=>{
+ serve({...chain,date_start:'2026-10-25T01:15:00Z',date_end:'2026-10-25T02:55:00Z'});
+ renderWithProviders(<VisitForm visitId={21} onSuccess={()=>{}} onCancel={()=>{}}/>);await screen.findByLabelText('Service 2');await noteEdit();
+ expect(await save()).toMatchObject({date_start:'2026-10-25T01:15:00.000Z'});
+});
+it('DST control keeps a sixty-minute UTC service across the spring gap',async()=>{
+ serve();renderWithProviders(<VisitForm initialDateStart={new Date('2026-03-29T00:30:00Z')} onSuccess={()=>{}} onCancel={()=>{}}/>);
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Jana Nováková'})).closest('select')!,'3');
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Massage (60 min)'})).closest('select')!,'5');
+ await userEvent.click(screen.getByRole('button',{name:'Create Visit'}));
+ await waitFor(()=>expect(api.post).toHaveBeenCalledWith('/visits/',expect.objectContaining({date_start:'2026-03-29T00:30:00.000Z',date_end:'2026-03-29T01:30:00.000Z'})));
+});
+it('DST control honors manual start and manual end instead of stale saved instants',async()=>{
+ serve();renderWithProviders(<VisitForm initialDateStart={new Date('2030-05-06T08:00:00Z')} initialDateEnd={new Date('2030-05-06T09:00:00Z')} onSuccess={()=>{}} onCancel={()=>{}}/>);
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Jana Nováková'})).closest('select')!,'3');
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Massage (60 min)'})).closest('select')!,'5');
+ const inputs=document.querySelectorAll('input[type="datetime-local"]');
+ fireEvent.change(inputs[0],{target:{value:'2030-05-07T11:00'}});fireEvent.change(inputs[1],{target:{value:'2030-05-07T12:45'}});
+ await userEvent.click(screen.getByRole('button',{name:'Create Visit'}));
+ await waitFor(()=>expect(api.post).toHaveBeenCalledWith('/visits/',expect.objectContaining({date_start:new Date('2030-05-07T11:00').toISOString(),date_end:new Date('2030-05-07T12:45').toISOString()})));
+});
+it('DST control rejects a manual end that is not after the start',async()=>{
+ serve();renderWithProviders(<VisitForm initialDateStart={new Date('2030-05-06T08:00:00Z')} initialDateEnd={new Date('2030-05-06T09:00:00Z')} onSuccess={()=>{}} onCancel={()=>{}}/>);
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Jana Nováková'})).closest('select')!,'3');
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Massage (60 min)'})).closest('select')!,'5');
+ const dates=document.querySelectorAll<HTMLInputElement>('input[type="datetime-local"]');
+ fireEvent.change(dates[1],{target:{value:dates[0].value}});
+ await userEvent.click(screen.getByRole('button',{name:'Create Visit'}));
+ expect(screen.getByText('End time must be after start time')).toBeInTheDocument();expect(api.post).not.toHaveBeenCalled();
+});

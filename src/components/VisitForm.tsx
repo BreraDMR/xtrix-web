@@ -60,6 +60,16 @@ function specialistsFor(service: ServiceOut): ServiceSpecialistOut[] {
   return [{ id: service.specialist_id, full_name: service.specialist?.full_name ?? '' }]
 }
 
+type VisitInstant = { wall: string; iso: string }
+
+function visitInstant(date: Date): VisitInstant {
+  return { wall: format(date, "yyyy-MM-dd'T'HH:mm"), iso: date.toISOString() }
+}
+
+function resolveVisitInstant(wall: string, saved: VisitInstant | null): Date {
+  return new Date(saved?.wall === wall ? saved.iso : wall)
+}
+
 const VISIT_FIELDS = ['client_id', 'service_id', 'specialist_id', 'service_name', 'date_start', 'date_end', 'price', 'status', 'payment_method', 'note']
 
 function newGiftRequestKey(): string {
@@ -107,19 +117,19 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [searchingClient, setSearchingClient] = useState(false)
   const [showClientSearch, setShowClientSearch] = useState(false)
   
-  const getInitialDate = (date?: Date) => {
-    if (date) return format(date, "yyyy-MM-dd'T'HH:mm")
-    return format(new Date(), "yyyy-MM-dd'T'HH:mm")
-  }
-  
-  const [formData, setFormData] = useState<VisitData>({
+  // datetime-local cannot distinguish the two copies of an autumn hour.
+  const initialStart = useRef(initialDateStart ?? new Date(Math.floor(Date.now() / 60000) * 60000))
+  const startInstant = useRef<VisitInstant | null>(visitInstant(initialStart.current))
+  const endInstant = useRef<VisitInstant | null>(initialDateEnd ? visitInstant(initialDateEnd) : null)
+
+  const [formData, setFormData] = useState<VisitData>(() => ({
     client_id: 0,
     // without a service to pick a specialist from, the visit is yours
     specialist_id: currentUser?.id ?? 0,
-    date_start: getInitialDate(initialDateStart),
-    date_end: initialDateEnd ? getInitialDate(initialDateEnd) : undefined,
+    date_start: startInstant.current!.wall,
+    date_end: endInstant.current?.wall,
     status: 'planned',
-  })
+  }))
   
   const [pointsToUse, setPointsToUse] = useState<number>(0)
   const [cashbackToUse, setCashbackToUse] = useState<number>(0)
@@ -256,6 +266,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       initialItems.current = null
       setItems([])
       setItemsMode(false)
+      startInstant.current = data.date_start ? visitInstant(new Date(data.date_start)) : null
+      endInstant.current = data.date_end ? visitInstant(new Date(data.date_end)) : null
       setFormData({
         client_id: data.client_id,
         specialist_id: data.specialist_id,
@@ -314,17 +326,11 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
-  const calculateDateEnd = (dateStart: string, durationMinutes: number | null | undefined): string | undefined => {
+  const calculateDateEnd = (dateStart: string, durationMinutes: number | null | undefined, remember = false): string | undefined => {
     if (!dateStart || !durationMinutes) return undefined
     
     try {
-      const [datePart, timePart] = dateStart.split('T')
-      if (!datePart || !timePart) return undefined
-      
-      const [year, month, day] = datePart.split('-').map(Number)
-      const [hours, minutes] = timePart.split(':').map(Number)
-      
-      const start = new Date(year, month - 1, day, hours, minutes, 0, 0)
+      const start = resolveVisitInstant(dateStart, startInstant.current)
       if (isNaN(start.getTime())) return undefined
       
       const end = new Date(start.getTime() + durationMinutes * 60 * 1000)
@@ -335,7 +341,9 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       const endHours = String(end.getHours()).padStart(2, '0')
       const endMinutes = String(end.getMinutes()).padStart(2, '0')
       
-      return `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}`
+      const wall = `${endYear}-${endMonth}-${endDay}T${endHours}:${endMinutes}`
+      if (remember) endInstant.current = { wall, iso: end.toISOString() }
+      return wall
     } catch (error) {
       console.error('Error calculating date_end:', error)
       return undefined
@@ -487,7 +495,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       }
 
       if (selectedService.duration_minutes && formData.date_start) {
-        const calculatedDateEnd = calculateDateEnd(formData.date_start, selectedService.duration_minutes)
+        const calculatedDateEnd = calculateDateEnd(formData.date_start, selectedService.duration_minutes, true)
         if (calculatedDateEnd) {
           updates.date_end = calculatedDateEnd
         }
@@ -507,12 +515,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   }
 
   const handleDateStartChange = (dateStart: string) => {
+    startInstant.current = null
     const updates: Partial<VisitData> = { date_start: dateStart }
 
     if (formData.service_id) {
       const selectedService = services.find(s => s.id === formData.service_id)
       if (selectedService?.duration_minutes) {
-        const calculatedDateEnd = calculateDateEnd(dateStart, selectedService.duration_minutes)
+        const calculatedDateEnd = calculateDateEnd(dateStart, selectedService.duration_minutes, true)
         if (calculatedDateEnd) {
           updates.date_end = calculatedDateEnd
         }
@@ -599,7 +608,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       setFormError(t('visits.itemsIncomplete'))
       return
     }
-    if (!itemsMode && formData.date_end && (!Number.isFinite(new Date(formData.date_end).getTime()) || new Date(formData.date_end) <= new Date(formData.date_start))) {
+    if (!itemsMode && formData.date_end && (!Number.isFinite(resolveVisitInstant(formData.date_end, endInstant.current).getTime()) || resolveVisitInstant(formData.date_end, endInstant.current) <= resolveVisitInstant(formData.date_start, startInstant.current))) {
       setFormError(t('validation.visitEnd'))
       return
     }
@@ -647,7 +656,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         ? {
             client_id: formData.client_id,
             specialist_id: itemPayload[0].specialist_id,
-            date_start: new Date(formData.date_start).toISOString(),
+            date_start: resolveVisitInstant(formData.date_start, startInstant.current).toISOString(),
             status: formData.status,
             note: formData.note,
             ...(formData.status === 'completed' ? payment : {}),
@@ -657,8 +666,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             ...details,
             ...(price !== undefined ? { price } : {}),
             ...payment,
-            date_start: new Date(formData.date_start).toISOString(),
-            date_end: formData.date_end ? new Date(formData.date_end).toISOString() : undefined,
+            date_start: resolveVisitInstant(formData.date_start, startInstant.current).toISOString(),
+            date_end: formData.date_end ? resolveVisitInstant(formData.date_end, endInstant.current).toISOString() : undefined,
           }
 
       const submitData = Object.fromEntries(Object.entries(draftPayload).filter(([, value]) => value !== undefined))
@@ -1070,7 +1079,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               type="datetime-local"
               style={{ minWidth: 0, maxWidth: '100%' }}
               value={formData.date_end || ''}
-              onChange={(e) => setFormData({ ...formData, date_end: e.target.value })}
+              onChange={(e) => { endInstant.current = null; setFormData({ ...formData, date_end: e.target.value }) }}
               className="w-full px-3 py-2 border rounded-md"
             />
             {fieldErrors.date_end && <FormError message={fieldErrors.date_end} />}
