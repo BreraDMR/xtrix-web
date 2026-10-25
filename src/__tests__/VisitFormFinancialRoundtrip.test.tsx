@@ -23,7 +23,7 @@ const chain: VisitOut = { ...hidden, service_id: null, date_end: '2030-05-06T09:
     date_start: '2030-05-06T09:00:00Z', date_end: '2030-05-06T09:40:00Z' },
 ] }
 
-beforeEach(() => { vi.clearAllMocks(); resetStores(); signIn({ id: 7, role: 'employee' }) })
+beforeEach(() => { vi.stubEnv('TZ', 'Europe/Prague'); vi.clearAllMocks(); resetStores(); signIn({ id: 7, role: 'employee' }) })
 function serve(visit = hidden) {
   vi.mocked(api.get).mockImplementation(routes({ '/clients/': [jana], '/services/': [massage, facial],
     '/services/5': { ...massage, specialists: [{ id: 7, full_name: 'Eva' }] },
@@ -179,7 +179,7 @@ it('saves a custom zero-price visit without echoing its nullable read-only item 
   await waitFor(() => expect(success).toHaveBeenCalledOnce())
 })
 
-afterEach(()=>vi.useRealTimers())
+afterEach(()=>{vi.useRealTimers();vi.unstubAllEnvs()})
 it('DST proof creates a 60 minute service across the autumn fold using real UTC endpoints', async()=>{
  vi.useFakeTimers({toFake:['Date']});vi.setSystemTime(new Date('2026-10-25T00:15:00Z'));serve();
  renderWithProviders(<VisitForm onSuccess={()=>{}} onCancel={()=>{}}/>);
@@ -240,3 +240,13 @@ it('DST control rejects a manual end that is not after the start',async()=>{
  await userEvent.click(screen.getByRole('button',{name:'Create Visit'}));
  expect(screen.getByText('End time must be after start time')).toBeInTheDocument();expect(api.post).not.toHaveBeenCalled();
 });
+
+it.each(['start','end'] as const)('rejects a manually entered spring-gap %s instead of silently booking another hour',async endpoint=>{
+ serve();renderWithProviders(<VisitForm initialDateStart={new Date('2026-03-29T00:30:00Z')} onSuccess={()=>{}} onCancel={()=>{}}/>);
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Jana Nováková'})).closest('select')!,'3');
+ await userEvent.selectOptions((await screen.findByRole('option',{name:'Massage (60 min)'})).closest('select')!,'5');
+ fireEvent.change(document.querySelectorAll('input[type="datetime-local"]')[endpoint==='start'?0:1],{target:{value:'2026-03-29T02:30'}});
+ await userEvent.click(screen.getByRole('button',{name:'Create Visit'}));
+ await waitFor(()=>expect(screen.getByRole('alert')).toHaveTextContent('This local time does not exist. Choose another time.'));
+ expect(api.post).not.toHaveBeenCalled();
+})

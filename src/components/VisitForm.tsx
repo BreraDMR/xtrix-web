@@ -67,7 +67,12 @@ function visitInstant(date: Date): VisitInstant {
 }
 
 function resolveVisitInstant(wall: string, saved: VisitInstant | null): Date {
-  return new Date(saved?.wall === wall ? saved.iso : wall)
+  if (saved?.wall === wall) return new Date(saved.iso)
+  const date = new Date(wall)
+  if (!Number.isFinite(date.getTime()) || format(date, "yyyy-MM-dd'T'HH:mm") !== wall) {
+    return new Date(NaN)
+  }
+  return date
 }
 
 const VISIT_FIELDS = ['client_id', 'service_id', 'specialist_id', 'service_name', 'date_start', 'date_end', 'price', 'status', 'payment_method', 'note']
@@ -606,6 +611,11 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     setFieldErrors({})
     if (itemsMode && !itemsComplete) {
       setFormError(t('visits.itemsIncomplete'))
+      return
+    }
+    if (!Number.isFinite(resolveVisitInstant(formData.date_start, startInstant.current).getTime()) ||
+        (!itemsMode && formData.date_end && !Number.isFinite(resolveVisitInstant(formData.date_end, endInstant.current).getTime()))) {
+      setFormError(t('validation.localTime'))
       return
     }
     if (!itemsMode && formData.date_end && (!Number.isFinite(resolveVisitInstant(formData.date_end, endInstant.current).getTime()) || resolveVisitInstant(formData.date_end, endInstant.current) <= resolveVisitInstant(formData.date_start, startInstant.current))) {
