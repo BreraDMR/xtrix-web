@@ -7,27 +7,52 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      borderRadius: { md: '6px', lg: '8px', xl: '10px', '2xl': '12px' },
-      boxShadow: { sm: '0 1px 2px #172d2005', md: '0 4px 16px #172d200a', lg: '0 12px 36px #172d2014' },
+      fontFamily: {
+        sans: ['"Segoe UI Variable Text"', '"Segoe UI Variable"', '"Segoe UI"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Segoe UI Variable Display"', '"Segoe UI Variable"', '"Segoe UI"', 'Inter', 'system-ui', 'sans-serif'],
+        chart: ['Roboto', '"Segoe UI"', 'sans-serif'],
+      },
+      borderRadius: { md: '6px', lg: '10px', xl: '14px', '2xl': '16px', card: '14px' },
+      boxShadow: {
+        sm: '0 1px 3px rgba(17, 17, 26, 0.06)',
+        md: '0 2px 10px rgba(17, 17, 26, 0.08)',
+        lg: '0 8px 28px rgba(17, 17, 26, 0.12)',
+        card: '0 2px 10px rgba(17, 17, 26, 0.08)',
+      },
+      backgroundImage: {
+        'brand-gradient': 'linear-gradient(90deg, #e04aa8 0%, #9f5aef 100%)',
+        'brand-gradient-diag': 'linear-gradient(135deg, #e04aa8 0%, #9f5aef 100%)',
+      },
       colors: {
+        // Xtrix neutrals: cool, slightly lavender greys from the design
         gray: {
-          50: '#f7f7f3', 100: '#f0f1eb', 200: '#dfe5dd', 300: '#c6cec4',
-          400: '#a2b0a5', 500: '#64726b', 600: '#4b5b50', 700: '#35443a',
-          800: '#1e2722', 900: '#161c19', 950: '#101611',
+          50: '#f7f7fb', 100: '#f1f1f5', 200: '#e4e4ea', 300: '#c9c9d3',
+          400: '#a3a3ad', 500: '#6b6b76', 600: '#55555f', 700: '#3a3a44',
+          800: '#1f1c27', 900: '#111111', 950: '#0b0a0f',
         },
-        // public pages were written with the cool slate greys - give them the same warm neutrals
         slate: {
-          50: '#f7f7f3', 100: '#f0f1eb', 200: '#dfe5dd', 300: '#c6cec4',
-          400: '#a2b0a5', 500: '#64726b', 600: '#4b5b50', 700: '#35443a',
-          800: '#1e2722', 900: '#161c19', 950: '#101611',
+          50: '#f7f7fb', 100: '#f1f1f5', 200: '#e4e4ea', 300: '#c9c9d3',
+          400: '#a3a3ad', 500: '#6b6b76', 600: '#55555f', 700: '#3a3a44',
+          800: '#1f1c27', 900: '#111111', 950: '#0b0a0f',
         },
-        // old screens still say blue/purple for "the accent" - both now mean the green one
-        blue: { 50: '#f1f6f0', 100: '#e9f0e9', 200: '#ccdece', 300: '#afd0b6', 400: '#9bceb0', 500: '#478469', 600: '#245f4b', 700: '#1a4b3a', 800: '#183e31', 900: '#173428', 950: '#0c2118' },
-        purple: { 50: '#f1f6f0', 100: '#e9f0e9', 200: '#ccdece', 300: '#afd0b6', 400: '#9bceb0', 500: '#478469', 600: '#245f4b', 700: '#1a4b3a', 800: '#183e31', 900: '#173428' },
+        // the accent is the Xtrix purple; old blue/purple/indigo utilities follow it
+        blue: { 50: '#f7f2fe', 100: '#efe6fc', 200: '#e2d2f9', 300: '#cdb2f5', 400: '#b48aee', 500: '#9f5aef', 600: '#8b45dd', 700: '#7633c2', 800: '#622b9e', 900: '#4f2580', 950: '#2e1250' },
+        purple: { 50: '#f7f2fe', 100: '#efe6fc', 200: '#e2d2f9', 300: '#cdb2f5', 400: '#b48aee', 500: '#9f5aef', 600: '#8b45dd', 700: '#7633c2', 800: '#622b9e', 900: '#4f2580', 950: '#2e1250' },
+        indigo: { 50: '#f7f2fe', 100: '#efe6fc', 200: '#e2d2f9', 300: '#cdb2f5', 400: '#b48aee', 500: '#9f5aef', 600: '#8b45dd', 700: '#7633c2', 800: '#622b9e', 900: '#4f2580', 950: '#2e1250' },
+        violet: { 50: '#f7f2fe', 100: '#efe6fc', 200: '#e2d2f9', 300: '#cdb2f5', 400: '#b48aee', 500: '#9f5aef', 600: '#8b45dd', 700: '#7633c2', 800: '#622b9e', 900: '#4f2580', 950: '#2e1250' },
         primary: {
-          50: '#f1f6f0', 100: '#e9f0e9', 200: '#ccdece', 300: '#afd0b6',
-          400: '#9bceb0', 500: '#478469', 600: '#245f4b', 700: '#1a4b3a',
-          800: '#183e31', 900: '#173428', 950: '#0c2118',
+          50: '#f7f2fe', 100: '#efe6fc', 200: '#e2d2f9', 300: '#cdb2f5',
+          400: '#b48aee', 500: '#9f5aef', 600: '#8b45dd', 700: '#7633c2',
+          800: '#622b9e', 900: '#4f2580', 950: '#2e1250',
+        },
+        pink: { 50: '#fdf2f8', 100: '#fce4f2', 200: '#f9c9e5', 300: '#f4a0d0', 400: '#ec6fb8', 500: '#e04aa8', 600: '#c93591', 700: '#a82775', 800: '#8b2362', 900: '#742153', 950: '#450a2c' },
+        brand: {
+          pink: '#e04aa8',
+          purple: '#9f5aef',
+          lavender: '#f1e8fb',
+          'lavender-border': '#e1ccf6',
+          bg: '#f7f7fb',
+          ink: '#111111',
         },
       },
     },

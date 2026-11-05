@@ -39,7 +39,7 @@ export default function PublicHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
         <div className="flex min-w-0 items-center gap-10">
           <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="Xtrix">
-            <span className="grid h-8 w-8 place-items-center rounded-md bg-[var(--workspace-accent)] text-xl font-semibold leading-none text-[var(--workspace-panel)]" aria-hidden="true">x</span>
+            <span className="crm-logo h-8 w-8 text-xl" aria-hidden="true">X</span>
             <span className="text-xl font-semibold tracking-tight">Xtrix</span>
           </Link>
           <nav className="hidden items-center gap-5 text-xs font-medium text-[var(--workspace-muted)] lg:flex">

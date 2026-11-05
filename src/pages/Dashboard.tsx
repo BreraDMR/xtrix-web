@@ -12,6 +12,7 @@ import QueryError from '../components/QueryError'
 import LoadingSpinner from '../components/LoadingSpinner'
 import VisitForm from '../components/VisitForm'
 import TodayAgenda from '../components/dashboard/TodayAgenda'
+import DonutProgress from '../components/DonutProgress'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
@@ -47,36 +48,58 @@ function BusinessOverview() {
   // 403 means this person may not see money (staff without the box ticked, a solo without a
   // business) - that's not an error to retry, the card just isn't theirs
   const moneyHidden = profit.isError && apiErrorStatus(profit.error) === 403
-  return <section aria-labelledby="business-overview-title" className="mt-8 border-t border-[var(--workspace-line)] pt-6">
-    <h2 id="business-overview-title" className="mb-4 text-base font-semibold">{t('dashboard.overview')}</h2>
-    <div className="grid items-start gap-4 xl:grid-cols-3">
-      {!moneyHidden && <Card className="p-5">
-        <h3 className="mb-4 text-sm font-medium">{t('dashboard.thisMonth')}</h3>
-        {profit.isPending ? <LoadingSpinner size="sm" /> : profit.isError ? <QueryError retry={profit.refetch} /> :
-          <dl className="space-y-3 text-sm">
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.monthlyRevenue')}</dt><dd className="font-medium tabular-nums">{money(profit.data?.revenue)}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.monthlyExpenses')}</dt><dd className="font-medium tabular-nums">{money(profit.data?.expenses)}</dd></div>
-            <div className="flex justify-between gap-4 border-t border-[var(--workspace-line)] pt-3"><dt className="text-[var(--workspace-muted)]">{t('dashboard.monthlyProfit')}</dt><dd className="font-semibold tabular-nums">{money(profit.data?.profit)}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.profitMargin')}</dt><dd className="tabular-nums">{profit.data?.profit_margin == null ? '—' : `${profit.data.profit_margin.toFixed(2)}%`}</dd></div>
-          </dl>}
+  const { user } = useAuthStore()
+  const canOpenFinance = user?.role === 'admin' || user?.role === 'business_owner'
+  const total = visits.data?.total_visits ?? 0
+  const completed = visits.data?.visits_by_status?.completed ?? 0
+  const completion = total > 0 ? (completed / total) * 100 : 0
+  const statusRow = (label: string, value: string | number) => (
+    <div className="flex items-center justify-between gap-4 rounded-[14px] bg-[#f4f4f6] px-3.5 py-2.5 dark:bg-white/5">
+      <dt className="text-xs font-bold text-[var(--workspace-muted)]">{label}</dt>
+      <dd className="min-w-[58px] rounded-md border border-[#d9c5f8] bg-[#efe6fc] px-3 py-0.5 text-center text-xs font-semibold tabular-nums dark:border-primary-800 dark:bg-primary-900/40">{value}</dd>
+    </div>
+  )
+  return <section aria-labelledby="business-overview-title" className="mt-8">
+    <h2 id="business-overview-title" className="mb-4 text-[17px] font-semibold">{t('dashboard.overview')}</h2>
+    <div className="grid items-stretch gap-6 xl:grid-cols-3">
+      {!moneyHidden && <Card className="flex flex-col p-7">
+        <h3 className="text-[15px] font-semibold">{t('dashboard.thisMonth')}</h3>
+        {profit.isPending ? <LoadingSpinner size="sm" /> : profit.isError ? <QueryError retry={profit.refetch} /> : <>
+          <p className="mt-2 text-xs font-semibold text-[var(--workspace-muted)]">{t('dashboard.monthlyRevenue')}</p>
+          <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <span className="text-[34px] font-bold leading-none tabular-nums">{money(profit.data?.revenue)}</span>
+            {profit.data?.profit_margin != null && <span className="text-xs font-semibold text-[var(--workspace-muted)]">
+              <span className="text-sm font-bold text-brand-pink">{profit.data.profit_margin.toFixed(2)}%</span> {t('dashboard.profitMargin').toLowerCase()}
+            </span>}
+          </div>
+          <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
+            <div><dt className="font-bold text-[#8f8f99]">{t('dashboard.monthlyExpenses')}:</dt><dd className="font-bold tabular-nums">{money(profit.data?.expenses)}</dd></div>
+            <div><dt className="font-bold text-[#8f8f99]">{t('dashboard.monthlyProfit')}:</dt><dd className="font-bold tabular-nums">{money(profit.data?.profit)}</dd></div>
+          </dl>
+        </>}
+        <div className="min-h-6 flex-1" />
+        {canOpenFinance && <Link to="/app/finance" className="ui-button ui-button-primary w-full py-2.5 text-[15px]">{t('nav.finance')}</Link>}
       </Card>}
-      <Card className="p-5">
-        <h3 className="mb-4 text-sm font-medium">{t('dashboard.visitHistory')}</h3>
+      <Card className="p-7">
+        <h3 className="text-[15px] font-semibold">{t('dashboard.visitHistory')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
-          <dl className="space-y-3 text-sm">
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.totalVisits')}</dt><dd className="font-semibold tabular-nums">{visits.data?.total_visits ?? '—'}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.completedVisits')}</dt><dd className="tabular-nums">{visits.data?.visits_by_status?.completed ?? 0}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.plannedVisits')}</dt><dd className="tabular-nums">{visits.data?.visits_by_status?.planned ?? 0}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.cancelledVisits')}</dt><dd className="tabular-nums">{visits.data?.visits_by_status?.cancelled ?? 0}</dd></div>
-          </dl>}
+          <div className="mt-4 flex flex-col items-center gap-6 sm:flex-row xl:flex-col 2xl:flex-row">
+            <DonutProgress value={completion} caption={`${completed} / ${total}`} />
+            <dl className="w-full space-y-2.5 text-[13px]">
+              <div className="flex items-center justify-between gap-4"><dt className="flex items-center gap-2"><span className="h-2 w-2 bg-brand-pink" />{t('dashboard.completedVisits')}</dt><dd className="font-bold tabular-nums">{completed}</dd></div>
+              <div className="flex items-center justify-between gap-4"><dt className="flex items-center gap-2"><span className="h-2 w-2 bg-[#e6e6ea]" />{t('dashboard.plannedVisits')}</dt><dd className="font-bold tabular-nums">{visits.data?.visits_by_status?.planned ?? 0}</dd></div>
+              <div className="flex items-center justify-between gap-4"><dt className="flex items-center gap-2"><span className="h-2 w-2 bg-[#c81e3a]" />{t('dashboard.cancelledVisits')}</dt><dd className="font-bold tabular-nums">{visits.data?.visits_by_status?.cancelled ?? 0}</dd></div>
+              <div className="flex items-center justify-between gap-4 border-t border-[var(--workspace-line)] pt-2.5"><dt className="text-[var(--workspace-muted)]">{t('dashboard.totalVisits')}</dt><dd className="font-bold tabular-nums">{visits.data?.total_visits ?? '—'}</dd></div>
+            </dl>
+          </div>}
       </Card>
-      <Card className="p-5">
-        <h3 className="mb-4 text-sm font-medium">{t('nav.clients')}</h3>
+      <Card className="p-7">
+        <h3 className="text-[15px] font-semibold">{t('nav.clients')}</h3>
         {clients.isPending ? <LoadingSpinner size="sm" /> : clients.isError ? <QueryError retry={clients.refetch} /> :
-          <dl className="space-y-3 text-sm">
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.totalClients')}</dt><dd className="font-semibold tabular-nums">{clients.data?.total_clients ?? '—'}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.newClients')}</dt><dd className="tabular-nums">{clients.data?.new_clients ?? '—'}</dd></div>
-            <div className="flex justify-between gap-4"><dt className="text-[var(--workspace-muted)]">{t('dashboard.averageSpending')}</dt><dd className="tabular-nums">{money(clients.data?.average_spending)}</dd></div>
+          <dl className="mt-5 space-y-3.5">
+            {statusRow(t('dashboard.totalClients'), clients.data?.total_clients ?? '—')}
+            {statusRow(t('dashboard.newClients'), clients.data?.new_clients ?? '—')}
+            {statusRow(t('dashboard.averageSpending'), money(clients.data?.average_spending))}
           </dl>}
       </Card>
     </div>

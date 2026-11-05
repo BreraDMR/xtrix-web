@@ -70,20 +70,21 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     setEditingVisitId(undefined)
   }
 
-  const tileContent = ({ date }: { date: Date }) => {
+  const tileContent = ({ date, view }: { date: Date; view: string }) => {
+    if (view !== 'month') return null
     const dateKey = format(date, 'yyyy-MM-dd')
     const dayVisits = visitsByDate[dateKey] || []
     if (dayVisits.length === 0) return null
 
     return (
-      <div className="mt-1 flex items-center justify-center gap-1">
-        <div className="w-2 h-2 rounded-full bg-purple-600"></div>
-        {dayVisits.length > 1 && (
-          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
-            {dayVisits.length}
-          </span>
-        )}
-      </div>
+      <>
+        <span className="absolute right-2 top-2 grid h-[22px] min-w-[22px] place-items-center rounded-full bg-[#7c3aed] px-1 text-[11px] font-bold text-white shadow-[0_4px_10px_rgba(124,58,237,0.35)]">
+          {dayVisits.length}
+        </span>
+        <span className="mt-auto flex gap-1">
+          {dayVisits.slice(0, 3).map((visit) => <span key={visit.id} className="h-1.5 w-1.5 rounded-full bg-primary-600" />)}
+        </span>
+      </>
     )
   }
 
@@ -98,14 +99,21 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
 
   const dayVisits = visitsByDate[format(selectedDate, 'yyyy-MM-dd')] || []
 
+  const insights = [
+    { label: t('visits.completed'), value: visits.filter((v) => v.status === 'completed').length },
+    { label: t('visits.planned'), value: visits.filter((v) => v.status === 'planned').length },
+    { label: t('visits.inProgress'), value: visits.filter((v) => v.status === 'in_progress').length },
+    { label: t('visits.cancelled'), value: visits.filter((v) => v.status === 'cancelled').length },
+  ]
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2">
-        <div className="flex items-center justify-between mb-4">
-          <button className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
+      <div className="ui-card p-4">
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <span className="rounded-full border border-[#d9c5f8] bg-[#e9dcfb] px-3 py-1 text-[11px] font-bold text-[#7c3aed]">
             {t('calendar.monthView')}
-          </button>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+          </span>
+          <span className="text-[11px] font-semibold text-[var(--workspace-muted)]">
             {totalEventsThisMonth} {t('calendar.eventsThisMonth')}
           </span>
         </div>
@@ -126,7 +134,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
 
       <div className="space-y-4">
         {}
-        <div className="bg-white p-4 rounded-lg shadow border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <div className="ui-card p-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-3 dark:text-gray-300">{t('calendar.selectedDay')}</h3>
           <p className="text-lg font-bold text-gray-900 mb-2 dark:text-gray-100">
             {format(selectedDate, 'EEEE, MMMM d', { locale: dateLocale })}
@@ -156,7 +164,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                   <div
                     key={visit.id}
                     onClick={() => handleVisitClick(visit)}
-                    className="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:hover:bg-gray-700"
+                    className="cursor-pointer rounded-md border border-[var(--workspace-control)] p-2.5 transition-colors hover:border-[#9f5aef]"
                   >
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {visit.service_name || t('visits.title')}
@@ -172,38 +180,16 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
         </div>
 
         {}
-        <div className="bg-white p-4 rounded-lg shadow border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+        <div className="ui-card p-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('calendar.insights')}</h3>
           <p className="text-xs text-gray-500 mb-3 dark:text-gray-400">{t('calendar.insightsTitle')}</p>
-          <div className="space-y-3">
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {visits.filter((v) => v.status === 'completed' || v.status === 'in_progress').length}
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Meetings</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">sync/planning</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {visits.filter((v) => v.status === 'planned').length}
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Calls</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">clients</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {visits.filter((v) => v.status === 'completed').length}
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Finance</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Invoices</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {visits.filter((v) => v.status === 'cancelled').length}
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Releases</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Deploy windows</p>
-            </div>
+          <div className="grid grid-cols-2 gap-3">
+            {insights.map((item) => (
+              <div key={item.label} className="rounded-md bg-[#f6f1fd] p-3 dark:bg-white/5">
+                <p className="text-[11px] font-bold text-[var(--workspace-muted)]">{item.label}</p>
+                <p className="mt-1 text-xl font-bold">{item.value}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

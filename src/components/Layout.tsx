@@ -12,26 +12,26 @@ import AccessNotice from './subscription/AccessNotice'
 import PilotSubscription from './subscription/PilotSubscription'
 import LoadingSpinner from './LoadingSpinner'
 import QueryError from './QueryError'
+import { HiOutlineMenuAlt2, HiOutlineX, HiOutlineChevronRight, HiOutlineChevronLeft } from 'react-icons/hi'
 import {
-  HiOutlineViewGrid, HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineCalendar,
-  HiOutlinePaperClip, HiOutlineCurrencyDollar, HiOutlineShoppingCart, HiOutlineChartBar,
-  HiOutlineHeart, HiOutlineCog, HiOutlineBriefcase, HiOutlineDocumentText,
-  HiOutlineClock, HiOutlineClipboardList, HiOutlineMenuAlt2, HiOutlineX,
-  HiOutlineChevronRight, HiOutlineChevronLeft, HiOutlineBell, HiOutlineUserAdd,
-  HiOutlineSpeakerphone, HiOutlineShieldCheck, HiOutlineUpload, HiOutlineIdentification,
-} from 'react-icons/hi'
+  LuLayoutGrid, LuUserPen, LuDoorOpen, LuCalendar, LuClock, LuHandshake, LuClipboardList,
+  LuShoppingCart, LuCircleDollarSign, LuChartLine, LuHeart, LuCircleUser, LuBriefcase,
+  LuReceiptText, LuWallet, LuSettings, LuBell, LuUserPlus, LuMegaphone, LuShieldCheck,
+  LuUpload, LuIdCard,
+} from 'react-icons/lu'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
-  '/app': HiOutlineViewGrid, '/app/clients': HiOutlineUsers, '/app/visits': HiOutlineOfficeBuilding,
-  '/app/calendar': HiOutlineCalendar, '/app/schedules': HiOutlineClock, '/app/services': HiOutlinePaperClip,
-  '/app/questionnaires': HiOutlineClipboardList, '/app/inventory': HiOutlineShoppingCart,
-  '/app/finance': HiOutlineCurrencyDollar, '/app/analytics': HiOutlineChartBar, '/app/loyalty': HiOutlineHeart,
-  '/app/employees': HiOutlineUsers, '/app/business': HiOutlineBriefcase, '/app/subscription': HiOutlineDocumentText,
-  '/app/my-salary': HiOutlineCurrencyDollar, '/app/settings': HiOutlineCog,
-  '/app/notifications': HiOutlineBell, '/app/waitlist': HiOutlineUserAdd,
-  '/app/campaigns': HiOutlineSpeakerphone, '/app/audit': HiOutlineShieldCheck,
-  '/app/import': HiOutlineUpload, '/app/profile': HiOutlineIdentification,
+  '/app': LuLayoutGrid, '/app/clients': LuUserPen, '/app/visits': LuDoorOpen,
+  '/app/calendar': LuCalendar, '/app/schedules': LuClock, '/app/services': LuHandshake,
+  '/app/questionnaires': LuClipboardList, '/app/inventory': LuShoppingCart,
+  '/app/finance': LuCircleDollarSign, '/app/analytics': LuChartLine, '/app/loyalty': LuHeart,
+  '/app/employees': LuCircleUser, '/app/business': LuBriefcase, '/app/subscription': LuReceiptText,
+  '/app/my-salary': LuWallet, '/app/settings': LuSettings,
+  '/app/notifications': LuBell, '/app/waitlist': LuUserPlus,
+  '/app/campaigns': LuMegaphone, '/app/audit': LuShieldCheck,
+  '/app/import': LuUpload, '/app/profile': LuIdCard,
 }
+
 
 export default function Layout() {
   const { user } = useAuthStore()
@@ -130,7 +130,7 @@ export default function Layout() {
     const selected = path === '/app' ? (location.pathname === '/app' || location.pathname === '/app/') : (location.pathname === path || location.pathname.startsWith(path + '/'))
     return <Link key={path} to={path} className="crm-navlink" aria-label={label} title={label} aria-current={selected ? 'page' : undefined}
       onClick={() => setIsMobileMenuOpen(false)}>
-      <Icon className="h-[18px] w-[18px] shrink-0" /><span className="crm-navtext truncate">{label}</span>
+      <span className="crm-navicon"><Icon className="h-4 w-4" /></span><span className="crm-navtext truncate">{label}</span>
     </Link>
   })
 
@@ -145,15 +145,15 @@ export default function Layout() {
       <aside ref={sidebar} id="workspace-navigation" role={isMobileMenuOpen ? 'dialog' : undefined}
         aria-modal={isMobileMenuOpen || undefined} aria-label={t('nav.primary')}
         className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="crm-brand flex h-[72px] shrink-0 items-center gap-3">
+        <div className="crm-brand flex h-[88px] shrink-0 items-center gap-3">
           <Link to="/app" aria-label="Xtrix" className="flex items-center gap-2.5">
-            <span className="grid h-7 w-7 place-items-center rounded-md bg-gray-900 text-[25px] font-medium leading-none text-white dark:bg-white dark:text-gray-900">x</span>
-            <span className="crm-navtext text-[22px] font-semibold tracking-[-1px]">Xtrix</span>
+            <span className="crm-logo h-8 w-8 text-xl">X</span>
+            <span className="crm-navtext text-[20px] font-bold tracking-[-0.5px]">Xtrix</span>
           </Link>
           <button className="ml-auto p-1 text-gray-500 lg:hidden" aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)}><HiOutlineX className="h-5 w-5" /></button>
         </div>
-        <div title={workspaceName} className="crm-business mb-2 flex shrink-0 items-center gap-2.5 rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gray-100 text-[11px] font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(workspaceName)}</span>
+        <div title={workspaceName} className="crm-business mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-[var(--x-lavender-border)] bg-[var(--x-lavender)]">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-gradient-diag text-[11px] font-bold text-white">{initials(workspaceName)}</span>
           <div className="crm-navtext min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
         </div>
         <nav aria-label={t('nav.primary')} className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5">
@@ -179,7 +179,7 @@ export default function Layout() {
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             {access && access.crm_mode !== 'blocked' && <AssistantLauncher />}
-            <div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-[11px] font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">{initials(user?.full_name || 'U')}</span><span className="hidden max-w-40 truncate text-xs sm:inline">{user?.full_name}</span></div>
+            <div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-brand-gradient-diag text-[11px] font-bold text-white">{initials(user?.full_name || 'U')}</span><span className="hidden max-w-40 truncate text-xs font-bold sm:inline">{user?.full_name}</span></div>
             <button className="rounded-lg px-2 py-2 text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20" onClick={() => { signOut(); navigate('/login', { replace: true }) }}>{t('nav.logout')}</button>
           </div>
         </header>
@@ -199,7 +199,7 @@ export default function Layout() {
         {links(primaryItems.filter(item => ['/app', '/app/calendar', '/app/clients'].includes(item.path)))}
         <button type="button" aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
           onClick={() => setIsMobileMenuOpen(true)}>
-          <HiOutlineMenuAlt2 className="h-[18px] w-[18px]" /><span>{t('nav.more')}</span>
+          <span className="crm-navicon"><HiOutlineMenuAlt2 className="h-[18px] w-[18px]" /></span><span>{t('nav.more')}</span>
         </button>
       </nav>
     </div>

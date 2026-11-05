@@ -7,7 +7,7 @@ export default function AuthShell({ title, description, children }: { title: str
   return <main className="min-h-screen bg-[var(--workspace-bg)] px-4 py-6 text-[var(--workspace-ink)] sm:px-6 sm:py-10">
     <header className="mx-auto flex max-w-5xl items-center justify-between gap-4">
       <Link to="/" aria-label="Xtrix" className="inline-flex items-center gap-2.5 text-xl font-semibold tracking-tight">
-        <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-md bg-[var(--workspace-ink)] text-2xl leading-none text-[var(--workspace-panel)]">x</span>
+        <span aria-hidden="true" className="crm-logo h-8 w-8 text-xl">X</span>
         Xtrix
       </Link>
       <LanguageSwitcher />

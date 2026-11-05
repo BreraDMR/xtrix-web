@@ -1,89 +1,131 @@
 @layer base {
   :root {
-    --workspace-bg: #f7f7f3;
+    --workspace-bg: #f7f7fb;
     --workspace-panel: #ffffff;
-    --workspace-ink: #202d28;
-    --workspace-muted: #64726b;
-    --workspace-line: #dfe5dd;
+    --workspace-ink: #111111;
+    --workspace-muted: #6b6b76;
+    --workspace-line: #e4e4ea;
     --workspace-border: var(--workspace-line);
-    --workspace-accent: #245f4b;
-    --workspace-accent-hover: #1a4b3a;
-    --workspace-accent-soft: #e9f0e9;
-    --workspace-focus: #4d8a6e;
-    --workspace-sidebar: #f0f1eb;
+    --workspace-accent: #8b45dd;
+    --workspace-accent-hover: #7633c2;
+    --workspace-accent-soft: #f1e8fb;
+    --workspace-focus: #b48aee;
+    --workspace-sidebar: #ffffff;
+    --workspace-card-border: transparent;
+    --workspace-card-shadow: 0 2px 10px rgba(17, 17, 26, 0.08);
+    --workspace-control: #c9c9d3;
+    --x-pink: #e04aa8;
+    --x-purple: #9f5aef;
+    --x-lavender: #f1e8fb;
+    --x-lavender-border: #e1ccf6;
+    --x-gradient: linear-gradient(90deg, #e04aa8 0%, #9f5aef 100%);
+    --x-gradient-diag: linear-gradient(135deg, #e04aa8 0%, #9f5aef 100%);
   }
   :root.dark {
-    --workspace-bg: #161c19;
-    --workspace-panel: #1e2722;
-    --workspace-ink: #edf2ec;
-    --workspace-muted: #a2b0a5;
-    --workspace-line: #35443a;
-    --workspace-accent: #9bceb0;
-    --workspace-accent-hover: #b4dfc5;
-    --workspace-accent-soft: #2b4033;
-    --workspace-focus: #9bceb0;
-    --workspace-sidebar: #1a221d;
+    --workspace-bg: #14121a;
+    --workspace-panel: #1c1924;
+    --workspace-ink: #f5f3fa;
+    --workspace-muted: #a3a3ad;
+    --workspace-line: #2e2a38;
+    --workspace-accent: #cdb2f5;
+    --workspace-accent-hover: #e2d2f9;
+    --workspace-accent-soft: #2b2238;
+    --workspace-focus: #b48aee;
+    --workspace-sidebar: #18151f;
+    --workspace-card-border: #2e2a38;
+    --workspace-card-shadow: none;
+    --workspace-control: #3a3546;
+    --x-lavender: #2b2238;
+    --x-lavender-border: #4f2580;
+  }
+  html {
+    font-family: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
   }
   body {
     background: var(--workspace-bg);
     color: var(--workspace-ink);
     font-size: 14px;
   }
+  h1, h2, h3, h4 {
+    font-family: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", Inter, system-ui, sans-serif;
+  }
   button:not(:disabled), [role='button']:not([aria-disabled='true']) { cursor: pointer; }
   :focus-visible { outline: 2px solid var(--workspace-focus); outline-offset: 3px; }
+  input[type='checkbox'], input[type='radio'] { accent-color: var(--x-purple); }
 }
 
 @layer components {
   .ui-card {
     background: var(--workspace-panel);
-    border: 1px solid var(--workspace-line);
-    border-radius: 8px;
-    box-shadow: none;
+    border: 1px solid var(--workspace-card-border);
+    border-radius: 14px;
+    box-shadow: var(--workspace-card-shadow);
   }
   .ui-button {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    min-height: 38px; padding: 9px 14px; border-radius: 6px; font-size: 13px;
-    font-weight: 500; line-height: 1.35; border: 1px solid transparent;
-    transition: background-color .15s;
+    min-height: 36px; padding: 8px 16px; border-radius: 6px; font-size: 13px;
+    font-weight: 700; line-height: 1.35; border: 1px solid transparent;
+    transition: filter .15s, background-color .15s, border-color .15s, color .15s, box-shadow .15s;
   }
   .ui-button:disabled { opacity: .5; cursor: not-allowed; }
   .ui-button svg { width: 17px; height: 17px; flex-shrink: 0; }
-  .ui-button-primary { background: var(--workspace-accent); color: var(--workspace-panel); }
-  .ui-button-primary:hover:not(:disabled) { background: var(--workspace-accent-hover); }
-  .ui-button-secondary { background: var(--workspace-panel); color: var(--workspace-ink); border-color: var(--workspace-line); }
-  .ui-button-secondary:hover:not(:disabled) { background: var(--workspace-bg); }
+  .ui-button-primary { background: var(--x-gradient); color: #fff; box-shadow: 0 1px 2px rgba(159, 90, 239, .25); }
+  .ui-button-primary:hover:not(:disabled) { filter: brightness(1.06); box-shadow: 0 4px 14px rgba(159, 90, 239, .3); }
+  .ui-button-secondary { background: var(--workspace-panel); color: #374151; border-color: #b9b9c3; }
+  .ui-button-secondary:hover:not(:disabled) { border-color: var(--x-purple); color: var(--workspace-accent); }
+  .dark .ui-button-secondary { color: var(--workspace-ink); border-color: var(--workspace-control); }
   .ui-button-quiet { color: var(--workspace-accent); background: transparent; }
-  .ui-button-danger { color: #e1393e; background: #ff3b300c; }
+  .ui-button-quiet:hover:not(:disabled) { background: var(--x-lavender); }
+  .ui-button-danger { color: #c81e1e; background: #fdecec; border-color: #d21f2f; }
+  .ui-button-danger:hover:not(:disabled) { background: #fbdada; }
   .ui-input {
-    min-height: 40px; padding: 9px 12px; border: 1px solid var(--workspace-line);
+    min-height: 36px; padding: 7px 12px; border: 1px solid var(--workspace-control);
     border-radius: 6px; background: var(--workspace-panel); color: var(--workspace-ink);
-    font-size: 13px; line-height: 1.5; width: 100%;
+    font-size: 13px; font-weight: 600; line-height: 1.5; width: 100%;
   }
-  .ui-input::placeholder { color: var(--workspace-muted); }
-  .ui-input:focus { outline: none; border-color: var(--workspace-focus); box-shadow: 0 0 0 2px var(--workspace-accent-soft); }
+  .ui-input::placeholder { color: #b3b3bd; font-weight: 600; }
+  .ui-input:focus { outline: none; border-color: var(--workspace-focus); box-shadow: 0 0 0 3px rgba(159, 90, 239, .16); }
   .ui-input:disabled { opacity: .55; cursor: not-allowed; }
-  .page-title { font-size: clamp(25px, 2.5vw, 30px); font-weight: 650; line-height: 1.2; letter-spacing: -.8px; color: var(--workspace-ink); }
-  .page-subtitle { color: var(--workspace-muted); font-size: 13px; line-height: 1.6; margin-top: 7px; }
-  .page-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+  .page-title { font-size: clamp(24px, 2.2vw, 28px); font-weight: 600; line-height: 1.2; letter-spacing: -.4px; color: var(--workspace-ink); }
+  .page-subtitle { color: var(--workspace-ink); opacity: .8; font-size: 14px; font-weight: 600; line-height: 1.6; margin-top: 8px; }
+  .page-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
   .page-actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
   .crm-app { background: var(--workspace-bg); color: var(--workspace-ink); }
-  .crm-app main > div > :is(h1, div > h1) { letter-spacing: -1px; font-weight: 650; }
+  .crm-app main > div > :is(h1, div > h1) { letter-spacing: -.4px; font-weight: 600; }
   .crm-app main :where(div, article, section)[class~='bg-white']:is([class~='rounded-lg'], [class~='rounded-xl']) {
-    border: 1px solid var(--workspace-line);
+    border-color: var(--workspace-card-border);
+    border-radius: 14px;
+    box-shadow: var(--workspace-card-shadow);
   }
   .crm-app main :where(table) { font-size: 13px; }
-  .crm-app main :where(th) { font-weight: 500; letter-spacing: .025em; font-size: 11px; color: var(--workspace-muted); }
-  .crm-app main :where(td) { border-color: var(--workspace-line); }
-  .crm-app main :where(input,select,textarea):not([type='checkbox'],[type='radio'],[type='range'],[type='color']) { border-color: var(--workspace-line); }
+  .crm-app main :where(thead) { border-bottom: 1px solid #d4d4dc; }
+  .crm-app main :where(th) { font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 12px; color: var(--workspace-muted); }
+  .crm-app main :where(td) { border-color: var(--workspace-line); font-weight: 600; }
+  .crm-app main :where(tbody tr) { transition: background-color .12s; }
+  .crm-app main :where(tbody tr:hover) { background-color: var(--x-lavender); }
+  .crm-app main :where(input,select,textarea):not([type='checkbox'],[type='radio'],[type='range'],[type='color']) { border-color: var(--workspace-control); }
   .crm-app main :where(input,select,textarea):focus { border-color: var(--workspace-focus); }
-  .crm-sidebar { width: 212px; background: var(--workspace-sidebar); border-right: 1px solid var(--workspace-line); }
-  .crm-brand { padding-inline: 24px; }
-  .crm-business { margin-inline: 14px; padding: 10px; }
-  .crm-header { background: var(--workspace-panel); border-bottom: 1px solid var(--workspace-line); }
-  .crm-navlink { display: flex; align-items: center; gap: 10px; padding: 9px 12px; margin: 2px 12px; border-radius: 6px; font-size: 13px; color: var(--workspace-muted); }
-  .crm-navlink:hover { background: var(--workspace-accent-soft); color: var(--workspace-ink); }
-  .crm-navlink[aria-current='page'] { background: var(--workspace-panel); color: var(--workspace-accent); font-weight: 550; }
-  .crm-navlabel { padding: 0 24px; margin: 24px 0 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .085em; font-weight: 550; color: var(--workspace-muted); }
+  .crm-sidebar { width: 256px; background: var(--workspace-sidebar); }
+  .dark .crm-sidebar { border-right: 1px solid var(--workspace-line); }
+  .crm-brand { padding-inline: 28px; }
+  .crm-business { margin-inline: 20px; padding: 10px; }
+  .crm-header { background: var(--workspace-bg); }
+  .crm-navlink {
+    display: flex; align-items: center; gap: 12px; padding: 6px 10px; margin: 3px 20px;
+    border: 1px solid transparent; border-radius: 14px; font-size: 13px; font-weight: 700;
+    color: var(--workspace-ink);
+  }
+  .crm-navlink:hover { background: #f6f1fd; }
+  .dark .crm-navlink:hover { background: rgba(255, 255, 255, .05); }
+  .crm-navlink[aria-current='page'] { background: var(--x-lavender); border-color: var(--x-lavender-border); color: var(--workspace-ink); }
+  .crm-navicon {
+    display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0;
+    border-radius: 6px; background: #f2f2f5; color: var(--workspace-ink);
+  }
+  .dark .crm-navicon { background: rgba(255, 255, 255, .08); }
+  .crm-navlink[aria-current='page'] .crm-navicon { background: var(--x-gradient-diag); color: #fff; }
+  .crm-navlabel { padding: 0 28px; margin: 18px 0 6px; font-size: 17px; text-transform: uppercase; letter-spacing: .02em; font-weight: 700; color: var(--workspace-ink); }
+  .crm-logo { display: grid; place-items: center; border-radius: 8px; background: var(--x-gradient-diag); color: #fff; font-family: Impact, "Arial Narrow", sans-serif; font-weight: 900; line-height: 1; }
   .crm-access {
     display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px;
     margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--workspace-line);
@@ -101,6 +143,7 @@
   @media (max-width: 1023px) {
     .crm-mobile-nav {
       position: fixed; inset: auto 0 0; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr);
+      box-shadow: 0 -2px 10px rgba(17, 17, 26, .06);
       background: var(--workspace-panel); border-top: 1px solid var(--workspace-line);
       padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
     }
@@ -109,13 +152,15 @@
       min-height: 56px; min-width: 0; margin: 0; padding: 6px 2px; border-radius: 4px;
       font-size: 10px; line-height: 1.3; color: var(--workspace-muted);
     }
-    .crm-mobile-nav .crm-navlink[aria-current='page'] { color: var(--workspace-accent); background: var(--workspace-accent-soft); }
+    .crm-mobile-nav .crm-navlink { border: 0; font-weight: 600; }
+    .crm-mobile-nav .crm-navicon { width: 24px; height: 24px; background: transparent; }
+    .crm-mobile-nav .crm-navlink[aria-current='page'] { color: var(--workspace-accent); background: var(--x-lavender); }
     .crm-mobile-nav .crm-navtext { max-width: 100%; }
     .crm-access { flex-wrap: wrap; gap: 6px; }
   }
   @media (min-width: 1024px) {
-    .crm-app { --navigation-width: 212px; }
-    .crm-app[data-sidebar-compact='true'] { --navigation-width: 68px; }
+    .crm-app { --navigation-width: 256px; }
+    .crm-app[data-sidebar-compact='true'] { --navigation-width: 76px; }
     .crm-sidebar { width: var(--navigation-width); }
     .crm-workspace { margin-left: var(--navigation-width); }
     .crm-app[data-sidebar-compact='true'] .crm-brand { padding-inline: 18px; }
@@ -123,6 +168,7 @@
     .crm-app[data-sidebar-compact='true'] .crm-navtext { display: none; }
     .crm-app[data-sidebar-compact='true'] .crm-navlabel { height: 1px; padding: 0; margin: 18px 20px 10px; overflow: hidden; color: transparent; background: var(--workspace-line); }
     .crm-app[data-sidebar-compact='true'] .crm-navlink { justify-content: center; margin-inline: 12px; padding-inline: 0; }
+    .crm-app[data-sidebar-compact='true'] .crm-brand { justify-content: center; }
   }
   @media (max-width: 767px) {
     .page-toolbar { align-items: flex-start; gap: 17px; flex-wrap: wrap; margin-bottom: 24px; }
@@ -148,4 +194,65 @@
 :root.dark :is(.border-blue-200, .border-blue-300, .border-purple-200, .border-purple-300,
   .border-primary-200, .border-primary-300) {
   border-color: var(--workspace-line);
+}
+
+/* Xtrix status pills: the older screens paint them with -100 backgrounds; give them the design's
+   outlined, bold look without touching every screen. */
+.crm-app :is(span, div, p).rounded-full:is(.text-xs, .text-\[11px\], .text-\[10px\]) { font-weight: 700; }
+.crm-app .rounded-full.bg-green-100 { background: #d9efe1; color: #1f7a3a; box-shadow: inset 0 0 0 1px #1f7a3a; }
+.crm-app .rounded-full:is(.bg-amber-100, .bg-yellow-100, .bg-orange-100) { background: #fdecd9; color: #b45309; }
+.crm-app .rounded-full.bg-red-100 { background: #f8dde6; color: #c81e3a; }
+.crm-app .rounded-full:is(.bg-purple-100, .bg-blue-100, .bg-primary-100, .bg-indigo-100) { background: #e9dcfb; color: #7c3aed; box-shadow: inset 0 0 0 1px #d9c5f8; }
+.dark .crm-app .rounded-full.bg-green-100 { background: rgba(31, 122, 58, .2); color: #8fd6a6; }
+.dark .crm-app .rounded-full:is(.bg-purple-100, .bg-blue-100, .bg-primary-100, .bg-indigo-100) { background: #2b2238; color: #cdb2f5; box-shadow: inset 0 0 0 1px #4f2580; }
+
+/* solid accent buttons written as utilities follow the brand gradient */
+.crm-app :is(button, a):is(.bg-blue-600, .bg-purple-600, .bg-primary-600, .bg-indigo-600).text-white {
+  background-image: var(--x-gradient); font-weight: 700;
+}
+.crm-app :is(button, a):is(.bg-blue-600, .bg-purple-600, .bg-primary-600, .bg-indigo-600).text-white:hover:not(:disabled) { filter: brightness(1.06); }
+
+/* Xtrix month calendar */
+.crm-app .react-calendar {
+  width: 100%; border: none; background: transparent; font-family: inherit;
+}
+.crm-app .react-calendar__navigation { margin-bottom: .75rem; }
+.crm-app .react-calendar__navigation button { border-radius: 8px; font-weight: 700; font-size: 14px; color: var(--workspace-ink); }
+.crm-app .react-calendar__navigation button:enabled:hover,
+.crm-app .react-calendar__navigation button:enabled:focus { background: var(--x-lavender); }
+.crm-app .react-calendar__month-view__weekdays { text-transform: none; font-size: 11px; font-weight: 700; color: var(--workspace-muted); }
+.crm-app .react-calendar__month-view__weekdays__weekday { text-align: left; padding: 0 .5rem .5rem; }
+.crm-app .react-calendar__month-view__weekdays abbr { text-decoration: none; }
+.crm-app .react-calendar__month-view__days { gap: 7px 0; margin-right: -7px; }
+.crm-app .react-calendar__month-view__days .react-calendar__tile {
+  position: relative; flex-basis: calc(14.2857% - 7px) !important; max-width: calc(14.2857% - 7px) !important;
+  margin-right: 7px; min-height: 68px; padding: .55rem .7rem; border: 1px solid #ececf1; border-radius: 10px;
+  background: var(--workspace-panel); text-align: left; display: flex; flex-direction: column; align-items: flex-start;
+  font-size: 12px; font-weight: 700; color: var(--workspace-ink);
+}
+.crm-app .react-calendar__month-view__days__day--weekend { color: var(--workspace-ink); }
+.crm-app .react-calendar__month-view__days__day--neighboringMonth { color: #c4c4cc !important; border-color: #f4f4f7 !important; }
+.crm-app .react-calendar__tile:enabled:hover,
+.crm-app .react-calendar__tile:enabled:focus { background: #faf6ff; border-color: var(--x-lavender-border); }
+.crm-app .react-calendar__tile--now { background: var(--workspace-panel); }
+.crm-app .react-calendar__tile--now abbr { color: var(--x-pink); }
+.crm-app .react-calendar__tile--active,
+.crm-app .react-calendar__tile--active:enabled:hover,
+.crm-app .react-calendar__tile--active:enabled:focus { background: var(--x-lavender) !important; border-color: #cdb2f5 !important; color: var(--workspace-ink) !important; }
+.crm-app .react-calendar__tile--active abbr {
+  display: inline-flex; min-width: 26px; justify-content: center; padding: 2px 4px;
+  border: 1px solid #cdb2f5; border-radius: 6px; background: #e9dcfb; color: #4f2580;
+}
+.dark .crm-app .react-calendar__month-view__days .react-calendar__tile { border-color: var(--workspace-line); }
+
+/* design headers are sentence case; older tables still say uppercase */
+.crm-app main th { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 600; color: var(--workspace-muted); }
+.crm-app select:not([multiple]), select.ui-input:not([multiple]) {
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 9l7 7 7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .6rem center; background-size: 1.1rem; padding-right: 2.25rem;
+  font-weight: 600;
+}
+.dark .crm-app select:not([multiple]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ddd' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 9l7 7 7-7'/%3E%3C/svg%3E");
 }
