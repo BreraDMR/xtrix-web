@@ -26,9 +26,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`px-4 py-2 border rounded-md flex items-center gap-2 ${
-          hasActiveFilters ? 'bg-blue-50 border-blue-300' : 'bg-white'
-        }`}
+        className={`ui-button ui-button-secondary ${hasActiveFilters ? 'border-brand-purple bg-[var(--x-lavender)] text-primary-700' : ''}`}
       >
         <svg
           className="h-5 w-5"
@@ -45,7 +43,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
         </svg>
         Filters
         {hasActiveFilters && (
-          <span className="ml-1 px-2 py-0.5 bg-primary-600 text-white text-xs rounded-full">
+          <span className="ml-1 px-2 py-0.5 bg-brand-gradient text-white text-xs rounded-full">
             {Object.values(filters).filter((f) => f.value !== null).length}
           </span>
         )}
@@ -57,7 +55,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-20 p-4 dark:bg-gray-800">
+          <div className="ui-card absolute top-full left-0 z-20 mt-2 w-64 p-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold">Filters</h3>
               {hasActiveFilters && (
@@ -72,7 +70,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
             <div className="space-y-4">
               {Object.entries(filters).map(([key, filter]) => (
                 <div key={key}>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="mb-1.5 block text-xs font-semibold text-[var(--workspace-muted)]">
                     {filter.label}
                   </label>
                   <select

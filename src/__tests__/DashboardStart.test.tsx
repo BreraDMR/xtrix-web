@@ -6,7 +6,8 @@ import { apiError, renderWithProviders, resetStores, routes, signIn } from '../t
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn() } }))
 vi.mock('recharts', () => ({ PieChart: () => null, Pie: () => null, Cell: () => null,
-  ResponsiveContainer: () => null, Legend: () => null, Tooltip: () => null }))
+  ResponsiveContainer: () => null, Legend: () => null, Tooltip: () => null,
+  BarChart: () => null, Bar: () => null, XAxis: () => null, YAxis: () => null, CartesianGrid: () => null }))
 
 beforeEach(() => { vi.clearAllMocks(); resetStores(); signIn({ id: 7, role: 'business_owner' }) })
 

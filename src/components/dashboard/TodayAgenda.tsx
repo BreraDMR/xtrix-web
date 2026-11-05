@@ -11,6 +11,7 @@ import { useLabels } from '../../i18n/labels'
 import { zonedDayKey, zonedWallTimeToIso } from '../../utils/dates'
 import Button from '../../ui/Button'
 import Card from '../../ui/Card'
+import { visitStatusClass } from '../../utils/statusPill'
 
 interface TodayAgendaProps {
   timeZone: string
@@ -92,14 +93,7 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
     timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
   }).format(new Date(iso))
   const dateLabel = new Intl.DateTimeFormat(localeTag, { timeZone, dateStyle: 'full' }).format(now)
-  const statusClass = (status: VisitOut['status']) => {
-    switch (status) {
-      case 'planned': return 'bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-200'
-      case 'in_progress': return 'bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-200'
-      case 'completed': return 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]'
-      default: return 'bg-[var(--workspace-bg)] text-[var(--workspace-muted)]'
-    }
-  }
+  const statusClass = visitStatusClass
 
   return (
     <Card className="overflow-hidden text-[var(--workspace-ink)]">
@@ -140,7 +134,7 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
                 </div>
                 <div className="col-start-2 flex flex-wrap items-center gap-2 text-xs sm:col-start-auto sm:flex-col sm:items-start">
                   <span className="text-[var(--workspace-muted)]"><span className="sr-only">{t('visits.specialist')}: </span>{staffNames.get(visit.specialist_id) || `#${visit.specialist_id}`}</span>
-                  <span className={`rounded px-2 py-1 ${statusClass(visit.status)}`}><span className="sr-only">{t('visits.status')}: </span>{labels.visitStatus(visit.status) || '—'}</span>
+                  <span className={`rounded-full px-3 py-0.5 text-[11px] ${statusClass(visit.status)}`}><span className="sr-only">{t('visits.status')}: </span>{labels.visitStatus(visit.status) || '—'}</span>
                 </div>
 
               </li>

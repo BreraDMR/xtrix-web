@@ -126,32 +126,31 @@ export default function Services() {
         <ContextHint hint="services" onAction={() => { setEditingId(undefined); setShowForm(true) }} />
       )}
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <div className="min-w-0 flex-1 basis-64 sm:max-w-sm">
-          <Input id="service-directory-search" type="search" aria-label={t('services.searchPlaceholder')} placeholder={t('services.searchPlaceholder')}
-            value={searchQuery} onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1) }} />
-        </div>
-        <Select aria-label={t('services.status')} value={activeFilter || ''} className="w-auto max-w-full"
-          onChange={event => { setActiveFilter(event.target.value || null); setCurrentPage(1) }}>
-          <option value="">{t('services.allServices')}</option>
-          <option value="active">{t('services.activeOnly')}</option>
-          <option value="inactive">{t('services.inactiveOnly')}</option>
-        </Select>
-        {(searchQuery || activeFilter) && <Button variant="quiet" onClick={() => { setSearchQuery(''); setActiveFilter(null); setCurrentPage(1) }}>{t('services.clearFilters')}</Button>}
-        {!isLoading && !isError && filteredServices.length > 0 && <div className="ml-auto">
-          <ExportButton data={filteredServices}
-            columns={[
-              { key: 'name', label: t('services.name') },
-              { key: 'duration_minutes', label: t('services.duration'), format: value => `${value} ${t('services.min')}` },
-              { key: 'price', label: t('services.price'), format: value => formatCurrency(value, currency) },
-              { key: 'is_active', label: t('services.status'), format: value => value ? t('services.active') : t('services.inactive') },
-            ]}
-            filename={`services-${today()}`} title={t('export.servicesReport')}
-            reportTypes={[t('export.servicesReport')]} dataType={searchQuery || activeFilter ? 'filtered' : 'all'} />
-        </div>}
-      </div>
-
       <Card className="overflow-hidden">
+        <div className="flex flex-wrap items-center gap-3 border-b border-[var(--workspace-line)] p-4 sm:p-6">
+          <div className="min-w-0 flex-1 basis-64 ">
+            <Input id="service-directory-search" type="search" aria-label={t('services.searchPlaceholder')} placeholder={t('services.searchPlaceholder')}
+              value={searchQuery} onChange={event => { setSearchQuery(event.target.value); setCurrentPage(1) }} />
+          </div>
+          <Select aria-label={t('services.status')} value={activeFilter || ''} className="w-auto max-w-full"
+            onChange={event => { setActiveFilter(event.target.value || null); setCurrentPage(1) }}>
+            <option value="">{t('services.allServices')}</option>
+            <option value="active">{t('services.activeOnly')}</option>
+            <option value="inactive">{t('services.inactiveOnly')}</option>
+          </Select>
+          {(searchQuery || activeFilter) && <Button variant="quiet" onClick={() => { setSearchQuery(''); setActiveFilter(null); setCurrentPage(1) }}>{t('services.clearFilters')}</Button>}
+          {!isLoading && !isError && filteredServices.length > 0 && <div className="ml-auto">
+            <ExportButton data={filteredServices}
+              columns={[
+                { key: 'name', label: t('services.name') },
+                { key: 'duration_minutes', label: t('services.duration'), format: value => `${value} ${t('services.min')}` },
+                { key: 'price', label: t('services.price'), format: value => formatCurrency(value, currency) },
+                { key: 'is_active', label: t('services.status'), format: value => value ? t('services.active') : t('services.inactive') },
+              ]}
+              filename={`services-${today()}`} title={t('export.servicesReport')}
+              reportTypes={[t('export.servicesReport')]} dataType={searchQuery || activeFilter ? 'filtered' : 'all'} />
+          </div>}
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full table-fixed">
             <thead className="bg-[var(--workspace-bg)]">

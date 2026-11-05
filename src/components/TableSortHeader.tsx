@@ -23,10 +23,10 @@ export default function TableSortHeader<T>({
     <th
       scope="col"
       aria-sort={direction === 'asc' ? 'ascending' : direction === 'desc' ? 'descending' : 'none'}
-      className={`py-3 text-left text-xs font-medium text-[var(--workspace-muted)] ${className}`}
+      className={`py-2.5 text-left text-xs font-semibold text-[var(--workspace-muted)] ${className}`}
     >
       <button type="button" onClick={() => onSort(columnKey)}
-        className="flex min-h-6 w-full select-none items-center gap-2 rounded-sm text-left text-xs font-medium uppercase tracking-wide hover:text-[var(--workspace-ink)]">
+        className="flex min-h-6 w-full select-none items-center gap-2 rounded-sm text-left text-xs font-semibold hover:text-[var(--workspace-ink)]">
         <span>{label}</span>
         <span aria-hidden="true" className="flex shrink-0 flex-col">
           <HiChevronUp

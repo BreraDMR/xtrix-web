@@ -171,19 +171,19 @@ export default function Analytics() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.retention_7_days')}</h3>
-                  <p className="text-3xl font-bold text-blue-600">{retentionData.retention_7_days?.toFixed(1) || 0}%</p>
+                  <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.retention_7_days?.toFixed(1) || 0}%</p>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.retention_30_days')}</h3>
-                  <p className="text-3xl font-bold text-blue-600">{retentionData.retention_30_days?.toFixed(1) || 0}%</p>
+                  <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.retention_30_days?.toFixed(1) || 0}%</p>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.retention_90_days')}</h3>
-                  <p className="text-3xl font-bold text-blue-600">{retentionData.retention_90_days?.toFixed(1) || 0}%</p>
+                  <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.retention_90_days?.toFixed(1) || 0}%</p>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.repeat_rate')}</h3>
-                  <p className="text-3xl font-bold text-green-600">{retentionData.repeat_rate?.toFixed(1) || 0}%</p>
+                  <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.repeat_rate?.toFixed(1) || 0}%</p>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.total_clients')}</h3>
@@ -191,7 +191,7 @@ export default function Analytics() {
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.repeat_clients')}</h3>
-                  <p className="text-3xl font-bold text-purple-600">{retentionData.repeat_clients || 0}</p>
+                  <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.repeat_clients || 0}</p>
                 </div>
               </div>
               {retentionData.average_days_between_visits && (
@@ -288,7 +288,7 @@ export default function Analytics() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.current_value')}</h3>
-                  <p className="text-3xl font-bold text-blue-600">{trendsData.current_value?.toFixed(2)}</p>
+                  <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{trendsData.current_value?.toFixed(2)}</p>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.previous_value')}</h3>
@@ -354,11 +354,11 @@ export default function Analytics() {
               <div className="bg-white p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6 dark:bg-gray-800">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.historical_average')}</h3>
-                  <p className="text-2xl font-bold text-blue-600">{forecastData.historical_average?.toFixed(2)}</p>
+                  <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{forecastData.historical_average?.toFixed(2)}</p>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.last_value')}</h3>
-                  <p className="text-2xl font-bold text-purple-600">{forecastData.last_value?.toFixed(2)}</p>
+                  <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{forecastData.last_value?.toFixed(2)}</p>
                 </div>
               </div>
               <div className="bg-white rounded-lg shadow-md overflow-x-auto dark:bg-gray-800">
@@ -519,15 +519,15 @@ export default function Analytics() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('analytics.business_count')}</h4>
-                    <p className="text-2xl font-bold text-blue-600">{benchmarksData.business_count}</p>
+                    <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{benchmarksData.business_count}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('analytics.avg_check_benchmark')}</h4>
-                    <p className="text-2xl font-bold text-green-600">{formatCurrency(benchmarksData.average_check, currency)}</p>
+                    <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{formatCurrency(benchmarksData.average_check, currency)}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('analytics.avg_visits_per_client')}</h4>
-                    <p className="text-2xl font-bold text-purple-600">{benchmarksData.average_visits_per_client?.toFixed(2)}</p>
+                    <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{benchmarksData.average_visits_per_client?.toFixed(2)}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('analytics.avg_retention_rate')}</h4>

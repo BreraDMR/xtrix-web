@@ -13,6 +13,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import VisitForm from '../components/VisitForm'
 import TodayAgenda from '../components/dashboard/TodayAgenda'
 import DonutProgress from '../components/DonutProgress'
+import WeekOverview from '../components/dashboard/WeekOverview'
 import { useMyBusiness } from '../hooks/useMyBusiness'
 import { useAuthStore } from '../store/authStore'
 import { useTranslation } from '../hooks/useTranslation'
@@ -139,6 +140,7 @@ export default function Dashboard() {
     <Checklist />
     <TodayAgenda timeZone={timeZone} onEdit={visitId => setForm({ visitId })} />
     <div className="mt-5"><ServiceStep /><StaffStep /></div>
+    <WeekOverview timeZone={timeZone} />
     <BusinessOverview />
     <ProductTour />
     {form && canEdit && <SidePanel title={t(form.visitId ? 'visits.editVisit' : 'visits.newVisit')} onClose={() => setForm(null)}>

@@ -26,7 +26,7 @@ export default function FormField({
 
   return (
     <div className={className}>
-      <label htmlFor={control ? controlId : undefined} className="block text-sm font-medium mb-1">
+      <label htmlFor={control ? controlId : undefined} className="mb-1.5 block text-xs font-semibold text-[var(--workspace-muted)]">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
         {hint && (

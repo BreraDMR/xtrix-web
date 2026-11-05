@@ -95,15 +95,15 @@ export default function LoyaltyAnalytics() {
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
             <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.earned')}</h3>
-            <p className="text-3xl font-bold text-blue-600">{statistics.total_points_earned?.toFixed(0) || '0'}</p>
+            <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{statistics.total_points_earned?.toFixed(0) || '0'}</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
             <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.spent')}</h3>
-            <p className="text-3xl font-bold text-red-600">{statistics.total_points_spent?.toFixed(0) || '0'}</p>
+            <p className="font-bold text-[22px] text-[#c81e1e]">{statistics.total_points_spent?.toFixed(0) || '0'}</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
             <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.active')}</h3>
-            <p className="text-3xl font-bold text-green-600">{statistics.active_points_balance?.toFixed(0) || '0'}</p>
+            <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{statistics.active_points_balance?.toFixed(0) || '0'}</p>
           </div>
         </div>
       ) : null}

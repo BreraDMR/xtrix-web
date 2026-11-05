@@ -6,6 +6,11 @@ export type TranslationKey =
   | 'today.staffUnavailable'
   | 'today.retryStaff'
   | 'dashboard.overview'
+  | 'dashboard.thisWeek'
+  | 'dashboard.occupancy'
+  | 'dashboard.topThisWeek'
+  | 'dashboard.noVisitsThisWeek'
+  | 'dashboard.visitsCount'
   | 'dashboard.visitHistory'
   | 'dashboard.openCalendar'
 
@@ -2183,6 +2188,11 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "today.staffUnavailable": {"en": "Specialist names are unavailable. Appointments are still shown.", "ru": "Имена специалистов недоступны. Записи по-прежнему показаны.", "cz": "Jména specialistů nejsou dostupná. Návštěvy se nadále zobrazují."},
   "today.retryStaff": {"en": "Retry names", "ru": "Загрузить имена повторно", "cz": "Znovu načíst jména"},
   "dashboard.overview": {"en": "Business overview", "ru": "Обзор бизнеса", "cz": "Přehled podnikání"},
+  "dashboard.thisWeek": {"en": "This week", "ru": "Эта неделя", "cz": "Tento týden"},
+  "dashboard.occupancy": {"en": "Occupancy level", "ru": "Уровень загрузки", "cz": "Úroveň obsazenosti"},
+  "dashboard.topThisWeek": {"en": "Top services this week", "ru": "Топ услуг недели", "cz": "Top služby týdne"},
+  "dashboard.noVisitsThisWeek": {"en": "No visits this week yet", "ru": "На этой неделе пока нет визитов", "cz": "Tento týden zatím žádné návštěvy"},
+  "dashboard.visitsCount": {"en": "visits", "ru": "визитов", "cz": "návštěv"},
   "dashboard.visitHistory": {"en": "Visit history", "ru": "История визитов", "cz": "Historie návštěv"},
   "dashboard.openCalendar": {"en": "Open calendar", "ru": "Открыть календарь", "cz": "Otevřít kalendář"},
   'google.title': {"en": "Sign in with Google", "ru": "Вход через Google", "cz": "Přihlášení přes Google"},

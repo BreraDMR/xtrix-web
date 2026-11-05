@@ -211,77 +211,6 @@ export default function Clients() {
         />
       )}
 
-      {!showForm && (
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex-1 w-full sm:max-w-md">
-              <Input
-                id="client-directory-search"
-                type="search"
-                maxLength={200}
-                aria-label={t('clients.searchPlaceholder')}
-                placeholder={t('clients.searchPlaceholder')}
-                value={searchQuery}
-                onChange={(event) => {
-                  setSearchQuery(event.target.value)
-                  setCurrentPage(1)
-                }}
-                className="w-full"
-              />
-            </div>
-            <div className="flex flex-wrap gap-3 items-center">
-              <Select
-                aria-label={t('clientForm.gender')}
-                value={genderFilter || ''}
-                onChange={(e) => {
-                  setGenderFilter(e.target.value || null)
-                  setCurrentPage(1)
-                }}
-                className="w-full sm:w-auto"
-              >
-                <option value="">{t('clients.allGenders')}</option>
-                <option value="male">{t('clients.male')}</option>
-                <option value="female">{t('clients.female')}</option>
-                <option value="other">{t('clients.other')}</option>
-              </Select>
-              {totalItems > 0 && (
-                <ExportButton
-                  data={clients}
-                  totalItems={totalItems}
-                  loadData={loadExport}
-                  columns={[
-                    { key: 'full_name', label: t('clients.name') },
-                    { key: 'contact_phone', label: t('clients.phone') },
-                    { key: 'contact_email', label: t('clients.email') },
-                    { key: 'gender', label: t('clientForm.gender') },
-                    { key: 'birth_date', label: t('clientForm.birthDate'), format: (val) => showDay(val) },
-                  ]}
-                  filename={`clients-${today()}`}
-                  title={t('export.clientReport')}
-                  reportTypes={[
-                    t('export.clientProfile'),
-                    t('export.clientContacts'),
-                    t('export.clientVisits'),
-                  ]}
-                  dataType={searchQuery || genderFilter ? 'filtered' : 'all'}
-                />
-              )}
-              {(searchQuery || genderFilter) && (
-                <Button
-                  onClick={() => {
-                    setSearchQuery('')
-                    setGenderFilter(null)
-                    setCurrentPage(1)
-                  }}
-                  variant="quiet"
-                >
-                  {t('clients.clearFilters')}
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {selectedId !== null && <SidePanel title={t('clientWorkspace.record')} onClose={() => setSelectedId(null)} fallbackFocusId="client-directory-search">
         <ClientWorkspace key={selectedId} embeddedClientId={selectedId} onClose={() => setSelectedId(null)} />
@@ -313,6 +242,75 @@ export default function Clients() {
         </Card>
       ) : (
       <Card className="overflow-hidden">
+          <div className="space-y-4 border-b border-[var(--workspace-line)] p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex-1 w-full">
+                <Input
+                  id="client-directory-search"
+                  type="search"
+                  maxLength={200}
+                  aria-label={t('clients.searchPlaceholder')}
+                  placeholder={t('clients.searchPlaceholder')}
+                  value={searchQuery}
+                  onChange={(event) => {
+                    setSearchQuery(event.target.value)
+                    setCurrentPage(1)
+                  }}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex flex-wrap gap-3 items-center">
+                <Select
+                  aria-label={t('clientForm.gender')}
+                  value={genderFilter || ''}
+                  onChange={(e) => {
+                    setGenderFilter(e.target.value || null)
+                    setCurrentPage(1)
+                  }}
+                  className="w-full sm:w-auto"
+                >
+                  <option value="">{t('clients.allGenders')}</option>
+                  <option value="male">{t('clients.male')}</option>
+                  <option value="female">{t('clients.female')}</option>
+                  <option value="other">{t('clients.other')}</option>
+                </Select>
+                {totalItems > 0 && (
+                  <ExportButton
+                    data={clients}
+                    totalItems={totalItems}
+                    loadData={loadExport}
+                    columns={[
+                      { key: 'full_name', label: t('clients.name') },
+                      { key: 'contact_phone', label: t('clients.phone') },
+                      { key: 'contact_email', label: t('clients.email') },
+                      { key: 'gender', label: t('clientForm.gender') },
+                      { key: 'birth_date', label: t('clientForm.birthDate'), format: (val) => showDay(val) },
+                    ]}
+                    filename={`clients-${today()}`}
+                    title={t('export.clientReport')}
+                    reportTypes={[
+                      t('export.clientProfile'),
+                      t('export.clientContacts'),
+                      t('export.clientVisits'),
+                    ]}
+                    dataType={searchQuery || genderFilter ? 'filtered' : 'all'}
+                  />
+                )}
+                {(searchQuery || genderFilter) && (
+                  <Button
+                    onClick={() => {
+                      setSearchQuery('')
+                      setGenderFilter(null)
+                      setCurrentPage(1)
+                    }}
+                    variant="quiet"
+                  >
+                    {t('clients.clearFilters')}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
         <div className="overflow-x-auto">
           <table className="w-full table-fixed divide-y divide-[var(--workspace-line)]">
             <thead className="bg-[var(--workspace-bg)]">

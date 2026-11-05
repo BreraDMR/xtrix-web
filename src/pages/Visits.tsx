@@ -29,6 +29,7 @@ import { today } from '../utils/dates'
 import { allPages } from '../api/allPages'
 import { useAuthStore } from '../store/authStore'
 import { useMediaQuery } from '../hooks/useMediaQuery'
+import { visitStatusClass } from '../utils/statusPill'
 
 type Visit = VisitOut
 
@@ -121,14 +122,7 @@ export default function Visits() {
     setShowForm(true)
   }
 
-  const statusClass = (status: Visit['status']) => {
-    switch (status) {
-      case 'planned': return 'bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-200'
-      case 'in_progress': return 'bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-200'
-      case 'completed': return 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]'
-      default: return 'bg-[var(--workspace-bg)] text-[var(--workspace-muted)]'
-    }
-  }
+  const statusClass = visitStatusClass
   const hasFilters = Boolean(searchQuery || statusFilter || dateFrom || dateTo)
   // on a phone service and status fold into the client and date cells, so nothing scrolls sideways
   const phone = useMediaQuery('(max-width: 639px)')
@@ -155,7 +149,6 @@ export default function Visits() {
               title={t('export.visitsReport')}
               reportTypes={[t('export.visitsReport')]}
               dataType={hasFilters ? 'filtered' : 'all'}
-              className="!border-[var(--workspace-line)] !bg-[var(--workspace-panel)] !text-[var(--workspace-ink)] !shadow-none hover:!bg-[var(--workspace-bg)] focus:!ring-[var(--workspace-focus)]"
             />
           )}
           {canEdit && (
@@ -240,7 +233,7 @@ export default function Visits() {
                       <span>{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
                       <span className="text-xs tabular-nums text-[var(--workspace-muted)]">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
                     </time>
-                    {phone && <span className={`mt-1.5 inline-flex rounded px-2 py-0.5 text-xs font-medium ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>}
+                    {phone && <span className={`mt-1.5 inline-flex rounded-full px-2.5 py-0.5 text-[11px] ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>}
                   </td>
                   <td role="cell" className={`break-words ${phone ? 'px-3' : 'px-4'} py-3 align-top font-medium [overflow-wrap:anywhere]`}>
                     {visit.client_name || '-'}
@@ -249,7 +242,7 @@ export default function Visits() {
                   {!phone && <td role="cell" className="break-words px-4 py-3 align-top text-[var(--workspace-muted)] [overflow-wrap:anywhere]">{visit.service_name || '-'}</td>}
                   {!phone && (
                     <td role="cell" className="px-4 py-3 align-top">
-                      <span className={`inline-flex rounded px-2 py-1 text-xs font-medium ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>
+                      <span className={`inline-flex rounded-full px-3 py-0.5 text-[11px] ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>
                     </td>
                   )}
                   <td role="cell" className={`${phone ? 'whitespace-nowrap px-2' : 'break-words px-4 [overflow-wrap:anywhere]'} py-3 align-top tabular-nums`}>
