@@ -110,76 +110,23 @@ interface Service {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('services.title')}</h1>
+        <h1 className="page-title">{t('services.title')}</h1>
         {!showForm && (
           <button
             onClick={() => {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            className="px-4 py-2 bg-brand-gradient text-white rounded-md hover:brightness-105 font-bold"
           >
             {t('services.addService')}
           </button>
         )}
       </div>
 
-      {!showForm && (
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex-1 w-full sm:max-w-md">
-              <SearchBar
-                placeholder={t('services.searchPlaceholder')}
-                onSearch={setSearchQuery}
-              />
-            </div>
-            {filteredServices.length > 0 && (
-              <ExportButton
-                data={filteredServices}
-                columns={[
-                  { key: 'name', label: t('services.name') },
-                  { key: 'duration_minutes', label: t('services.duration'), format: (val) => `${val} ${t('services.min')}` },
-                  { key: 'price', label: t('services.price'), format: (val) => formatCurrency(val, currency) },
-                  { key: 'is_active', label: t('services.status'), format: (val) => val ? t('services.active') : t('services.inactive') },
-                ]}
-                  filename={`services-${new Date().toISOString().split('T')[0]}`}
-                  title={t('export.servicesReport')}
-                  reportTypes={[t('export.servicesReport')]}
-                  dataType={searchQuery || activeFilter ? 'filtered' : 'all'}
-              />
-            )}
-          </div>
-          <div className="flex gap-4">
-            <select
-              value={activeFilter || ''}
-              onChange={(e) => {
-                setActiveFilter(e.target.value || null)
-                setCurrentPage(1)
-              }}
-              className="px-4 py-2 border rounded-md"
-            >
-              <option value="">{t('services.allServices')}</option>
-              <option value="active">{t('services.activeOnly')}</option>
-              <option value="inactive">{t('services.inactiveOnly')}</option>
-            </select>
-            {(searchQuery || activeFilter) && (
-              <button
-                onClick={() => {
-                  setSearchQuery('')
-                  setActiveFilter(null)
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
-              >
-                {t('services.clearFilters')}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-card shadow-card">
           <ServiceForm
             serviceId={editingId}
             onSuccess={handleSuccess}
@@ -190,10 +137,61 @@ interface Service {
           />
         </div>
       ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="table-card">
+          <div className="table-toolbar">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex-1 w-full">
+                <SearchBar
+                  placeholder={t('services.searchPlaceholder')}
+                  onSearch={setSearchQuery}
+                />
+              </div>
+              {filteredServices.length > 0 && (
+                <ExportButton
+                  data={filteredServices}
+                  columns={[
+                    { key: 'name', label: t('services.name') },
+                    { key: 'duration_minutes', label: t('services.duration'), format: (val) => `${val} ${t('services.min')}` },
+                    { key: 'price', label: t('services.price'), format: (val) => formatCurrency(val, currency) },
+                    { key: 'is_active', label: t('services.status'), format: (val) => val ? t('services.active') : t('services.inactive') },
+                  ]}
+                    filename={`services-${new Date().toISOString().split('T')[0]}`}
+                    title={t('export.servicesReport')}
+                    reportTypes={[t('export.servicesReport')]}
+                    dataType={searchQuery || activeFilter ? 'filtered' : 'all'}
+                />
+              )}
+            </div>
+            <div className="flex gap-4">
+              <select
+                value={activeFilter || ''}
+                onChange={(e) => {
+                  setActiveFilter(e.target.value || null)
+                  setCurrentPage(1)
+                }}
+                className="px-3 py-1.5 min-w-[180px]"
+              >
+                <option value="">{t('services.allServices')}</option>
+                <option value="active">{t('services.activeOnly')}</option>
+                <option value="inactive">{t('services.inactiveOnly')}</option>
+              </select>
+              {(searchQuery || activeFilter) && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('')
+                    setActiveFilter(null)
+                    setCurrentPage(1)
+                  }}
+                  className="btn-ghost"
+                >
+                  {t('services.clearFilters')}
+                </button>
+              )}
+            </div>
+          </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-white dark:bg-transparent">
               <tr>
                 <TableSortHeader
                   columnKey="name"
@@ -213,10 +211,10 @@ interface Service {
                   currentSort={sortConfig}
                   onSort={handleSort}
                 />
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('services.status')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('common.actions')}
                 </th>
               </tr>
@@ -233,13 +231,13 @@ interface Service {
               ) : (
                 paginatedData.map((service) => (
               <tr key={service.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap">
                   {service.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap">
                   {service.duration_minutes} {t('services.min')}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap">
                   {formatCurrency(service.price, currency)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -253,7 +251,7 @@ interface Service {
                     {service.is_active ? t('services.active') : t('services.inactive')}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     onClick={() => handleEdit(service.id)}
                     className="text-blue-600 hover:text-blue-800"

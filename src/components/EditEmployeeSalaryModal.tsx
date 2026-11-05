@@ -68,7 +68,7 @@ export default function EditEmployeeSalaryModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 dark:bg-gray-800">
+      <div className="bg-white rounded-card shadow-xl max-w-md w-full mx-4 dark:bg-gray-800">
         <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {t('employees.edit_salary') || 'Редактировать зарплату'}
@@ -119,14 +119,14 @@ export default function EditEmployeeSalaryModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+              className="flex-1 px-4 py-2 rounded-lg dark:text-gray-300 border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
             >
               {t('common.cancel')}
             </button>
             <button
               type="submit"
               disabled={updateMutation.isPending}
-              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-brand-gradient text-white rounded-lg disabled:opacity-50 hover:brightness-105 font-bold"
             >
               {updateMutation.isPending ? (t('common.saving') || 'Сохранение...') : (t('common.save') || 'Сохранить')}
             </button>

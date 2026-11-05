@@ -121,12 +121,12 @@ export default function Analytics() {
   return (
     <div className="animate-fade-in">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('analytics.title')}</h1>
-        <p className="text-sm sm:text-base text-gray-600">{t('analytics.subtitle')}</p>
+        <h1 className="page-title mb-2">{t('analytics.title')}</h1>
+        <p className="page-subtitle">{t('analytics.subtitle')}</p>
       </div>
 
       {}
-      <div className="bg-white rounded-lg shadow-md mb-6 overflow-x-auto">
+      <div className="bg-white rounded-card shadow-card mb-6 overflow-x-auto">
         <div className="flex border-b border-gray-200">
           {tabs.map((tab) => (
             <button
@@ -146,7 +146,7 @@ export default function Analytics() {
 
       {}
       {(activeTab === 'retention' || activeTab === 'cohorts' || activeTab === 'services') && (
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+        <div className="bg-white p-4 rounded-card shadow-card mb-6">
           <div className="flex gap-4 items-end">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.date_from')}</label>
@@ -178,40 +178,40 @@ export default function Analytics() {
           ) : retentionData ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-md">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.retention_7_days')}</h3>
-                  <p className="text-3xl font-bold text-blue-600">{retentionData.retention_7_days?.toFixed(1) || 0}%</p>
+                <div className="bg-white p-6 rounded-card shadow-card">
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.retention_7_days')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{retentionData.retention_7_days?.toFixed(1) || 0}%</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.retention_30_days')}</h3>
-                  <p className="text-3xl font-bold text-blue-600">{retentionData.retention_30_days?.toFixed(1) || 0}%</p>
+                <div className="bg-white p-6 rounded-card shadow-card">
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.retention_30_days')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{retentionData.retention_30_days?.toFixed(1) || 0}%</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.retention_90_days')}</h3>
-                  <p className="text-3xl font-bold text-blue-600">{retentionData.retention_90_days?.toFixed(1) || 0}%</p>
+                <div className="bg-white p-6 rounded-card shadow-card">
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.retention_90_days')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{retentionData.retention_90_days?.toFixed(1) || 0}%</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.repeat_rate')}</h3>
-                  <p className="text-3xl font-bold text-green-600">{retentionData.repeat_rate?.toFixed(1) || 0}%</p>
+                <div className="bg-white p-6 rounded-card shadow-card">
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.repeat_rate')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{retentionData.repeat_rate?.toFixed(1) || 0}%</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.total_clients')}</h3>
-                  <p className="text-3xl font-bold text-gray-900">{retentionData.total_clients || 0}</p>
+                <div className="bg-white p-6 rounded-card shadow-card">
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.total_clients')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{retentionData.total_clients || 0}</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.repeat_clients')}</h3>
-                  <p className="text-3xl font-bold text-purple-600">{retentionData.repeat_clients || 0}</p>
+                <div className="bg-white p-6 rounded-card shadow-card">
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.repeat_clients')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{retentionData.repeat_clients || 0}</p>
                 </div>
               </div>
               {retentionData.average_days_between_visits && (
-                <div className="bg-white p-6 rounded-xl shadow-md">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.avg_days_between_visits')}</h3>
-                  <p className="text-2xl font-bold text-gray-900">{retentionData.average_days_between_visits.toFixed(1)} days</p>
+                <div className="bg-white p-6 rounded-card shadow-card">
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.avg_days_between_visits')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{retentionData.average_days_between_visits.toFixed(1)} days</p>
                 </div>
               )}
             </>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">{t('analytics.no_data')}</div>
+            <div className="bg-white p-8 rounded-card shadow-card text-center text-gray-500">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -222,14 +222,14 @@ export default function Analytics() {
           {isLoadingCohorts ? (
             <LoadingSpinner />
           ) : cohortsData?.cohort_table && cohortsData.cohort_table.length > 0 ? (
-            <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+            <div className="bg-white rounded-card shadow-card overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-white dark:bg-transparent">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.cohort_month')}</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.total_clients')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.cohort_month')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.total_clients')}</th>
                     {[0, 1, 2, 3, 4, 5, 6].map((month) => (
-                      <th key={month} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th key={month} className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                         M{month}
                       </th>
                     ))}
@@ -238,8 +238,8 @@ export default function Analytics() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {cohortsData.cohort_table.map((cohort: any, idx: number) => (
                     <tr key={idx}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cohort.cohort_month}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{cohort.total_clients}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{cohort.cohort_month}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{cohort.total_clients}</td>
                       {[0, 1, 2, 3, 4, 5, 6].map((month) => (
                         <td key={month} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {cohort[`month_${month}`]?.toFixed(1) || '-'}%
@@ -251,7 +251,7 @@ export default function Analytics() {
               </table>
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">{t('analytics.no_data')}</div>
+            <div className="bg-white p-8 rounded-card shadow-card text-center text-gray-500">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -259,7 +259,7 @@ export default function Analytics() {
       {}
       {activeTab === 'trends' && (
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded-lg shadow-md">
+          <div className="bg-white p-4 rounded-card shadow-card">
             <div className="flex gap-4 items-end">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.trend_metric')}</label>
@@ -293,24 +293,24 @@ export default function Analytics() {
           {isLoadingTrends ? (
             <LoadingSpinner />
           ) : trendsData ? (
-            <div className="bg-white p-6 rounded-xl shadow-md">
+            <div className="bg-white p-6 rounded-card shadow-card">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.current_value')}</h3>
-                  <p className="text-3xl font-bold text-blue-600">{trendsData.current_value?.toFixed(2)}</p>
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.current_value')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{trendsData.current_value?.toFixed(2)}</p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.previous_value')}</h3>
-                  <p className="text-3xl font-bold text-gray-600">{trendsData.previous_value?.toFixed(2)}</p>
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.previous_value')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{trendsData.previous_value?.toFixed(2)}</p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.change')}</h3>
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.change')}</h3>
                   <p className={`text-3xl font-bold ${trendsData.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {trendsData.change >= 0 ? '+' : ''}{trendsData.change?.toFixed(2)}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.change_percent')}</h3>
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.change_percent')}</h3>
                   <p className={`text-3xl font-bold ${trendsData.change_percent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {trendsData.change_percent >= 0 ? '+' : ''}{trendsData.change_percent?.toFixed(2)}%
                     <span className="ml-2 text-2xl">
@@ -321,7 +321,7 @@ export default function Analytics() {
               </div>
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">{t('analytics.no_data')}</div>
+            <div className="bg-white p-8 rounded-card shadow-card text-center text-gray-500">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -329,7 +329,7 @@ export default function Analytics() {
       {}
       {activeTab === 'forecast' && (
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded-lg shadow-md">
+          <div className="bg-white p-4 rounded-card shadow-card">
             <div className="flex gap-4 items-end">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.forecast_type')}</label>
@@ -360,29 +360,29 @@ export default function Analytics() {
             <LoadingSpinner />
           ) : forecastData ? (
             <div className="space-y-4">
-              <div className="bg-white p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-card shadow-card grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.historical_average')}</h3>
-                  <p className="text-2xl font-bold text-blue-600">{forecastData.historical_average?.toFixed(2)}</p>
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.historical_average')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{forecastData.historical_average?.toFixed(2)}</p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('analytics.last_value')}</h3>
-                  <p className="text-2xl font-bold text-purple-600">{forecastData.last_value?.toFixed(2)}</p>
+                  <h3 className="text-[13px] font-semibold text-[#6b6b76] mb-2">{t('analytics.last_value')}</h3>
+                  <p className="font-bold text-[22px] text-brand-ink dark:text-white">{forecastData.last_value?.toFixed(2)}</p>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+              <div className="bg-white rounded-card shadow-card overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-white dark:bg-transparent">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Forecasted Value</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">Period</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">Forecasted Value</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {forecastData.forecast?.map((f: any, idx: number) => (
                       <tr key={idx}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{f.period}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{f.forecasted_value?.toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{f.period}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{f.forecasted_value?.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -390,7 +390,7 @@ export default function Analytics() {
               </div>
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">{t('analytics.no_data')}</div>
+            <div className="bg-white p-8 rounded-card shadow-card text-center text-gray-500">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -403,30 +403,30 @@ export default function Analytics() {
           ) : servicesData ? (
             <>
               {}
-              <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+              <div className="bg-white rounded-card shadow-card overflow-x-auto">
                 <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200">{t('analytics.services_specialists')} - Services</h3>
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-white dark:bg-transparent">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.service_name')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.visit_count')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.total_revenue')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.avg_price')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.unique_clients')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.ltv_per_client')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.visits_per_client')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.service_name')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.visit_count')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.total_revenue')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.avg_price')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.unique_clients')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.ltv_per_client')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.visits_per_client')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {servicesData.services?.map((service: any, idx: number) => (
                       <tr key={idx}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{service.service_name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.visit_count}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(service.total_revenue, currency)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(service.average_price, currency)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.unique_clients}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(service.ltv_per_client, currency)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.visits_per_client?.toFixed(2)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{service.service_name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{service.visit_count}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(service.total_revenue, currency)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(service.average_price, currency)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{service.unique_clients}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(service.ltv_per_client, currency)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{service.visits_per_client?.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -434,28 +434,28 @@ export default function Analytics() {
               </div>
 
               {}
-              <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+              <div className="bg-white rounded-card shadow-card overflow-x-auto">
                 <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200">{t('analytics.services_specialists')} - Specialists</h3>
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-white dark:bg-transparent">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.specialist_name')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.visit_count')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.total_revenue')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.avg_check')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.unique_clients')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('analytics.revenue_per_client')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.specialist_name')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.visit_count')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.total_revenue')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.avg_check')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.unique_clients')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('analytics.revenue_per_client')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {servicesData.specialists?.map((specialist: any, idx: number) => (
                       <tr key={idx}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{specialist.specialist_name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{specialist.visit_count}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(specialist.total_revenue, currency)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(specialist.average_check, currency)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{specialist.unique_clients}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(specialist.revenue_per_client, currency)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{specialist.specialist_name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{specialist.visit_count}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(specialist.total_revenue, currency)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(specialist.average_check, currency)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{specialist.unique_clients}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{formatCurrency(specialist.revenue_per_client, currency)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -463,7 +463,7 @@ export default function Analytics() {
               </div>
             </>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">{t('analytics.no_data')}</div>
+            <div className="bg-white p-8 rounded-card shadow-card text-center text-gray-500">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -511,7 +511,7 @@ export default function Analytics() {
               </div>
             ))
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">{t('analytics.no_data')}</div>
+            <div className="bg-white p-8 rounded-card shadow-card text-center text-gray-500">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -523,20 +523,20 @@ export default function Analytics() {
             <LoadingSpinner />
           ) : benchmarksData ? (
             benchmarksData.available ? (
-              <div className="bg-white p-6 rounded-xl shadow-md">
+              <div className="bg-white p-6 rounded-card shadow-card">
                 <h3 className="text-xl font-semibold text-gray-900 mb-6">{t('analytics.benchmarks_available')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1">{t('analytics.business_count')}</h4>
-                    <p className="text-2xl font-bold text-blue-600">{benchmarksData.business_count}</p>
+                    <p className="font-bold text-[22px] text-brand-ink dark:text-white">{benchmarksData.business_count}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1">{t('analytics.avg_check_benchmark')}</h4>
-                    <p className="text-2xl font-bold text-green-600">{formatCurrency(benchmarksData.average_check, currency)}</p>
+                    <p className="font-bold text-[22px] text-brand-ink dark:text-white">{formatCurrency(benchmarksData.average_check, currency)}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1">{t('analytics.avg_visits_per_client')}</h4>
-                    <p className="text-2xl font-bold text-purple-600">{benchmarksData.average_visits_per_client?.toFixed(2)}</p>
+                    <p className="font-bold text-[22px] text-brand-ink dark:text-white">{benchmarksData.average_visits_per_client?.toFixed(2)}</p>
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1">{t('analytics.avg_retention_rate')}</h4>
@@ -544,15 +544,15 @@ export default function Analytics() {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1">{t('analytics.avg_daily_load')}</h4>
-                    <p className="text-2xl font-bold text-indigo-600">{benchmarksData.average_daily_load?.toFixed(2)}</p>
+                    <p className="font-bold text-[22px] text-brand-ink dark:text-white">{benchmarksData.average_daily_load?.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">{benchmarksData.reason || t('analytics.benchmarks_not_available')}</div>
+              <div className="bg-white p-8 rounded-card shadow-card text-center text-gray-500">{benchmarksData.reason || t('analytics.benchmarks_not_available')}</div>
             )
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">{t('analytics.no_data')}</div>
+            <div className="bg-white p-8 rounded-card shadow-card text-center text-gray-500">{t('analytics.no_data')}</div>
           )}
         </div>
       )}

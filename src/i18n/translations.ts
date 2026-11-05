@@ -202,6 +202,20 @@ export type TranslationKey =
   | 'dashboard.noClientsDescription'
   | 'dashboard.noData'
   | 'dashboard.noProfitData'
+  | 'dashboard.viewPayments'
+  | 'dashboard.visits'
+  | 'dashboard.averageCheck'
+  | 'dashboard.remaining'
+  | 'dashboard.completedOf'
+  | 'dashboard.ordersOverview'
+  | 'dashboard.ordersReport'
+  | 'dashboard.topThisWeek'
+  | 'dashboard.noVisitsThisWeek'
+  | 'dashboard.occupancy'
+  | 'dashboard.today'
+  | 'dashboard.expenses'
+  | 'dashboard.profit'
+  | 'dashboard.margin.vs'
   | 'clients.title'
   | 'clients.addClient'
   | 'clients.searchPlaceholder'
@@ -930,6 +944,20 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'dashboard.noClientsDescription': { en: 'Add your first client to see statistics here', ru: 'Добавьте первого клиента, чтобы увидеть статистику', cz: 'Přidejte svého prvního klienta, abyste zde viděli statistiky' },
   'dashboard.noData': { en: 'No data available', ru: 'Нет данных', cz: 'Žádná data' },
   'dashboard.noProfitData': { en: 'No profit data available for this month', ru: 'Нет данных о прибыли за этот месяц', cz: 'Žádná data o zisku za tento měsíc' },
+  'dashboard.viewPayments': { en: 'View Payments', ru: 'Смотреть платежи', cz: 'Zobrazit platby' },
+  'dashboard.visits': { en: 'Visits', ru: 'Визиты', cz: 'Návštěvy' },
+  'dashboard.averageCheck': { en: 'Average check', ru: 'Средний чек', cz: 'Průměrná útrata' },
+  'dashboard.remaining': { en: 'Remaining', ru: 'Осталось', cz: 'Zbývá' },
+  'dashboard.completedOf': { en: 'completed', ru: 'завершено', cz: 'dokončeno' },
+  'dashboard.ordersOverview': { en: 'Visits overview', ru: 'Обзор визитов', cz: 'Přehled návštěv' },
+  'dashboard.ordersReport': { en: 'Analytics report', ru: 'Аналитический отчёт', cz: 'Analytický report' },
+  'dashboard.topThisWeek': { en: 'Top services this week', ru: 'Топ услуг недели', cz: 'Top služby týdne' },
+  'dashboard.noVisitsThisWeek': { en: 'No visits this week yet', ru: 'На этой неделе пока нет визитов', cz: 'Tento týden zatím žádné návštěvy' },
+  'dashboard.occupancy': { en: 'Occupancy level', ru: 'Уровень загрузки', cz: 'Úroveň obsazenosti' },
+  'dashboard.today': { en: 'Today', ru: 'Сегодня', cz: 'Dnes' },
+  'dashboard.expenses': { en: 'Expenses', ru: 'Расходы', cz: 'Výdaje' },
+  'dashboard.profit': { en: 'Profit', ru: 'Прибыль', cz: 'Zisk' },
+  'dashboard.margin.vs': { en: 'margin', ru: 'маржа', cz: 'marže' },
   
   'clients.title': { en: 'Clients', ru: 'Клиенты', cz: 'Klienti' },
   'clients.addClient': { en: 'Add Client', ru: 'Добавить клиента', cz: 'Přidat klienta' },

@@ -154,7 +154,7 @@ export default function ClientPersonalReportModal({
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-white rounded-card shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           {}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900">
@@ -229,12 +229,12 @@ export default function ClientPersonalReportModal({
                 </div>
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-white dark:bg-transparent">
                       <tr>
                         {columns.map((col) => (
                           <th
                             key={col.key}
-                            className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                            className="px-4 py-2 text-left text-xs font-semibold text-[#6b6b76]"
                           >
                             {col.label}
                           </th>
@@ -276,7 +276,7 @@ export default function ClientPersonalReportModal({
             <button
               onClick={handleExport}
               disabled={exportData.length === 0 || isLoadingClient || isLoadingVisits}
-              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-sm text-white bg-brand-gradient rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 hover:brightness-105 font-bold"
             >
               <HiDownload className="w-4 h-4" />
               {t('export.export')} / {t('common.print')}

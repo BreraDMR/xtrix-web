@@ -26,12 +26,10 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`px-4 py-2 border rounded-md flex items-center gap-2 ${
-          hasActiveFilters ? 'bg-blue-50 border-blue-300' : 'bg-white'
-        }`}
+        className={`btn-outline ${hasActiveFilters ? 'border-brand-purple text-brand-purple bg-brand-lavender' : ''}`}
       >
         <svg
-          className="h-5 w-5"
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -45,7 +43,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
         </svg>
         Filters
         {hasActiveFilters && (
-          <span className="ml-1 px-2 py-0.5 bg-primary-600 text-white text-xs rounded-full">
+          <span className="ml-1 px-2 py-0.5 bg-brand-gradient text-white text-xs rounded-full">
             {Object.values(filters).filter((f) => f.value !== null).length}
           </span>
         )}
@@ -57,13 +55,13 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute top-full left-0 mt-2 w-64 bg-white border rounded-lg shadow-lg z-20 p-4">
+          <div className="absolute top-full left-0 mt-2 w-64 card z-20 p-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold">Filters</h3>
               {hasActiveFilters && (
                 <button
                   onClick={onReset}
-                  className="text-sm text-blue-600 hover:text-blue-800"
+                  className="text-xs link"
                 >
                   Reset
                 </button>
@@ -72,13 +70,13 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
             <div className="space-y-4">
               {Object.entries(filters).map(([key, filter]) => (
                 <div key={key}>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-xs font-semibold text-[#55555f] mb-1.5">
                     {filter.label}
                   </label>
                   <select
                     value={filter.value || ''}
                     onChange={(e) => filter.onChange(e.target.value || null)}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full px-3 py-1.5"
                   >
                     <option value="">All</option>
                     {filter.options.map((option) => (

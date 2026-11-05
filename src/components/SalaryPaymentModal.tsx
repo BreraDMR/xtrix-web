@@ -90,7 +90,7 @@ export default function SalaryPaymentModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+      <div className="bg-white rounded-card shadow-xl max-w-md w-full">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
             {t('salary.recordPayment') || 'Зарегистрировать выплату'}
@@ -200,7 +200,7 @@ export default function SalaryPaymentModal({
             <button
               type="submit"
               disabled={createMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50"
+              className="px-4 py-2 text-sm rounded-md disabled:opacity-50 border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
             >
               {createMutation.isPending
                 ? (t('common.saving' as any) || 'Сохранение...')

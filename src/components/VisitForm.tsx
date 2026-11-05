@@ -376,7 +376,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               onClick={() => setShowClientSearch(false)}
               className={`px-3 py-1 text-sm rounded-md ${
                 !showClientSearch
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-brand-gradient text-white hover:brightness-105 font-bold'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -387,7 +387,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               onClick={() => setShowClientSearch(true)}
               className={`px-3 py-1 text-sm rounded-md ${
                 showClientSearch
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-brand-gradient text-white hover:brightness-105 font-bold'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -435,7 +435,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                         <button
                           type="button"
                           onClick={() => linkClientToBusiness()}
-                          className="px-3 py-1 text-xs bg-primary-600 text-white rounded hover:bg-primary-700"
+                          className="px-3 py-1 text-xs bg-brand-gradient text-white rounded hover:brightness-105 font-bold"
                         >
                           {t('visits.addToMyBusiness') || 'Добавить в мой бизнес'}
                         </button>
@@ -670,7 +670,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+          className="px-6 py-2.5 bg-brand-gradient text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all flex items-center gap-2 hover:brightness-105 font-bold"
         >
           {loading ? (
             <>

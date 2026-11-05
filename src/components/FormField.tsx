@@ -21,7 +21,7 @@ export default function FormField({
 }: FormFieldProps) {
   return (
     <div className={className}>
-      <label className="block text-sm font-medium mb-1">
+      <label className="block text-xs font-semibold text-[#55555f] mb-1.5">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
         {hint && (

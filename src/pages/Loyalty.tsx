@@ -106,21 +106,21 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
     <div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-white dark:bg-transparent">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                 {t('loyalty.transaction_type')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                 {t('loyalty.points')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                 {t('loyalty.cashback')}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                 Description
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                 Date
               </th>
             </tr>
@@ -128,7 +128,7 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
           <tbody className="bg-white divide-y divide-gray-200">
             {transactions.map((transaction) => (
               <tr key={transaction.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap">
                   {t(`loyalty.transaction_${transaction.transaction_type}`)}
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap text-sm ${transaction.points_amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -139,10 +139,10 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
                     ? `${transaction.cashback_amount >= 0 ? '+' : ''}${transaction.cashback_amount.toFixed(2)}`
                     : '-'}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900">
+                <td className="px-6 py-4">
                   {transaction.description || '-'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap">
                   {new Date(transaction.created_at).toLocaleString()}
                 </td>
               </tr>
@@ -157,7 +157,7 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
           >
             Previous
           </button>
@@ -167,7 +167,7 @@ function TransactionsList({ clientId, transactionType }: { clientId: number; tra
           <button
             onClick={() => setPage(p => Math.min(pages, p + 1))}
             disabled={page >= pages}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
           >
             Next
           </button>
@@ -414,12 +414,12 @@ export default function Loyalty() {
   return (
     <div className="animate-fade-in">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('loyalty.title')}</h1>
-        <p className="text-sm sm:text-base text-gray-600">{t('loyalty.subtitle')}</p>
+        <h1 className="page-title mb-2">{t('loyalty.title')}</h1>
+        <p className="page-subtitle">{t('loyalty.subtitle')}</p>
       </div>
 
       {}
-      <div className="bg-white rounded-lg shadow-md mb-6 overflow-x-auto">
+      <div className="bg-white rounded-card shadow-card mb-6 overflow-x-auto">
         <div className="flex border-b border-gray-200">
           {tabs.map((tab) => (
             <button
@@ -439,7 +439,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'program' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-card shadow-card p-6">
           {isLoadingProgram ? (
             <LoadingSpinner />
           ) : !program ? (
@@ -448,7 +448,7 @@ export default function Loyalty() {
               {isAdmin && (
                 <button
                   onClick={() => setShowProgramForm(true)}
-                  className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
+                  className="px-6 py-3 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
                 >
                   {t('loyalty.create_program')}
                 </button>
@@ -458,7 +458,7 @@ export default function Loyalty() {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{t('loyalty.program_settings')}</h2>
+                  <h2 className="font-bold text-[22px] text-brand-ink dark:text-white">{t('loyalty.program_settings')}</h2>
                   <p className={`text-sm mt-1 ${program.is_active ? 'text-green-600' : 'text-red-600'}`}>
                     {program.is_active ? t('loyalty.is_active') : t('loyalty.program_not_active')}
                   </p>
@@ -472,14 +472,14 @@ export default function Loyalty() {
                       className={`px-4 py-2 rounded-lg font-medium ${
                         program.is_active
                           ? 'bg-yellow-600 text-white hover:bg-yellow-700'
-                          : 'bg-green-600 text-white hover:bg-green-700'
+                          : 'border border-[#1f7a3a] bg-[#d9efe1] text-[#1f7a3a] hover:brightness-95'
                       }`}
                     >
                       {program.is_active ? t('loyalty.deactivate_program') : t('loyalty.activate_program')}
                     </button>
                     <button
                       onClick={() => setShowProgramForm(true)}
-                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
+                      className="px-4 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
                     >
                       {t('loyalty.edit_program')}
                     </button>
@@ -489,7 +489,7 @@ export default function Loyalty() {
                           await deleteProgramMutation.mutateAsync()
                         }
                       }}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+                      className="px-4 py-2 rounded-lg border border-[#d21f2f] bg-[#fdecec] text-[#c81e1e] hover:bg-[#fbdada] font-bold"
                     >
                       {t('loyalty.delete_program')}
                     </button>
@@ -542,7 +542,7 @@ export default function Loyalty() {
           {showProgramForm && isAdmin && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowProgramForm(false)}>
               <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{program ? t('loyalty.edit_program') : t('loyalty.create_program')}</h3>
+                <h3 className="font-bold mb-4 text-[22px] text-brand-ink dark:text-white">{program ? t('loyalty.edit_program') : t('loyalty.create_program')}</h3>
                 <form onSubmit={program ? handleUpdateProgram : handleCreateProgram}>
                   <div className="space-y-4">
                     <div>
@@ -658,14 +658,14 @@ export default function Loyalty() {
                   <div className="flex gap-2 mt-6">
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
+                      className="px-6 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
                     >
                       {t('common.save')}
                     </button>
                     <button
                       type="button"
                       onClick={() => setShowProgramForm(false)}
-                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                      className="px-6 py-2 rounded-lg border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
                     >
                       {t('common.cancel')}
                     </button>
@@ -679,7 +679,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'levels' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-card shadow-card p-6">
           {!program ? (
             <p className="text-gray-600">{t('loyalty.no_program')}</p>
           ) : isLoadingLevels ? (
@@ -687,14 +687,14 @@ export default function Loyalty() {
           ) : (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">{t('loyalty.levels')}</h2>
+                <h2 className="font-bold text-[22px] text-brand-ink dark:text-white">{t('loyalty.levels')}</h2>
                 {isAdmin && (
                   <button
                     onClick={() => {
                       setEditingLevel(null)
                       setShowLevelForm(true)
                     }}
-                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
+                    className="px-4 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
                   >
                     {t('loyalty.add_level')}
                   </button>
@@ -727,7 +727,7 @@ export default function Loyalty() {
                                 setEditingLevel(level)
                                 setShowLevelForm(true)
                               }}
-                              className="px-3 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
+                              className="px-3 py-1 bg-brand-gradient text-white rounded text-sm hover:brightness-105 font-bold"
                             >
                               {t('common.edit')}
                             </button>
@@ -737,7 +737,7 @@ export default function Loyalty() {
                                   await deleteLevelMutation.mutateAsync(level.id)
                                 }
                               }}
-                              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                              className="px-3 py-1 rounded text-sm border border-[#d21f2f] bg-[#fdecec] text-[#c81e1e] hover:bg-[#fbdada] font-bold"
                             >
                               {t('common.delete')}
                             </button>
@@ -755,7 +755,7 @@ export default function Loyalty() {
           {showLevelForm && isAdmin && program && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowLevelForm(false)}>
               <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{editingLevel ? t('loyalty.edit_level') : t('loyalty.add_level')}</h3>
+                <h3 className="font-bold mb-4 text-[22px] text-brand-ink dark:text-white">{editingLevel ? t('loyalty.edit_level') : t('loyalty.add_level')}</h3>
                 <form
                   onSubmit={async (e) => {
                     e.preventDefault()
@@ -861,7 +861,7 @@ export default function Loyalty() {
                   <div className="flex gap-2 mt-6">
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
+                      className="px-6 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
                     >
                       {t('common.save')}
                     </button>
@@ -871,7 +871,7 @@ export default function Loyalty() {
                         setShowLevelForm(false)
                         setEditingLevel(null)
                       }}
-                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                      className="px-6 py-2 rounded-lg border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
                     >
                       {t('common.cancel')}
                     </button>
@@ -885,7 +885,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'promotions' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-card shadow-card p-6">
           {!program ? (
             <p className="text-gray-600">{t('loyalty.no_program')}</p>
           ) : isLoadingPromotions ? (
@@ -893,7 +893,7 @@ export default function Loyalty() {
           ) : (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">{t('loyalty.promotions')}</h2>
+                <h2 className="font-bold text-[22px] text-brand-ink dark:text-white">{t('loyalty.promotions')}</h2>
                 {isAdmin && (
                   <button
                     onClick={() => {
@@ -901,7 +901,7 @@ export default function Loyalty() {
                       setPromotionType('double_points')
                       setShowPromotionForm(true)
                     }}
-                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
+                    className="px-4 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
                   >
                     {t('loyalty.add_promotion')}
                   </button>
@@ -931,7 +931,7 @@ export default function Loyalty() {
                                 setPromotionType(promotion.promotion_type)
                                 setShowPromotionForm(true)
                               }}
-                              className="px-3 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
+                              className="px-3 py-1 bg-brand-gradient text-white rounded text-sm hover:brightness-105 font-bold"
                             >
                               {t('common.edit')}
                             </button>
@@ -941,7 +941,7 @@ export default function Loyalty() {
                                   await deletePromotionMutation.mutateAsync(promotion.id)
                                 }
                               }}
-                              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+                              className="px-3 py-1 rounded text-sm border border-[#d21f2f] bg-[#fdecec] text-[#c81e1e] hover:bg-[#fbdada] font-bold"
                             >
                               {t('common.delete')}
                             </button>
@@ -959,7 +959,7 @@ export default function Loyalty() {
           {showPromotionForm && isAdmin && program && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowPromotionForm(false)}>
               <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{editingPromotion ? t('loyalty.edit_promotion') : t('loyalty.add_promotion')}</h3>
+                <h3 className="font-bold mb-4 text-[22px] text-brand-ink dark:text-white">{editingPromotion ? t('loyalty.edit_promotion') : t('loyalty.add_promotion')}</h3>
                 <form
                   onSubmit={async (e) => {
                     e.preventDefault()
@@ -1157,7 +1157,7 @@ export default function Loyalty() {
                   <div className="flex gap-2 mt-6">
                     <button
                       type="submit"
-                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
+                      className="px-6 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
                     >
                       {t('common.save')}
                     </button>
@@ -1168,7 +1168,7 @@ export default function Loyalty() {
                         setEditingPromotion(null)
                         setPromotionType('double_points')
                       }}
-                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                      className="px-6 py-2 rounded-lg border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
                     >
                       {t('common.cancel')}
                     </button>
@@ -1182,8 +1182,8 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'transactions' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('loyalty.transactions')}</h2>
+        <div className="bg-white rounded-card shadow-card p-6">
+          <h2 className="font-bold mb-6 text-[22px] text-brand-ink dark:text-white">{t('loyalty.transactions')}</h2>
           
           {!program ? (
             <p className="text-gray-600">{t('loyalty.no_program')}</p>
@@ -1230,7 +1230,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'analytics' && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-card shadow-card p-6">
           <LoyaltyAnalytics />
         </div>
       )}

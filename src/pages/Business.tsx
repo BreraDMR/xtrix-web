@@ -57,14 +57,14 @@ export default function Business() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Business</h1>
+        <h1 className="page-title">My Business</h1>
         {!showForm && !business && (user?.role === 'admin' || user?.role === 'business_owner') && (
           <button
             onClick={() => {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            className="px-4 py-2 bg-brand-gradient text-white rounded-md hover:brightness-105 font-bold"
           >
             Create Business
           </button>
@@ -75,7 +75,7 @@ export default function Business() {
               setEditingId(business.id)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            className="px-4 py-2 bg-brand-gradient text-white rounded-md hover:brightness-105 font-bold"
           >
             Edit Business
           </button>
@@ -83,7 +83,7 @@ export default function Business() {
       </div>
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-card shadow-card">
           <BusinessForm
             businessId={editingId}
             onSuccess={handleSuccess}
@@ -94,7 +94,7 @@ export default function Business() {
           />
         </div>
       ) : business ? (
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className="bg-white shadow-card rounded-card p-6">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-500 mb-1">Business Name</label>
@@ -133,14 +133,14 @@ export default function Business() {
           </div>
         </div>
       ) : (
-        <div className="bg-white shadow rounded-lg p-6 text-center">
+        <div className="bg-white shadow-card rounded-card p-6 text-center">
           <p className="text-gray-500 mb-4">You don't have a business yet.</p>
           <button
             onClick={() => {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            className="px-4 py-2 bg-brand-gradient text-white rounded-md hover:brightness-105 font-bold"
           >
             Create Business
           </button>

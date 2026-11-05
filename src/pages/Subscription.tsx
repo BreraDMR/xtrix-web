@@ -256,7 +256,7 @@ export default function Subscription() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">
+      <h1 className="page-title mb-6">
         {t('subscription.title')}
       </h1>
 
@@ -270,7 +270,7 @@ export default function Subscription() {
 
       {}
       {subscription && (
-        <div className="mb-8 bg-white rounded-lg shadow-md p-6">
+        <div className="mb-8 bg-white rounded-card shadow-card p-6">
           <div className="flex justify-between items-start mb-4">
             <h2 className="text-xl font-semibold">
               {t('subscription.currentSubscription')}
@@ -280,7 +280,7 @@ export default function Subscription() {
                 <button
                   onClick={handleReactivate}
                   disabled={loading}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
+                  className="px-4 py-2 rounded-lg disabled:opacity-50 text-sm border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
                 >
                   {t('subscription.reactivate')}
                 </button>
@@ -289,7 +289,7 @@ export default function Subscription() {
                 <button
                   onClick={() => handleCancel(true)}
                   disabled={loading || subscription.cancel_at_period_end}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm"
+                  className="px-4 py-2 rounded-lg disabled:opacity-50 text-sm border border-[#d21f2f] bg-[#fdecec] text-[#c81e1e] hover:bg-[#fbdada] font-bold"
                 >
                   {subscription.cancel_at_period_end
                     ? t('subscription.cancelled')
@@ -412,7 +412,7 @@ export default function Subscription() {
             {availablePlans.map((plan) => (
               <div
                 key={plan.id}
-                className={`bg-white rounded-lg shadow-md p-6 border-2 ${
+                className={`bg-white rounded-card shadow-card p-6 border-2 ${
                   selectedPlan === plan.id ? 'border-blue-600' : 'border-gray-200'
                 }`}
               >
@@ -430,7 +430,7 @@ export default function Subscription() {
                   className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
                     subscription?.status === 'active'
                       ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                      : 'bg-primary-600 text-white hover:bg-primary-700'
+                      : 'bg-brand-gradient text-white hover:brightness-105 font-bold'
                   }`}
                 >
                     {subscription?.status === 'active'
@@ -498,20 +498,20 @@ export default function Subscription() {
           <h2 className="text-xl font-semibold mb-4">
             {t('subscription.history')}
           </h2>
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="bg-white rounded-card shadow-card overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-white dark:bg-transparent">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                     {t('subscription.plan_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                     {t('subscription.status_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                     {t('subscription.created_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                     {t('subscription.period_end_label')}
                   </th>
                 </tr>
@@ -521,7 +521,7 @@ export default function Subscription() {
                   .filter((sub: Subscription) => sub.id !== subscription?.id)
                   .map((sub: Subscription) => (
                     <tr key={sub.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         {t('subscription.plan_number')} #{sub.plan_id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -537,10 +537,10 @@ export default function Subscription() {
                           {sub.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         {formatDate(sub.created_at)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         {formatDate(sub.current_period_end)}
                       </td>
                     </tr>

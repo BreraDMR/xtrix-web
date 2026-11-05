@@ -19,45 +19,37 @@ export default function CalendarPage() {
 
   return (
     <div>
-      <div className="mb-6 flex justify-between items-center">
+      <div className="page-header">
         <div>
-          <h1 className="text-2xl font-bold">{t('calendar.title')}</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="page-title">{t('calendar.title')}</h1>
+          <p className="page-subtitle">
             {view === 'simple' 
               ? t('calendar.simpleViewDescription')
               : t('calendar.advancedViewDescription')}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="segmented">
           <button
             onClick={() => setView('simple')}
-            className={`px-4 py-2 rounded-md ${
-              view === 'simple'
-                ? 'bg-primary-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+            className={`segmented-item ${view === 'simple' ? 'segmented-item-active' : ''}`}
           >
             {t('calendar.simpleView')}
           </button>
           <button
             onClick={() => setView('advanced')}
-            className={`px-4 py-2 rounded-md ${
-              view === 'advanced'
-                ? 'bg-primary-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+            className={`segmented-item ${view === 'advanced' ? 'segmented-item-active' : ''}`}
           >
             {t('calendar.advancedView')}
           </button>
         </div>
       </div>
-      <div className="bg-white p-6 rounded-lg shadow">
-        {view === 'simple' ? (
-          <SimpleCalendar visits={visits || []} onRefresh={() => refetch()} />
-        ) : (
+      {view === 'simple' ? (
+        <SimpleCalendar visits={visits || []} onRefresh={() => refetch()} />
+      ) : (
+        <div className="card p-6">
           <Calendar visits={visits || []} onRefresh={() => refetch()} />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

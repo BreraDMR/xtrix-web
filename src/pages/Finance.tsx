@@ -124,13 +124,13 @@ export default function Finance() {
     <div className="animate-fade-in">
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('finance.title')}</h1>
-          <p className="text-gray-600">{t('finance.subtitle')}</p>
+          <h1 className="page-title mb-2">{t('finance.title')}</h1>
+          <p className="page-subtitle">{t('finance.subtitle')}</p>
         </div>
         {(user?.role === 'admin' || user?.role === 'business_owner') && (
           <button
             onClick={() => setShowAddExpense(true)}
-            className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
+            className="px-6 py-3 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
           >
             {t('finance.add_expense')}
           </button>
@@ -138,7 +138,7 @@ export default function Finance() {
       </div>
 
       {}
-      <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+      <div className="bg-white p-4 rounded-card shadow-card mb-6">
         <div className="flex gap-4 items-end">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('finance.date_from')}</label>
@@ -179,7 +179,7 @@ export default function Finance() {
       {}
       {!isLoadingPayments && paymentStats && (
         <div className="mb-6">
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100" id="payment-chart">
+          <div className="bg-white p-6 rounded-card shadow-card" id="payment-chart">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">{t('finance.payments_volume')}</h3>
               <ExportButton
@@ -314,21 +314,21 @@ export default function Finance() {
         <LoadingSpinner />
       ) : profitReport ? (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div className="bg-white p-6 rounded-card shadow-card">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('finance.revenue')}</h3>
-            <p className="text-3xl font-bold text-green-600">{formatCurrency(profitReport.revenue, currency)}</p>
+            <p className="font-bold text-[22px] text-brand-ink dark:text-white">{formatCurrency(profitReport.revenue, currency)}</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div className="bg-white p-6 rounded-card shadow-card">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('finance.expenses')}</h3>
-            <p className="text-3xl font-bold text-red-600">{formatCurrency(profitReport.expenses, currency)}</p>
+            <p className="font-bold text-[22px] text-[#c81e1e]">{formatCurrency(profitReport.expenses, currency)}</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div className="bg-white p-6 rounded-card shadow-card">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('finance.profit')}</h3>
             <p className={`text-3xl font-bold ${(profitReport.profit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatCurrency(profitReport.profit, currency)}
             </p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div className="bg-white p-6 rounded-card shadow-card">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('finance.profit_margin')}</h3>
             <p className={`text-3xl font-bold ${(profitReport.profit_margin || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {profitReport.profit_margin?.toFixed(2) || '0.00'}%
@@ -339,7 +339,7 @@ export default function Finance() {
 
       {}
       {profitReport?.expenses_by_category && profitReport.expenses_by_category.length > 0 && (
-        <div className="bg-white p-6 rounded-xl shadow-md mb-6">
+        <div className="bg-white p-6 rounded-card shadow-card mb-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">{t('finance.expenses_by_category')}</h2>
           <div className="space-y-3">
             {profitReport.expenses_by_category.map((item: any) => (
@@ -359,7 +359,7 @@ export default function Finance() {
       )}
 
       {}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="bg-white rounded-card shadow-card overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-900">{t('finance.expenses_list')}</h2>
           {expenses.length > 0 && (
@@ -389,22 +389,22 @@ export default function Finance() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-white dark:bg-transparent">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('finance.date')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('finance.category')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('finance.description')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('finance.amount')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('finance.payment_method')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('finance.date')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('finance.category')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('finance.description')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('finance.amount')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('finance.payment_method')}</th>
                   {(user?.role === 'admin' || user?.role === 'business_owner') && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('finance.actions')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('finance.actions')}</th>
                   )}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {expenses.map((expense) => (
                   <tr key={expense.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {new Date(expense.expense_date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -420,17 +420,17 @@ export default function Finance() {
                         <span className="text-sm text-gray-500">-</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4">
                       {expense.description || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-red-600">
                       {expense.amount.toFixed(2)} {expense.currency}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {expense.payment_method}
                     </td>
                     {(user?.role === 'admin' || user?.role === 'business_owner') && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           onClick={() => {
                             if (confirm(t('finance.confirm_delete'))) {
@@ -686,7 +686,7 @@ function ExpenseForm({
             <button
               type="submit"
               disabled={createMutation.isPending}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-brand-gradient text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-105 font-bold"
             >
               {createMutation.isPending ? t('common.loading') : t('common.save')}
             </button>

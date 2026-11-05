@@ -99,11 +99,11 @@ export default function SpecialistProfile() {
   return (
     <div className="p-6">
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{t('specialistProfile.title')}</h1>
+        <h1 className="page-title">{t('specialistProfile.title')}</h1>
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            className="px-4 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
           >
             {t('common.edit')}
           </button>
@@ -128,7 +128,7 @@ export default function SpecialistProfile() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <div className="bg-white rounded-card shadow-card p-6 space-y-6">
         {}
         <div>
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.basicInfo')}</h2>
@@ -351,14 +351,14 @@ export default function SpecialistProfile() {
             <button
               onClick={handleSave}
               disabled={loading}
-              className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+              className="px-6 py-2 bg-brand-gradient text-white rounded-lg disabled:opacity-50 hover:brightness-105 font-bold"
             >
               {loading ? t('common.loading') : t('common.save')}
             </button>
             <button
               onClick={handleCancel}
               disabled={loading}
-              className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+              className="px-6 py-2 rounded-lg disabled:opacity-50 border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
             >
               {t('common.cancel')}
             </button>

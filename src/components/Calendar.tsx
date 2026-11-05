@@ -106,7 +106,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
   return (
     <div>
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-card shadow-card">
           <button
             onClick={handleFormCancel}
             className="mb-4 text-gray-600 hover:text-gray-800"
@@ -130,7 +130,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                 prev.setMonth(prev.getMonth() - 1)
                 setCurrentMonth(prev)
               }}
-              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+              className="px-4 py-2 rounded-md border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
             >
               ← {t('calendar.previous')}
             </button>
@@ -143,7 +143,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                 next.setMonth(next.getMonth() + 1)
                 setCurrentMonth(next)
               }}
-              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+              className="px-4 py-2 rounded-md border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
             >
               {t('calendar.next')} →
             </button>
@@ -177,7 +177,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                     <div className="flex items-center gap-1 mt-1">
                       <div className="w-1.5 h-1.5 rounded-full bg-purple-600"></div>
                       {dayVisits.length > 1 && (
-                        <span className="inline-flex items-center px-1 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
+                        <span className="inline-flex items-center px-1 py-0.5 rounded-full text-xs bg-[#e9dcfb] text-[#7c3aed] border border-[#d9c5f8] font-bold">
                           {dayVisits.length}
                         </span>
                       )}

@@ -190,13 +190,13 @@ export default function Settings() {
   return (
     <div className="animate-fade-in">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('settings.title')}</h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{t('settings.subtitle')}</p>
+        <h1 className="page-title mb-2">{t('settings.title')}</h1>
+        <p className="page-subtitle">{t('settings.subtitle')}</p>
       </div>
 
       <div className="space-y-6">
         {}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-card shadow-card p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.language')}</h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.language_description')}</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -219,7 +219,7 @@ export default function Settings() {
 
         {}
         {business && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-card shadow-card p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.currency')}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.currency_description')}</p>
             <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
@@ -259,7 +259,7 @@ export default function Settings() {
 
         {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-card shadow-card p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.theme')}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.theme_description')}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -283,7 +283,7 @@ export default function Settings() {
 
         {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-card shadow-card p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.timezone')}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.timezone_description')}</p>
             <select
@@ -303,7 +303,7 @@ export default function Settings() {
 
         {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-card shadow-card p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.date_time_format')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -342,7 +342,7 @@ export default function Settings() {
 
         {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-card shadow-card p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.notifications')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -389,7 +389,7 @@ export default function Settings() {
 
         {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-card shadow-card p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.auto_save')}</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -433,7 +433,7 @@ export default function Settings() {
 
         {}
         {preferences && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-card shadow-card p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('settings.export_format')}</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{t('settings.export_format_description')}</p>
             <select

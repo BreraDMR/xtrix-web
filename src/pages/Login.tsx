@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import LanguageSwitcher from '../components/LanguageSwitcher'
 import { useTranslation } from '../hooks/useTranslation'
 import { logger } from '../utils/logger'
+import { XLogo } from '../components/Layout'
 
 export default function Login() {
   const { t } = useTranslation()
@@ -86,7 +87,8 @@ export default function Login() {
       </div>
       <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-xl shadow-2xl animate-fade-in">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Xtrix</h2>
+          <XLogo className="mx-auto mb-4 h-12 w-12 text-2xl" />
+          <h2 className="page-title mb-2 text-[24px]">Xtrix</h2>
           <p className="text-gray-600 dark:text-gray-300">{t('login.subtitle')}</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -128,7 +130,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-brand-gradient text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 hover:brightness-105 font-bold"
           >
             {loading ? (
               <>

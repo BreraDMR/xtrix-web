@@ -304,7 +304,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-card shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
@@ -363,19 +363,19 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <div className="text-sm text-blue-700">{t('import.totalRows') || 'Всего строк'}</div>
-                  <div className="text-2xl font-bold text-blue-900">{parsedData.length}</div>
+                  <div className="font-bold text-[22px] text-brand-ink dark:text-white">{parsedData.length}</div>
                 </div>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                   <div className="text-sm text-green-700">
                     {t('import.validRows') || 'Корректных'}
                   </div>
-                  <div className="text-2xl font-bold text-green-900">{validRows}</div>
+                  <div className="font-bold text-[22px] text-brand-ink dark:text-white">{validRows}</div>
                 </div>
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                   <div className="text-sm text-red-700">
                     {t('import.errors') || 'Ошибок'}
                   </div>
-                  <div className="text-2xl font-bold text-red-900">{validationErrors.length}</div>
+                  <div className="font-bold text-[22px] text-[#c81e1e]">{validationErrors.length}</div>
                 </div>
               </div>
 
@@ -406,19 +406,19 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50 sticky top-0">
                       <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[#6b6b76]">
                           #
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[#6b6b76]">
                           {t('clients.name')}
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[#6b6b76]">
                           {t('clients.phone')}
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[#6b6b76]">
                           {t('clients.email')}
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-[#6b6b76]">
                           {t('import.status') || 'Статус'}
                         </th>
                       </tr>
@@ -431,15 +431,15 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
                             key={idx}
                             className={hasError ? 'bg-red-50' : 'bg-green-50'}
                           >
-                            <td className="px-4 py-2 text-sm text-gray-900">{client.row}</td>
-                            <td className="px-4 py-2 text-sm text-gray-900">{client.full_name}</td>
-                            <td className="px-4 py-2 text-sm text-gray-500">
+                            <td className="px-4 py-2">{client.row}</td>
+                            <td className="px-4 py-2">{client.full_name}</td>
+                            <td className="px-4 py-2">
                               {client.contact_phone || '-'}
                             </td>
-                            <td className="px-4 py-2 text-sm text-gray-500">
+                            <td className="px-4 py-2">
                               {client.contact_email || '-'}
                             </td>
-                            <td className="px-4 py-2 text-sm">
+                            <td className="px-4 py-2">
                               {hasError ? (
                                 <span className="text-red-600 flex items-center gap-1">
                                   <HiXCircle className="w-4 h-4" />
@@ -520,7 +520,7 @@ export default function ImportClientsModal({ isOpen, onClose }: ImportClientsMod
             <button
               onClick={handleImport}
               disabled={isImporting || validRows === 0}
-              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-sm text-white bg-brand-gradient rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 hover:brightness-105 font-bold"
             >
               {isImporting ? (
                 <>

@@ -430,7 +430,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                   setTimeout(() => setPasswordCopied(false), 2000)
                 }
               }}
-              className="px-4 py-3 bg-green-600 text-white rounded hover:bg-green-700 font-medium whitespace-nowrap"
+              className="px-4 py-3 rounded whitespace-nowrap border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
             >
               {passwordCopied ? '✓ Copied!' : 'Copy'}
             </button>
@@ -445,7 +445,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
               setPasswordCopied(false)
               onSuccess()
             }}
-            className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
+            className="mt-3 px-4 py-2 rounded text-sm border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
           >
             Close
           </button>
@@ -558,7 +558,7 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
         </button>
         <button
           type="submit"
-          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+          className="px-4 py-2 bg-brand-gradient text-white rounded-lg disabled:opacity-50 hover:brightness-105 font-bold"
           disabled={loading}
         >
           {loading ? t('common.loading') + '...' : t('common.save')}

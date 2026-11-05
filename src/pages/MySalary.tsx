@@ -149,10 +149,10 @@ export default function MySalary() {
   return (
     <div className="p-6 animate-fade-in">
       <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="page-title">
             {t('salary.my_salary') || 'Моя зарплата'}
           </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="page-subtitle">
           {t('salary.viewSalaryDetails') || 'Просмотр начислений и выплат'}
         </p>
       </div>
@@ -185,7 +185,7 @@ export default function MySalary() {
           {currentSalary ? (
             <div className="space-y-6">
               {}
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-white rounded-card shadow-card p-6">
                 <h2 className="text-xl font-semibold mb-4">{t('salary.currentSalary') || 'Текущая зарплата'}</h2>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -293,7 +293,7 @@ export default function MySalary() {
       {activeTab === 'details' && currentSalary && (
         <div className="space-y-6">
           {}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-card shadow-card p-6">
             <h2 className="text-xl font-semibold mb-4">{t('salary.adjustments') || 'Бонусы и штрафы'}</h2>
             {currentSalary.adjustments && currentSalary.adjustments.length > 0 ? (
               <div className="space-y-3">
@@ -330,7 +330,7 @@ export default function MySalary() {
           </div>
 
           {}
-          <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+          <div className="bg-white rounded-card shadow-card p-6 dark:bg-gray-800">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold dark:text-white">{t('salary.payments') || 'История выплат'}</h2>
               <div className="flex gap-2">
@@ -410,7 +410,7 @@ export default function MySalary() {
 
       {}
       {activeTab === 'history' && (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-card shadow-card overflow-hidden">
           {isLoadingHistory ? (
             <div className="p-8 text-center">
               <LoadingSpinner />
@@ -418,18 +418,18 @@ export default function MySalary() {
           ) : salaryHistory && salaryHistory.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-white dark:bg-transparent">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                       {t('salary.period')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                       {t('salary.total')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                       {t('salary.paid')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                       {t('salary.status')}
                     </th>
                   </tr>
@@ -437,14 +437,14 @@ export default function MySalary() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {salaryHistory.map((salary) => (
                     <tr key={salary.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         {new Date(salary.period_start).toLocaleDateString()} -{' '}
                         {new Date(salary.period_end).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         {formatCurrency(salary.total_with_adjustments, currency)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         {formatCurrency(salary.paid_amount, currency)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -469,7 +469,7 @@ export default function MySalary() {
 
       {}
       {activeTab === 'export' && currentSalary && (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-card shadow-card p-6">
           <h2 className="text-xl font-semibold mb-4">{t('salary.export') || 'Экспорт отчета'}</h2>
           <p className="text-gray-600 mb-4">
             {t('salary.exportDescription') || 'Экспортируйте детализированный отчет о зарплате'}
@@ -479,7 +479,7 @@ export default function MySalary() {
               onClick={() => {
                 alert(t('common.export') || 'Экспорт')
               }}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              className="px-4 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
             >
               {t('common.export') || 'Экспорт'} PDF
             </button>
@@ -487,7 +487,7 @@ export default function MySalary() {
               onClick={() => {
                 alert(t('common.export') || 'Экспорт')
               }}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="px-4 py-2 rounded-lg border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
             >
               {t('common.export') || 'Экспорт'} Excel
             </button>

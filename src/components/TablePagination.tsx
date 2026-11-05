@@ -32,7 +32,7 @@ export default function TablePagination({
   }
 
   return (
-    <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 bg-white sm:px-6">
+    <div className="px-7 py-3 flex items-center justify-between border-t border-[#e4e4ea] bg-white text-[12px] font-semibold dark:bg-transparent">
       <div className="flex-1 flex justify-between sm:hidden">
         <button
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
@@ -51,14 +51,14 @@ export default function TablePagination({
       </div>
       <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <p className="text-sm text-gray-700">
+          <p className="text-xs text-[#6b6b76]">
             Showing <span className="font-medium">{startItem}</span> to{' '}
             <span className="font-medium">{endItem}</span> of{' '}
             <span className="font-medium">{totalItems}</span> results
           </p>
           {onPerPageChange && (
             <div className="flex items-center gap-2">
-              <label htmlFor="per-page" className="text-sm text-gray-700">
+              <label htmlFor="per-page" className="text-xs text-[#6b6b76]">
                 Per page:
               </label>
               <select
@@ -107,7 +107,7 @@ export default function TablePagination({
                   onClick={() => onPageChange(pageNum)}
                   className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                     currentPage === pageNum
-                      ? 'z-10 bg-purple-50 border-purple-500 text-purple-600'
+                      ? 'z-10 bg-brand-gradient border-transparent text-white'
                       : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                   }`}
                 >

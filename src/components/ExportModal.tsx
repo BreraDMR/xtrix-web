@@ -100,7 +100,7 @@ export default function ExportModal<T extends Record<string, any>>({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-card shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         {}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
@@ -231,7 +231,7 @@ export default function ExportModal<T extends Record<string, any>>({
           <button
             onClick={handleExport}
             disabled={isExporting || data.length === 0}
-            className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            className="px-4 py-2 text-sm text-white bg-brand-gradient rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 hover:brightness-105 font-bold"
           >
             {isExporting ? (
               <>

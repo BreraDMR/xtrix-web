@@ -147,11 +147,11 @@ export default function Inventory() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('inventory.title')}</h1>
+        <h1 className="page-title">{t('inventory.title')}</h1>
         {(user?.role === 'admin' || user?.role === 'business_owner') && (
           <button
             onClick={() => setShowAddForm(true)}
-            className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="w-full sm:w-auto px-4 py-2 bg-brand-gradient text-white rounded-lg transition-colors hover:brightness-105 font-bold"
           >
             + {t('inventory.add_product')}
           </button>
@@ -222,27 +222,27 @@ export default function Inventory() {
       </div>
 
       {}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-card shadow-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-white dark:bg-transparent">
               <tr>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('inventory.name')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76] hidden md:table-cell">
                   {t('inventory.category')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('inventory.quantity')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76] hidden lg:table-cell">
                   {t('inventory.min_quantity')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76] hidden lg:table-cell">
                   {t('inventory.price')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('inventory.actions')}
                 </th>
               </tr>
@@ -269,7 +269,7 @@ export default function Inventory() {
                     {product.category || '-'}
                   </div>
                 </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
                   {product.category || '-'}
                 </td>
                 <td className="px-2 sm:px-6 py-4">
@@ -291,13 +291,13 @@ export default function Inventory() {
                     </div>
                   </div>
                 </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
                   {product.min_quantity} {product.unit}
                 </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
                   {product.price_per_unit ? formatCurrency(product.price_per_unit, currency) : '-'}
                 </td>
-                <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1 sm:space-x-2">
+                <td className="px-2 sm:px-6 py-4 whitespace-nowrap space-x-1 sm:space-x-2">
                   {(user?.role === 'admin' || user?.role === 'business_owner') && (
                     <>
                       <button
@@ -385,7 +385,7 @@ export default function Inventory() {
                     addQuantityMutation.mutate({ id: addQuantityProduct.id, quantity })
                   }
                 }}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                className="px-4 py-2 bg-brand-gradient text-white rounded-lg hover:brightness-105 font-bold"
               >
                 {t('common.save')}
               </button>
@@ -598,7 +598,7 @@ function ProductForm({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-brand-gradient text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-105 font-bold"
               disabled={isLoading}
             >
               {isLoading ? t('common.loading') : t('common.save')}

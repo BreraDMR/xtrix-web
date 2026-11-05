@@ -64,7 +64,7 @@ function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
         </span>
       )}
       {balance.level && (
-        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">
+        <span className="px-2 py-1 text-xs rounded-full bg-[#e9dcfb] text-[#7c3aed] border border-[#d9c5f8] font-bold">
           {balance.level.name}
         </span>
       )}
@@ -163,12 +163,12 @@ export default function Clients() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('clients.title')}</h1>
+        <h1 className="page-title">{t('clients.title')}</h1>
         {!showForm && (
           <div className="flex gap-2">
             <button
               onClick={() => setShowImportModal(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center gap-2"
+              className="px-4 py-2 rounded-md flex items-center gap-2 border border-[#b9b9c3] bg-white text-[#374151] hover:border-brand-purple hover:text-brand-purple font-bold"
             >
               <HiUpload className="w-4 h-4" />
               {t('import.title') || 'Импорт'}
@@ -178,7 +178,7 @@ export default function Clients() {
                 setEditingId(undefined)
                 setShowForm(true)
               }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+              className="px-4 py-2 bg-brand-gradient text-white rounded-md hover:brightness-105 font-bold"
             >
               {t('clients.addClient')}
             </button>
@@ -186,65 +186,6 @@ export default function Clients() {
         )}
       </div>
 
-      {!showForm && (
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex-1 w-full sm:max-w-md">
-              <SearchBar
-                placeholder={t('clients.searchPlaceholder')}
-                onSearch={setSearchQuery}
-              />
-            </div>
-            <div className="flex gap-4 items-center">
-              <select
-                value={genderFilter || ''}
-                onChange={(e) => {
-                  setGenderFilter(e.target.value || null)
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 border rounded-md"
-              >
-                <option value="">{t('clients.allGenders')}</option>
-                <option value="male">{t('clients.male')}</option>
-                <option value="female">{t('clients.female')}</option>
-                <option value="other">{t('clients.other')}</option>
-              </select>
-              {filteredClients.length > 0 && (
-                <ExportButton
-                  data={filteredClients}
-                  columns={[
-                    { key: 'full_name', label: t('clients.name') },
-                    { key: 'contact_phone', label: t('clients.phone') },
-                    { key: 'contact_email', label: t('clients.email') },
-                    { key: 'gender', label: 'Gender' },
-                    { key: 'date_of_birth', label: 'Date of Birth', format: (val) => val ? new Date(val).toLocaleDateString() : '-' },
-                  ]}
-                  filename={`clients-${new Date().toISOString().split('T')[0]}`}
-                  title={t('export.clientReport')}
-                  reportTypes={[
-                    t('export.clientProfile'),
-                    t('export.clientContacts'),
-                    t('export.clientVisits'),
-                  ]}
-                  dataType={searchQuery || genderFilter ? 'filtered' : 'all'}
-                />
-              )}
-              {(searchQuery || genderFilter) && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('')
-                    setGenderFilter(null)
-                    setCurrentPage(1)
-                  }}
-                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
-                >
-                  {t('clients.clearFilters')}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {}
       {clientReportId && (
@@ -264,7 +205,7 @@ export default function Clients() {
       )}
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-card shadow-card">
           <ClientForm
             clientId={editingId}
             onSuccess={handleSuccess}
@@ -275,10 +216,67 @@ export default function Clients() {
           />
         </div>
       ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="table-card">
+          <div className="table-toolbar">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex-1 w-full">
+                <SearchBar
+                  placeholder={t('clients.searchPlaceholder')}
+                  onSearch={setSearchQuery}
+                />
+              </div>
+              <div className="flex gap-4 items-center">
+                <select
+                  value={genderFilter || ''}
+                  onChange={(e) => {
+                    setGenderFilter(e.target.value || null)
+                    setCurrentPage(1)
+                  }}
+                  className="px-3 py-1.5 min-w-[180px]"
+                >
+                  <option value="">{t('clients.allGenders')}</option>
+                  <option value="male">{t('clients.male')}</option>
+                  <option value="female">{t('clients.female')}</option>
+                  <option value="other">{t('clients.other')}</option>
+                </select>
+                {filteredClients.length > 0 && (
+                  <ExportButton
+                    data={filteredClients}
+                    columns={[
+                      { key: 'full_name', label: t('clients.name') },
+                      { key: 'contact_phone', label: t('clients.phone') },
+                      { key: 'contact_email', label: t('clients.email') },
+                      { key: 'gender', label: 'Gender' },
+                      { key: 'date_of_birth', label: 'Date of Birth', format: (val) => val ? new Date(val).toLocaleDateString() : '-' },
+                    ]}
+                    filename={`clients-${new Date().toISOString().split('T')[0]}`}
+                    title={t('export.clientReport')}
+                    reportTypes={[
+                      t('export.clientProfile'),
+                      t('export.clientContacts'),
+                      t('export.clientVisits'),
+                    ]}
+                    dataType={searchQuery || genderFilter ? 'filtered' : 'all'}
+                  />
+                )}
+                {(searchQuery || genderFilter) && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('')
+                      setGenderFilter(null)
+                      setCurrentPage(1)
+                    }}
+                    className="btn-ghost"
+                  >
+                    {t('clients.clearFilters')}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-white dark:bg-transparent">
               <tr>
                 <TableSortHeader
                   columnKey="full_name"
@@ -301,10 +299,10 @@ export default function Clients() {
                   onSort={handleSort}
                   className="px-2 sm:px-6 hidden md:table-cell"
                 />
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76] hidden lg:table-cell">
                   {t('loyalty.points')}
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('common.actions')}
                 </th>
               </tr>
@@ -319,7 +317,7 @@ export default function Clients() {
               ) : (
                 paginatedData.map((client) => (
                 <tr key={client.id} className="hover:bg-gray-50">
-                  <td className="px-2 sm:px-6 py-4 text-sm font-medium text-gray-900">
+                  <td className="px-2 sm:px-6 py-4">
                     <div className="flex flex-col">
                       <span>{client.full_name}</span>
                       <span className="text-xs text-gray-500 sm:hidden mt-1">
@@ -327,16 +325,16 @@ export default function Clients() {
                       </span>
                     </div>
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
                     {client.contact_phone || '-'}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
                     {client.contact_email || '-'}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
+                  <td className="px-2 sm:px-6 py-4 hidden lg:table-cell">
                     <ClientLoyaltyBalance clientId={client.id} />
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => handleEdit(client.id)}

@@ -143,105 +143,23 @@ interface Visit {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold">{t('visits.title')}</h1>
+        <h1 className="page-title">{t('visits.title')}</h1>
         {!showForm && (
           <button
             onClick={() => {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+            className="w-full sm:w-auto px-4 py-2 bg-brand-gradient text-white rounded-md transition-colors hover:brightness-105 font-bold"
           >
             {t('visits.newVisit')}
           </button>
         )}
       </div>
 
-      {!showForm && (
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex-1 w-full sm:max-w-md">
-              <SearchBar
-                placeholder={t('visits.searchPlaceholder')}
-                onSearch={setSearchQuery}
-              />
-            </div>
-            {filteredVisits.length > 0 && (
-              <ExportButton
-                data={filteredVisits}
-                columns={[
-                  { key: 'date_start', label: t('visits.date'), format: (val) => format(new Date(val), 'PP', { locale: dateLocale }) },
-                  { key: 'service_name', label: t('visits.service') },
-                  { key: 'client_name', label: t('visits.client') },
-                  { key: 'status', label: t('visits.status'), format: (val) => getStatusTranslation(val) },
-                  { key: 'price', label: t('visits.price'), format: (val) => val ? formatCurrency(val, currency) : '-' },
-                ]}
-                filename={`visits-${new Date().toISOString().split('T')[0]}`}
-                title={t('export.visitsReport')}
-                reportTypes={[t('export.visitsReport')]}
-                dataType={searchQuery || statusFilter || dateFrom || dateTo ? 'filtered' : 'all'}
-              />
-            )}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <select
-              value={statusFilter || ''}
-              onChange={(e) => {
-                setStatusFilter(e.target.value || null)
-                setCurrentPage(1)
-              }}
-              className="px-4 py-2 border rounded-md"
-            >
-              <option value="">{t('visits.allStatuses')}</option>
-              <option value="planned">{t('visits.planned')}</option>
-              <option value="in_progress">{t('visits.inProgress')}</option>
-              <option value="completed">{t('visits.completed')}</option>
-              <option value="cancelled">{t('visits.cancelled')}</option>
-            </select>
-            <div className="relative">
-              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none">{t('visits.fromDate')}</label>
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => {
-                  setDateFrom(e.target.value)
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 border rounded-md w-full pt-3"
-              />
-            </div>
-            <div className="relative">
-              <label className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-500 pointer-events-none">{t('visits.toDate')}</label>
-              <input
-                type="date"
-                value={dateTo}
-                onChange={(e) => {
-                  setDateTo(e.target.value)
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 border rounded-md w-full pt-3"
-              />
-            </div>
-            {(searchQuery || statusFilter || dateFrom || dateTo) && (
-              <button
-                onClick={() => {
-                  setSearchQuery('')
-                  setStatusFilter(null)
-                  setDateFrom('')
-                  setDateTo('')
-                  setCurrentPage(1)
-                }}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border rounded-md"
-              >
-                {t('visits.clearFilters')}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-card shadow-card">
           <VisitForm
             visitId={editingId}
             onSuccess={handleSuccess}
@@ -252,10 +170,90 @@ interface Visit {
           />
         </div>
       ) : (
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="table-card">
+          <div className="table-toolbar">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex-1 w-full">
+                <SearchBar
+                  placeholder={t('visits.searchPlaceholder')}
+                  onSearch={setSearchQuery}
+                />
+              </div>
+              {filteredVisits.length > 0 && (
+                <ExportButton
+                  data={filteredVisits}
+                  columns={[
+                    { key: 'date_start', label: t('visits.date'), format: (val) => format(new Date(val), 'PP', { locale: dateLocale }) },
+                    { key: 'service_name', label: t('visits.service') },
+                    { key: 'client_name', label: t('visits.client') },
+                    { key: 'status', label: t('visits.status'), format: (val) => getStatusTranslation(val) },
+                    { key: 'price', label: t('visits.price'), format: (val) => val ? formatCurrency(val, currency) : '-' },
+                  ]}
+                  filename={`visits-${new Date().toISOString().split('T')[0]}`}
+                  title={t('export.visitsReport')}
+                  reportTypes={[t('export.visitsReport')]}
+                  dataType={searchQuery || statusFilter || dateFrom || dateTo ? 'filtered' : 'all'}
+                />
+              )}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <select
+                value={statusFilter || ''}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value || null)
+                  setCurrentPage(1)
+                }}
+                className="px-3 py-1.5 min-w-[180px]"
+              >
+                <option value="">{t('visits.allStatuses')}</option>
+                <option value="planned">{t('visits.planned')}</option>
+                <option value="in_progress">{t('visits.inProgress')}</option>
+                <option value="completed">{t('visits.completed')}</option>
+                <option value="cancelled">{t('visits.cancelled')}</option>
+              </select>
+              <div className="relative">
+                <label className="absolute -top-2 left-2 bg-white px-1 text-[10px] text-[#6b6b76] pointer-events-none">{t('visits.fromDate')}</label>
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => {
+                    setDateFrom(e.target.value)
+                    setCurrentPage(1)
+                  }}
+                  className="px-3 py-1.5 min-w-[180px] w-full"
+                />
+              </div>
+              <div className="relative">
+                <label className="absolute -top-2 left-2 bg-white px-1 text-[10px] text-[#6b6b76] pointer-events-none">{t('visits.toDate')}</label>
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => {
+                    setDateTo(e.target.value)
+                    setCurrentPage(1)
+                  }}
+                  className="px-3 py-1.5 min-w-[180px] w-full"
+                />
+              </div>
+              {(searchQuery || statusFilter || dateFrom || dateTo) && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('')
+                    setStatusFilter(null)
+                    setDateFrom('')
+                    setDateTo('')
+                    setCurrentPage(1)
+                  }}
+                  className="btn-ghost"
+                >
+                  {t('visits.clearFilters')}
+                </button>
+              )}
+            </div>
+          </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-white dark:bg-transparent">
               <tr>
                 <TableSortHeader
                   columnKey="date_start"
@@ -271,7 +269,7 @@ interface Visit {
                   onSort={handleSort}
                   className="px-2 sm:px-6"
                 />
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76] hidden sm:table-cell">
                   {t('visits.status')}
                 </th>
                 <TableSortHeader
@@ -281,7 +279,7 @@ interface Visit {
                   onSort={handleSort}
                   className="px-2 sm:px-6 hidden md:table-cell"
                 />
-                <th className="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-2 sm:px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('common.actions')}
                 </th>
               </tr>
@@ -298,13 +296,13 @@ interface Visit {
               ) : (
                 paginatedData.map((visit) => (
                 <tr key={visit.id} className="hover:bg-gray-50">
-                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-900">
+                  <td className="px-2 sm:px-6 py-4">
                     <div className="flex flex-col">
                       <span className="whitespace-nowrap">{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
                       <span className="text-xs text-gray-500 sm:hidden">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
                     </div>
                   </td>
-                  <td className="px-2 sm:px-6 py-4 text-sm text-gray-500">
+                  <td className="px-2 sm:px-6 py-4">
                     <div className="flex flex-col">
                       <span>{visit.service_name || '-'}</span>
                       <span className="text-xs sm:hidden mt-1">
@@ -331,10 +329,10 @@ interface Visit {
                       {getStatusTranslation(visit.status)}
                     </span>
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
                     {visit.price ? formatCurrency(visit.price, currency) : '-'}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap">
                     <button
                       onClick={() => handleEdit(visit.id)}
                       className="text-blue-600 hover:text-blue-800 font-medium"

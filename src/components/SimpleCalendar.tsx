@@ -69,20 +69,21 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
     setEditingVisitId(undefined)
   }
 
-  const tileContent = ({ date }: { date: Date }) => {
+  const tileContent = ({ date, view }: { date: Date; view: string }) => {
+    if (view !== 'month') return null
     const dateKey = format(date, 'yyyy-MM-dd')
     const dayVisits = visitsByDate[dateKey] || []
     if (dayVisits.length === 0) return null
 
     return (
-      <div className="mt-1 flex items-center justify-center gap-1">
-        <div className="w-2 h-2 rounded-full bg-purple-600"></div>
-        {dayVisits.length > 1 && (
-          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
-            {dayVisits.length}
-          </span>
-        )}
-      </div>
+      <>
+        <span className="x-cal-count">{dayVisits.length}</span>
+        <span className="x-cal-dots">
+          {dayVisits.slice(0, 3).map((v: any) => (
+            <span key={v.id} className="h-1.5 w-1.5 rounded-full bg-primary-600" />
+          ))}
+        </span>
+      </>
     )
   }
 
@@ -97,14 +98,19 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
 
   const dayVisits = visitsByDate[format(selectedDate, 'yyyy-MM-dd')] || []
 
+  const insights = [
+    { label: t('visits.completed'), value: visits.filter((v) => v.status === 'completed').length },
+    { label: t('visits.planned'), value: visits.filter((v) => v.status === 'planned').length },
+    { label: t('visits.inProgress'), value: visits.filter((v) => v.status === 'in_progress').length },
+    { label: t('visits.cancelled'), value: visits.filter((v) => v.status === 'cancelled').length },
+  ]
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2">
-        <div className="flex items-center justify-between mb-4">
-          <button className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium">
-            {t('calendar.monthView')}
-          </button>
-          <span className="text-sm text-gray-500">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_260px]">
+      <div className="card p-4">
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <span className="badge-purple py-1">{t('calendar.monthView')}</span>
+          <span className="text-[11px] font-semibold text-[#6b6b76]">
             {totalEventsThisMonth} {t('calendar.eventsThisMonth')}
           </span>
         </div>
@@ -119,23 +125,19 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           value={selectedDate}
           onClickDay={handleDateClick}
           tileContent={tileContent}
-          className="w-full"
+          className="x-calendar"
         />
       </div>
 
-      <div className="space-y-4">
-        {}
-        <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('calendar.selectedDay')}</h3>
-          <p className="text-lg font-bold text-gray-900 mb-2">
+      <div className="space-y-6">
+        <div className="card p-4">
+          <h3 className="text-[13px] font-semibold text-[#8f8f99]">{t('calendar.selectedDay')}</h3>
+          <p className="mb-3 text-[15px] font-bold capitalize">
             {format(selectedDate, 'EEEE, MMMM d', { locale: dateLocale })}
           </p>
           {showForm ? (
             <div>
-              <button
-                onClick={handleFormCancel}
-                className="mb-4 text-sm text-gray-600 hover:text-gray-800"
-              >
+              <button onClick={handleFormCancel} className="btn-ghost mb-3 px-2">
                 ← {t('common.cancel')}
               </button>
               <VisitForm
@@ -149,65 +151,46 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           ) : (
             <div className="space-y-2">
               {dayVisits.length === 0 ? (
-                <p className="text-sm text-gray-500">{t('calendar.noVisits')}</p>
+                <p className="text-xs font-semibold text-[#8f8f99]">{t('calendar.noVisits')}</p>
               ) : (
                 dayVisits.map((visit) => (
-                  <div
+                  <button
                     key={visit.id}
                     onClick={() => handleVisitClick(visit)}
-                    className="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors"
+                    className="block w-full rounded-md border border-[#c9c9d3] p-2.5 text-left hover:border-brand-purple"
                   >
-                    <p className="text-sm font-medium text-gray-900">
-                      {visit.service_name || t('visits.title')}
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      {format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })}
-                    </p>
-                  </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate text-xs font-bold">{visit.service_name || t('visits.title')}</span>
+                      <span className="text-xs font-semibold">{format(new Date(visit.date_start), 'HH:mm', { locale: dateLocale })}</span>
+                    </div>
+                    {visit.client_name && (
+                      <div className="mt-1.5 flex items-center gap-1.5 text-[10px] text-[#8f8f99]">
+                        <span className="badge-purple px-2 py-0 text-[9px]">{visit.status ? t(`visits.${visit.status === 'in_progress' ? 'inProgress' : visit.status}` as any) : ''}</span>
+                        · {visit.client_name}
+                      </div>
+                    )}
+                  </button>
                 ))
               )}
             </div>
           )}
         </div>
 
-        {}
-        <div className="bg-white p-4 rounded-lg shadow border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('calendar.insights')}</h3>
-          <p className="text-xs text-gray-500 mb-3">{t('calendar.insightsTitle')}</p>
-          <div className="space-y-3">
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {visits.filter((v) => v.status === 'completed' || v.status === 'in_progress').length}
-              </p>
-              <p className="text-xs text-gray-600">Meetings</p>
-              <p className="text-xs text-gray-500">sync/planning</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {visits.filter((v) => v.status === 'planned').length}
-              </p>
-              <p className="text-xs text-gray-600">Calls</p>
-              <p className="text-xs text-gray-500">clients</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {visits.filter((v) => v.status === 'completed').length}
-              </p>
-              <p className="text-xs text-gray-600">Finance</p>
-              <p className="text-xs text-gray-500">Invoices</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {visits.filter((v) => v.status === 'cancelled').length}
-              </p>
-              <p className="text-xs text-gray-600">Releases</p>
-              <p className="text-xs text-gray-500">Deploy windows</p>
-            </div>
+        <div className="card p-4">
+          <div className="mb-3 flex items-baseline gap-2">
+            <span className="text-xs text-[#8f8f99]">{t('calendar.insights')}</span>
+            <span className="text-[13px] font-bold">{t('calendar.insightsTitle')}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {insights.map((i) => (
+              <div key={i.label} className="rounded-md bg-[#f6f1fd] p-3 dark:bg-white/5">
+                <p className="text-[11px] font-bold text-[#8f8f99]">{i.label}</p>
+                <p className="mt-1 text-xl font-bold">{i.value}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   )
 }
-
-

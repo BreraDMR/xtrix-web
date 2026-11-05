@@ -59,7 +59,7 @@ export default function LoyaltyAnalytics() {
   return (
     <div className="space-y-6">
       {}
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="bg-white p-4 rounded-card shadow-card">
         <div className="flex gap-4 items-end">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.date_from')}</label>
@@ -87,21 +87,21 @@ export default function LoyaltyAnalytics() {
         <LoadingSpinner />
       ) : statistics ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-xl shadow-md">
+          <div className="bg-white p-6 rounded-card shadow-card">
             <h3 className="text-sm font-medium text-gray-500 mb-2">Total Participants</h3>
-            <p className="text-3xl font-bold text-gray-900">{statistics.total_participants || 0}</p>
+            <p className="font-bold text-[22px] text-brand-ink dark:text-white">{statistics.total_participants || 0}</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md">
+          <div className="bg-white p-6 rounded-card shadow-card">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('loyalty.points')} Earned</h3>
-            <p className="text-3xl font-bold text-blue-600">{statistics.total_points_earned?.toFixed(0) || '0'}</p>
+            <p className="font-bold text-[22px] text-brand-ink dark:text-white">{statistics.total_points_earned?.toFixed(0) || '0'}</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md">
+          <div className="bg-white p-6 rounded-card shadow-card">
             <h3 className="text-sm font-medium text-gray-500 mb-2">{t('loyalty.points')} Spent</h3>
-            <p className="text-3xl font-bold text-red-600">{statistics.total_points_spent?.toFixed(0) || '0'}</p>
+            <p className="font-bold text-[22px] text-[#c81e1e]">{statistics.total_points_spent?.toFixed(0) || '0'}</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md">
+          <div className="bg-white p-6 rounded-card shadow-card">
             <h3 className="text-sm font-medium text-gray-500 mb-2">Active {t('loyalty.points')}</h3>
-            <p className="text-3xl font-bold text-green-600">{statistics.active_points_balance?.toFixed(0) || '0'}</p>
+            <p className="font-bold text-[22px] text-brand-ink dark:text-white">{statistics.active_points_balance?.toFixed(0) || '0'}</p>
           </div>
         </div>
       ) : null}
@@ -110,8 +110,8 @@ export default function LoyaltyAnalytics() {
       {isLoadingLevelDist ? (
         <LoadingSpinner />
       ) : levelDistribution?.distribution && levelDistribution.distribution.length > 0 ? (
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('loyalty.levels')} Distribution</h2>
+        <div className="bg-white p-6 rounded-card shadow-card">
+          <h2 className="font-bold mb-4 text-[22px] text-brand-ink dark:text-white">{t('loyalty.levels')} Distribution</h2>
           <div className="space-y-3">
             {levelDistribution.distribution.map((item: any) => (
               <div key={item.level_id || 'none'} className="flex items-center justify-between">
@@ -135,27 +135,27 @@ export default function LoyaltyAnalytics() {
       {isLoadingTopClients ? (
         <LoadingSpinner />
       ) : topClients?.clients && topClients.clients.length > 0 ? (
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Top Clients</h2>
+        <div className="bg-white p-6 rounded-card shadow-card">
+          <h2 className="font-bold mb-4 text-[22px] text-brand-ink dark:text-white">Top Clients</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-white dark:bg-transparent">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('loyalty.points')}</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('loyalty.cashback')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">Client</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('loyalty.points')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('loyalty.cashback')}</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {topClients.clients.map((client: any) => (
                   <tr key={client.client_id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {client.client_name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-blue-600">
                       {client.points?.toFixed(0) || '0'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-green-600">
                       {formatCurrency(client.cashback, currency)}
                     </td>
                   </tr>
@@ -170,31 +170,31 @@ export default function LoyaltyAnalytics() {
       {isLoadingPromotions ? (
         <LoadingSpinner />
       ) : promotions?.promotions && promotions.promotions.length > 0 ? (
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Promotion Effectiveness</h2>
+        <div className="bg-white p-6 rounded-card shadow-card">
+          <h2 className="font-bold mb-4 text-[22px] text-brand-ink dark:text-white">Promotion Effectiveness</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-white dark:bg-transparent">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Promotion</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usage Count</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unique Clients</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('loyalty.points')} Awarded</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">Promotion</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">Usage Count</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">Unique Clients</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">{t('loyalty.points')} Awarded</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {promotions.promotions.map((promo: any) => (
                   <tr key={promo.promotion_id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {promo.promotion_name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {promo.usage_count}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {promo.unique_clients}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-blue-600">
                       {promo.total_points_awarded?.toFixed(0) || '0'}
                     </td>
                   </tr>

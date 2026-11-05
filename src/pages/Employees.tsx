@@ -150,13 +150,13 @@ export default function Employees() {
   return (
     <div className="p-6 animate-fade-in">
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">{t('employees.title')}</h1>
+        <h1 className="page-title">{t('employees.title')}</h1>
         <button
           onClick={() => {
             setEditingId(undefined)
             setShowForm(true)
           }}
-          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+          className="px-4 py-2 bg-brand-gradient text-white rounded-lg transition hover:brightness-105 font-bold"
         >
           {t('employees.add_employee')}
         </button>
@@ -211,12 +211,12 @@ export default function Employees() {
       </div>
 
       {}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-card shadow-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-white dark:bg-transparent">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('employees.employee')}
                 </th>
                 <TableSortHeader
@@ -237,7 +237,7 @@ export default function Employees() {
                   currentSort={sortConfig}
                   onSort={handleSort}
                 />
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-[#6b6b76]">
                   {t('employees.status')}
                 </th>
                 <TableSortHeader
@@ -246,7 +246,7 @@ export default function Employees() {
                   currentSort={sortConfig}
                   onSort={handleSort}
                 />
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-semibold text-[#6b6b76]">
                   {t('employees.actions')}
                 </th>
               </tr>
@@ -272,15 +272,15 @@ export default function Employees() {
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {employee.position || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {employee.commission_percentage !== undefined
                       ? `${employee.commission_percentage}%`
                       : '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {employee.base_salary !== undefined
                       ? formatCurrency(employee.base_salary, currency)
                       : '-'}
@@ -296,12 +296,12 @@ export default function Employees() {
                       {employee.is_active ? t('employees.active') : t('employees.inactive')}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {employee.hired_at
                       ? new Date(employee.hired_at).toLocaleDateString()
                       : '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => {
