@@ -26,7 +26,8 @@ test('assistant history: send -> navigate -> close -> reload -> new chat -> old 
 
   // Confirm plan
   await card.getByRole('button', { name: 'Confirm' }).click()
-  await expect(card.getByText('Sasha booked the visit')).toBeVisible()
+  // the step line and the outcome line both say it
+  await expect(card.getByText('Sasha booked the visit')).toHaveCount(2)
   await expect(card.getByRole('button', { name: 'Confirm' })).toHaveCount(0)
 
   // Close panel
