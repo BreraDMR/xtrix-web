@@ -179,6 +179,9 @@ test('legacy visit becomes a chain, moves as a group, refuses conflicts and coun
   await expect(cards.first()).toHaveAttribute('aria-label', /14:00–14:30/)
   visit = await getVisit(request, salon)
   expect(visit.items?.[0].date_start).toBe('2030-05-06T12:00:00Z')
+  // the blocker did its job; it has no price, and the report won't total a day with an unknown price
+  const removed = await request.delete(`${apiUrl}/visits/${blocker.id}`, { headers: salon.owner.headers })
+  expect(removed.ok(), await removed.text()).toBeTruthy()
 
   // completing twice must not double revenue, salary or loyalty base: they read Visit.price once
   for (let attempt = 0; attempt < 2; attempt += 1) {
