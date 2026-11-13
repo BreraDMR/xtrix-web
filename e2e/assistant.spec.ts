@@ -25,9 +25,9 @@ test('ask the assistant in text, check the plan, confirm, and the visit shows up
 
   const card = panel.getByRole('article', { name: 'Book Alice Assistant at the earliest free time' })
   await expect(card).toBeVisible()
-  await expect(card.getByText('Find the client')).toBeVisible()
-  await expect(card.getByText('Find free time')).toBeVisible()
-  await expect(card.getByText('Book a visit')).toBeVisible()
+  await expect(card.getByText('Sasha will find the client')).toBeVisible()
+  await expect(card.getByText('Sasha will look for free time')).toBeVisible()
+  await expect(card.getByText('Sasha will book a visit')).toBeVisible()
   // the server filled in who and when, from the user's own data
   await expect(card.getByText(CLIENT, { exact: true })).toHaveCount(2)
   await expect(card.getByText('Olga Owner', { exact: true })).toHaveCount(2)
@@ -36,8 +36,9 @@ test('ask the assistant in text, check the plan, confirm, and the visit shows up
   await expect(card.getByText(/Valid for \d+:\d\d/)).toBeVisible()
 
   await card.getByRole('button', { name: 'Confirm' }).click()
-  await expect(card.getByText('Sasha booked the visit')).toBeVisible()
-  await expect(card.getByText('Done')).toHaveCount(3)
+  await expect(card.getByText('Sasha booked the visit')).toHaveCount(2)
+  await expect(card.getByText('Sasha found the client')).toBeVisible()
+  await expect(card.getByText('Sasha found free time')).toBeVisible()
   await expect(card.getByRole('button', { name: 'Confirm' })).toHaveCount(0)
 
   // the list behind the panel refreshed by itself

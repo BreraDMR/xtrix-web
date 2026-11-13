@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useWorkspaceAccessContext } from '../../hooks/useWorkspaceAccess'
 import { useTranslation } from '../../hooks/useTranslation'
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import { useQueryClient, type UseQueryResult } from '@tanstack/react-query'
 import { HiOutlineMicrophone, HiOutlinePaperAirplane, HiOutlineSparkles, HiOutlineStop, HiOutlineTrash, HiOutlineX } from 'react-icons/hi'
 import api from '../../api/client'
@@ -49,6 +49,54 @@ type NewEntry = Entry extends infer E ? (E extends Entry ? Omit<E, 'id'> : never
 const PHONE = '(max-width: 639px)'
 const FOCUSABLE = 'button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
 
+// on a desktop the panel can be dragged wider or narrower by its left edge; the width is remembered
+const WIDE = '(min-width: 1024px)'
+const MIN_WIDTH = 800
+const WIDTH_KEY = 'assistant-panel-width'
+
+function savedWidth(): number | null {
+  try {
+    const value = Number(window.localStorage.getItem(WIDTH_KEY))
+    return Number.isFinite(value) && value >= MIN_WIDTH ? value : null
+  } catch {
+    return null
+  }
+}
+
+function useResizableWidth() {
+  const [width, setWidth] = useState<number | null>(() => savedWidth())
+  const [wide, setWide] = useState(() => typeof window.matchMedia === 'function' && window.matchMedia(WIDE).matches)
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
+    const media = window.matchMedia(WIDE)
+    const update = () => setWide(media.matches)
+    media.addEventListener?.('change', update)
+    return () => media.removeEventListener?.('change', update)
+  }, [])
+  const startDrag = (event: ReactPointerEvent) => {
+    event.preventDefault()
+    const move = (e: PointerEvent) => {
+      const max = Math.max(MIN_WIDTH, window.innerWidth - 80)
+      setWidth(Math.round(Math.min(max, Math.max(MIN_WIDTH, window.innerWidth - e.clientX))))
+    }
+    const stop = () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', stop)
+      setWidth((current) => {
+        try {
+          if (current) window.localStorage.setItem(WIDTH_KEY, String(current))
+        } catch {
+          // private mode or blocked storage: the width just isn't remembered
+        }
+        return current
+      })
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', stop)
+  }
+  return { width: wide ? width : null, wide, startDrag }
+}
+
 function useFullScreen(): boolean {
   const [full, setFull] = useState(() => typeof window.matchMedia === 'function' && window.matchMedia(PHONE).matches)
   useEffect(() => {
@@ -92,6 +140,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   const logRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const fullScreen = useFullScreen()
+  const resize = useResizableWidth()
   const titleId = useId()
   const hintId = useId()
 
@@ -354,9 +403,19 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
       hidden={!open}
       onKeyDown={onKeyDown}
       className={open
-        ? 'fixed inset-0 z-[60] flex flex-col bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[min(760px,100vw)] sm:border-l sm:border-gray-200 sm:shadow-2xl lg:w-[min(1200px,94vw)] dark:sm:border-gray-700'
+        ? 'fixed inset-0 z-[60] flex flex-col bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[min(800px,100vw)] sm:border-l sm:border-gray-200 sm:shadow-2xl lg:w-[clamp(800px,60vw,1400px)] dark:sm:border-gray-700'
         : 'hidden'}
+      style={open && resize.width ? { width: resize.width } : undefined}
     >
+      {open && resize.wide && (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label={say('resize')}
+          onPointerDown={resize.startDrag}
+          className="absolute inset-y-0 left-0 z-10 w-1.5 -translate-x-1/2 cursor-col-resize hover:bg-purple-300/60"
+        />
+      )}
       <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
         <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">
           <HiOutlineSparkles className="h-5 w-5" aria-hidden="true" />

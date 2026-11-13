@@ -247,8 +247,8 @@ describe('plan card', () => {
     await ask('Book Clara for a haircut tomorrow at 10')
 
     const card = await screen.findByRole('article', { name: /Book Clara for a haircut/ })
-    expect(within(card).getByText('Find the client')).toBeInTheDocument()
-    expect(within(card).getByText('Book a visit')).toBeInTheDocument()
+    expect(within(card).getByText('Sasha will find the client')).toBeInTheDocument()
+    expect(within(card).getByText('Sasha will book a visit')).toBeInTheDocument()
     expect(within(card).getAllByText('Clara Client')).toHaveLength(2)
     expect(within(card).getByText('Haircut')).toBeInTheDocument()
     expect(within(card).getByText('Olga Owner')).toBeInTheDocument()
@@ -366,8 +366,9 @@ describe('confirming a plan', () => {
     await userEvent.click(within(card).getByRole('button', { name: 'Confirm' }))
 
     await waitFor(() => expect(api.post).toHaveBeenLastCalledWith('/assistant/execute', { plan_id: 'plan-1' }))
-    expect(await screen.findByText('Sasha booked the visit')).toBeInTheDocument()
-    expect(within(card).getAllByText('Done')).toHaveLength(2)
+    // every step now says it in the assistant's voice, and the outcome line says it once more
+    expect(await screen.findAllByText('Sasha booked the visit')).toHaveLength(2)
+    expect(within(card).getByText('Sasha found the client')).toBeInTheDocument()
     // the Confirm button is gone, so the focus goes back to the input instead of getting lost
     await waitFor(() => expect(screen.getByRole('textbox', { name: 'Type a request…' })).toHaveFocus())
     expect(within(card).queryByRole('button', { name: 'Confirm' })).not.toBeInTheDocument()

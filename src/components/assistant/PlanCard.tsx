@@ -8,15 +8,16 @@ import { minutesSeconds, useCountdown } from '../../hooks/useCountdown'
 import { confirmable, outcomeText, type PlanEntry, type Say } from './plan'
 import { AssistantBubble, LogCard } from './ChatBubbles'
 
-const ACTION_LABELS: Record<AssistantPlannedAction['action'], AssistantKey> = {
-  find_client: 'action_find_client',
-  create_client: 'action_create_client',
-  update_client: 'action_update_client',
-  find_free_slot: 'action_find_free_slot',
-  create_visit: 'action_create_visit',
-  reschedule_visit: 'action_reschedule_visit',
-  cancel_visit: 'action_cancel_visit',
-  add_note: 'action_add_note',
+// each step is said in the assistant's voice: "Sasha will book a visit", then "Sasha booked the visit"
+const STEP_LABELS: Record<AssistantPlannedAction['action'], { will: AssistantKey; did: AssistantKey }> = {
+  find_client: { will: 'will_find_client', did: 'did_find_client' },
+  create_client: { will: 'will_create_client', did: 'did_create_client' },
+  update_client: { will: 'will_update_client', did: 'did_update_client' },
+  find_free_slot: { will: 'will_find_free_slot', did: 'did_find_free_slot' },
+  create_visit: { will: 'will_create_visit', did: 'did_create_visit' },
+  reschedule_visit: { will: 'will_reschedule_visit', did: 'did_reschedule_visit' },
+  cancel_visit: { will: 'will_cancel_visit', did: 'did_cancel_visit' },
+  add_note: { will: 'will_add_note', did: 'did_add_note' },
 }
 
 const RESULT_LABELS: Record<AssistantActionResult['status'], AssistantKey> = {
@@ -147,7 +148,12 @@ export default function PlanCard({ entry, name, locale, say, onConfirm, onCancel
               const outcome = result?.results.find((r) => r.index === index)
               return (
                 <li key={index} className="rounded-md bg-gray-50 p-2 dark:bg-gray-900/40">
-                  <p className="font-medium">{ACTION_LABELS[action.action] ? say(ACTION_LABELS[action.action]) : action.action}</p>
+                  <p className={`flex items-center gap-1 font-medium ${outcome?.status === 'done' ? 'text-green-700 dark:text-green-400' : ''}`}>
+                    {outcome?.status === 'done' && <HiOutlineCheckCircle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />}
+                    {STEP_LABELS[action.action]
+                      ? say(outcome?.status === 'done' ? STEP_LABELS[action.action].did : STEP_LABELS[action.action].will)
+                      : action.action}
+                  </p>
                   {rows(action).length > 0 && (
                     <dl className="mt-1 grid grid-cols-[auto,1fr] gap-x-3 gap-y-0.5 text-gray-700 dark:text-gray-300">
                       {rows(action).map(([label, value]) => (
@@ -158,7 +164,8 @@ export default function PlanCard({ entry, name, locale, say, onConfirm, onCancel
                       ))}
                     </dl>
                   )}
-                  {outcome && <ResultLine result={outcome} say={say} />}
+                  {/* a done step already says so in its own line; failed and skipped ones get the result */}
+                  {outcome && outcome.status !== 'done' && <ResultLine result={outcome} say={say} />}
                 </li>
               )
             })}
