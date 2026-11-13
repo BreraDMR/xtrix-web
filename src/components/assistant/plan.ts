@@ -7,7 +7,7 @@ export interface PlanEntry {
   id: number
   kind: 'plan'
   plan: AssistantPlanOut
-  // what was sent for this plan, so an answer to its questions can go out with it
+  // what was sent for this plan (kept for display; answers no longer repeat it, the server has the chat)
   request: string
   phase: PlanPhase
   result?: AssistantExecuteOut

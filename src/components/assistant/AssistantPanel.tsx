@@ -17,6 +17,7 @@ import { minutesSeconds, useCountdown } from '../../hooks/useCountdown'
 import { MAX_RECORDING_SECONDS, useVoiceRecorder, type VoiceProblem } from '../../hooks/useVoiceRecorder'
 import ConversationList from './ConversationList'
 import PlanCard from './PlanCard'
+import { AssistantBubble, SystemLine, UserBubble } from './ChatBubbles'
 import { confirmable, type PlanEntry, type PlanPhase, type Say } from './plan'
 
 const MAX_REQUEST_LENGTH = 2000
@@ -246,10 +247,10 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
   const send = async () => {
     const typed = text.trim()
     if (!canSend || subscriptionRequired) return
-    // the model has no memory: an answer to its questions goes out together with the request it asked about
-    const lastPlan = [...entries].reverse().find((e): e is PlanEntry => e.kind === 'plan')
-    const asking = lastPlan && lastPlan.phase === 'open' && lastPlan.plan.questions.length > 0 ? lastPlan : null
-    const request = (asking ? `${asking.request}\n${typed}` : typed).slice(0, MAX_REQUEST_LENGTH)
+    // the server keeps the conversation and gives the model the earlier turns and its own questions,
+    // so an answer goes out as typed - glued to the old request it would repeat it, and after a reload
+    // the "request" of a stored plan is the assistant's own text
+    const request = typed.slice(0, MAX_REQUEST_LENGTH)
     add({ kind: 'user', text: typed })
     setText('')
     setSending(true)
@@ -353,7 +354,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
       hidden={!open}
       onKeyDown={onKeyDown}
       className={open
-        ? 'fixed inset-0 z-[60] flex flex-col bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[400px] sm:border-l sm:border-gray-200 sm:shadow-2xl dark:sm:border-gray-700'
+        ? 'fixed inset-0 z-[60] flex flex-col bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[min(760px,100vw)] sm:border-l sm:border-gray-200 sm:shadow-2xl lg:w-[min(1200px,94vw)] dark:sm:border-gray-700'
         : 'hidden'}
     >
       <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
@@ -394,7 +395,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
       ) : off ? (
         <p className="m-4 rounded-lg bg-gray-50 p-4 text-sm text-gray-700 dark:bg-gray-900/40 dark:text-gray-300">{say('notConfigured')}</p>
       ) : (
-        <>
+        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
           <ConversationList
             conversations={conversations}
             activeId={activeId}
@@ -407,12 +408,13 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
             onLoadMore={() => loadMore()}
             isLoadingMore={isLoadingMore}
           />
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <div
             ref={logRef}
             role="log"
             aria-live="polite"
             aria-label={persona.name}
-            className="flex-1 space-y-3 overflow-y-auto bg-gray-50 p-4 dark:bg-gray-900/30"
+            className="flex-1 space-y-4 overflow-y-auto bg-gray-50 px-4 py-5 dark:bg-gray-900/30 lg:px-8"
           >
             {messagesQuery.hasNextPage && (
               <div className="text-center">
@@ -429,33 +431,22 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
             {entries.length === 0 && <p className="text-center text-sm text-gray-500 dark:text-gray-400">{say('ready')}</p>}
             {entries.map((entry) => {
               if (entry.kind === 'user') {
-                return (
-                  <div key={entry.id} className="flex justify-end">
-                    <p className="max-w-[85%] whitespace-pre-wrap break-words rounded-lg bg-purple-600 px-3 py-2 text-sm text-white">
-                      <span className="sr-only">{say('you')}: </span>
-                      {entry.text}
-                    </p>
-                  </div>
-                )
+                return <UserBubble key={entry.id} label={say('you')}>{entry.text}</UserBubble>
               }
               if (entry.kind === 'notice') {
-                return (
-                  <p
-                    key={entry.id}
-                    role={entry.tone === 'error' ? 'alert' : undefined}
-                    className={entry.tone === 'error'
-                      ? 'rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800 dark:bg-red-900/30 dark:text-red-200'
-                      : 'max-w-[85%] rounded-lg bg-white px-3 py-2 text-sm text-gray-800 shadow-sm dark:bg-gray-800 dark:text-gray-100'}
-                  >
-                    {entry.text}
-                  </p>
-                )
+                return entry.tone === 'error'
+                  ? <SystemLine key={entry.id}>{entry.text}</SystemLine>
+                  : <AssistantBubble key={entry.id} name={persona.name}><p className="whitespace-pre-wrap">{entry.text}</p></AssistantBubble>
               }
               return (
-                <PlanCard key={entry.id} entry={entry} locale={locale} say={say} onConfirm={confirm} onCancel={cancel} onExpire={expire} />
+                <PlanCard key={entry.id} entry={entry} name={persona.name} locale={locale} say={say} onConfirm={confirm} onCancel={cancel} onExpire={expire} />
               )
             })}
-            {sending && <p className="text-sm text-gray-500 dark:text-gray-400">{say('thinking')}</p>}
+            {sending && (
+              <AssistantBubble name={persona.name} tone="muted">
+                <p className="animate-pulse">{say('thinking')}</p>
+              </AssistantBubble>
+            )}
           </div>
 
           <form
@@ -540,7 +531,8 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
             </div>
             <p id={hintId} className="mt-1 hidden text-xs text-gray-500 dark:text-gray-400 sm:block">{say('keyboardHint')}</p>
           </form>
-        </>
+          </div>
+        </div>
       )}
     </div>
   )

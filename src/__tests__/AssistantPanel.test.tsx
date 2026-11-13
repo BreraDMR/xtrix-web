@@ -272,7 +272,7 @@ describe('plan card', () => {
     })))
   })
 
-  it("shows the model's questions and no Confirm, then sends the answer with the first request", async () => {
+  it("shows the model's questions and no Confirm, then sends just the answer (the server keeps the chat)", async () => {
     vi.mocked(api.post).mockResolvedValueOnce({
       data: bookingPlan({ plan_id: 'plan-q', summary: 'Need a time', questions: ['What time?', 'Which service?'], actions: [] }),
     })
@@ -289,7 +289,7 @@ describe('plan card', () => {
     vi.mocked(api.post).mockResolvedValueOnce({ data: bookingPlan({ plan_id: 'plan-2' }) })
     await ask('at 10, haircut')
     await waitFor(() => expect(api.post).toHaveBeenLastCalledWith('/assistant/plan', expect.objectContaining({
-      text: 'Book Clara tomorrow\nat 10, haircut', locale: 'en', conversation_id: 'conv-1', client_request_id: expect.any(String),
+      text: 'at 10, haircut', locale: 'en', conversation_id: 'conv-1', client_request_id: expect.any(String),
     })))
     expect(await screen.findByRole('article', { name: /Book Clara for a haircut/ })).toBeInTheDocument()
   })

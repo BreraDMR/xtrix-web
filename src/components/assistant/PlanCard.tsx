@@ -6,6 +6,7 @@ import type { Locale } from '../../store/localeStore'
 import { formatTimeRange } from '../../hooks/useAssistant'
 import { minutesSeconds, useCountdown } from '../../hooks/useCountdown'
 import { confirmable, outcomeText, type PlanEntry, type Say } from './plan'
+import { AssistantBubble, LogCard } from './ChatBubbles'
 
 const ACTION_LABELS: Record<AssistantPlannedAction['action'], AssistantKey> = {
   find_client: 'action_find_client',
@@ -49,6 +50,7 @@ function ResultLine({ result, say }: { result: AssistantActionResult; say: Say }
 
 interface PlanCardProps {
   entry: PlanEntry
+  name: string
   locale: Locale
   say: Say
   onConfirm: (id: number) => void
@@ -56,7 +58,7 @@ interface PlanCardProps {
   onExpire: (id: number) => void
 }
 
-export default function PlanCard({ entry, locale, say, onConfirm, onCancel, onExpire }: PlanCardProps) {
+export default function PlanCard({ entry, name, locale, say, onConfirm, onCancel, onExpire }: PlanCardProps) {
   const { plan, phase, result } = entry
   const canConfirm = confirmable(plan)
   const counting = phase === 'open' && canConfirm
@@ -79,83 +81,91 @@ export default function PlanCard({ entry, locale, say, onConfirm, onCancel, onEx
     return list.filter((row): row is [AssistantKey, string] => !!row[1])
   }
 
+  const asking = plan.questions.length > 0
+  // what the assistant says goes in its bubble; the steps and buttons go in the log in the middle
+  const speech = asking ? (
+    <div>
+      {plan.summary && <p className="mb-2 font-medium">{plan.summary}</p>}
+      <p className="text-gray-600 dark:text-gray-300">{say('asks')}</p>
+      <ul className="mt-1 list-disc space-y-1 pl-5">
+        {plan.questions.map((question, i) => <li key={i}>{question}</li>)}
+      </ul>
+      {phase === 'open' && <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{say('answerHint')}</p>}
+    </div>
+  ) : (
+    <div>
+      <p className="text-gray-600 dark:text-gray-300">{say('planReady')}</p>
+      {plan.summary && <p className="mt-1 font-medium">{plan.summary}</p>}
+    </div>
+  )
+
+  const footer = (
+    <>
+      {counting && !expired && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onConfirm(entry.id)}
+            className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+          >
+            {say('confirm')}
+          </button>
+          <button
+            type="button"
+            onClick={() => onCancel(entry.id)}
+            className="rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            {say('cancel')}
+          </button>
+          <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
+            {say('expiresIn', { time: minutesSeconds(secondsLeft) })}
+          </span>
+        </div>
+      )}
+      {phase === 'running' && <p className="mt-3 text-gray-600 dark:text-gray-300">{say('executing')}</p>}
+      {phase === 'done' && result && (
+        <p className={`mt-3 font-medium ${result.ok ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
+          {outcomeText(result, say)}
+        </p>
+      )}
+      {phase === 'cancelled' && <p className="mt-3 text-gray-600 dark:text-gray-300">{say('cancelled')}</p>}
+      {(phase === 'expired' || expired) && <p className="mt-3 text-amber-700 dark:text-amber-400">{say('planExpired')}</p>}
+      {phase === 'replaced' && <p className="mt-3 text-gray-500 dark:text-gray-400">{say('replaced')}</p>}
+    </>
+  )
+
   return (
-    <article
-      aria-label={plan.summary || say('planReady')}
-      className="rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
-    >
-      {plan.questions.length > 0 ? (
-        <div>
-          {plan.summary && <p className="mb-2 font-medium">{plan.summary}</p>}
-          <p className="text-gray-600 dark:text-gray-300">{say('asks')}</p>
-          <ul className="mt-1 list-disc space-y-1 pl-5">
-            {plan.questions.map((question, i) => <li key={i}>{question}</li>)}
-          </ul>
-          {phase === 'open' && <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{say('answerHint')}</p>}
-        </div>
-      ) : (
-        <div>
-          <p className="text-gray-600 dark:text-gray-300">{say('planReady')}</p>
-          {plan.summary && <p className="mt-1 font-medium">{plan.summary}</p>}
-        </div>
-      )}
-
+    <article aria-label={plan.summary || say('planReady')} className="space-y-3">
+      <AssistantBubble name={name} tone={phase === 'replaced' || phase === 'answered' ? 'muted' : 'plain'}>
+        {speech}
+        {plan.actions.length === 0 && footer}
+      </AssistantBubble>
       {plan.actions.length > 0 && (
-        <ol className="mt-3 space-y-2">
-          {plan.actions.map((action, index) => {
-            const outcome = result?.results.find((r) => r.index === index)
-            return (
-              <li key={index} className="rounded-md bg-gray-50 p-2 dark:bg-gray-900/40">
-                <p className="font-medium">{ACTION_LABELS[action.action] ? say(ACTION_LABELS[action.action]) : action.action}</p>
-                {rows(action).length > 0 && (
-                  <dl className="mt-1 grid grid-cols-[auto,1fr] gap-x-3 gap-y-0.5 text-gray-700 dark:text-gray-300">
-                    {rows(action).map(([label, value]) => (
-                      <div key={label} className="contents">
-                        <dt className="text-gray-500 dark:text-gray-400">{say(label)}</dt>
-                        <dd className="min-w-0 break-words">{value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-                {outcome && <ResultLine result={outcome} say={say} />}
-              </li>
-            )
-          })}
-        </ol>
+        <LogCard label={say('logLabel')}>
+          <ol className="space-y-2">
+            {plan.actions.map((action, index) => {
+              const outcome = result?.results.find((r) => r.index === index)
+              return (
+                <li key={index} className="rounded-md bg-gray-50 p-2 dark:bg-gray-900/40">
+                  <p className="font-medium">{ACTION_LABELS[action.action] ? say(ACTION_LABELS[action.action]) : action.action}</p>
+                  {rows(action).length > 0 && (
+                    <dl className="mt-1 grid grid-cols-[auto,1fr] gap-x-3 gap-y-0.5 text-gray-700 dark:text-gray-300">
+                      {rows(action).map(([label, value]) => (
+                        <div key={label} className="contents">
+                          <dt className="text-gray-500 dark:text-gray-400">{say(label)}</dt>
+                          <dd className="min-w-0 break-words">{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                  {outcome && <ResultLine result={outcome} say={say} />}
+                </li>
+              )
+            })}
+          </ol>
+          {footer}
+        </LogCard>
       )}
-
-      <div className="mt-3">
-        {counting && !expired && (
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => onConfirm(entry.id)}
-              className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-            >
-              {say('confirm')}
-            </button>
-            <button
-              type="button"
-              onClick={() => onCancel(entry.id)}
-              className="rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
-            >
-              {say('cancel')}
-            </button>
-            <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
-              {say('expiresIn', { time: minutesSeconds(secondsLeft) })}
-            </span>
-          </div>
-        )}
-        {phase === 'running' && <p className="text-gray-600 dark:text-gray-300">{say('executing')}</p>}
-        {phase === 'done' && result && (
-          <p className={`font-medium ${result.ok ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
-            {outcomeText(result, say)}
-          </p>
-        )}
-        {phase === 'cancelled' && <p className="text-gray-600 dark:text-gray-300">{say('cancelled')}</p>}
-        {(phase === 'expired' || expired) && <p className="text-amber-700 dark:text-amber-400">{say('planExpired')}</p>}
-        {phase === 'replaced' && <p className="text-gray-500 dark:text-gray-400">{say('replaced')}</p>}
-      </div>
     </article>
   )
 }

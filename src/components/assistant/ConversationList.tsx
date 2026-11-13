@@ -83,7 +83,7 @@ export default function ConversationList({
   }
 
   return (
-    <div className="flex flex-col border-b border-gray-200 bg-gray-50/60 p-2.5 dark:border-gray-700/80 dark:bg-gray-800/40">
+    <div className="flex flex-col border-b border-gray-200 bg-gray-50/60 p-2.5 dark:border-gray-700/80 dark:bg-gray-800/40 lg:w-64 lg:flex-shrink-0 lg:border-b-0 lg:border-r">
       <div className="mb-2 flex items-center justify-between gap-2">
         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
           {assistantT(locale, 'conversations')}
@@ -104,7 +104,7 @@ export default function ConversationList({
           {assistantT(locale, 'noConversations')}
         </p>
       ) : (
-        <div className="flex max-h-36 flex-col gap-1 overflow-y-auto overscroll-contain pr-1">
+        <div className="flex max-h-36 flex-col gap-1 overflow-y-auto overscroll-contain pr-1 lg:max-h-none lg:flex-1">
           {conversations.map((conv) => {
             const isSelected = conv.id === activeId
             const isEditing = conv.id === editingId
