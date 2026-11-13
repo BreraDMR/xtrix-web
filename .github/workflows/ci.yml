@@ -1,9 +1,9 @@
 name: CI
 
+# Damir 13.11.2026: lint, unit tests and e2e run locally before every push,
+# so GitHub doesn't run them on its own. Start it by hand when you want it.
 on:
-  push:
-    branches: [main, staging, develop]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   check:
