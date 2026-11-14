@@ -366,8 +366,8 @@ describe('confirming a plan', () => {
     await userEvent.click(within(card).getByRole('button', { name: 'Confirm' }))
 
     await waitFor(() => expect(api.post).toHaveBeenLastCalledWith('/assistant/execute', { plan_id: 'plan-1' }))
-    // every step now says it in the assistant's voice, and the outcome line says it once more
-    expect(await screen.findAllByText('Sasha booked the visit')).toHaveLength(2)
+    // every step says it in the assistant's voice; no extra outcome line on top when all went fine
+    expect(await screen.findAllByText('Sasha booked the visit')).toHaveLength(1)
     expect(within(card).getByText('Sasha found the client')).toBeInTheDocument()
     // the Confirm button is gone, so the focus goes back to the input instead of getting lost
     await waitFor(() => expect(screen.getByRole('textbox', { name: 'Type a request…' })).toHaveFocus())
@@ -388,7 +388,7 @@ describe('confirming a plan', () => {
     const { card } = await planReady(bookingPlan({ assistant: persona('Сашенька', 'female') }))
     vi.mocked(api.post).mockResolvedValueOnce({ data: executed() })
     await userEvent.click(within(card).getByRole('button', { name: 'Подтвердить' }))
-    expect(await screen.findByText('Сашенька записала визит')).toBeInTheDocument()
+    expect(await screen.findByText('Сашенька записала на визит')).toBeInTheDocument()
   })
 
   it('uses the male form for a male assistant', async () => {
@@ -397,7 +397,7 @@ describe('confirming a plan', () => {
     const { card } = await planReady(bookingPlan({ assistant: persona('Марк', 'male', false) }))
     vi.mocked(api.post).mockResolvedValueOnce({ data: executed() })
     await userEvent.click(within(card).getByRole('button', { name: 'Подтвердить' }))
-    expect(await screen.findByText('Марк записал визит')).toBeInTheDocument()
+    expect(await screen.findByText('Марк записал на визит')).toBeInTheDocument()
   })
 
   it('shows which action failed, why, and what was skipped', async () => {

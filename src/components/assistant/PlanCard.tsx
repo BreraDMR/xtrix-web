@@ -124,7 +124,8 @@ export default function PlanCard({ entry, name, locale, say, onConfirm, onCancel
         </div>
       )}
       {phase === 'running' && <p className="mt-3 text-gray-600 dark:text-gray-300">{say('executing')}</p>}
-      {phase === 'done' && result && (
+      {/* every step already shows its own green line, so the summary only matters when something went wrong */}
+      {phase === 'done' && result && (!result.ok || plan.actions.length === 0) && (
         <p className={`mt-3 font-medium ${result.ok ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
           {outcomeText(result, say)}
         </p>
