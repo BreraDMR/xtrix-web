@@ -33,7 +33,7 @@ export default function Tabs<T extends string>({ tabs, value, onChange, label, c
       role="tablist"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className={`mb-6 flex gap-1 overflow-x-auto border-b border-[var(--workspace-line)] ${className}`}
+      className={`mb-6 inline-flex max-w-full gap-1 overflow-x-auto rounded-full bg-[var(--workspace-fill)] p-1 ${className}`}
     >
       {tabs.map((tab, index) => {
         const selected = tab.id === value
@@ -46,10 +46,10 @@ export default function Tabs<T extends string>({ tabs, value, onChange, label, c
             aria-selected={selected}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(tab.id)}
-            className={`-mb-px whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-focus)] ${
+            className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[13.5px] font-medium tracking-[-0.01em] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-focus)] ${
               selected
-                ? 'border-[var(--workspace-accent)] text-[var(--workspace-ink)]'
-                : 'border-transparent text-[var(--workspace-muted)] hover:text-[var(--workspace-ink)]'
+                ? 'bg-[var(--workspace-panel)] text-[var(--workspace-ink)] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)]'
+                : 'text-[var(--workspace-muted)] hover:text-[var(--workspace-ink)]'
             }`}
           >
             {tab.label}

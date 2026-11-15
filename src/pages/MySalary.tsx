@@ -6,7 +6,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
-import { HiCheckCircle, HiExclamationCircle, HiXCircle } from 'react-icons/hi'
+import { LuCircleAlert, LuCircleCheck, LuCircleX } from 'react-icons/lu'
 import ExportButton from '../components/ExportButton'
 import Tabs from '../ui/Tabs'
 
@@ -134,11 +134,11 @@ export default function MySalary() {
   const getPaymentStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <HiCheckCircle className="w-5 h-5 text-green-600" />
+        return <LuCircleCheck className="w-5 h-5 text-green-600" />
       case 'pending':
-        return <HiExclamationCircle className="w-5 h-5 text-yellow-600" />
+        return <LuCircleAlert className="w-5 h-5 text-yellow-600" />
       case 'failed':
-        return <HiXCircle className="w-5 h-5 text-red-600" />
+        return <LuCircleX className="w-5 h-5 text-red-600" />
       default:
         return null
     }

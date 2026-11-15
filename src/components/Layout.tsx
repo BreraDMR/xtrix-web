@@ -12,12 +12,8 @@ import AccessNotice from './subscription/AccessNotice'
 import PilotSubscription from './subscription/PilotSubscription'
 import LoadingSpinner from './LoadingSpinner'
 import QueryError from './QueryError'
-import { HiOutlineMenuAlt2, HiOutlineX, HiOutlineChevronRight, HiOutlineChevronLeft } from 'react-icons/hi'
 import {
-  LuLayoutGrid, LuUserPen, LuDoorOpen, LuCalendar, LuClock, LuHandshake, LuClipboardList,
-  LuShoppingCart, LuCircleDollarSign, LuChartLine, LuHeart, LuCircleUser, LuBriefcase,
-  LuReceiptText, LuWallet, LuSettings, LuBell, LuUserPlus, LuMegaphone, LuShieldCheck,
-  LuUpload, LuIdCard,
+  LuBell, LuBriefcase, LuCalendar, LuChartLine, LuChevronLeft, LuChevronRight, LuCircleDollarSign, LuCircleUser, LuClipboardList, LuClock, LuDoorOpen, LuHandshake, LuHeart, LuIdCard, LuLayoutGrid, LuLogOut, LuMegaphone, LuMenu, LuReceiptText, LuSettings, LuShieldCheck, LuShoppingCart, LuUpload, LuUserPen, LuUserPlus, LuWallet, LuX,
 } from 'react-icons/lu'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -147,13 +143,13 @@ export default function Layout() {
         className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="crm-brand flex h-[88px] shrink-0 items-center gap-3">
           <Link to="/app" aria-label="Xtrix" className="flex items-center gap-2.5">
-            <span className="crm-logo h-8 w-8 text-xl">X</span>
-            <span className="crm-navtext text-[20px] font-bold tracking-[-0.5px]">Xtrix</span>
+            <span className="crm-logo h-8 w-8 text-[17px]">X</span>
+            <span className="crm-navtext font-display text-[19px] font-semibold tracking-[-0.03em]">Xtrix</span>
           </Link>
-          <button className="ml-auto p-1 text-gray-500 lg:hidden" aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)}><HiOutlineX className="h-5 w-5" /></button>
+          <button className="ml-auto p-1 text-gray-500 lg:hidden" aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)}><LuX className="h-5 w-5" /></button>
         </div>
-        <div title={workspaceName} className="crm-business mb-2 flex shrink-0 items-center gap-2.5 rounded-[14px] border border-[var(--x-lavender-border)] bg-[var(--x-lavender)]">
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-gradient-diag text-[11px] font-bold text-white">{initials(workspaceName)}</span>
+        <div title={workspaceName} className="crm-business mb-2 flex shrink-0 items-center gap-2.5 rounded-xl border border-[var(--workspace-hairline)] bg-[var(--workspace-panel)] shadow-sm">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-gradient-diag text-[11px] font-semibold text-white">{initials(workspaceName)}</span>
           <div className="crm-navtext min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
         </div>
         <nav aria-label={t('nav.primary')} className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5">
@@ -170,17 +166,17 @@ export default function Layout() {
               title={t(isCompact ? 'nav.expand_menu' : 'nav.collapse_menu')}
               aria-controls="workspace-navigation" aria-expanded={!isCompact}
               onClick={() => setIsCompact((compact) => !compact)}>
-              {isCompact ? <HiOutlineChevronRight className="h-5 w-5" /> : <HiOutlineChevronLeft className="h-5 w-5" />}
+              {isCompact ? <LuChevronRight className="h-5 w-5" /> : <LuChevronLeft className="h-5 w-5" />}
             </button>
             <button className="-ml-1 p-1 text-gray-600 lg:hidden dark:text-gray-300"
               aria-label={t('nav.primary')} aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
-              onClick={() => setIsMobileMenuOpen((open) => !open)}><HiOutlineMenuAlt2 className="h-5 w-5" /></button>
-            <div className="min-w-0 items-center gap-2 text-xs text-gray-500 flex"><span className="max-w-28 truncate sm:max-w-40">{workspaceName}</span>{active && <><HiOutlineChevronRight className="hidden h-3 w-3 sm:block" /><span className="hidden truncate text-gray-800 sm:block dark:text-gray-200">{active.label}</span></>}</div>
+              onClick={() => setIsMobileMenuOpen((open) => !open)}><LuMenu className="h-5 w-5" /></button>
+            <div className="min-w-0 items-center gap-2 text-xs text-gray-500 flex"><span className="max-w-28 truncate sm:max-w-40">{workspaceName}</span>{active && <><LuChevronRight className="hidden h-3 w-3 sm:block" /><span className="hidden truncate text-gray-800 sm:block dark:text-gray-200">{active.label}</span></>}</div>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             {access && access.crm_mode !== 'blocked' && <AssistantLauncher />}
-            <div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-brand-gradient-diag text-[11px] font-bold text-white">{initials(user?.full_name || 'U')}</span><span className="hidden max-w-40 truncate text-xs font-bold sm:inline">{user?.full_name}</span></div>
-            <button className="rounded-lg px-2 py-2 text-xs text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20" onClick={() => { signOut(); navigate('/login', { replace: true }) }}>{t('nav.logout')}</button>
+            <div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-brand-gradient-diag text-[11px] font-semibold text-white">{initials(user?.full_name || 'U')}</span><span className="hidden max-w-40 truncate text-[13px] font-medium sm:inline">{user?.full_name}</span></div>
+            <button className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] text-[var(--workspace-muted)] transition-colors hover:bg-[var(--workspace-hover)] hover:text-[var(--workspace-ink)]" onClick={() => { signOut(); navigate('/login', { replace: true }) }}><LuLogOut aria-hidden="true" className="h-4 w-4" />{t('nav.logout')}</button>
           </div>
         </header>
         <main id="workspace-main" className="crm-main mx-auto w-full min-w-0 max-w-[1540px] flex-1 p-4 pt-6 pb-[calc(88px+env(safe-area-inset-bottom))] sm:p-6 sm:pb-[calc(88px+env(safe-area-inset-bottom))] lg:p-8">
@@ -199,7 +195,7 @@ export default function Layout() {
         {links(primaryItems.filter(item => ['/app', '/app/calendar', '/app/clients'].includes(item.path)))}
         <button type="button" aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
           onClick={() => setIsMobileMenuOpen(true)}>
-          <span className="crm-navicon"><HiOutlineMenuAlt2 className="h-[18px] w-[18px]" /></span><span>{t('nav.more')}</span>
+          <span className="crm-navicon"><LuMenu className="h-[18px] w-[18px]" /></span><span>{t('nav.more')}</span>
         </button>
       </nav>
     </div>

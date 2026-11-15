@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { HiOutlineCheckCircle, HiOutlineMinusCircle, HiOutlineXCircle } from 'react-icons/hi'
+import { LuCircleCheck, LuCircleMinus, LuCircleX } from 'react-icons/lu'
 import type { AssistantActionResult, AssistantPlannedAction } from '../../api/types'
 import type { AssistantKey } from '../../i18n/assistant'
 import type { Locale } from '../../store/localeStore'
@@ -35,7 +35,7 @@ function clientName(action: AssistantPlannedAction): string | null | undefined {
 }
 
 function ResultLine({ result, say }: { result: AssistantActionResult; say: Say }) {
-  const Icon = result.status === 'done' ? HiOutlineCheckCircle : result.status === 'failed' ? HiOutlineXCircle : HiOutlineMinusCircle
+  const Icon = result.status === 'done' ? LuCircleCheck : result.status === 'failed' ? LuCircleX : LuCircleMinus
   const color = result.status === 'done' ? 'text-green-700 dark:text-green-400'
     : result.status === 'failed' ? 'text-red-700 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'
   return (
@@ -150,7 +150,7 @@ export default function PlanCard({ entry, name, locale, say, onConfirm, onCancel
               return (
                 <li key={index} className="rounded-md bg-gray-50 p-2 dark:bg-gray-900/40">
                   <p className={`flex items-center gap-1 font-medium ${outcome?.status === 'done' ? 'text-green-700 dark:text-green-400' : ''}`}>
-                    {outcome?.status === 'done' && <HiOutlineCheckCircle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />}
+                    {outcome?.status === 'done' && <LuCircleCheck className="h-4 w-4 flex-shrink-0" aria-hidden="true" />}
                     {STEP_LABELS[action.action]
                       ? say(outcome?.status === 'done' ? STEP_LABELS[action.action].did : STEP_LABELS[action.action].will)
                       : action.action}

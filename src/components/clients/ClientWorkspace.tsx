@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { HiArrowLeft, HiPrinter } from 'react-icons/hi'
+import { LuArrowLeft, LuPrinter } from 'react-icons/lu'
 import api from '../../api/client'
 import { apiErrorStatus, apiErrorMessage } from '../../api/errors'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -267,14 +267,14 @@ export default function ClientWorkspace({ embeddedClientId, onClose }: {
         {embedded ? <Link to={`/app/clients/${clientId}`} state={{ from: `${location.pathname}${location.search}` }} className="text-xs text-[var(--workspace-accent)] hover:underline">
           {t('clientWorkspace.fullPage')}
         </Link> : <Button variant="quiet" onClick={back}>
-          <HiArrowLeft className="h-4 w-4" />{t('clientWorkspace.back')}
+          <LuArrowLeft className="h-4 w-4" />{t('clientWorkspace.back')}
         </Button>}
         <div className="flex flex-wrap gap-2">
           {canEdit && <Button variant="secondary" onClick={() => setShowForm((value) => !value)}>
             {t('common.edit')}
           </Button>}
           <Button variant="quiet" onClick={() => setShowReport(true)}>
-            <HiPrinter className="h-4 w-4" />
+            <LuPrinter className="h-4 w-4" />
             {t('common.print')}
           </Button>
         </div>

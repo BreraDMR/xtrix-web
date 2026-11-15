@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
-import { HiOutlineExclamationCircle, HiOutlineHome, HiOutlineViewGrid } from 'react-icons/hi'
+import { LuCircleAlert, LuHouse, LuLayoutGrid } from 'react-icons/lu'
 
 export default function NotFound() {
   const { t } = useTranslation()
@@ -11,7 +11,7 @@ export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--workspace-bg)] px-6 py-16 text-center text-[var(--workspace-ink)]">
       <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]">
-        <HiOutlineExclamationCircle className="h-8 w-8" />
+        <LuCircleAlert className="h-8 w-8" />
       </div>
 
       <span className="mt-6 text-sm font-semibold uppercase tracking-wider text-[var(--workspace-muted)]">
@@ -29,7 +29,7 @@ export default function NotFound() {
           to="/"
           className={`ui-button ${isAuthenticated ? 'ui-button-secondary' : 'ui-button-primary'}`}
         >
-          <HiOutlineHome className="h-4 w-4" />
+          <LuHouse className="h-4 w-4" />
           {t('notfound.to_home')}
         </Link>
         {isAuthenticated && (
@@ -37,7 +37,7 @@ export default function NotFound() {
             to="/app"
             className="ui-button ui-button-primary"
           >
-            <HiOutlineViewGrid className="h-4 w-4" />
+            <LuLayoutGrid className="h-4 w-4" />
             {t('notfound.to_app')}
           </Link>
         )}

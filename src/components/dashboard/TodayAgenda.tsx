@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { HiOutlineChevronRight } from 'react-icons/hi'
+import { LuChevronRight } from 'react-icons/lu'
 import { useQuery } from '@tanstack/react-query'
 import api from '../../api/client'
 import { allPages } from '../../api/allPages'
@@ -128,7 +128,7 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
                 <div className="min-w-0">
                   {canEdit ? <button type="button" aria-label={`${t('common.edit')}: ${visit.client_name || `#${visit.client_id}`}`}
                     onClick={() => onEdit(visit.id)} className="group inline-flex max-w-full items-center gap-2 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
-                    <span className="break-words">{visit.client_name || `#${visit.client_id}`}</span><HiOutlineChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
+                    <span className="break-words">{visit.client_name || `#${visit.client_id}`}</span><LuChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
                   </button> : <p className="break-words text-sm font-medium">{visit.client_name || `#${visit.client_id}`}</p>}
                   <p className="mt-1 break-words text-xs text-[var(--workspace-muted)]">{visit.service_name || (visit.service_id ? `#${visit.service_id}` : t('today.noService'))}</p>
                 </div>

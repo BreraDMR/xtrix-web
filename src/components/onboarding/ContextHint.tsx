@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { HiOutlineLightBulb } from 'react-icons/hi'
+import { LuLightbulb } from 'react-icons/lu'
 import Button from '../../ui/Button'
 import { apiErrorMessage } from '../../api/errors'
 import { useOnboarding, useUpdateOnboarding } from '../../hooks/useOnboarding'
@@ -44,7 +44,7 @@ export default function ContextHint({ hint, onAction, to }: ContextHintProps) {
   return (
     <div className="mb-5 flex flex-col gap-3 rounded-lg border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
-        <HiOutlineLightBulb className="mt-0.5 h-5 w-5 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />
+        <LuLightbulb className="mt-0.5 h-5 w-5 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />
         <div className="min-w-0">
           <p className="text-sm font-medium">{t(copy.title)}</p>
           <p className="mt-0.5 text-xs leading-relaxed text-[var(--workspace-muted)]">{t(copy.body)}</p>

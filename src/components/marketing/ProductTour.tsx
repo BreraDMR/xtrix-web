@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useTranslation } from '../../hooks/useTranslation'
-import { HiOutlineCalendar, HiOutlineUserGroup, HiOutlineChatAlt2, HiOutlineMicrophone } from 'react-icons/hi'
+import { LuMessagesSquare, LuCalendar, LuMic, LuUsersRound } from 'react-icons/lu'
 
 export default function ProductTour() {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<'calendar' | 'clients' | 'assistant'>('calendar')
   const views = [
-    { key: 'calendar', icon: HiOutlineCalendar, label: t('landing.tour.calendar_tab'), title: t('landing.tour.step1_title'), description: t('landing.tour.step1_desc') },
-    { key: 'clients', icon: HiOutlineUserGroup, label: t('landing.tour.clients_tab'), title: t('landing.tour.step2_title'), description: t('landing.tour.step2_desc') },
-    { key: 'assistant', icon: HiOutlineChatAlt2, label: t('landing.tour.assistant_tab'), title: t('landing.tour.step3_title'), description: t('landing.tour.step3_desc') },
+    { key: 'calendar', icon: LuCalendar, label: t('landing.tour.calendar_tab'), title: t('landing.tour.step1_title'), description: t('landing.tour.step1_desc') },
+    { key: 'clients', icon: LuUsersRound, label: t('landing.tour.clients_tab'), title: t('landing.tour.step2_title'), description: t('landing.tour.step2_desc') },
+    { key: 'assistant', icon: LuMessagesSquare, label: t('landing.tour.assistant_tab'), title: t('landing.tour.step3_title'), description: t('landing.tour.step3_desc') },
   ] as const
   const current = views.find(view => view.key === activeTab)!
   const agenda = <div className="divide-y divide-[var(--workspace-line)] border-y border-[var(--workspace-line)]">
@@ -48,7 +48,7 @@ export default function ProductTour() {
             </div>
             <div className="p-4 sm:p-6">
               {activeTab === 'calendar' && <>
-                <h4 className="mb-4 flex items-center gap-2 text-xs font-semibold text-[var(--workspace-muted)]"><HiOutlineCalendar className="h-4 w-4" aria-hidden="true" />{t('landing.hero.preview_title')}</h4>
+                <h4 className="mb-4 flex items-center gap-2 text-xs font-semibold text-[var(--workspace-muted)]"><LuCalendar className="h-4 w-4" aria-hidden="true" />{t('landing.hero.preview_title')}</h4>
                 {agenda}
               </>}
               {activeTab === 'clients' && <>
@@ -62,7 +62,7 @@ export default function ProductTour() {
               </>}
               {activeTab === 'assistant' && <>
                 <div className="mb-5 flex items-start gap-3">
-                  <HiOutlineMicrophone className="mt-0.5 h-5 w-5 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />
+                  <LuMic className="mt-0.5 h-5 w-5 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />
                   <div><h4 className="text-sm font-semibold">{t('landing.features.assistant_title')}</h4><p className="mt-2 text-sm leading-relaxed text-[var(--workspace-muted)]">{t('landing.features.assistant_desc')}</p></div>
                 </div>
                 {agenda}

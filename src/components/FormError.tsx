@@ -1,4 +1,4 @@
-import { HiXCircle } from 'react-icons/hi'
+import { LuCircleX } from 'react-icons/lu'
 
 interface FormErrorProps {
   message: string
@@ -10,7 +10,7 @@ export default function FormError({ message, className = '' }: FormErrorProps) {
   
   return (
     <div className={`flex items-center gap-2 text-red-600 text-sm mt-1 ${className}`}>
-      <HiXCircle className="w-4 h-4 flex-shrink-0" />
+      <LuCircleX className="w-4 h-4 flex-shrink-0" />
       <span>{message}</span>
     </div>
   )

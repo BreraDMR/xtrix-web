@@ -1,6 +1,6 @@
 import { useId, useState } from 'react'
 import { useTranslation } from '../../hooks/useTranslation'
-import { HiOutlineChevronDown } from 'react-icons/hi'
+import { LuChevronDown } from 'react-icons/lu'
 
 export default function FAQ() {
   const { t } = useTranslation()
@@ -61,7 +61,7 @@ export default function FAQ() {
                 >
                   <span className="min-w-0">{faq.q}</span>
                   <span className="flex h-6 shrink-0 items-center">
-                    <HiOutlineChevronDown
+                    <LuChevronDown
                       className={`h-5 w-5 transform transition-transform duration-200 ${
                         isOpen ? 'rotate-180 text-[var(--workspace-accent)]' : 'text-[var(--workspace-muted)]'
                       }`}

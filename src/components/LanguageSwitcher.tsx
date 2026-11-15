@@ -1,5 +1,6 @@
 import { useId, useRef, useState } from 'react'
 import { useLocaleStore } from '../store/localeStore'
+import { LuChevronDown, LuGlobe } from 'react-icons/lu'
 
 export default function LanguageSwitcher() {
   const { locale, setLocale } = useLocaleStore()
@@ -32,8 +33,9 @@ export default function LanguageSwitcher() {
         onClick={() => setIsOpen(!isOpen)}
         className="ui-button ui-button-secondary !min-h-9 !gap-1.5 !px-3 !py-1.5 !text-xs"
       >
+        <LuGlobe aria-hidden="true" className="!h-3.5 !w-3.5 text-[var(--workspace-muted)]" />
         <span>{currentLanguage.label}</span>
-        <span className="text-xs">▼</span>
+        <LuChevronDown aria-hidden="true" className={`!h-3.5 !w-3.5 text-[var(--workspace-muted)] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       
       {isOpen && (
@@ -42,7 +44,7 @@ export default function LanguageSwitcher() {
             className="fixed inset-0 z-10" 
             onClick={() => setIsOpen(false)}
           />
-          <div id={menuId} className="absolute right-0 top-full z-20 mt-2 w-24 rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-1 shadow-lg">
+          <div id={menuId} className="absolute right-0 top-full z-20 mt-2 w-32 rounded-2xl border border-[var(--workspace-card-border)] bg-[color-mix(in_srgb,var(--workspace-panel)_90%,transparent)] p-1.5 shadow-lg backdrop-blur-xl">
             {languages.map((lang) => (
               <button
                 key={lang.code}
@@ -51,7 +53,7 @@ export default function LanguageSwitcher() {
                   setLocale(lang.code)
                   setIsOpen(false)
                 }}
-                className={`w-full rounded px-3 py-2 text-left text-xs font-medium hover:bg-[var(--workspace-accent-soft)] ${
+                className={`w-full rounded-xl px-3 py-2 text-left text-[13px] font-medium hover:bg-[var(--workspace-hover)] ${
                   locale === lang.code
                     ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]'
                     : 'text-[var(--workspace-ink)]'

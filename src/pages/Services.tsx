@@ -9,7 +9,7 @@ import Select from '../ui/Select'
 import Card from '../ui/Card'
 import Button from '../ui/Button'
 import SidePanel from '../ui/SidePanel'
-import { HiOutlineChevronRight, HiOutlinePlus } from 'react-icons/hi'
+import { LuChevronRight, LuPlus } from 'react-icons/lu'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
@@ -119,7 +119,7 @@ export default function Services() {
           </div>
           <p className="page-subtitle">{t('services.subtitle')}</p>
         </div>
-        {canEdit && <Button onClick={() => { setEditingId(undefined); setShowForm(true) }}><HiOutlinePlus />{t('services.addService')}</Button>}
+        {canEdit && <Button onClick={() => { setEditingId(undefined); setShowForm(true) }}><LuPlus />{t('services.addService')}</Button>}
       </div>
 
       {!isLoading && !isError && canEdit && services?.length === 0 && !searchQuery && !activeFilter && (
@@ -166,7 +166,7 @@ export default function Services() {
                       <td className="px-4 py-3 sm:px-5">
                         {canEdit ? <button type="button" onClick={() => handleEdit(service.id)} aria-label={`${t('common.edit')}: ${service.name}`}
                           className="inline-flex max-w-full items-center gap-2 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
-                          <span className="min-w-0 [overflow-wrap:anywhere]">{service.name}</span><HiOutlineChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
+                          <span className="min-w-0 [overflow-wrap:anywhere]">{service.name}</span><LuChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
                         </button> : <span className="text-sm font-medium [overflow-wrap:anywhere]">{service.name}</span>}
                         {service.description && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--workspace-muted)] [overflow-wrap:anywhere]" title={service.description}>{service.description}</p>}
                         <span className="mt-1 block text-xs tabular-nums text-[var(--workspace-muted)] sm:hidden">{service.duration_minutes} {t('services.min')} · {formatCurrency(service.price, currency)}</span>

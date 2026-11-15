@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { HiOutlineCalendar, HiOutlinePlus } from 'react-icons/hi'
+import { LuArrowRight, LuCalendar, LuPlus } from 'react-icons/lu'
 import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
 import type { Schema } from '../api/types'
@@ -54,54 +54,58 @@ function BusinessOverview() {
   const total = visits.data?.total_visits ?? 0
   const completed = visits.data?.visits_by_status?.completed ?? 0
   const completion = total > 0 ? (completed / total) * 100 : 0
-  const statusRow = (label: string, value: string | number) => (
-    <div className="flex items-center justify-between gap-4 rounded-[14px] bg-[#f4f4f6] px-3.5 py-2.5 dark:bg-white/5">
-      <dt className="text-xs font-bold text-[var(--workspace-muted)]">{label}</dt>
-      <dd className="min-w-[58px] rounded-md border border-[#d9c5f8] bg-[#efe6fc] px-3 py-0.5 text-center text-xs font-semibold tabular-nums dark:border-primary-800 dark:bg-primary-900/40">{value}</dd>
+  const row = (label: string, value: string | number, dot?: string) => (
+    <div className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
+      <dt className="flex items-center gap-2.5 text-[13.5px] text-[var(--workspace-muted)]">
+        {dot && <span aria-hidden="true" className={`h-2 w-2 rounded-full ${dot}`} />}{label}
+      </dt>
+      <dd className="text-[15px] font-medium tracking-[-0.01em] tabular-nums">{value}</dd>
     </div>
   )
-  return <section aria-labelledby="business-overview-title" className="mt-8">
-    <h2 id="business-overview-title" className="mb-4 text-[17px] font-semibold">{t('dashboard.overview')}</h2>
-    <div className="grid items-stretch gap-6 xl:grid-cols-3">
+  return <section aria-labelledby="business-overview-title" className="mt-12">
+    <div className="mb-4 flex items-baseline justify-between">
+      <h2 id="business-overview-title" className="text-[20px] font-semibold tracking-[-0.02em]">{t('dashboard.overview')}</h2>
+    </div>
+    <div className="grid items-stretch gap-5 xl:grid-cols-3">
       {!moneyHidden && <Card className="flex flex-col p-7">
-        <h3 className="text-[15px] font-semibold">{t('dashboard.thisMonth')}</h3>
+        <h3 className="eyebrow">{t('dashboard.thisMonth')}</h3>
         {profit.isPending ? <LoadingSpinner size="sm" /> : profit.isError ? <QueryError retry={profit.refetch} /> : <>
-          <p className="mt-2 text-xs font-semibold text-[var(--workspace-muted)]">{t('dashboard.monthlyRevenue')}</p>
-          <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <span className="text-[34px] font-bold leading-none tabular-nums">{money(profit.data?.revenue)}</span>
-            {profit.data?.profit_margin != null && <span className="text-xs font-semibold text-[var(--workspace-muted)]">
-              <span className="text-sm font-bold text-brand-pink">{profit.data.profit_margin.toFixed(2)}%</span> {t('dashboard.profitMargin').toLowerCase()}
-            </span>}
-          </div>
-          <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
-            <div><dt className="font-bold text-[#8f8f99]">{t('dashboard.monthlyExpenses')}:</dt><dd className="font-bold tabular-nums">{money(profit.data?.expenses)}</dd></div>
-            <div><dt className="font-bold text-[#8f8f99]">{t('dashboard.monthlyProfit')}:</dt><dd className="font-bold tabular-nums">{money(profit.data?.profit)}</dd></div>
+          <p className="mt-5 text-[13.5px] text-[var(--workspace-muted)]">{t('dashboard.monthlyRevenue')}</p>
+          <p className="mt-1 font-display text-[40px] font-semibold leading-none tracking-[-0.035em] tabular-nums">{money(profit.data?.revenue)}</p>
+          {profit.data?.profit_margin != null && <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--x-lavender)] px-2.5 py-1 text-xs font-medium text-[var(--workspace-accent)]">
+            {profit.data.profit_margin.toFixed(1)}% · {t('dashboard.profitMargin').toLowerCase()}
+          </p>}
+          <dl className="mt-6 divide-y divide-[var(--workspace-line)] border-t border-[var(--workspace-line)] pt-3">
+            {row(t('dashboard.monthlyExpenses'), money(profit.data?.expenses))}
+            {row(t('dashboard.monthlyProfit'), money(profit.data?.profit))}
           </dl>
         </>}
         <div className="min-h-6 flex-1" />
-        {canOpenFinance && <Link to="/app/finance" className="ui-button ui-button-primary w-full py-2.5 text-[15px]">{t('nav.finance')}</Link>}
+        {canOpenFinance && <Link to="/app/finance" className="ui-button ui-button-secondary w-full">{t('nav.finance')}<LuArrowRight aria-hidden="true" /></Link>}
       </Card>}
       <Card className="p-7">
-        <h3 className="text-[15px] font-semibold">{t('dashboard.visitHistory')}</h3>
+        <h3 className="eyebrow">{t('dashboard.visitHistory')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
-          <div className="mt-4 flex flex-col items-center gap-6 sm:flex-row xl:flex-col 2xl:flex-row">
+          <div className="mt-6 flex flex-col items-center gap-7">
             <DonutProgress value={completion} caption={`${completed} / ${total}`} />
-            <dl className="w-full space-y-2.5 text-[13px]">
-              <div className="flex items-center justify-between gap-4"><dt className="flex items-center gap-2"><span className="h-2 w-2 bg-brand-pink" />{t('dashboard.completedVisits')}</dt><dd className="font-bold tabular-nums">{completed}</dd></div>
-              <div className="flex items-center justify-between gap-4"><dt className="flex items-center gap-2"><span className="h-2 w-2 bg-[#e6e6ea]" />{t('dashboard.plannedVisits')}</dt><dd className="font-bold tabular-nums">{visits.data?.visits_by_status?.planned ?? 0}</dd></div>
-              <div className="flex items-center justify-between gap-4"><dt className="flex items-center gap-2"><span className="h-2 w-2 bg-[#c81e3a]" />{t('dashboard.cancelledVisits')}</dt><dd className="font-bold tabular-nums">{visits.data?.visits_by_status?.cancelled ?? 0}</dd></div>
-              <div className="flex items-center justify-between gap-4 border-t border-[var(--workspace-line)] pt-2.5"><dt className="text-[var(--workspace-muted)]">{t('dashboard.totalVisits')}</dt><dd className="font-bold tabular-nums">{visits.data?.total_visits ?? '—'}</dd></div>
+            <dl className="w-full divide-y divide-[var(--workspace-line)]">
+              {row(t('dashboard.completedVisits'), completed, 'bg-brand-pink')}
+              {row(t('dashboard.plannedVisits'), visits.data?.visits_by_status?.planned ?? 0, 'bg-[#d2d2d7]')}
+              {row(t('dashboard.cancelledVisits'), visits.data?.visits_by_status?.cancelled ?? 0, 'bg-[#ff6b6b]')}
+              {row(t('dashboard.totalVisits'), visits.data?.total_visits ?? '—')}
             </dl>
           </div>}
       </Card>
       <Card className="p-7">
-        <h3 className="text-[15px] font-semibold">{t('nav.clients')}</h3>
-        {clients.isPending ? <LoadingSpinner size="sm" /> : clients.isError ? <QueryError retry={clients.refetch} /> :
-          <dl className="mt-5 space-y-3.5">
-            {statusRow(t('dashboard.totalClients'), clients.data?.total_clients ?? '—')}
-            {statusRow(t('dashboard.newClients'), clients.data?.new_clients ?? '—')}
-            {statusRow(t('dashboard.averageSpending'), money(clients.data?.average_spending))}
-          </dl>}
+        <h3 className="eyebrow">{t('nav.clients')}</h3>
+        {clients.isPending ? <LoadingSpinner size="sm" /> : clients.isError ? <QueryError retry={clients.refetch} /> : <>
+          <p className="mt-5 text-[13.5px] text-[var(--workspace-muted)]">{t('dashboard.totalClients')}</p>
+          <p className="mt-1 font-display text-[40px] font-semibold leading-none tracking-[-0.035em] tabular-nums">{clients.data?.total_clients ?? '—'}</p>
+          <dl className="mt-6 divide-y divide-[var(--workspace-line)] border-t border-[var(--workspace-line)] pt-3">
+            {row(t('dashboard.newClients'), clients.data?.new_clients ?? '—')}
+            {row(t('dashboard.averageSpending'), money(clients.data?.average_spending))}
+          </dl>
+        </>}
       </Card>
     </div>
   </section>
@@ -132,8 +136,8 @@ export default function Dashboard() {
     <div className="page-toolbar">
       <div><h1 className="page-title">{t('dashboard.title')}</h1><p className="page-subtitle">{t('dashboard.subtitle')}</p></div>
       <div className="page-actions">
-        <Link to="/app/calendar" aria-label={t('dashboard.openCalendar')} className="ui-button ui-button-secondary"><HiOutlineCalendar />{t('nav.calendar')}</Link>
-        {canEdit && <Button onClick={() => setForm({})}><HiOutlinePlus />{t('visits.newVisit')}</Button>}
+        <Link to="/app/calendar" aria-label={t('dashboard.openCalendar')} className="ui-button ui-button-secondary"><LuCalendar />{t('nav.calendar')}</Link>
+        {canEdit && <Button onClick={() => setForm({})}><LuPlus />{t('visits.newVisit')}</Button>}
       </div>
     </div>
     <Welcome />

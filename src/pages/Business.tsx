@@ -2,7 +2,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { HiCheckCircle, HiOutlineExclamationCircle } from 'react-icons/hi'
+import { LuCircleAlert, LuCircleCheck } from 'react-icons/lu'
 import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import BusinessForm from '../components/BusinessForm'
@@ -356,9 +356,9 @@ function PublicBookingCard() {
           <ul className="mt-4 space-y-2 text-sm">
             <li className="flex items-start gap-2">
               {settings.has_bookable_service ? (
-                <HiCheckCircle className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
+                <LuCircleCheck className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
               ) : (
-                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
+                <LuCircleAlert className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
               )}
               {/* text and link wrap next to the icon instead of dropping below it on a phone */}
               <span className="min-w-0">
@@ -381,9 +381,9 @@ function PublicBookingCard() {
             </li>
             <li className="flex items-start gap-2">
               {settings.has_schedule ? (
-                <HiCheckCircle className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
+                <LuCircleCheck className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
               ) : (
-                <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
+                <LuCircleAlert className="h-5 w-5 shrink-0 text-amber-500" aria-hidden="true" />
               )}
               {/* text and link wrap next to the icon instead of dropping below it on a phone */}
               <span className="min-w-0">

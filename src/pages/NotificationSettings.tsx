@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { HiCheckCircle, HiOutlineExclamationCircle } from 'react-icons/hi'
+import { LuCircleAlert, LuCircleCheck } from 'react-icons/lu'
 import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -119,9 +119,9 @@ export default function NotificationSettings() {
         </h2>
         <div className="mt-3 flex items-start gap-2 text-sm">
           {providerReady ? (
-            <HiCheckCircle className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
+            <LuCircleCheck className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
           ) : (
-            <HiOutlineExclamationCircle
+            <LuCircleAlert
               className="h-5 w-5 shrink-0 text-amber-500"
               aria-hidden="true"
             />
@@ -273,7 +273,7 @@ export default function NotificationSettings() {
         {test.data && (
           <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900/40 dark:bg-emerald-900/20">
             <p className="flex items-center gap-2 text-sm font-medium text-emerald-800 dark:text-emerald-300">
-              <HiCheckCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
+              <LuCircleCheck className="h-5 w-5 shrink-0" aria-hidden="true" />
               {test.data.status === 'captured'
                 ? t('notifications.testCaptured')
                 : test.data.status}

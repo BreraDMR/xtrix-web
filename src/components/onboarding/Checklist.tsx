@@ -1,6 +1,6 @@
 import { useId, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { HiCheckCircle, HiOutlineArrowRight } from 'react-icons/hi'
+import { LuArrowRight, LuCircleCheck } from 'react-icons/lu'
 import Card from '../../ui/Card'
 import Button from '../../ui/Button'
 import { apiErrorMessage } from '../../api/errors'
@@ -86,7 +86,7 @@ export default function Checklist() {
             >
               <div className="flex min-w-0 items-center gap-2.5">
                 {step.completed ? (
-                  <HiCheckCircle className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
+                  <LuCircleCheck className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
                 ) : (
                   <span className="h-5 w-5 shrink-0 rounded-full border border-[var(--workspace-border)]" aria-hidden="true" />
                 )}
@@ -107,7 +107,7 @@ export default function Checklist() {
                   className="inline-flex shrink-0 items-center gap-1 text-xs text-[var(--workspace-accent)] hover:underline"
                 >
                   {t(STEP_COPY[step.key].cta)}
-                  <HiOutlineArrowRight className="h-4 w-4" aria-hidden="true" />
+                  <LuArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               )}
               {!step.completed && !route && (

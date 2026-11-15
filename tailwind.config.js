@@ -8,16 +8,16 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Segoe UI Variable Text"', '"Segoe UI Variable"', '"Segoe UI"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['"Segoe UI Variable Display"', '"Segoe UI Variable"', '"Segoe UI"', 'Inter', 'system-ui', 'sans-serif'],
-        chart: ['Roboto', '"Segoe UI"', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'Inter', '"Segoe UI Variable Text"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', 'Inter', '"Segoe UI Variable Display"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        chart: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'system-ui', 'sans-serif'],
       },
-      borderRadius: { md: '6px', lg: '10px', xl: '14px', '2xl': '16px', card: '14px' },
+      borderRadius: { md: '8px', lg: '12px', xl: '16px', '2xl': '20px', card: '18px' },
       boxShadow: {
-        sm: '0 1px 3px rgba(17, 17, 26, 0.06)',
-        md: '0 2px 10px rgba(17, 17, 26, 0.08)',
-        lg: '0 8px 28px rgba(17, 17, 26, 0.12)',
-        card: '0 2px 10px rgba(17, 17, 26, 0.08)',
+        sm: '0 1px 2px rgba(0, 0, 0, 0.04)',
+        md: '0 1px 2px rgba(0, 0, 0, 0.03), 0 6px 24px rgba(0, 0, 0, 0.035)',
+        lg: '0 2px 6px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 0, 0, 0.08)',
+        card: '0 1px 2px rgba(0, 0, 0, 0.03), 0 6px 24px rgba(0, 0, 0, 0.035)',
       },
       backgroundImage: {
         'brand-gradient': 'linear-gradient(90deg, #e04aa8 0%, #9f5aef 100%)',
@@ -26,14 +26,14 @@ export default {
       colors: {
         // Xtrix neutrals: cool, slightly lavender greys from the design
         gray: {
-          50: '#f7f7fb', 100: '#f1f1f5', 200: '#e4e4ea', 300: '#c9c9d3',
-          400: '#a3a3ad', 500: '#6b6b76', 600: '#55555f', 700: '#3a3a44',
-          800: '#1f1c27', 900: '#111111', 950: '#0b0a0f',
+          50: '#f6f6f8', 100: '#f2f2f5', 200: '#e8e8ed', 300: '#d2d2d7',
+          400: '#aeaeb2', 500: '#86868b', 600: '#6e6e73', 700: '#48484a',
+          800: '#1d1d1f', 900: '#111113', 950: '#0b0b0c',
         },
         slate: {
-          50: '#f7f7fb', 100: '#f1f1f5', 200: '#e4e4ea', 300: '#c9c9d3',
-          400: '#a3a3ad', 500: '#6b6b76', 600: '#55555f', 700: '#3a3a44',
-          800: '#1f1c27', 900: '#111111', 950: '#0b0a0f',
+          50: '#f6f6f8', 100: '#f2f2f5', 200: '#e8e8ed', 300: '#d2d2d7',
+          400: '#aeaeb2', 500: '#86868b', 600: '#6e6e73', 700: '#48484a',
+          800: '#1d1d1f', 900: '#111113', 950: '#0b0b0c',
         },
         // the accent is the Xtrix purple; old blue/purple/indigo utilities follow it
         blue: { 50: '#f7f2fe', 100: '#efe6fc', 200: '#e2d2f9', 300: '#cdb2f5', 400: '#b48aee', 500: '#9f5aef', 600: '#8b45dd', 700: '#7633c2', 800: '#622b9e', 900: '#4f2580', 950: '#2e1250' },
@@ -51,8 +51,8 @@ export default {
           purple: '#9f5aef',
           lavender: '#f1e8fb',
           'lavender-border': '#e1ccf6',
-          bg: '#f7f7fb',
-          ink: '#111111',
+          bg: '#f6f6f8',
+          ink: '#1d1d1f',
         },
       },
     },

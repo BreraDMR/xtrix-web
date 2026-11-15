@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from '../../hooks/useTranslation'
 import Modal from '../../ui/Modal'
 import Button from '../../ui/Button'
-import { HiOutlineDocumentText } from 'react-icons/hi'
+import { LuFileText } from 'react-icons/lu'
 
 export default function PublicFooter() {
   const { t } = useTranslation()
@@ -21,7 +21,7 @@ export default function PublicFooter() {
             <button type="button" onClick={() => setModalDocument('terms')} className="text-left hover:text-[var(--workspace-accent)]">{t('landing.footer.terms')}</button>
           </div>
         </div>
-        <p className="mt-6 flex items-start gap-2 border-t border-[var(--workspace-line)] pt-5 text-[11px] leading-relaxed text-[var(--workspace-muted)]"><HiOutlineDocumentText className="h-4 w-4 shrink-0" aria-hidden="true" />{t('landing.footer.status_preview')}</p>
+        <p className="mt-6 flex items-start gap-2 border-t border-[var(--workspace-line)] pt-5 text-[11px] leading-relaxed text-[var(--workspace-muted)]"><LuFileText className="h-4 w-4 shrink-0" aria-hidden="true" />{t('landing.footer.status_preview')}</p>
       </div>
       {modalDocument && <Modal title={modalDocument === 'privacy' ? t('landing.footer.privacy') : t('landing.footer.terms')} onClose={() => setModalDocument(null)}>
         <div className="p-5">

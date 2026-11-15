@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
-import { HiDownload } from 'react-icons/hi'
+import { LuDownload } from 'react-icons/lu'
 import { useTranslation } from '../hooks/useTranslation'
 import ExportModal from './ExportModal'
 import type { ExportColumn } from '../utils/export'
@@ -50,7 +50,7 @@ export default function ExportButton<T extends object>({
         className={`ui-button ui-button-secondary ${className}`}
         title={t('common.export')}
       >
-        <HiDownload className="w-4 h-4" />
+        <LuDownload className="w-4 h-4" />
         <span className="hidden sm:inline">{t('common.export')}</span>
       </button>
 

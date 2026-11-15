@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode, cloneElement, isValidElement, useId } from 'react'
 import FormError from './FormError'
-import { HiQuestionMarkCircle } from 'react-icons/hi'
+import { LuCircleHelp } from 'react-icons/lu'
 
 interface FormFieldProps {
   label: string
@@ -31,7 +31,7 @@ export default function FormField({
         {required && <span className="text-red-500 ml-1">*</span>}
         {hint && (
           <span className="ml-2 text-gray-400 group relative">
-            <HiQuestionMarkCircle className="w-4 h-4 inline cursor-help" />
+            <LuCircleHelp className="w-4 h-4 inline cursor-help" />
             <span className="absolute left-0 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
               {hint}
             </span>

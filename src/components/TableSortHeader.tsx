@@ -1,4 +1,4 @@
-import { HiChevronUp, HiChevronDown } from 'react-icons/hi'
+import { LuChevronDown, LuChevronUp } from 'react-icons/lu'
 import { SortDirection } from '../utils/table'
 
 interface TableSortHeaderProps<T> {
@@ -29,12 +29,12 @@ export default function TableSortHeader<T>({
         className="flex min-h-6 w-full select-none items-center gap-2 rounded-sm text-left text-xs font-semibold hover:text-[var(--workspace-ink)]">
         <span>{label}</span>
         <span aria-hidden="true" className="flex shrink-0 flex-col">
-          <HiChevronUp
+          <LuChevronUp
             className={`w-3 h-3 -mb-1 ${
               direction === 'asc' ? 'text-[var(--workspace-accent)]' : 'opacity-30'
             }`}
           />
-          <HiChevronDown
+          <LuChevronDown
             className={`w-3 h-3 ${
               direction === 'desc' ? 'text-[var(--workspace-accent)]' : 'opacity-30'
             }`}

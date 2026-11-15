@@ -20,7 +20,7 @@ import Card from '../ui/Card'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Button from '../ui/Button'
-import { HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi'
+import { LuPlus, LuTrash2 } from 'react-icons/lu'
 
 // an expense keeps its own currency; show the symbol like every other amount, the code only if we don't know it
 const expenseAmount = (amount: number, code: string) =>
@@ -128,7 +128,7 @@ export default function Finance() {
           <p className="page-subtitle">{t('finance.subtitle')}</p>
         </div>
         {(user?.role === 'admin' || user?.role === 'business_owner') && (
-          <Button onClick={() => setShowAddExpense(true)} className="shrink-0"><HiOutlinePlus />{t('finance.add_expense')}</Button>
+          <Button onClick={() => setShowAddExpense(true)} className="shrink-0"><LuPlus />{t('finance.add_expense')}</Button>
         )}
       </div>
 
@@ -328,7 +328,7 @@ export default function Finance() {
                     <td className="px-3 py-3 text-right align-top text-sm font-medium tabular-nums [overflow-wrap:anywhere] sm:px-5">{expenseAmount(expense.amount, expense.currency)}</td>
                     {(user?.role === 'admin' || user?.role === 'business_owner') && <td className="px-1 py-3 text-right align-top sm:px-4">
                       <Button variant="quiet" aria-label={t('common.delete')} title={t('common.delete')} className="min-h-8 px-1.5 py-1 text-red-600 dark:text-red-400"
-                        onClick={() => { if (confirm(t('finance.confirm_delete'))) deleteMutation.mutate(expense.id) }}><HiOutlineTrash /></Button>
+                        onClick={() => { if (confirm(t('finance.confirm_delete'))) deleteMutation.mutate(expense.id) }}><LuTrash2 /></Button>
                     </td>}
                   </tr>)}
                 </tbody>

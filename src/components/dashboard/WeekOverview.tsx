@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from 'recharts'
-import { HiOutlineFolder } from 'react-icons/hi'
 import api from '../../api/client'
 import { allPages } from '../../api/allPages'
 import type { Schema, VisitOut } from '../../api/types'
@@ -80,53 +79,58 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
     }
   }, [visits.data, days, timeZone, localeTag])
 
-  return <section aria-labelledby="week-overview-title" className="mt-8">
-    <h2 id="week-overview-title" className="mb-4 text-[17px] font-semibold">{t('dashboard.thisWeek')}</h2>
-    <div className="grid gap-6 xl:grid-cols-[2.2fr_1fr]">
+  return <section aria-labelledby="week-overview-title" className="mt-12">
+    <h2 id="week-overview-title" className="mb-4 text-[20px] font-semibold tracking-[-0.02em]">{t('dashboard.thisWeek')}</h2>
+    <div className="grid gap-5 xl:grid-cols-[2.2fr_1fr]">
       <Card className="p-7">
-        <h3 className="text-[15px] font-semibold">{t('dashboard.occupancy')}</h3>
+        <h3 className="eyebrow">{t('dashboard.occupancy')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
           <div className="mt-4 h-[230px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={occupancy} margin={{ top: 10, right: 10, left: -18, bottom: 0 }}>
-                <CartesianGrid vertical={false} stroke="#9b9ba3" strokeWidth={0.6} />
+              <BarChart data={occupancy} margin={{ top: 10, right: 6, left: -22, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="x-bar-gradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopColor="#9f5aef" />
+                    <stop offset="1" stopColor="#e04aa8" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} stroke="var(--workspace-line)" strokeDasharray="0" />
                 <XAxis dataKey="key" axisLine={false} tickLine={false} interval={0} height={34}
                   tick={({ x, y, index }: { x: number; y: number; index: number }) => (
                     <g transform={`translate(${x},${y + 8})`}>
-                      <text textAnchor="middle" fill="#6b6b76" fontSize={10} fontFamily="Roboto, sans-serif">
+                      <text textAnchor="middle" fill="#86868b" fontSize={10.5} fontFamily="-apple-system, BlinkMacSystemFont, Inter, sans-serif">
                         <tspan x={0} dy={0} style={{ textTransform: 'capitalize' }}>{occupancy[index]?.day}</tspan>
                         <tspan x={0} dy={12}>{occupancy[index]?.date}</tspan>
                       </text>
                     </g>
                   )} />
                 <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickFormatter={(value) => `${value}%`}
-                  axisLine={false} tickLine={false} tick={{ fill: '#9b9ba3', fontSize: 8 }} />
-                <Tooltip cursor={{ fill: 'rgba(159,90,239,0.06)' }}
+                  axisLine={false} tickLine={false} tick={{ fill: '#aeaeb2', fontSize: 10 }} />
+                <Tooltip cursor={{ fill: 'rgba(0,0,0,0.03)' }}
+                  contentStyle={{ borderRadius: 12, border: '1px solid rgba(0,0,0,.06)', boxShadow: '0 8px 24px rgba(0,0,0,.08)', fontSize: 12 }}
                   labelFormatter={(_label, payload) => payload?.[0]?.payload ? `${payload[0].payload.day} ${payload[0].payload.date}` : ''}
                   formatter={(_value, _name, item) => [`${item.payload.count} ${t('dashboard.visitsCount')}`, '']} />
-                <Bar dataKey="value" barSize={30} minPointSize={2} isAnimationActive={false}>
-                  {occupancy.map((entry) => <Cell key={entry.key} fill={entry.key === todayKey ? '#e04aa8' : '#e8e8ea'} />)}
+                <Bar dataKey="value" barSize={28} minPointSize={3} radius={[8, 8, 8, 8]} isAnimationActive={false}>
+                  {occupancy.map((entry) => <Cell key={entry.key} fill={entry.key === todayKey ? 'url(#x-bar-gradient)' : '#e8e8ed'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>}
       </Card>
       <Card className="p-7">
-        <h3 className="text-[15px] font-semibold">{t('dashboard.topThisWeek')}</h3>
+        <h3 className="eyebrow">{t('dashboard.topThisWeek')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
           topServices.length === 0 ? <p className="mt-4 text-[13px] font-semibold text-[var(--workspace-muted)]">{t('dashboard.noVisitsThisWeek')}</p> :
-            <ul className="mt-5 space-y-3">
-              {topServices.map((service, index) => <li key={service.name} className="text-[13px]">
-                <div className="flex items-center gap-2 font-semibold">
-                  <HiOutlineFolder aria-hidden="true" className="h-4 w-4 shrink-0" />
-                  <span className="truncate">{service.name}</span>
+            <ol className="mt-5 divide-y divide-[var(--workspace-line)]">
+              {topServices.map((service, index) => <li key={service.name} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--workspace-fill)] text-xs font-medium tabular-nums text-[var(--workspace-muted)]">{index + 1}</span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[14px] font-medium tracking-[-0.01em]">{service.name}</p>
+                  <p className="text-xs text-[var(--workspace-muted)] tabular-nums">{service.count} {t('dashboard.visitsCount')}</p>
                 </div>
-                {index < 2 && <p className="ml-6 mt-1 text-xs">
-                  <span className="text-brand-pink">{service.count}</span> {t('dashboard.visitsCount')} · <span className="text-brand-pink">{formatCurrency(service.revenue, currency)}</span>
-                </p>}
-                {index >= 2 && <p className="ml-6 mt-0.5 text-xs text-[var(--workspace-muted)]">{service.count} {t('dashboard.visitsCount')}</p>}
+                <span className="text-[13.5px] font-medium tabular-nums">{formatCurrency(service.revenue, currency)}</span>
               </li>)}
-            </ul>}
+            </ol>}
       </Card>
     </div>
   </section>

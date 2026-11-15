@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
-import { HiX } from 'react-icons/hi'
+import { LuX } from 'react-icons/lu'
 import FormError from './FormError'
 import { apiErrorMessage } from '../api/errors'
 
@@ -83,7 +83,7 @@ export default function EditEmployeeSalaryModal({
             onClick={onClose}
             className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
           >
-            <HiX className="w-6 h-6" />
+            <LuX className="w-6 h-6" />
           </button>
         </div>
 

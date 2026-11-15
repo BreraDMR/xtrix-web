@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { HiX } from 'react-icons/hi'
+import { LuX } from 'react-icons/lu'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 import FormError from './FormError'
@@ -95,7 +95,7 @@ export default function SalaryAdjustmentModal({
             className="text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-400"
             disabled={createMutation.isPending}
           >
-            <HiX className="w-6 h-6" />
+            <LuX className="w-6 h-6" />
           </button>
         </div>
 

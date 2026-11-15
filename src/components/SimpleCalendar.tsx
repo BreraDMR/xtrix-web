@@ -78,11 +78,11 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
 
     return (
       <>
-        <span className="absolute right-2 top-2 grid h-[22px] min-w-[22px] place-items-center rounded-full bg-[#7c3aed] px-1 text-[11px] font-bold text-white shadow-[0_4px_10px_rgba(124,58,237,0.35)]">
+        <span className="absolute right-2 top-2 grid h-5 min-w-5 place-items-center rounded-full bg-[var(--workspace-ink)] px-1.5 text-[10.5px] font-medium tabular-nums text-[var(--workspace-panel)]">
           {dayVisits.length}
         </span>
         <span className="mt-auto flex gap-1">
-          {dayVisits.slice(0, 3).map((visit) => <span key={visit.id} className="h-1.5 w-1.5 rounded-full bg-primary-600" />)}
+          {dayVisits.slice(0, 3).map((visit) => <span key={visit.id} className="h-1.5 w-1.5 rounded-full bg-[var(--x-purple)]" />)}
         </span>
       </>
     )
@@ -107,13 +107,13 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
   ]
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
-      <div className="ui-card p-4">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_300px]">
+      <div className="ui-card p-5">
         <div className="mb-4 flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-[#d9c5f8] bg-[#e9dcfb] px-3 py-1 text-[11px] font-bold text-[#7c3aed]">
+          <span className="rounded-full bg-[var(--x-lavender)] px-3 py-1 text-xs font-medium text-[var(--workspace-accent)]">
             {t('calendar.monthView')}
           </span>
-          <span className="text-[11px] font-semibold text-[var(--workspace-muted)]">
+          <span className="text-xs text-[var(--workspace-muted)] tabular-nums">
             {totalEventsThisMonth} {t('calendar.eventsThisMonth')}
           </span>
         </div>
@@ -164,7 +164,7 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
                   <div
                     key={visit.id}
                     onClick={() => handleVisitClick(visit)}
-                    className="cursor-pointer rounded-md border border-[var(--workspace-control)] p-2.5 transition-colors hover:border-[#9f5aef]"
+                    className="cursor-pointer rounded-xl bg-[var(--workspace-fill)] p-3 transition-colors hover:bg-[var(--x-lavender)]"
                   >
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {visit.service_name || t('visits.title')}
@@ -185,9 +185,9 @@ export default function SimpleCalendar({ visits, onRefresh }: SimpleCalendarProp
           <p className="text-xs text-gray-500 mb-3 dark:text-gray-400">{t('calendar.insightsTitle')}</p>
           <div className="grid grid-cols-2 gap-3">
             {insights.map((item) => (
-              <div key={item.label} className="rounded-md bg-[#f6f1fd] p-3 dark:bg-white/5">
-                <p className="text-[11px] font-bold text-[var(--workspace-muted)]">{item.label}</p>
-                <p className="mt-1 text-xl font-bold">{item.value}</p>
+              <div key={item.label} className="rounded-2xl bg-[var(--workspace-fill)] p-3.5">
+                <p className="text-xs text-[var(--workspace-muted)]">{item.label}</p>
+                <p className="mt-1 font-display text-2xl font-semibold tracking-[-0.03em] tabular-nums">{item.value}</p>
               </div>
             ))}
           </div>

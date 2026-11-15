@@ -21,7 +21,7 @@ import Card from '../ui/Card'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Button from '../ui/Button'
-import { HiOutlinePlus } from 'react-icons/hi'
+import { LuPlus } from 'react-icons/lu'
 
 type Employee = EmployeeOut
 function contact(employee: Employee, field: 'full_name' | 'email' | 'phone'): string {
@@ -109,7 +109,7 @@ export default function Employees() {
           <h1 className="page-title">{t('employees.title')}</h1>
           <span className="rounded border border-[var(--workspace-line)] px-2 py-0.5 text-xs tabular-nums text-[var(--workspace-muted)]">{isLoading || isError ? '—' : totalItems}</span>
         </div>
-        {canEdit && <Button onClick={() => { setEditingId(undefined); setShowForm(true) }}><HiOutlinePlus />{t('employees.add_employee')}</Button>}
+        {canEdit && <Button onClick={() => { setEditingId(undefined); setShowForm(true) }}><LuPlus />{t('employees.add_employee')}</Button>}
       </div>
       <Card className="min-w-0 overflow-hidden">
         <div className="flex flex-wrap items-center gap-3 border-b border-[var(--workspace-line)] p-4">

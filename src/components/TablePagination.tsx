@@ -1,5 +1,5 @@
 import { useId, type ChangeEvent } from 'react'
-import { HiChevronLeft, HiChevronRight } from 'react-icons/hi'
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
 import { useTranslation } from '../hooks/useTranslation'
 import Select from '../ui/Select'
 
@@ -55,7 +55,7 @@ export default function TablePagination({
       <nav aria-label={t('pagination.label')} className="flex w-full shrink-0 items-center justify-between gap-1 sm:w-auto sm:justify-end">
         <button type="button" onClick={() => goToPage(page - 1)} disabled={page <= 1 || totalPages === 0}
           className={`${controlClass} ${quietClass}`}>
-          <HiChevronLeft aria-hidden="true" className="hidden h-4 w-4 sm:block" />
+          <LuChevronLeft aria-hidden="true" className="hidden h-4 w-4 sm:block" />
           <span className="sm:sr-only">{t('pagination.previous')}</span>
         </button>
         <span className="hidden sm:contents">
@@ -70,7 +70,7 @@ export default function TablePagination({
         </span>
         <button type="button" onClick={() => goToPage(page + 1)} disabled={page >= lastPage || totalPages === 0}
           className={`${controlClass} ${quietClass}`}>
-          <HiChevronRight aria-hidden="true" className="hidden h-4 w-4 sm:block" />
+          <LuChevronRight aria-hidden="true" className="hidden h-4 w-4 sm:block" />
           <span className="sm:sr-only">{t('pagination.next')}</span>
         </button>
       </nav>

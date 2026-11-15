@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
-import { HiOutlineDownload, HiOutlineUpload } from 'react-icons/hi'
+import { LuDownload, LuUpload } from 'react-icons/lu'
 
 import api from '../../api/client'
 import { apiErrorCode, apiErrorMessage, apiErrorStatus } from '../../api/errors'
@@ -216,7 +216,7 @@ export default function ImportWizard() {
             </p>
             <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700">
-                <HiOutlineUpload className="h-4 w-4" />
+                <LuUpload className="h-4 w-4" />
                 <span>{file ? t('importWizard.replaceFile') : t('importWizard.selectFile')}</span>
                 <input
                   ref={inputRef}
@@ -682,7 +682,7 @@ function PreviewPanel({
           <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('importWizard.previewHint')}</p>
         </div>
         <Button variant="secondary" onClick={downloadReport} disabled={downloading}>
-          <HiOutlineDownload className="mr-1 inline h-4 w-4" />
+          <LuDownload className="mr-1 inline h-4 w-4" />
           {downloading ? t('importWizard.downloading') : t('importWizard.downloadReport')}
         </Button>
       </div>
@@ -907,7 +907,7 @@ function ResultPanel({ batch, onClose }: { batch: ImportBatch; onClose: () => vo
       {error && <p role="alert" className="mt-3 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">{error}</p>}
       <div className="mt-4 flex flex-wrap gap-2">
         <Button onClick={downloadReport} disabled={downloading}>
-          <HiOutlineDownload className="mr-1 inline h-4 w-4" />
+          <LuDownload className="mr-1 inline h-4 w-4" />
           {downloading ? t('importWizard.downloading') : t('importWizard.downloadReport')}
         </Button>
         <Button variant="secondary" onClick={onClose}>{t('importWizard.startOver')}</Button>

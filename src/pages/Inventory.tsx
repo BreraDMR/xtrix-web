@@ -18,7 +18,7 @@ import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
 import Card from '../ui/Card'
-import { HiOutlineChevronRight, HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi'
+import { LuChevronRight, LuPlus, LuTrash2 } from 'react-icons/lu'
 
 type Product = Schema<'ProductOut'>
 
@@ -126,7 +126,7 @@ export default function Inventory() {
           <h1 className="page-title">{t('inventory.title')}</h1>
           <span className="shrink-0 rounded border border-[var(--workspace-line)] px-2 py-0.5 text-xs tabular-nums text-[var(--workspace-muted)]">{isLoading || isError ? '—' : rows.length}</span>
         </div>
-        {canManage && <Button onClick={() => setShowAddForm(true)} className="shrink-0"><HiOutlinePlus />{t('inventory.add_product')}</Button>}
+        {canManage && <Button onClick={() => setShowAddForm(true)} className="shrink-0"><LuPlus />{t('inventory.add_product')}</Button>}
       </div>
 
       <Card className="overflow-hidden">
@@ -181,7 +181,7 @@ export default function Inventory() {
                       <td className="px-3 py-3 sm:px-5">
                         {canManage ? <button type="button" aria-label={`${t('inventory.edit')}: ${product.name}`} onClick={() => setShowEditForm(product)}
                           className="inline-flex max-w-full items-center gap-1.5 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
-                          <span className="min-w-0 [overflow-wrap:anywhere]">{product.name}</span><HiOutlineChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
+                          <span className="min-w-0 [overflow-wrap:anywhere]">{product.name}</span><LuChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
                         </button> : <span className="text-sm font-medium [overflow-wrap:anywhere]">{product.name}</span>}
                         {product.description && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--workspace-muted)] [overflow-wrap:anywhere]" title={product.description}>{product.description}</p>}
                         <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-[var(--workspace-muted)] xl:hidden">
@@ -201,7 +201,7 @@ export default function Inventory() {
                         <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:justify-end">
                           <Button variant="quiet" className="min-h-8 whitespace-normal px-1.5 py-1 text-xs" onClick={() => setAddQuantityProduct(product)}>{t('inventory.add_quantity')}</Button>
                           <Button variant="quiet" aria-label={t('inventory.delete')} title={t('inventory.delete')} className="min-h-8 px-1.5 py-1 text-red-600 dark:text-red-400"
-                            onClick={() => { if (window.confirm(t('inventory.confirm_delete'))) deleteMutation.mutate(product.id) }}><HiOutlineTrash /></Button>
+                            onClick={() => { if (window.confirm(t('inventory.confirm_delete'))) deleteMutation.mutate(product.id) }}><LuTrash2 /></Button>
                         </div>
                       </td>}
                     </tr>)}

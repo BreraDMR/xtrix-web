@@ -10,7 +10,7 @@ import { formatCurrency } from '../utils/currency'
 import SalaryAdjustmentModal from '../components/SalaryAdjustmentModal'
 import SalaryPaymentModal from '../components/SalaryPaymentModal'
 import EditEmployeeSalaryModal from '../components/EditEmployeeSalaryModal'
-import { HiPlus, HiTrash, HiCheckCircle, HiXCircle, HiExclamationCircle, HiPencil } from 'react-icons/hi'
+import { LuCircleAlert, LuCircleCheck, LuCircleX, LuPencil, LuPlus, LuTrash2 } from 'react-icons/lu'
 import { dayEnd, dayStart } from '../utils/dates'
 import FormError from '../components/FormError'
 import { apiErrorMessage } from '../api/errors'
@@ -222,11 +222,11 @@ export default function EmployeeSalary() {
   const getPaymentStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <HiCheckCircle className="w-5 h-5 text-green-600" />
+        return <LuCircleCheck className="w-5 h-5 text-green-600" />
       case 'pending':
-        return <HiExclamationCircle className="w-5 h-5 text-yellow-600" />
+        return <LuCircleAlert className="w-5 h-5 text-yellow-600" />
       case 'failed':
-        return <HiXCircle className="w-5 h-5 text-red-600" />
+        return <LuCircleX className="w-5 h-5 text-red-600" />
       default:
         return null
     }
@@ -257,7 +257,7 @@ export default function EmployeeSalary() {
         <div className="page-actions">
           {employee && (
             <Button onClick={() => setShowEditSalaryModal(true)} title={t('employees.edit_salary')}>
-              <HiPencil className="h-4 w-4" aria-hidden="true" />
+              <LuPencil className="h-4 w-4" aria-hidden="true" />
               {t('employees.edit_salary')}
             </Button>
           )}
@@ -374,7 +374,7 @@ export default function EmployeeSalary() {
                         }}
                         className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
                       >
-                        <HiPlus className="w-4 h-4" />
+                        <LuPlus className="w-4 h-4" />
                         {t('salary.addAdjustment')}
                       </button>
                       {remainingAmount > 0 && (
@@ -385,7 +385,7 @@ export default function EmployeeSalary() {
                           }}
                           className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                         >
-                          <HiPlus className="w-4 h-4" />
+                          <LuPlus className="w-4 h-4" />
                           {t('salary.recordPayment')}
                         </button>
                       )}
@@ -530,7 +530,7 @@ export default function EmployeeSalary() {
                 }}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
               >
-                <HiPlus className="w-4 h-4" />
+                <LuPlus className="w-4 h-4" />
                 {t('salary.addAdjustment')}
               </button>
             )}
@@ -580,7 +580,7 @@ export default function EmployeeSalary() {
                     className="text-red-600 hover:text-red-800 p-2"
                     disabled={deleteAdjustmentMutation.isPending}
                   >
-                    <HiTrash className="w-5 h-5" />
+                    <LuTrash2 className="w-5 h-5" />
                   </button>
                 </div>
               ))}
@@ -633,7 +633,7 @@ export default function EmployeeSalary() {
                     }}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                   >
-                    <HiPlus className="w-4 h-4" />
+                    <LuPlus className="w-4 h-4" />
                     {t('salary.recordPayment')}
                   </button>
                 )

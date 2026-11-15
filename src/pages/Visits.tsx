@@ -12,7 +12,7 @@ import Select from '../ui/Select'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
 import SidePanel from '../ui/SidePanel'
-import { HiOutlinePencil, HiOutlinePlus } from 'react-icons/hi'
+import { LuPencil, LuPlus } from 'react-icons/lu'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
@@ -153,7 +153,7 @@ export default function Visits() {
           )}
           {canEdit && (
             <Button onClick={() => { setEditingId(undefined); setShowForm(true) }}>
-              <HiOutlinePlus aria-hidden="true" />
+              <LuPlus aria-hidden="true" />
               {t('visits.newVisit')}
             </Button>
           )}
@@ -251,7 +251,7 @@ export default function Visits() {
                   {canEdit && (
                     <td role="cell" className={`${phone ? 'px-1' : 'px-2'} py-2 align-top text-center`}>
                       <Button variant="quiet" className="!px-2" onClick={() => handleEdit(visit.id)} title={t('common.edit')}>
-                        <HiOutlinePencil aria-hidden="true" /><span className="sr-only">{t('common.edit')}</span>
+                        <LuPencil aria-hidden="true" /><span className="sr-only">{t('common.edit')}</span>
                       </Button>
                     </td>
                   )}

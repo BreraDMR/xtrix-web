@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { HiOutlineMailOpen } from 'react-icons/hi'
+import { LuMailOpen } from 'react-icons/lu'
 
 import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
@@ -129,7 +129,7 @@ export default function Unsubscribe() {
     <Frame>
       <section className="rounded-2xl bg-white p-6 shadow-sm sm:p-8 dark:bg-gray-800">
         <div className="flex items-start gap-3">
-          <HiOutlineMailOpen className="mt-0.5 h-7 w-7 shrink-0 text-primary-600 dark:text-primary-400" aria-hidden="true" />
+          <LuMailOpen className="mt-0.5 h-7 w-7 shrink-0 text-primary-600 dark:text-primary-400" aria-hidden="true" />
           <div>
             <h1 className="text-xl font-semibold">{t('unsubscribe.title')}</h1>
             <p className="mt-2 text-sm text-slate-600 dark:text-gray-300">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useId } from 'react'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
-import { HiDownload, HiPrinter } from 'react-icons/hi'
+import { LuDownload, LuPrinter } from 'react-icons/lu'
 import { useTranslation } from '../hooks/useTranslation'
 import FormError from './FormError'
 import Modal from '../ui/Modal'
@@ -173,7 +173,7 @@ export default function ExportModal<T extends object>({
                     : 'border-gray-300 hover:border-gray-400'
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
-                <HiPrinter className="w-5 h-5 mx-auto mb-1" />
+                <LuPrinter className="w-5 h-5 mx-auto mb-1" />
                 <div className="text-xs text-gray-500 dark:text-gray-400">Print</div>
               </button>
             </div>
@@ -224,7 +224,7 @@ export default function ExportModal<T extends object>({
               </>
             ) : (
               <>
-                <HiDownload className="w-4 h-4" />
+                <LuDownload className="w-4 h-4" />
                 {selectedFormat === 'print' ? t('export.print') : t('export.export')}
               </>
             )}

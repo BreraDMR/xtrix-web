@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
 import type { Schema } from '../api/types'
-import { HiOutlineClock, HiOutlineExclamationCircle } from 'react-icons/hi'
+import { LuCircleAlert, LuClock } from 'react-icons/lu'
 
 type Subscription = Schema<'SubscriptionOut'>
 
@@ -70,7 +70,7 @@ export default function TrialBanner() {
       <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50/90 p-4 text-rose-900 shadow-sm dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-200">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2">
-            <HiOutlineExclamationCircle className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
+            <LuCircleAlert className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
             <span className="text-sm font-medium">
               {t('trial.banner_expired')}
             </span>
@@ -95,7 +95,7 @@ export default function TrialBanner() {
     <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/90 p-4 text-amber-900 shadow-sm dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-2">
-          <HiOutlineClock className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <LuClock className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
           <span className="text-sm font-medium">{activeMsg}</span>
         </div>
         <Link

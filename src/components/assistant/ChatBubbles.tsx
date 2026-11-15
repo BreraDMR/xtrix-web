@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { HiOutlineSparkles } from 'react-icons/hi'
+import { LuSparkles } from 'react-icons/lu'
 
 // The chat reads like a messenger: the assistant talks on the left, the person on the right,
 // and what the assistant is about to do (or did) sits in the middle as a log card.
@@ -11,7 +11,7 @@ export function AssistantBubble({ name, children, tone = 'plain' }: { name: stri
         className="mt-5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300"
         aria-hidden="true"
       >
-        <HiOutlineSparkles className="h-4 w-4" />
+        <LuSparkles className="h-4 w-4" />
       </span>
       <div className="min-w-0 max-w-[75%]">
         <p className="mb-1 text-xs font-medium text-purple-700 dark:text-purple-300">{name}</p>

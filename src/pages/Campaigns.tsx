@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import api from '../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
-import { HiOutlineSpeakerphone } from 'react-icons/hi'
+import { LuMegaphone } from 'react-icons/lu'
 import EmptyState from '../components/EmptyState'
 import LoadingSpinner from '../components/LoadingSpinner'
 import QueryError from '../components/QueryError'
@@ -388,7 +388,7 @@ export default function Campaigns() {
         // nothing to pick yet, so one clear empty state instead of a list next to a blank panel
         <Card>
           <EmptyState
-            icon={<HiOutlineSpeakerphone className="h-10 w-10" />}
+            icon={<LuMegaphone className="h-10 w-10" />}
             title={t('campaigns.emptyTitle')}
             description={t('campaigns.emptyHint')}
           />

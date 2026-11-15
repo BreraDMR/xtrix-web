@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type MouseEvent } from 'react'
-import { HiOutlineArchive, HiOutlineCheck, HiOutlinePencil, HiOutlinePlus, HiOutlineX } from 'react-icons/hi'
+import { LuArchive, LuCheck, LuPencil, LuPlus, LuX } from 'react-icons/lu'
 import type { ConversationOut } from '../../api/types'
 import { useLocaleStore } from '../../store/localeStore'
 import { assistantT } from '../../i18n/assistant'
@@ -94,7 +94,7 @@ export default function ConversationList({
           disabled={isCreating}
           className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 shadow-xs hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
         >
-          <HiOutlinePlus className="h-3.5 w-3.5" />
+          <LuPlus className="h-3.5 w-3.5" />
           <span>{assistantT(locale, 'newConversation')}</span>
         </button>
       </div>
@@ -130,7 +130,7 @@ export default function ConversationList({
                     className="p-1 text-green-600 hover:text-green-700"
                     aria-label={assistantT(locale, 'confirm')}
                   >
-                    <HiOutlineCheck className="h-3.5 w-3.5" />
+                    <LuCheck className="h-3.5 w-3.5" />
                   </button>
                   <button
                     type="button"
@@ -138,7 +138,7 @@ export default function ConversationList({
                     className="p-1 text-gray-400 hover:text-gray-600"
                     aria-label={assistantT(locale, 'cancel')}
                   >
-                    <HiOutlineX className="h-3.5 w-3.5" />
+                    <LuX className="h-3.5 w-3.5" />
                   </button>
                 </form>
               )
@@ -190,7 +190,7 @@ export default function ConversationList({
                     aria-label={assistantT(locale, 'renameConversation')}
                     title={assistantT(locale, 'renameConversation')}
                   >
-                    <HiOutlinePencil className="h-3.5 w-3.5" />
+                    <LuPencil className="h-3.5 w-3.5" />
                   </button>
                   <button
                     type="button"
@@ -199,7 +199,7 @@ export default function ConversationList({
                     aria-label={assistantT(locale, 'archiveConversation')}
                     title={assistantT(locale, 'archiveConversation')}
                   >
-                    <HiOutlineArchive className="h-3.5 w-3.5" />
+                    <LuArchive className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>

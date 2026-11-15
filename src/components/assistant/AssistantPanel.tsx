@@ -3,7 +3,7 @@ import { useWorkspaceAccessContext } from '../../hooks/useWorkspaceAccess'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import { useQueryClient, type UseQueryResult } from '@tanstack/react-query'
-import { HiOutlineMicrophone, HiOutlinePaperAirplane, HiOutlineSparkles, HiOutlineStop, HiOutlineTrash, HiOutlineX } from 'react-icons/hi'
+import { LuMic, LuSend, LuSparkles, LuSquare, LuTrash2, LuX } from 'react-icons/lu'
 import api from '../../api/client'
 import {
   apiErrorCode, apiErrorMessage, apiErrorStatus, apiIsNetworkError, apiRetryAfter, apiValidationCodes,
@@ -418,7 +418,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
       )}
       <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
         <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">
-          <HiOutlineSparkles className="h-5 w-5" aria-hidden="true" />
+          <LuSparkles className="h-5 w-5" aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
           <h2 id={titleId} className="truncate text-base font-semibold">{persona.name}</h2>
@@ -431,7 +431,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
           aria-label={say('close')}
           className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200"
         >
-          <HiOutlineX className="h-5 w-5" aria-hidden="true" />
+          <LuX className="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
 
@@ -537,14 +537,14 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
                   aria-label={say('voiceDiscard')}
                   className="rounded-lg p-2 text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-red-200 dark:hover:bg-red-900/50"
                 >
-                  <HiOutlineTrash className="h-5 w-5" aria-hidden="true" />
+                  <LuTrash2 className="h-5 w-5" aria-hidden="true" />
                 </button>
                 <button
                   type="button"
                   onClick={voice.stop}
                   className="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-2 font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 >
-                  <HiOutlineStop className="h-5 w-5" aria-hidden="true" />
+                  <LuSquare className="h-5 w-5" aria-hidden="true" />
                   {say('voiceStop')}
                 </button>
               </div>
@@ -576,7 +576,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
                   aria-label={say('voiceStart')}
                   className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                 >
-                  <HiOutlineMicrophone className="h-5 w-5" aria-hidden="true" />
+                  <LuMic className="h-5 w-5" aria-hidden="true" />
                 </button>
               )}
               <button
@@ -585,7 +585,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
                 aria-label={say('send')}
                 className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-purple-600 text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <HiOutlinePaperAirplane className="h-5 w-5 rotate-90" aria-hidden="true" />
+                <LuSend className="h-5 w-5 rotate-90" aria-hidden="true" />
               </button>
             </div>
             <p id={hintId} className="mt-1 hidden text-xs text-gray-500 dark:text-gray-400 sm:block">{say('keyboardHint')}</p>

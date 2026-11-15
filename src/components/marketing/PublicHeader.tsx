@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useAuthStore } from '../../store/authStore'
 import LanguageSwitcher from '../LanguageSwitcher'
-import { HiOutlineMenu, HiOutlineX } from 'react-icons/hi'
+import { LuMenu, LuX } from 'react-icons/lu'
 
 export default function PublicHeader() {
   const { t } = useTranslation()
@@ -39,7 +39,7 @@ export default function PublicHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
         <div className="flex min-w-0 items-center gap-10">
           <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="Xtrix">
-            <span className="crm-logo h-8 w-8 text-xl" aria-hidden="true">X</span>
+            <span className="crm-logo h-8 w-8 text-[17px]" aria-hidden="true">X</span>
             <span className="text-xl font-semibold tracking-tight">Xtrix</span>
           </Link>
           <nav className="hidden items-center gap-5 text-xs font-medium text-[var(--workspace-muted)] lg:flex">
@@ -52,7 +52,7 @@ export default function PublicHeader() {
           <button ref={menuButton} type="button" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="grid h-10 w-10 place-items-center rounded-md text-[var(--workspace-muted)] hover:bg-[var(--workspace-bg)] lg:hidden"
             aria-expanded={mobileMenuOpen} aria-controls="landing-mobile-navigation" aria-label={t('landing.nav.toggleMenu')}>
-            {mobileMenuOpen ? <HiOutlineX className="h-5 w-5" aria-hidden="true" /> : <HiOutlineMenu className="h-5 w-5" aria-hidden="true" />}
+            {mobileMenuOpen ? <LuX className="h-5 w-5" aria-hidden="true" /> : <LuMenu className="h-5 w-5" aria-hidden="true" />}
           </button>
         </div>
       </div>

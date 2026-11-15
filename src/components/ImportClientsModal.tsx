@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { HiX, HiUpload, HiCheckCircle, HiXCircle, HiExclamationCircle } from 'react-icons/hi'
+import { LuCircleAlert, LuCircleCheck, LuCircleX, LuUpload, LuX } from 'react-icons/lu'
 import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 import { useAuthStore } from '../store/authStore'
@@ -282,7 +282,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
             className="text-gray-400 hover:text-gray-600 transition-colors dark:hover:text-gray-400"
             disabled={isImporting}
           >
-            <HiX className="w-6 h-6" />
+            <LuX className="w-6 h-6" />
           </button>
         </div>
 
@@ -409,12 +409,12 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
                             <td className="px-4 py-2 text-sm">
                               {hasError ? (
                                 <span className="text-red-600 flex items-center gap-1">
-                                  <HiXCircle className="w-4 h-4" />
+                                  <LuCircleX className="w-4 h-4" />
                                   {t('import.error')}
                                 </span>
                               ) : (
                                 <span className="text-green-600 flex items-center gap-1">
-                                  <HiCheckCircle className="w-4 h-4" />
+                                  <LuCircleCheck className="w-4 h-4" />
                                   {t('import.ready')}
                                 </span>
                               )}
@@ -444,13 +444,13 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
               </h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-green-700">
-                  <HiCheckCircle className="w-5 h-5" />
+                  <LuCircleCheck className="w-5 h-5" />
                   <span>
                     {t('import.successCount')}: {importResult.success}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-yellow-700">
-                  <HiExclamationCircle className="w-5 h-5" />
+                  <LuCircleAlert className="w-5 h-5" />
                   <span>
                     {t('import.skippedCount')}: {importResult.skipped}
                   </span>
@@ -520,7 +520,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
                 </>
               ) : (
                 <>
-                  <HiUpload className="w-4 h-4" />
+                  <LuUpload className="w-4 h-4" />
                   {t('import.import')} ({validRows})
                 </>
               )}

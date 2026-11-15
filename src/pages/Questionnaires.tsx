@@ -1,7 +1,7 @@
 import { fetchAllServices } from '../api/services'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { HiOutlineClipboardList } from 'react-icons/hi'
+import { LuClipboardList } from 'react-icons/lu'
 import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
 import EmptyState from '../components/EmptyState'
@@ -90,7 +90,7 @@ export default function Questionnaires() {
       )) : items.length === 0 ? (
         <div className="rounded-lg bg-white shadow dark:bg-gray-800">
           <EmptyState
-            icon={<HiOutlineClipboardList className="h-10 w-10" />}
+            icon={<LuClipboardList className="h-10 w-10" />}
             title={t('questionnaires.emptyTitle')}
             description={t('questionnaires.emptyDescription')}
             action={

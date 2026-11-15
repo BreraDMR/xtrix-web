@@ -7,7 +7,7 @@ import ProductTour from '../components/marketing/ProductTour'
 import Pricing from '../components/marketing/Pricing'
 import FAQ from '../components/marketing/FAQ'
 import PublicFooter from '../components/marketing/PublicFooter'
-import { HiOutlineArrowRight, HiOutlineCalendar, HiOutlineClock, HiOutlineLink } from 'react-icons/hi'
+import { LuArrowRight, LuCalendar, LuClock, LuLink } from 'react-icons/lu'
 
 export default function Landing() {
   const { t } = useTranslation()
@@ -38,11 +38,11 @@ export default function Landing() {
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 {isAuthenticated ? (
                   <Link to="/app" className="ui-button ui-button-primary">
-                    {t('landing.hero.cta_app')}<HiOutlineArrowRight aria-hidden="true" />
+                    {t('landing.hero.cta_app')}<LuArrowRight aria-hidden="true" />
                   </Link>
                 ) : <>
                   <Link to="/register" className="ui-button ui-button-primary">
-                    {t('landing.hero.cta_start')}<HiOutlineArrowRight aria-hidden="true" />
+                    {t('landing.hero.cta_start')}<LuArrowRight aria-hidden="true" />
                   </Link>
                   <Link to="/login" className="ui-button ui-button-secondary">{t('landing.hero.cta_login')}</Link>
                 </>}
@@ -51,7 +51,7 @@ export default function Landing() {
 
             <figure aria-labelledby="landing-hero-sample" className="min-w-0 overflow-hidden rounded-lg border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
               <div className="flex items-center justify-between gap-3 border-b border-[var(--workspace-line)] bg-[var(--workspace-bg)] px-4 py-3">
-                <span className="flex items-center gap-2 text-xs font-medium"><HiOutlineCalendar className="h-4 w-4 text-[var(--workspace-accent)]" aria-hidden="true" />{t('landing.tour.calendar_tab')}</span>
+                <span className="flex items-center gap-2 text-xs font-medium"><LuCalendar className="h-4 w-4 text-[var(--workspace-accent)]" aria-hidden="true" />{t('landing.tour.calendar_tab')}</span>
                 <span className="text-xs text-[var(--workspace-muted)]">Xtrix</span>
               </div>
               <div className="px-4 py-5 sm:px-5">
@@ -59,7 +59,7 @@ export default function Landing() {
                 <div className="divide-y divide-[var(--workspace-line)] border-y border-[var(--workspace-line)]">
                   {appointments.map(appointment => (
                     <div key={appointment.time} className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-3 py-4">
-                      <span className="flex items-start gap-1.5 pt-0.5 text-xs tabular-nums text-[var(--workspace-muted)]"><HiOutlineClock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{appointment.time}</span>
+                      <span className="flex items-start gap-1.5 pt-0.5 text-xs tabular-nums text-[var(--workspace-muted)]"><LuClock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{appointment.time}</span>
                       <div className="min-w-0">
                         <p className="text-sm font-medium leading-relaxed">{appointment.description}</p>
                         <span className="mt-2 inline-block rounded bg-[var(--workspace-accent-soft)] px-2 py-0.5 text-xs text-[var(--workspace-accent)]">{appointment.status}</span>
@@ -68,7 +68,7 @@ export default function Landing() {
                   ))}
                 </div>
                 <div className="mt-5 flex items-start gap-3">
-                  <HiOutlineLink className="mt-0.5 h-4 w-4 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />
+                  <LuLink className="mt-0.5 h-4 w-4 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />
                   <div><h3 className="text-xs font-medium">{t('landing.features.booking_title')}</h3><p className="mt-1 text-xs leading-relaxed text-[var(--workspace-muted)]">{t('landing.features.booking_desc')}</p></div>
                 </div>
               </div>

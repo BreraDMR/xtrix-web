@@ -1,44 +1,37 @@
 import { useTranslation } from '../../hooks/useTranslation'
-import {
-  HiOutlineCalendar,
-  HiOutlineChatAlt2,
-  HiOutlineChartBar,
-  HiOutlineCreditCard,
-  HiOutlineGlobeAlt,
-  HiOutlineUsers,
-} from 'react-icons/hi'
+import { LuMessagesSquare, LuCalendar, LuChartColumn, LuCreditCard, LuGlobe, LuUsers } from 'react-icons/lu'
 
 export default function Features() {
   const { t } = useTranslation()
 
   const featureList = [
     {
-      icon: HiOutlineGlobeAlt,
+      icon: LuGlobe,
       title: t('landing.features.booking_title'),
       description: t('landing.features.booking_desc'),
     },
     {
-      icon: HiOutlineCalendar,
+      icon: LuCalendar,
       title: t('landing.features.calendar_title'),
       description: t('landing.features.calendar_desc'),
     },
     {
-      icon: HiOutlineUsers,
+      icon: LuUsers,
       title: t('landing.features.clients_title'),
       description: t('landing.features.clients_desc'),
     },
     {
-      icon: HiOutlineChatAlt2,
+      icon: LuMessagesSquare,
       title: t('landing.features.assistant_title'),
       description: t('landing.features.assistant_desc'),
     },
     {
-      icon: HiOutlineChartBar,
+      icon: LuChartColumn,
       title: t('landing.features.analytics_title'),
       description: t('landing.features.analytics_desc'),
     },
     {
-      icon: HiOutlineCreditCard,
+      icon: LuCreditCard,
       title: t('landing.features.finance_title'),
       description: t('landing.features.finance_desc'),
     },

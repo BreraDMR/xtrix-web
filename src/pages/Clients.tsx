@@ -18,7 +18,7 @@ import ClientWorkspace from '../components/clients/ClientWorkspace'
 import SidePanel from '../ui/SidePanel'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import ImportClientsModal from '../components/ImportClientsModal'
-import { HiChevronRight, HiUpload } from 'react-icons/hi'
+import { LuChevronRight, LuUpload } from 'react-icons/lu'
 import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
@@ -185,7 +185,7 @@ export default function Clients() {
               onClick={() => setShowImportModal(true)}
               variant="secondary"
             >
-              <HiUpload className="w-4 h-4" />
+              <LuUpload className="w-4 h-4" />
               {t('import.title')}
             </Button>
             <Button
@@ -353,7 +353,7 @@ export default function Clients() {
                       <span className="min-w-0 flex-1 [overflow-wrap:anywhere]"><span>{client.full_name}</span>
                         <span className="mt-0.5 block text-xs font-normal text-[var(--workspace-muted)] sm:hidden">{client.contact_phone || client.contact_email || '—'}</span>
                       </span>
-                      <HiChevronRight className="h-4 w-4 shrink-0 text-[var(--workspace-muted)]" />
+                      <LuChevronRight className="h-4 w-4 shrink-0 text-[var(--workspace-muted)]" />
                     </button>
                   </td>
                   <td className="px-4 sm:px-5 py-3 truncate text-sm text-gray-500 hidden sm:table-cell dark:text-gray-400">
