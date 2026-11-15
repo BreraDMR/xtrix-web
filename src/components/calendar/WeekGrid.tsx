@@ -63,7 +63,7 @@ export default function WeekGrid({
         </span>
       </div>
 
-      <div className="max-h-[70vh] overflow-auto rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
+      <div className="max-h-[70vh] overflow-auto rounded-[22px] border border-[var(--workspace-card-border)] shadow-[var(--workspace-card-shadow)] bg-[var(--workspace-panel)]">
         <div
           className="grid"
           style={{ gridTemplateColumns: `3.5rem repeat(${DAYS_IN_WEEK}, minmax(8rem, 1fr))` }}

@@ -2,84 +2,87 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import PublicHeader from '../components/marketing/PublicHeader'
+import HeroShowcase from '../components/marketing/HeroShowcase'
 import Features from '../components/marketing/Features'
+import AssistantSpotlight from '../components/marketing/AssistantSpotlight'
 import ProductTour from '../components/marketing/ProductTour'
+import HowItWorks from '../components/marketing/HowItWorks'
 import Pricing from '../components/marketing/Pricing'
 import FAQ from '../components/marketing/FAQ'
+import FinalCta from '../components/marketing/FinalCta'
 import PublicFooter from '../components/marketing/PublicFooter'
-import { LuArrowRight, LuCalendar, LuClock, LuLink } from 'react-icons/lu'
+import { LuArrowRight, LuChevronRight } from 'react-icons/lu'
+import '../components/marketing/landing.css'
 
 export default function Landing() {
   const { t } = useTranslation()
   const { token, user } = useAuthStore()
   const isAuthenticated = !!token && !!user
-  const appointments = [
-    { time: '10:00', description: t('landing.hero.preview_slot1'), status: t('visits.completed') },
-    { time: '11:30', description: t('landing.hero.preview_slot2'), status: t('visits.planned') },
+  const stats = [
+    [t('landing.stats.trial_value'), t('landing.stats.trial_label')],
+    [t('landing.stats.booking_value'), t('landing.stats.booking_label')],
+    [t('landing.stats.lang_value'), t('landing.stats.lang_label')],
+    [t('landing.stats.devices_value'), t('landing.stats.devices_label')],
   ]
 
   return (
-    <div className="min-h-screen bg-[var(--workspace-bg)] text-[var(--workspace-ink)]">
+    <div className="lp min-h-screen bg-[var(--workspace-bg)] text-[var(--workspace-ink)]">
       <PublicHeader />
       <main>
-        <section className="border-b border-[var(--workspace-line)] py-12 sm:py-16 lg:py-20">
-          <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-            <div className="min-w-0">
-              <p className="flex items-center gap-3 text-xs font-medium leading-relaxed text-[var(--workspace-accent)]">
-                <span className="h-px w-7 shrink-0 bg-[var(--workspace-accent)]" aria-hidden="true" />
+        <section className="lp-hero pb-16 pt-14 sm:pb-24 sm:pt-20 lg:pt-24">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <div className="mx-auto max-w-4xl text-center">
+              <p className="lp-pill lp-rise">
+                <span className="lp-pill-dot">AI</span>
                 {t('landing.hero.badge')}
               </p>
-              <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.12] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-6xl">
+              <h1 className="lp-display lp-ink-gradient lp-rise lp-rise-1 mt-7 text-[40px] sm:text-6xl lg:text-[76px]">
                 {t('landing.hero.title')}
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--workspace-muted)] sm:text-lg">
+              <p className="lp-rise lp-rise-2 mx-auto mt-6 max-w-2xl text-[17px] leading-relaxed text-[var(--workspace-muted)] sm:text-xl">
                 {t('landing.hero.subtitle')}
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
+              <div className="lp-rise lp-rise-2 mt-9 flex flex-wrap items-center justify-center gap-3">
                 {isAuthenticated ? (
-                  <Link to="/app" className="ui-button ui-button-primary">
+                  <Link to="/app" className="ui-button ui-button-primary min-h-12 px-7 text-[15px]">
                     {t('landing.hero.cta_app')}<LuArrowRight aria-hidden="true" />
                   </Link>
                 ) : <>
-                  <Link to="/register" className="ui-button ui-button-primary">
+                  <Link to="/register" className="ui-button ui-button-primary min-h-12 px-7 text-[15px]">
                     {t('landing.hero.cta_start')}<LuArrowRight aria-hidden="true" />
                   </Link>
-                  <Link to="/login" className="ui-button ui-button-secondary">{t('landing.hero.cta_login')}</Link>
+                  <Link to="/login" className="ui-button ui-button-secondary min-h-12 px-7 text-[15px]">{t('landing.hero.cta_login')}</Link>
                 </>}
               </div>
+              <p className="lp-rise lp-rise-2 mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] text-[var(--workspace-muted)]">
+                <span>{t('landing.hero.trial_note')}</span>
+                <a href="#tour" className="inline-flex items-center font-medium text-[var(--workspace-accent)] hover:underline">{t('landing.hero.tour_link')}<LuChevronRight className="h-4 w-4" aria-hidden="true" /></a>
+              </p>
             </div>
-
-            <figure aria-labelledby="landing-hero-sample" className="min-w-0 overflow-hidden rounded-lg border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
-              <div className="flex items-center justify-between gap-3 border-b border-[var(--workspace-line)] bg-[var(--workspace-bg)] px-4 py-3">
-                <span className="flex items-center gap-2 text-xs font-medium"><LuCalendar className="h-4 w-4 text-[var(--workspace-accent)]" aria-hidden="true" />{t('landing.tour.calendar_tab')}</span>
-                <span className="text-xs text-[var(--workspace-muted)]">Xtrix</span>
-              </div>
-              <div className="px-4 py-5 sm:px-5">
-                <h2 className="mb-5 text-sm font-semibold">{t('landing.hero.preview_title')}</h2>
-                <div className="divide-y divide-[var(--workspace-line)] border-y border-[var(--workspace-line)]">
-                  {appointments.map(appointment => (
-                    <div key={appointment.time} className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-3 py-4">
-                      <span className="flex items-start gap-1.5 pt-0.5 text-xs tabular-nums text-[var(--workspace-muted)]"><LuClock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{appointment.time}</span>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium leading-relaxed">{appointment.description}</p>
-                        <span className="mt-2 inline-block rounded bg-[var(--workspace-accent-soft)] px-2 py-0.5 text-xs text-[var(--workspace-accent)]">{appointment.status}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-5 flex items-start gap-3">
-                  <LuLink className="mt-0.5 h-4 w-4 shrink-0 text-[var(--workspace-accent)]" aria-hidden="true" />
-                  <div><h3 className="text-xs font-medium">{t('landing.features.booking_title')}</h3><p className="mt-1 text-xs leading-relaxed text-[var(--workspace-muted)]">{t('landing.features.booking_desc')}</p></div>
-                </div>
-              </div>
-              <figcaption id="landing-hero-sample" className="border-t border-[var(--workspace-line)] px-4 py-3 text-[11px] leading-relaxed text-[var(--workspace-muted)] sm:px-5">{t('landing.preview.sampleNotice')}</figcaption>
-            </figure>
+            <div className="mt-14 sm:mt-20">
+              <HeroShowcase />
+            </div>
           </div>
         </section>
+
+        <section className="border-y border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
+          <dl className="mx-auto grid max-w-7xl grid-cols-2 px-5 sm:px-8 lg:grid-cols-4">
+            {stats.map(([value, label], index) => (
+              <div key={value} className={`flex flex-col-reverse justify-end py-8 sm:py-10 ${index % 2 ? 'border-l border-[var(--workspace-line)] pl-5 sm:pl-8' : 'pr-5 sm:pr-8'} ${index > 1 ? 'border-t border-[var(--workspace-line)] lg:border-t-0' : ''} ${index ? 'lg:border-l lg:border-[var(--workspace-line)] lg:pl-8' : ''}`}>
+                <dt className="mt-1.5 text-[13px] leading-snug text-[var(--workspace-muted)] sm:text-sm">{label}</dt>
+                <dd className="font-display text-2xl font-semibold tracking-[-0.03em] sm:text-4xl"><span className="lp-gradient-text">{value}</span></dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
         <Features />
+        <AssistantSpotlight />
         <ProductTour />
+        <HowItWorks />
         <Pricing />
         <FAQ />
+        <FinalCta />
       </main>
       <PublicFooter />
     </div>

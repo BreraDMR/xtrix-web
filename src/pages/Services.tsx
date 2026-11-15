@@ -9,7 +9,9 @@ import Select from '../ui/Select'
 import Card from '../ui/Card'
 import Button from '../ui/Button'
 import SidePanel from '../ui/SidePanel'
-import { LuChevronRight, LuPlus } from 'react-icons/lu'
+import { LuChevronRight, LuCircleCheck, LuClock, LuLayers, LuPlus, LuTag } from 'react-icons/lu'
+import StatTile from '../ui/StatTile'
+import { avatarBackground } from '../utils/avatar'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
@@ -80,6 +82,18 @@ export default function Services() {
     }
   }, [filteredServices, currentPage, perPage])
 
+  const stats = useMemo(() => {
+    const list = services ?? []
+    const active = list.filter(service => service.is_active)
+    const basis = active.length ? active : list
+    const average = (values: number[]) => values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null
+    return {
+      total: list.length, active: active.length,
+      price: average(basis.map(service => Number(service.price) || 0)),
+      duration: average(basis.map(service => service.duration_minutes || 0)),
+    }
+  }, [services])
+
   useEffect(() => {
     if (!isLoading && !isError && currentPage > Math.max(1, totalPages)) setCurrentPage(Math.max(1, totalPages))
   }, [isLoading, isError, currentPage, totalPages])
@@ -115,7 +129,7 @@ export default function Services() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="page-title">{t('services.title')}</h1>
-            <span className="rounded border border-[var(--workspace-line)] px-2 py-0.5 text-xs tabular-nums text-[var(--workspace-muted)]">{isLoading || isError ? '—' : totalItems}</span>
+            <span className="rounded-full bg-[var(--workspace-accent-soft)] px-3 py-1 text-sm font-medium tabular-nums text-[var(--workspace-accent)]">{isLoading || isError ? '—' : totalItems}</span>
           </div>
           <p className="page-subtitle">{t('services.subtitle')}</p>
         </div>
@@ -125,6 +139,13 @@ export default function Services() {
       {!isLoading && !isError && canEdit && services?.length === 0 && !searchQuery && !activeFilter && (
         <ContextHint hint="services" onAction={() => { setEditingId(undefined); setShowForm(true) }} />
       )}
+
+      {!isLoading && !isError && stats.total > 0 && <dl className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        <StatTile icon={LuLayers} label={t('services.stats.total')} value={stats.total} />
+        <StatTile icon={LuCircleCheck} label={t('services.active')} value={stats.active} tone="positive" />
+        <StatTile icon={LuTag} label={t('services.stats.avgPrice')} value={stats.price == null ? '—' : formatCurrency(Math.round(stats.price), currency)} />
+        <StatTile icon={LuClock} label={t('services.stats.avgDuration')} value={stats.duration == null ? '—' : `${Math.round(stats.duration)} ${t('services.min')}`} />
+      </dl>}
 
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center gap-3 border-b border-[var(--workspace-line)] p-4 sm:p-6">
@@ -163,17 +184,22 @@ export default function Services() {
             </thead>
             <tbody className="divide-y divide-[var(--workspace-line)]">
               {!isError && !isLoading && paginatedData.map(service => <tr key={service.id} className="hover:bg-[var(--workspace-bg)]">
-                      <td className="px-4 py-3 sm:px-5">
+                      <td className="px-4 py-3.5 sm:px-5">
+                        <div className="flex min-w-0 items-start gap-3">
+                        <span aria-hidden="true" className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-[11px] text-[13px] font-semibold text-white" style={{ background: avatarBackground(service.name), opacity: service.is_active ? 1 : .45 }}>{service.name.trim().charAt(0).toLocaleUpperCase()}</span>
+                        <div className="min-w-0 flex-1">
                         {canEdit ? <button type="button" onClick={() => handleEdit(service.id)} aria-label={`${t('common.edit')}: ${service.name}`}
                           className="inline-flex max-w-full items-center gap-2 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
                           <span className="min-w-0 [overflow-wrap:anywhere]">{service.name}</span><LuChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
                         </button> : <span className="text-sm font-medium [overflow-wrap:anywhere]">{service.name}</span>}
                         {service.description && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--workspace-muted)] [overflow-wrap:anywhere]" title={service.description}>{service.description}</p>}
                         <span className="mt-1 block text-xs tabular-nums text-[var(--workspace-muted)] sm:hidden">{service.duration_minutes} {t('services.min')} · {formatCurrency(service.price, currency)}</span>
+                        </div>
+                        </div>
                       </td>
-                      <td className="hidden px-4 py-3 text-sm tabular-nums text-[var(--workspace-muted)] sm:table-cell sm:px-5">{service.duration_minutes} {t('services.min')}</td>
-                      <td className="hidden px-4 py-3 text-sm tabular-nums text-[var(--workspace-ink)] sm:table-cell sm:px-5">{formatCurrency(service.price, currency)}</td>
-                      <td className="px-4 py-3 sm:px-5"><span className={`inline-flex rounded px-2 py-1 text-xs ${service.is_active ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]' : 'bg-[var(--workspace-bg)] text-[var(--workspace-muted)]'}`}>{service.is_active ? t('services.active') : t('services.inactive')}</span></td>
+                      <td className="hidden px-4 py-3 sm:table-cell sm:px-5"><span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--workspace-fill)] px-2.5 py-1 text-xs tabular-nums text-[var(--workspace-muted)]"><LuClock className="h-3.5 w-3.5" aria-hidden="true" />{service.duration_minutes} {t('services.min')}</span></td>
+                      <td className="hidden px-4 py-3 text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-[var(--workspace-ink)] sm:table-cell sm:px-5">{formatCurrency(service.price, currency)}</td>
+                      <td className="px-4 py-3 sm:px-5"><span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${service.is_active ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]' : 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'}`}><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-current" />{service.is_active ? t('services.active') : t('services.inactive')}</span></td>
                     </tr>)}
             </tbody>
           </table>

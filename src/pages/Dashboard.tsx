@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { LuArrowRight, LuCalendar, LuPlus } from 'react-icons/lu'
+import { LuArrowRight, LuCalendar, LuCalendarCheck, LuPlus, LuUsers, LuWallet } from 'react-icons/lu'
 import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
 import type { Schema } from '../api/types'
@@ -68,10 +68,10 @@ function BusinessOverview() {
     </div>
     <div className="grid items-stretch gap-5 xl:grid-cols-3">
       {!moneyHidden && <Card className="flex flex-col p-7">
-        <h3 className="eyebrow">{t('dashboard.thisMonth')}</h3>
+        <h3 className="x-stat-label"><span className="x-icon" aria-hidden="true"><LuWallet /></span>{t('dashboard.thisMonth')}</h3>
         {profit.isPending ? <LoadingSpinner size="sm" /> : profit.isError ? <QueryError retry={profit.refetch} /> : <>
           <p className="mt-5 text-[13.5px] text-[var(--workspace-muted)]">{t('dashboard.monthlyRevenue')}</p>
-          <p className="mt-1 font-display text-[40px] font-semibold leading-none tracking-[-0.035em] tabular-nums">{money(profit.data?.revenue)}</p>
+          <p className="mt-1 font-display text-[44px] font-semibold leading-none tracking-[-0.04em] tabular-nums">{money(profit.data?.revenue)}</p>
           {profit.data?.profit_margin != null && <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--x-lavender)] px-2.5 py-1 text-xs font-medium text-[var(--workspace-accent)]">
             {profit.data.profit_margin.toFixed(1)}% · {t('dashboard.profitMargin').toLowerCase()}
           </p>}
@@ -84,7 +84,7 @@ function BusinessOverview() {
         {canOpenFinance && <Link to="/app/finance" className="ui-button ui-button-secondary w-full">{t('nav.finance')}<LuArrowRight aria-hidden="true" /></Link>}
       </Card>}
       <Card className="p-7">
-        <h3 className="eyebrow">{t('dashboard.visitHistory')}</h3>
+        <h3 className="x-stat-label"><span className="x-icon" aria-hidden="true"><LuCalendarCheck /></span>{t('dashboard.visitHistory')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
           <div className="mt-6 flex flex-col items-center gap-7">
             <DonutProgress value={completion} caption={`${completed} / ${total}`} />
@@ -97,10 +97,10 @@ function BusinessOverview() {
           </div>}
       </Card>
       <Card className="p-7">
-        <h3 className="eyebrow">{t('nav.clients')}</h3>
+        <h3 className="x-stat-label"><span className="x-icon" aria-hidden="true"><LuUsers /></span>{t('nav.clients')}</h3>
         {clients.isPending ? <LoadingSpinner size="sm" /> : clients.isError ? <QueryError retry={clients.refetch} /> : <>
           <p className="mt-5 text-[13.5px] text-[var(--workspace-muted)]">{t('dashboard.totalClients')}</p>
-          <p className="mt-1 font-display text-[40px] font-semibold leading-none tracking-[-0.035em] tabular-nums">{clients.data?.total_clients ?? '—'}</p>
+          <p className="mt-1 font-display text-[44px] font-semibold leading-none tracking-[-0.04em] tabular-nums"><span className="x-gradient-text">{clients.data?.total_clients ?? '—'}</span></p>
           <dl className="mt-6 divide-y divide-[var(--workspace-line)] border-t border-[var(--workspace-line)] pt-3">
             {row(t('dashboard.newClients'), clients.data?.new_clients ?? '—')}
             {row(t('dashboard.averageSpending'), money(clients.data?.average_spending))}
@@ -112,7 +112,7 @@ function BusinessOverview() {
 }
 
 export default function Dashboard() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const { user, token } = useAuthStore()
   const business = useMyBusiness(!!user)
   const access = useWorkspaceAccessContext()
@@ -126,6 +126,11 @@ export default function Dashboard() {
     <Welcome /><Checklist /><BusinessStep />
   </>
   const timeZone = business.data?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+  const now = new Date()
+  const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hourCycle: 'h23' }).format(now))
+  const greeting = t(hour < 12 ? 'dashboard.greeting.morning' : hour < 18 ? 'dashboard.greeting.afternoon' : 'dashboard.greeting.evening')
+  const firstName = user?.full_name?.trim().split(/\s+/)[0]
+  const today = new Intl.DateTimeFormat(locale === 'cz' ? 'cs-CZ' : locale === 'ru' ? 'ru-RU' : 'en-GB', { timeZone, weekday: 'long', day: 'numeric', month: 'long' }).format(now)
   const savedVisit = () => {
     setForm(null)
     for (const key of ['visits', 'visits-statistics', 'profit-current-month', 'clients-statistics']) {
@@ -134,7 +139,10 @@ export default function Dashboard() {
   }
   return <div>
     <div className="page-toolbar">
-      <div><h1 className="page-title">{t('dashboard.title')}</h1><p className="page-subtitle">{t('dashboard.subtitle')}</p></div>
+      <div>
+        <p className="mb-2 text-[13.5px] font-medium"><span className="x-gradient-text">{greeting}{firstName ? `, ${firstName}` : ''}</span><span className="text-[var(--workspace-muted)]"> · {today}</span></p>
+        <h1 className="page-title">{t('dashboard.title')}</h1><p className="page-subtitle">{t('dashboard.subtitle')}</p>
+      </div>
       <div className="page-actions">
         <Link to="/app/calendar" aria-label={t('dashboard.openCalendar')} className="ui-button ui-button-secondary"><LuCalendar />{t('nav.calendar')}</Link>
         {canEdit && <Button onClick={() => setForm({})}><LuPlus />{t('visits.newVisit')}</Button>}

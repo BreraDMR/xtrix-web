@@ -32,6 +32,10 @@ interface StaffColumnsProps {
 }
 
 
+
+// one colour per specialist column, from the Xtrix palette
+const STAFF_COLORS = ['#9f5aef', '#e04aa8', '#4f8df7', '#22a06b', '#f59e0b', '#14b8a6']
+
 export default function StaffColumns({
   day,
   visits,
@@ -141,16 +145,18 @@ export default function StaffColumns({
               </span>
             </div>
           )}
-          <div ref={scroll} data-calendar-scroll tabIndex={0} role="region" aria-label={t('calendar.timeGrid')} className="max-h-[65vh] overflow-auto rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
+          <div ref={scroll} data-calendar-scroll tabIndex={0} role="region" aria-label={t('calendar.timeGrid')} className="max-h-[65vh] overflow-auto rounded-[22px] border border-[var(--workspace-card-border)] shadow-[var(--workspace-card-shadow)] bg-[var(--workspace-panel)]">
             <div className="grid" style={{ gridTemplateColumns: template }}>
               <div className="sticky left-0 top-0 z-30 border-b border-[var(--workspace-line)] bg-[var(--workspace-panel)]" />
-              {columns.map((column) => (
+              {columns.map((column, index) => (
                 <div
                   key={column.id}
-                  className="sticky top-0 z-20 truncate border-b border-l border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-2 py-2 text-xs font-semibold text-[var(--workspace-ink)]"
+                  className="sticky top-0 z-20 flex min-w-0 items-center gap-2 border-b border-l border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-2.5 py-2.5 text-xs font-semibold text-[var(--workspace-ink)]"
                   title={column.name}
                 >
-                  {column.name}
+                  <span aria-hidden="true" className="grid h-6 w-6 shrink-0 place-items-center rounded-full text-[10px] font-semibold text-white"
+                    style={{ background: STAFF_COLORS[index % STAFF_COLORS.length] }}>{column.name.trim().charAt(0).toUpperCase()}</span>
+                  <span className="truncate">{column.name}</span>
                 </div>
               ))}
 

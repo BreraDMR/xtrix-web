@@ -106,15 +106,12 @@ function layoutDay(visits: CalendarEvent[], dayKey: string, timeZone: string): D
   return laidOut
 }
 
+// soft tint with a coloured edge, matching the public preview (see .x-ev in theme.css)
 const STATUS_CLASS: Record<string, string> = {
-  planned:
-    'border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950/70 dark:text-amber-50 dark:hover:bg-amber-900/70',
-  in_progress:
-    'border-blue-300 bg-blue-50 text-blue-950 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950/70 dark:text-blue-50 dark:hover:bg-blue-900/70',
-  completed:
-    'border-emerald-300 bg-emerald-50 text-emerald-950 hover:bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-50 dark:hover:bg-emerald-900/70',
-  cancelled:
-    'border-rose-300 bg-rose-50 text-rose-950 line-through hover:bg-rose-100 dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-100 dark:hover:bg-rose-900/60',
+  planned: 'x-ev x-ev-planned',
+  in_progress: 'x-ev x-ev-in_progress',
+  completed: 'x-ev x-ev-completed',
+  cancelled: 'x-ev x-ev-cancelled',
 }
 
 const statusClass = (status?: string | null): string => STATUS_CLASS[status ?? ''] ?? STATUS_CLASS.planned
@@ -339,7 +336,7 @@ export default function DayGrid({
                 left: `calc(${event.lane * width}% + 2px)`,
                 width: `calc(${width}% - 4px)`,
               }
-              const blockClass = `absolute z-10 overflow-hidden rounded-lg border px-1.5 py-1 text-left shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-accent)] ${statusClass(visit.status)}${segment?.isChain ? ' ring-1 ring-[var(--workspace-accent)]/40' : ''}`
+              const blockClass = `absolute z-10 overflow-hidden px-2 py-1 text-left transition-[filter] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-accent)] ${statusClass(visit.status)}${segment?.isChain ? ' ring-1 ring-[var(--workspace-accent)]/40' : ''}`
               const content = (
                 <>
                   {segment?.isChain && (
@@ -404,7 +401,7 @@ export default function DayGrid({
         </div>
       )}
       {contained ? (
-        <div className="max-h-[70vh] overflow-y-auto rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
+        <div className="max-h-[70vh] overflow-y-auto rounded-[22px] border border-[var(--workspace-card-border)] shadow-[var(--workspace-card-shadow)] bg-[var(--workspace-panel)]">
           {body}
         </div>
       ) : (

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { LuCreditCard } from 'react-icons/lu'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import api from '../../api/client'
@@ -43,10 +44,10 @@ function newRefundKey(): string {
 function StatusChip({ status }: { status: string }) {
   const { t } = useTranslation()
   const tone = status === 'paid' || status === 'partially_refunded' || status === 'refunded'
-    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+    ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]'
     : status === 'pending' || status === 'reconcile'
-      ? 'bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200'
-      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+      ? 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]'
+      : 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
   return (
     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${tone}`}>
       {t(STATUS_KEYS[status] ?? 'payment.status.pending')}
@@ -135,13 +136,13 @@ export default function ServicePayments() {
   const payments = paymentsQuery.data ?? []
 
   return (
-    <section aria-labelledby="service-payments-title" className="mb-6 rounded-xl border border-gray-100 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
+    <section aria-labelledby="service-payments-title" className="ui-card mb-6 p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 id="service-payments-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {t('finance.servicePayments.title')}
+          <h2 id="service-payments-title" className="flex items-center gap-3 text-[17px] font-semibold tracking-[-0.02em]">
+            <span className="x-icon" aria-hidden="true"><LuCreditCard /></span>{t('finance.servicePayments.title')}
           </h2>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-2 text-sm text-[var(--workspace-muted)]">
             {t('finance.servicePayments.subtitle')}
           </p>
         </div>
@@ -149,7 +150,7 @@ export default function ServicePayments() {
           aria-label={t('finance.servicePayments.filter')}
           value={status}
           onChange={(event) => setStatus(event.target.value)}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700"
+          className="ui-input w-auto"
         >
           <option value="">{t('finance.servicePayments.allStatuses')}</option>
           {STATUSES.map((value) => (
@@ -165,17 +166,17 @@ export default function ServicePayments() {
       )}
 
       {paymentsQuery.isLoading ? (
-        <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">{t('common.loading')}</p>
+        <p className="mt-4 text-sm text-[var(--workspace-muted)]">{t('common.loading')}</p>
       ) : payments.length === 0 ? (
-        <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">{t('finance.servicePayments.empty')}</p>
+        <p className="mt-4 text-sm text-[var(--workspace-muted)]">{t('finance.servicePayments.empty')}</p>
       ) : (
         <ul className="mt-4 space-y-3">
           {payments.map((payment) => (
-            <li key={payment.id} className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+            <li key={payment.id} className="rounded-2xl bg-[var(--workspace-bg)] p-4 sm:p-5">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-medium text-gray-900 dark:text-gray-100">{payment.client_name}</p>
-                  <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                  <p className="font-semibold">{payment.client_name}</p>
+                  <p className="mt-0.5 text-sm text-[var(--workspace-muted)]">
                     {payment.service_name} · {formatMoment(payment.visit_start)}
                   </p>
                 </div>
@@ -184,19 +185,19 @@ export default function ServicePayments() {
 
               <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
                 <div>
-                  <dt className="text-gray-500 dark:text-gray-400">{t('finance.servicePayments.amount')}</dt>
+                  <dt className="text-[var(--workspace-muted)]">{t('finance.servicePayments.amount')}</dt>
                   <dd className="font-medium">{money(payment.amount, payment)}</dd>
                 </div>
                 <div>
-                  <dt className="text-gray-500 dark:text-gray-400">{t('finance.servicePayments.refunded')}</dt>
+                  <dt className="text-[var(--workspace-muted)]">{t('finance.servicePayments.refunded')}</dt>
                   <dd className="font-medium">{money(payment.refunded_amount, payment)}</dd>
                 </div>
                 <div>
-                  <dt className="text-gray-500 dark:text-gray-400">{t('finance.servicePayments.refundable')}</dt>
+                  <dt className="text-[var(--workspace-muted)]">{t('finance.servicePayments.refundable')}</dt>
                   <dd className="font-medium">{money(payment.refundable_amount, payment)}</dd>
                 </div>
                 <div>
-                  <dt className="text-gray-500 dark:text-gray-400">
+                  <dt className="text-[var(--workspace-muted)]">
                     {payment.status === 'pending'
                       ? t('finance.servicePayments.holdExpires')
                       : t('finance.servicePayments.visit')}
@@ -210,7 +211,7 @@ export default function ServicePayments() {
               </dl>
 
               {(payment.refunds?.length ?? 0) > 0 && (
-                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <div className="mt-2 text-xs text-[var(--workspace-muted)]">
                   <span className="font-medium">{t('finance.servicePayments.refundsTitle')}: </span>
                   {(payment.refunds ?? []).map((row) => (
                     <span key={row.id} className="mr-3 inline-block">
@@ -224,7 +225,7 @@ export default function ServicePayments() {
                 <button
                   type="button"
                   onClick={() => openRefund(payment)}
-                  className="mt-3 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700"
+                  className="ui-button ui-button-secondary mt-3"
                 >
                   {t('finance.servicePayments.refund')}
                 </button>
@@ -238,7 +239,7 @@ export default function ServicePayments() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div role="dialog" aria-modal="true" aria-labelledby="refund-title" className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800">
             <h3 id="refund-title" className="text-lg font-semibold">{t('finance.servicePayments.refundTitle')}</h3>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-[var(--workspace-muted)]">
               {refundTarget.client_name} · {money(refundTarget.refundable_amount, refundTarget)}
             </p>
 
@@ -258,7 +259,7 @@ export default function ServicePayments() {
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
               />
             </label>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{t('finance.servicePayments.amountHint')}</p>
+            <p className="mt-1 text-xs text-[var(--workspace-muted)]">{t('finance.servicePayments.amountHint')}</p>
 
             <label className="mt-3 block text-sm font-medium">
               {t('finance.servicePayments.reason')}

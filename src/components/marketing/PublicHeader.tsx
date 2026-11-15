@@ -22,6 +22,7 @@ export default function PublicHeader() {
 
   const links = [
     { href: '#features', label: t('landing.nav.features') },
+    { href: '#assistant', label: t('landing.ai.eyebrow') },
     { href: '#tour', label: t('landing.nav.tour') },
     { href: '#pricing', label: t('landing.nav.pricing') },
     { href: '#faq', label: t('landing.nav.faq') },
@@ -35,15 +36,15 @@ export default function PublicHeader() {
   </>
 
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--workspace-line)] bg-[var(--workspace-panel)]">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+    <header className="sticky top-0 z-30 border-b border-[var(--workspace-hairline)] bg-[color-mix(in_srgb,var(--workspace-panel)_76%,transparent)] backdrop-blur-xl backdrop-saturate-150">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
         <div className="flex min-w-0 items-center gap-10">
           <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="Xtrix">
             <span className="crm-logo h-8 w-8 text-[17px]" aria-hidden="true">X</span>
             <span className="text-xl font-semibold tracking-tight">Xtrix</span>
           </Link>
-          <nav className="hidden items-center gap-5 text-xs font-medium text-[var(--workspace-muted)] lg:flex">
-            {links.map(link => <a key={link.href} href={link.href} className="py-2 hover:text-[var(--workspace-accent)]">{link.label}</a>)}
+          <nav className="hidden items-center gap-7 text-[13px] text-[var(--workspace-muted)] lg:flex">
+            {links.map(link => <a key={link.href} href={link.href} className="py-2 transition-colors hover:text-[var(--workspace-ink)]">{link.label}</a>)}
           </nav>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">

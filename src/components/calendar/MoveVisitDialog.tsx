@@ -85,7 +85,7 @@ export default function MoveVisitDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="move-visit-title"
-        className="w-full max-w-md rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)] p-5 shadow-xl"
+        className="w-full max-w-md rounded-[24px] border border-[var(--workspace-card-border)] bg-[var(--workspace-panel)] p-6 shadow-[var(--x-shadow-lift)]"
       >
         <h2 id="move-visit-title" className="text-lg font-semibold text-[var(--workspace-ink)]">
           {t('calendar.moveTitle')}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { LuChevronRight } from 'react-icons/lu'
+import { LuCalendarClock, LuChevronRight } from 'react-icons/lu'
 import { useQuery } from '@tanstack/react-query'
 import api from '../../api/client'
 import { allPages } from '../../api/allPages'
@@ -94,13 +94,17 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
   }).format(new Date(iso))
   const dateLabel = new Intl.DateTimeFormat(localeTag, { timeZone, dateStyle: 'full' }).format(now)
   const statusClass = visitStatusClass
+  const statusEdge: Record<string, string> = {
+    planned: 'var(--x-gradient-diag)', in_progress: 'var(--tint-amber-ink)',
+    completed: 'var(--tint-green-ink)', cancelled: 'var(--tint-red-ink)',
+  }
 
   return (
     <Card className="overflow-hidden text-[var(--workspace-ink)]">
       <section aria-label={t('today.title')}>
-        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--workspace-line)] px-4 py-4 sm:px-5">
-          <h2 className="text-base font-semibold">{t('today.title')}</h2>
-          <time dateTime={dayKey} className="text-xs text-[var(--workspace-muted)]">{dateLabel}</time>
+        <header className="flex flex-wrap items-center justify-between gap-3 px-4 pb-2 pt-5 sm:px-6">
+          <h2 className="flex items-center gap-3 text-[17px] font-semibold tracking-[-0.02em]"><span className="x-icon" aria-hidden="true"><LuCalendarClock /></span>{t('today.title')}</h2>
+          <time dateTime={dayKey} className="rounded-full bg-[var(--workspace-accent-soft)] px-3 py-1 text-xs font-medium text-[var(--workspace-accent)]">{dateLabel}</time>
         </header>
         {managesStaff && employees.isError && (
           <div role="status" className="flex flex-wrap items-center gap-2 border-b border-[var(--workspace-line)] px-4 py-2 text-xs text-[var(--workspace-muted)] sm:px-5">
@@ -118,18 +122,19 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
         ) : !visits.data?.length ? (
           <p className="px-5 py-8 text-sm text-[var(--workspace-muted)]">{t('today.empty')}</p>
         ) : (
-          <ul className="divide-y divide-[var(--workspace-line)]">
+          <ul className="flex flex-col gap-2 px-3 py-3 sm:px-4">
             {visits.data.map(visit => (
-              <li key={visit.id} className="grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-3 gap-y-1.5 px-4 py-3 sm:grid-cols-[5rem_minmax(0,1fr)_minmax(7rem,auto)] sm:items-center sm:px-5">
-                <div className="row-span-2 text-sm tabular-nums sm:row-span-1">
+              <li key={visit.id} className="relative grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-3 gap-y-1.5 rounded-2xl bg-[var(--workspace-bg)] py-3 pl-5 pr-4 transition-colors hover:bg-[var(--workspace-fill)] sm:grid-cols-[5rem_minmax(0,1fr)_minmax(7rem,auto)] sm:items-center">
+                <span aria-hidden="true" className="absolute inset-y-3 left-2 w-[3px] rounded-full" style={{ background: statusEdge[visit.status ?? ''] ?? statusEdge.planned }} />
+                <div className="row-span-2 text-[15px] font-semibold tabular-nums text-[var(--workspace-ink)] sm:row-span-1">
                   <time dateTime={visit.date_start}>{formatTime(visit.date_start)}</time>
                   {visit.date_end && <time dateTime={visit.date_end} className="block text-xs text-[var(--workspace-muted)]">{formatTime(visit.date_end)}</time>}
                 </div>
                 <div className="min-w-0">
                   {canEdit ? <button type="button" aria-label={`${t('common.edit')}: ${visit.client_name || `#${visit.client_id}`}`}
-                    onClick={() => onEdit(visit.id)} className="group inline-flex max-w-full items-center gap-2 text-left text-sm font-medium hover:text-[var(--workspace-accent)]">
+                    onClick={() => onEdit(visit.id)} className="group inline-flex max-w-full items-center gap-2 text-left text-sm font-semibold text-[var(--workspace-ink)] hover:text-[var(--workspace-accent)]">
                     <span className="break-words">{visit.client_name || `#${visit.client_id}`}</span><LuChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
-                  </button> : <p className="break-words text-sm font-medium">{visit.client_name || `#${visit.client_id}`}</p>}
+                  </button> : <p className="break-words text-sm font-semibold text-[var(--workspace-ink)]">{visit.client_name || `#${visit.client_id}`}</p>}
                   <p className="mt-1 break-words text-xs text-[var(--workspace-muted)]">{visit.service_name || (visit.service_id ? `#${visit.service_id}` : t('today.noService'))}</p>
                 </div>
                 <div className="col-start-2 flex flex-wrap items-center gap-2 text-xs sm:col-start-auto sm:flex-col sm:items-start">
@@ -141,7 +146,7 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
             ))}
           </ul>
         )}
-        <footer className="border-t border-[var(--workspace-line)] px-4 py-3 text-xs text-[var(--workspace-muted)] sm:px-5">
+        <footer className="px-4 pb-4 pt-1 text-xs text-[var(--workspace-muted)] sm:px-6">
           {t('today.timeZone')}: {timeZone}
         </footer>
       </section>

@@ -18,17 +18,36 @@ import ClientWorkspace from '../components/clients/ClientWorkspace'
 import SidePanel from '../ui/SidePanel'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import ImportClientsModal from '../components/ImportClientsModal'
-import { LuChevronRight, LuUpload } from 'react-icons/lu'
+import { LuChevronRight, LuUpload, LuUserPlus, LuUsers, LuWallet } from 'react-icons/lu'
+import StatTile from '../ui/StatTile'
+import Avatar from '../ui/Avatar'
 import { useTranslation } from '../hooks/useTranslation'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { SortConfig } from '../utils/table'
-import type { ClientOut, ClientPage } from '../api/types'
+import type { ClientOut, ClientPage, Schema } from '../api/types'
 import { showDay, today } from '../utils/dates'
 import { allPages } from '../api/allPages'
 import { useAuthStore } from '../store/authStore'
 
 type Client = ClientOut
+
+// headline numbers above the directory; hidden when the person may not see them
+function ClientStats() {
+  const { t } = useTranslation()
+  const currency = useBusinessCurrency()
+  const stats = useQuery({
+    queryKey: ['clients-statistics'],
+    queryFn: async () => (await api.get<Schema<'ClientStatisticsResponse'>>('/analytics/clients/statistics')).data,
+    retry: false,
+  })
+  if (!stats.data) return null
+  return <dl className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+    <StatTile icon={LuUsers} label={t('dashboard.totalClients')} value={stats.data.total_clients ?? '—'} tone="positive" />
+    <StatTile icon={LuUserPlus} label={t('dashboard.newClients')} value={stats.data.new_clients ?? '—'} />
+    <StatTile icon={LuWallet} className="col-span-2 sm:col-span-1" label={t('dashboard.averageSpending')} value={stats.data.average_spending == null ? '—' : formatCurrency(stats.data.average_spending, currency)} />
+  </dl>
+}
 
 function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
   const { t } = useTranslation()
@@ -177,7 +196,7 @@ export default function Clients() {
       <div className="page-toolbar">
         <div className="flex items-center gap-3">
           <h1 className="page-title">{t('clients.title')}</h1>
-          <span className="rounded-full border border-[var(--workspace-line)] px-3 py-1 text-sm tabular-nums text-[var(--workspace-muted)]">{totalItems}</span>
+          <span className="rounded-full bg-[var(--workspace-accent-soft)] px-3 py-1 text-sm font-medium tabular-nums text-[var(--workspace-accent)]">{totalItems}</span>
         </div>
         {!showForm && canEdit && (
           <div className="page-actions">
@@ -200,6 +219,8 @@ export default function Clients() {
           </div>
         )}
       </div>
+
+      {!showForm && <ClientStats />}
 
       {!showForm && canEdit && !isLoading && !isError && totalItems === 0 && !searchQuery && !genderFilter && (
         <ContextHint
@@ -346,10 +367,10 @@ export default function Clients() {
               {!isError && !isLoading && (
                 paginatedData.map((client) => (
                 <tr key={client.id} className="hover:bg-[var(--workspace-bg)]">
-                  <td className="px-4 py-3 text-sm font-medium sm:px-5">
+                  <td className="px-4 py-3 text-sm font-semibold sm:px-5">
                     <button type="button" onClick={() => openWorkspace(client.id)} aria-label={`${t('clients.open')}: ${client.full_name}`}
                       className="group flex w-full min-w-0 items-center gap-3 text-left hover:text-[var(--workspace-accent)]">
-                      <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--workspace-accent-soft)] text-[11px] font-semibold text-[var(--workspace-accent)]">{client.full_name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toLocaleUpperCase()}</span>
+                      <Avatar name={client.full_name} seed={client.id} size={36} />
                       <span className="min-w-0 flex-1 [overflow-wrap:anywhere]"><span>{client.full_name}</span>
                         <span className="mt-0.5 block text-xs font-normal text-[var(--workspace-muted)] sm:hidden">{client.contact_phone || client.contact_email || '—'}</span>
                       </span>

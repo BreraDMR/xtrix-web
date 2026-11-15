@@ -1,3 +1,4 @@
+import { LuChartColumn, LuTrophy } from 'react-icons/lu'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from 'recharts'
@@ -83,7 +84,7 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
     <h2 id="week-overview-title" className="mb-4 text-[20px] font-semibold tracking-[-0.02em]">{t('dashboard.thisWeek')}</h2>
     <div className="grid gap-5 xl:grid-cols-[2.2fr_1fr]">
       <Card className="p-7">
-        <h3 className="eyebrow">{t('dashboard.occupancy')}</h3>
+        <h3 className="x-stat-label"><span className="x-icon" aria-hidden="true"><LuChartColumn /></span>{t('dashboard.occupancy')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
           <div className="mt-4 h-[230px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -111,19 +112,19 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
                   labelFormatter={(_label, payload) => payload?.[0]?.payload ? `${payload[0].payload.day} ${payload[0].payload.date}` : ''}
                   formatter={(_value, _name, item) => [`${item.payload.count} ${t('dashboard.visitsCount')}`, '']} />
                 <Bar dataKey="value" barSize={28} minPointSize={3} radius={[8, 8, 8, 8]} isAnimationActive={false}>
-                  {occupancy.map((entry) => <Cell key={entry.key} fill={entry.key === todayKey ? 'url(#x-bar-gradient)' : '#e8e8ed'} />)}
+                  {occupancy.map((entry) => <Cell key={entry.key} fill={entry.key === todayKey ? 'url(#x-bar-gradient)' : '#e9ddfb'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>}
       </Card>
       <Card className="p-7">
-        <h3 className="eyebrow">{t('dashboard.topThisWeek')}</h3>
+        <h3 className="x-stat-label"><span className="x-icon" aria-hidden="true"><LuTrophy /></span>{t('dashboard.topThisWeek')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
           topServices.length === 0 ? <p className="mt-4 text-[13px] font-semibold text-[var(--workspace-muted)]">{t('dashboard.noVisitsThisWeek')}</p> :
             <ol className="mt-5 divide-y divide-[var(--workspace-line)]">
               {topServices.map((service, index) => <li key={service.name} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--workspace-fill)] text-xs font-medium tabular-nums text-[var(--workspace-muted)]">{index + 1}</span>
+                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-semibold tabular-nums ${index ? 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]' : 'text-white'}`} style={index ? undefined : { background: 'var(--x-gradient-diag)' }}>{index + 1}</span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[14px] font-medium tracking-[-0.01em]">{service.name}</p>
                   <p className="text-xs text-[var(--workspace-muted)] tabular-nums">{service.count} {t('dashboard.visitsCount')}</p>

@@ -740,6 +740,9 @@ export type TranslationKey =
   | 'login.failed'
   | 'dashboard.title'
   | 'dashboard.subtitle'
+  | 'dashboard.greeting.morning'
+  | 'dashboard.greeting.afternoon'
+  | 'dashboard.greeting.evening'
   | 'dashboard.monthlyRevenue'
   | 'dashboard.monthlyProfit'
   | 'dashboard.monthlyExpenses'
@@ -811,6 +814,9 @@ export type TranslationKey =
   | 'services.subtitle'
   | 'services.editService'
   | 'services.title'
+  | 'services.stats.total'
+  | 'services.stats.avgPrice'
+  | 'services.stats.avgDuration'
   | 'services.addService'
   | 'services.searchPlaceholder'
   | 'services.allServices'
@@ -1446,6 +1452,90 @@ export type TranslationKey =
   | 'landing.footer.terms'
   | 'landing.footer.status_preview'
   | 'landing.footer.contact_support'
+  | 'landing.hero.trial_note'
+  | 'landing.hero.tour_link'
+  | 'landing.mock.today'
+  | 'landing.mock.greeting'
+  | 'landing.mock.visits'
+  | 'landing.mock.revenue'
+  | 'landing.mock.occupancy'
+  | 'landing.mock.upcoming'
+  | 'landing.mock.new_booking'
+  | 'landing.mock.new_booking_detail'
+  | 'landing.mock.svc_haircut'
+  | 'landing.mock.svc_manicure'
+  | 'landing.mock.svc_coloring'
+  | 'landing.mock.svc_pedicure'
+  | 'landing.mock.svc_massage'
+  | 'landing.mock.svc_brows'
+  | 'landing.mock.staff1'
+  | 'landing.mock.staff2'
+  | 'landing.mock.staff3'
+  | 'landing.mock.client_visits'
+  | 'landing.mock.client_last'
+  | 'landing.mock.client_last_value'
+  | 'landing.mock.client_bonus'
+  | 'landing.mock.client_tags'
+  | 'landing.stats.trial_value'
+  | 'landing.stats.trial_label'
+  | 'landing.stats.booking_value'
+  | 'landing.stats.booking_label'
+  | 'landing.stats.lang_value'
+  | 'landing.stats.lang_label'
+  | 'landing.stats.devices_value'
+  | 'landing.stats.devices_label'
+  | 'landing.features.eyebrow'
+  | 'landing.more.title'
+  | 'landing.more.waitlist_title'
+  | 'landing.more.waitlist_desc'
+  | 'landing.more.loyalty_title'
+  | 'landing.more.loyalty_desc'
+  | 'landing.more.campaigns_title'
+  | 'landing.more.campaigns_desc'
+  | 'landing.more.inventory_title'
+  | 'landing.more.inventory_desc'
+  | 'landing.more.import_title'
+  | 'landing.more.import_desc'
+  | 'landing.more.exports_title'
+  | 'landing.more.exports_desc'
+  | 'landing.ai.eyebrow'
+  | 'landing.ai.title'
+  | 'landing.ai.subtitle'
+  | 'landing.ai.p1'
+  | 'landing.ai.p2'
+  | 'landing.ai.p3'
+  | 'landing.ai.chat_q1'
+  | 'landing.ai.chat_a1'
+  | 'landing.ai.chat_q2'
+  | 'landing.ai.plan_step'
+  | 'landing.ai.plan_detail'
+  | 'landing.ai.listening'
+  | 'landing.steps.eyebrow'
+  | 'landing.steps.title'
+  | 'landing.steps.s1_title'
+  | 'landing.steps.s1_desc'
+  | 'landing.steps.s2_title'
+  | 'landing.steps.s2_desc'
+  | 'landing.steps.s3_title'
+  | 'landing.steps.s3_desc'
+  | 'landing.audience.title'
+  | 'landing.audience.salon_title'
+  | 'landing.audience.salon_desc'
+  | 'landing.audience.solo_title'
+  | 'landing.audience.solo_desc'
+  | 'landing.audience.owner_title'
+  | 'landing.audience.owner_desc'
+  | 'landing.audience.kinds'
+  | 'landing.pricing.perk1'
+  | 'landing.pricing.perk2'
+  | 'landing.pricing.perk3'
+  | 'landing.cta.title'
+  | 'landing.cta.start'
+  | 'landing.cta.open'
+  | 'landing.footer.tagline'
+  | 'landing.footer.product'
+  | 'landing.footer.account'
+  | 'landing.footer.legal'
   | 'notfound.title'
   | 'notfound.subtitle'
   | 'notfound.to_home'
@@ -2956,6 +3046,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   
   'dashboard.title': { en: 'Workday', ru: 'Рабочий день', cz: 'Pracovní den' },
   'dashboard.subtitle': { en: 'Appointments and the work ahead, in one place.', ru: 'Записи и дела на сегодня — в одном месте.', cz: 'Dnešní návštěvy a práce na jednom místě.' },
+  'dashboard.greeting.morning': {"en":"Good morning","ru":"Доброе утро","cz":"Dobré ráno"},
+  'dashboard.greeting.afternoon': {"en":"Good afternoon","ru":"Добрый день","cz":"Dobré odpoledne"},
+  'dashboard.greeting.evening': {"en":"Good evening","ru":"Добрый вечер","cz":"Dobrý večer"},
   'dashboard.monthlyRevenue': { en: 'Monthly Revenue', ru: 'Месячный доход', cz: 'Měsíční příjem' },
   'dashboard.monthlyProfit': { en: 'Monthly Profit', ru: 'Месячная прибыль', cz: 'Měsíční zisk' },
   'dashboard.monthlyExpenses': { en: 'Monthly Expenses', ru: 'Месячные расходы', cz: 'Měsíční výdaje' },
@@ -3029,6 +3122,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'services.subtitle': { en: 'Your service catalogue, with duration and pricing.', ru: 'Каталог услуг, длительность и стоимость.', cz: 'Katalog služeb, délka a ceny.' },
   'services.editService': { en: 'Edit service', ru: 'Редактирование услуги', cz: 'Upravit službu' },
   'services.title': { en: 'Services', ru: 'Услуги', cz: 'Služby' },
+  'services.stats.total': {"en":"All services","ru":"Все услуги","cz":"Všechny služby"},
+  'services.stats.avgPrice': {"en":"Average price","ru":"Средняя цена","cz":"Průměrná cena"},
+  'services.stats.avgDuration': {"en":"Average length","ru":"Средняя длительность","cz":"Průměrná délka"},
   'services.addService': { en: 'Add Service', ru: 'Добавить услугу', cz: 'Přidat službu' },
   'services.searchPlaceholder': { en: 'Search by service name...', ru: 'Поиск по названию услуги...', cz: 'Hledat podle názvu služby...' },
   'services.allServices': { en: 'All Services', ru: 'Все услуги', cz: 'Všechny služby' },
@@ -5453,6 +5549,91 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'importWizard.error.formulaNotAllowed': { en: 'Formulas are not imported', ru: 'Формулы не импортируются', cz: 'Vzorce se neimportují' },
   'importWizard.error.malformedRow': { en: 'The row could not be read', ru: 'Строку не удалось прочитать', cz: 'Řádek se nepodařilo přečíst' },
   'importWizard.error.rowFailed': { en: 'The row could not be saved', ru: 'Строку не удалось сохранить', cz: 'Řádek se nepodařilo uložit' },
+
+  'landing.hero.trial_note': {"en":"7 days of CRM and AI free · No card required","ru":"7 дней CRM и ИИ бесплатно · Без карты","cz":"7 dní CRM a AI zdarma · Bez karty"},
+  'landing.hero.tour_link': {"en":"See how it works","ru":"Посмотреть, как это работает","cz":"Podívejte se, jak to funguje"},
+  'landing.mock.today': {"en":"Today","ru":"Сегодня","cz":"Dnes"},
+  'landing.mock.greeting': {"en":"Good morning","ru":"Доброе утро","cz":"Dobré ráno"},
+  'landing.mock.visits': {"en":"Visits today","ru":"Визитов сегодня","cz":"Návštěvy dnes"},
+  'landing.mock.revenue': {"en":"Revenue","ru":"Выручка","cz":"Tržby"},
+  'landing.mock.occupancy': {"en":"Occupancy","ru":"Загрузка","cz":"Vytížení"},
+  'landing.mock.upcoming': {"en":"Up next","ru":"Далее","cz":"Následuje"},
+  'landing.mock.new_booking': {"en":"New online booking","ru":"Новая онлайн-запись","cz":"Nová online rezervace"},
+  'landing.mock.new_booking_detail': {"en":"Brows & lashes · 14:30","ru":"Брови и ресницы · 14:30","cz":"Obočí a řasy · 14:30"},
+  'landing.mock.svc_haircut': {"en":"Haircut","ru":"Стрижка","cz":"Střih"},
+  'landing.mock.svc_manicure': {"en":"Manicure","ru":"Маникюр","cz":"Manikúra"},
+  'landing.mock.svc_coloring': {"en":"Coloring","ru":"Окрашивание","cz":"Barvení"},
+  'landing.mock.svc_pedicure': {"en":"Pedicure","ru":"Педикюр","cz":"Pedikúra"},
+  'landing.mock.svc_massage': {"en":"Massage","ru":"Массаж","cz":"Masáž"},
+  'landing.mock.svc_brows': {"en":"Brows & lashes","ru":"Брови и ресницы","cz":"Obočí a řasy"},
+  'landing.mock.staff1': {"en":"Anna","ru":"Анна","cz":"Anna"},
+  'landing.mock.staff2': {"en":"Elena","ru":"Елена","cz":"Elena"},
+  'landing.mock.staff3': {"en":"Maria","ru":"Мария","cz":"Marie"},
+  'landing.mock.client_visits': {"en":"Visits","ru":"Визиты","cz":"Návštěvy"},
+  'landing.mock.client_last': {"en":"Last visit","ru":"Последний визит","cz":"Poslední návštěva"},
+  'landing.mock.client_last_value': {"en":"2 weeks ago","ru":"2 недели назад","cz":"před 2 týdny"},
+  'landing.mock.client_bonus': {"en":"Bonuses","ru":"Бонусы","cz":"Bonusy"},
+  'landing.mock.client_tags': {"en":"Regular · Prefers mornings","ru":"Постоянная · Любит утро","cz":"Stálá · Preferuje ráno"},
+  'landing.stats.trial_value': {"en":"7 days","ru":"7 дней","cz":"7 dní"},
+  'landing.stats.trial_label': {"en":"free trial of CRM and AI, no card","ru":"бесплатно CRM и ИИ, без карты","cz":"zdarma CRM a AI, bez karty"},
+  'landing.stats.booking_value': {"en":"24/7","ru":"24/7","cz":"24/7"},
+  'landing.stats.booking_label': {"en":"online booking for your clients","ru":"онлайн-запись для ваших клиентов","cz":"online rezervace pro vaše klienty"},
+  'landing.stats.lang_value': {"en":"3 languages","ru":"3 языка","cz":"3 jazyky"},
+  'landing.stats.lang_label': {"en":"Czech, Russian and English","ru":"чешский, русский и английский","cz":"čeština, ruština a angličtina"},
+  'landing.stats.devices_value': {"en":"1 workspace","ru":"1 пространство","cz":"1 prostor"},
+  'landing.stats.devices_label': {"en":"on your phone and computer","ru":"на телефоне и компьютере","cz":"v mobilu i na počítači"},
+  'landing.features.eyebrow': {"en":"Everything in one place","ru":"Всё в одном месте","cz":"Vše na jednom místě"},
+  'landing.more.title': {"en":"And everything around it","ru":"И всё, что вокруг","cz":"A vše kolem toho"},
+  'landing.more.waitlist_title': {"en":"Waitlist","ru":"Лист ожидания","cz":"Pořadník"},
+  'landing.more.waitlist_desc': {"en":"Offer freed-up slots to clients who are waiting.","ru":"Предлагайте освободившееся время ожидающим клиентам.","cz":"Nabídněte uvolněné termíny čekajícím klientům."},
+  'landing.more.loyalty_title': {"en":"Loyalty & gift cards","ru":"Лояльность и сертификаты","cz":"Věrnost a dárkové poukazy"},
+  'landing.more.loyalty_desc': {"en":"Bonuses, discounts and gift packages that bring clients back.","ru":"Бонусы, скидки и подарочные пакеты, которые возвращают клиентов.","cz":"Bonusy, slevy a dárkové balíčky, které vracejí klienty."},
+  'landing.more.campaigns_title': {"en":"Campaigns","ru":"Рассылки","cz":"Kampaně"},
+  'landing.more.campaigns_desc': {"en":"Remind clients about yourself and share news in a few clicks.","ru":"Напоминайте о себе и делитесь новостями в пару кликов.","cz":"Připomeňte se klientům a sdílejte novinky pár kliknutími."},
+  'landing.more.inventory_title': {"en":"Inventory","ru":"Склад","cz":"Sklad"},
+  'landing.more.inventory_desc': {"en":"Keep track of materials and stock levels.","ru":"Учёт материалов и остатков.","cz":"Evidence materiálu a zásob."},
+  'landing.more.import_title': {"en":"Import from spreadsheets","ru":"Импорт из таблиц","cz":"Import z tabulek"},
+  'landing.more.import_desc': {"en":"Bring clients and visits over from your spreadsheets.","ru":"Перенесите клиентов и визиты из своих таблиц.","cz":"Přeneste klienty a návštěvy ze svých tabulek."},
+  'landing.more.exports_title': {"en":"Reports & exports","ru":"Отчёты и выгрузки","cz":"Reporty a exporty"},
+  'landing.more.exports_desc': {"en":"Download PDF and Excel reports whenever you need them.","ru":"Выгружайте отчёты в PDF и Excel, когда нужно.","cz":"Stahujte reporty v PDF a Excelu, kdykoli je potřebujete."},
+  'landing.ai.eyebrow': {"en":"AI assistant","ru":"AI-ассистент","cz":"AI asistentka"},
+  'landing.ai.title': {"en":"Just say it. Sashenka handles the rest.","ru":"Просто скажите. Остальное сделает Сашенька.","cz":"Stačí to říct. O zbytek se postará Saška."},
+  'landing.ai.subtitle': {"en":"Ask about today’s schedule, find a client or book a visit — by voice or by text. Every step is shown as a clear plan you can follow.","ru":"Спросите о расписании, найдите клиента или запишите на визит — голосом или текстом. Каждый шаг виден в понятном плане.","cz":"Zeptejte se na rozvrh, najděte klienta nebo zapište návštěvu — hlasem nebo textem. Každý krok uvidíte v přehledném plánu."},
+  'landing.ai.p1': {"en":"Voice and text","ru":"Голос и текст","cz":"Hlas i text"},
+  'landing.ai.p2': {"en":"Books visits for you","ru":"Записывает клиентов на визиты","cz":"Zapisuje klienty na návštěvy"},
+  'landing.ai.p3': {"en":"Knows your schedule and clients","ru":"Знает расписание и клиентов","cz":"Zná rozvrh i klienty"},
+  'landing.ai.chat_q1': {"en":"Who’s coming in today after 15:00?","ru":"Кто придёт сегодня после 15:00?","cz":"Kdo dnes přijde po 15:00?"},
+  'landing.ai.chat_a1': {"en":"Two visits: a manicure with Elena at 15:30 and coloring with Anna at 17:00.","ru":"Два визита: маникюр у Елены в 15:30 и окрашивание у Анны в 17:00.","cz":"Dvě návštěvy: manikúra u Eleny v 15:30 a barvení u Anny v 17:00."},
+  'landing.ai.chat_q2': {"en":"Book Maria for a massage tomorrow at 10.","ru":"Запиши Марию на массаж завтра в 10.","cz":"Zapiš Marii na masáž zítra v 10."},
+  'landing.ai.plan_step': {"en":"Sashenka booked the visit","ru":"Сашенька записала на визит","cz":"Saška zapsala návštěvu"},
+  'landing.ai.plan_detail': {"en":"Massage · tomorrow, 10:00","ru":"Массаж · завтра, 10:00","cz":"Masáž · zítra, 10:00"},
+  'landing.ai.listening': {"en":"Listening…","ru":"Слушаю…","cz":"Poslouchám…"},
+  'landing.steps.eyebrow': {"en":"How it works","ru":"Как это работает","cz":"Jak to funguje"},
+  'landing.steps.title': {"en":"Up and running in one evening.","ru":"Запуск за один вечер.","cz":"Spuštění za jeden večer."},
+  'landing.steps.s1_title': {"en":"Create a workspace","ru":"Создайте пространство","cz":"Vytvořte pracovní prostor"},
+  'landing.steps.s1_desc': {"en":"Register as a salon or a solo specialist — the trial starts right away.","ru":"Зарегистрируйтесь как салон или частный мастер — пробный период начнётся сразу.","cz":"Zaregistrujte se jako salon nebo samostatný specialista — zkušební období začne hned."},
+  'landing.steps.s2_title': {"en":"Add services and your team","ru":"Добавьте услуги и команду","cz":"Přidejte služby a tým"},
+  'landing.steps.s2_desc': {"en":"Set prices, durations and working hours, invite specialists — or import clients from a spreadsheet.","ru":"Задайте цены, длительность и рабочие часы, пригласите мастеров — или импортируйте клиентов из таблицы.","cz":"Nastavte ceny, délku a pracovní dobu, pozvěte specialisty — nebo importujte klienty z tabulky."},
+  'landing.steps.s3_title': {"en":"Share your booking link","ru":"Поделитесь ссылкой на запись","cz":"Sdílejte rezervační odkaz"},
+  'landing.steps.s3_desc': {"en":"Put it on Instagram or your website — new bookings land straight in the calendar.","ru":"Разместите её в Instagram или на сайте — новые записи сразу попадают в календарь.","cz":"Vložte ho na Instagram nebo web — nové rezervace se hned objeví v kalendáři."},
+  'landing.audience.title': {"en":"Made for the way you work.","ru":"Под ваш формат работы.","cz":"Pro váš způsob práce."},
+  'landing.audience.salon_title': {"en":"Salons & studios","ru":"Салоны и студии","cz":"Salony a studia"},
+  'landing.audience.salon_desc': {"en":"Several specialists, a shared calendar, roles and payroll.","ru":"Несколько мастеров, общий календарь, роли и расчёт зарплат.","cz":"Více specialistů, sdílený kalendář, role a mzdy."},
+  'landing.audience.solo_title': {"en":"Solo specialists","ru":"Частные мастера","cz":"Samostatní specialisté"},
+  'landing.audience.solo_desc': {"en":"Your own clients, services and booking page — nothing extra.","ru":"Свои клиенты, услуги и страница записи — ничего лишнего.","cz":"Vlastní klienti, služby a rezervační stránka — nic navíc."},
+  'landing.audience.owner_title': {"en":"Owners & managers","ru":"Владельцы и управляющие","cz":"Majitelé a manažeři"},
+  'landing.audience.owner_desc': {"en":"Revenue, occupancy and team results at a glance.","ru":"Выручка, загрузка и результаты команды — с одного взгляда.","cz":"Tržby, vytížení a výsledky týmu na první pohled."},
+  'landing.audience.kinds': {"en":"Hair · Nails · Lashes & brows · Barbers · Massage · Cosmetology","ru":"Волосы · Ногти · Ресницы и брови · Барберы · Массаж · Косметология","cz":"Vlasy · Nehty · Řasy a obočí · Barbeři · Masáže · Kosmetika"},
+  'landing.pricing.perk1': {"en":"No card needed for the trial","ru":"Без карты на пробный период","cz":"Bez karty na zkušební období"},
+  'landing.pricing.perk2': {"en":"CRM and AI are separate — pay only for what you use","ru":"CRM и ИИ отдельно — платите только за нужное","cz":"CRM a AI zvlášť — plaťte jen za to, co využijete"},
+  'landing.pricing.perk3': {"en":"Monthly plans in CZK","ru":"Помесячные тарифы в CZK","cz":"Měsíční tarify v CZK"},
+  'landing.cta.title': {"en":"Give your salon the workspace it deserves.","ru":"Дайте салону рабочее пространство, которого он заслуживает.","cz":"Dopřejte salonu pracovní prostor, jaký si zaslouží."},
+  'landing.cta.start': {"en":"Create a workspace","ru":"Создать пространство","cz":"Vytvořit prostor"},
+  'landing.cta.open': {"en":"Go to your workspace","ru":"Перейти в рабочее пространство","cz":"Přejít do pracovního prostoru"},
+  'landing.footer.tagline': {"en":"CRM and AI assistant for beauty businesses.","ru":"CRM и AI-ассистент для бьюти-бизнеса.","cz":"CRM a AI asistentka pro beauty podnikání."},
+  'landing.footer.product': {"en":"Product","ru":"Продукт","cz":"Produkt"},
+  'landing.footer.account': {"en":"Account","ru":"Аккаунт","cz":"Účet"},
+  'landing.footer.legal': {"en":"Legal","ru":"Документы","cz":"Právní informace"},
 }
 
 export default translations

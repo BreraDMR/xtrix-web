@@ -20,7 +20,8 @@ import Card from '../ui/Card'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Button from '../ui/Button'
-import { LuPlus, LuTrash2 } from 'react-icons/lu'
+import { LuChartPie, LuPercent, LuPlus, LuReceiptText, LuTags, LuTrash2, LuTrendingUp, LuWallet } from 'react-icons/lu'
+import StatTile from '../ui/StatTile'
 
 // an expense keeps its own currency; show the symbol like every other amount, the code only if we don't know it
 const expenseAmount = (amount: number, code: string) =>
@@ -132,7 +133,7 @@ export default function Finance() {
         )}
       </div>
 
-      <Card className="p-4">
+      <Card className="p-4 sm:px-5">
         <div className="grid max-w-lg grid-cols-2 gap-3">
           <div className="min-w-0">
             <label htmlFor={`${pageId}-from`} className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">{t('finance.date_from')}</label>
@@ -148,33 +149,19 @@ export default function Finance() {
       {(queryError0 || queryError1 || queryError2 || queryError3) && <QueryError retry={retryQueries} />}
 
       {isLoadingProfit ? <LoadingSpinner /> : profitReport ? (
-        <Card>
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-5 p-5 xl:grid-cols-4">
-            <div className="min-w-0">
-              <dt className="text-xs text-[var(--workspace-muted)]">{t('finance.revenue')}</dt>
-              <dd className="mt-2 text-xl font-semibold tabular-nums [overflow-wrap:anywhere] xl:text-2xl">{formatCurrency(profitReport.revenue, currency)}</dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="text-xs text-[var(--workspace-muted)]">{t('finance.expenses')}</dt>
-              <dd className="mt-2 text-xl font-semibold tabular-nums [overflow-wrap:anywhere] xl:text-2xl">{formatCurrency(profitReport.expenses, currency)}</dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="text-xs text-[var(--workspace-muted)]">{t('finance.profit')}</dt>
-              <dd className={`mt-2 text-xl font-semibold tabular-nums [overflow-wrap:anywhere] xl:text-2xl ${(profitReport.profit || 0) >= 0 ? 'text-[var(--workspace-accent)]' : 'text-red-600 dark:text-red-400'}`}>{formatCurrency(profitReport.profit, currency)}</dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="text-xs text-[var(--workspace-muted)]">{t('finance.profit_margin')}</dt>
-              <dd className={`mt-2 text-xl font-semibold tabular-nums [overflow-wrap:anywhere] xl:text-2xl ${(profitReport.profit_margin || 0) >= 0 ? 'text-[var(--workspace-accent)]' : 'text-red-600 dark:text-red-400'}`}>{profitReport.profit_margin?.toFixed(2) || '0.00'}%</dd>
-            </div>
-          </dl>
-        </Card>
+        <dl className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+          <StatTile icon={LuTrendingUp} label={t('finance.revenue')} value={formatCurrency(profitReport.revenue, currency)} />
+          <StatTile icon={LuReceiptText} label={t('finance.expenses')} value={formatCurrency(profitReport.expenses, currency)} />
+          <StatTile icon={LuWallet} label={t('finance.profit')} value={formatCurrency(profitReport.profit, currency)} tone={(profitReport.profit || 0) >= 0 ? 'positive' : 'negative'} />
+          <StatTile icon={LuPercent} label={t('finance.profit_margin')} value={`${profitReport.profit_margin?.toFixed(2) || '0.00'}%`} tone={(profitReport.profit_margin || 0) >= 0 ? 'positive' : 'negative'} />
+        </dl>
       ) : null}
 
       <div className="grid items-start gap-4 xl:grid-cols-2">
         {!isLoadingPayments && paymentStats && (
-          <Card id="payment-chart" role="region" aria-labelledby={`${pageId}-payments`} className="min-w-0 p-4 sm:p-5">
+          <Card id="payment-chart" role="region" aria-labelledby={`${pageId}-payments`} className="min-w-0 p-5 sm:p-6">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <h2 id={`${pageId}-payments`} className="text-sm font-semibold">{t('finance.payments_volume')}</h2>
+              <h2 id={`${pageId}-payments`} className="flex items-center gap-3 text-[17px] font-semibold tracking-[-0.02em]"><span className="x-icon" aria-hidden="true"><LuChartPie /></span>{t('finance.payments_volume')}</h2>
               <ExportButton
                 data={[
                   {
@@ -233,9 +220,9 @@ export default function Finance() {
                       endAngle={-270}
                       dataKey="value"
                     >
-                      <Cell fill="#3F6D54" />
-                      <Cell fill="#94A78C" />
-                      <Cell fill="#D2C8B8" />
+                      <Cell fill="#9f5aef" />
+                      <Cell fill="#e04aa8" />
+                      <Cell fill="#d9c6f7" />
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
@@ -243,11 +230,11 @@ export default function Finance() {
               <div className="w-full min-w-0 flex-1">
                 <dl className="space-y-3">
                   {[
-                    { label: t('finance.payment_card'), color: '#3F6D54', stats: paymentStats.card_payments },
-                    { label: t('finance.payment_cash'), color: '#94A78C', stats: paymentStats.cash_payments },
-                    { label: t('finance.payment_other'), color: '#D2C8B8', stats: paymentStats.other_payments },
+                    { label: t('finance.payment_card'), color: '#9f5aef', stats: paymentStats.card_payments },
+                    { label: t('finance.payment_cash'), color: '#e04aa8', stats: paymentStats.cash_payments },
+                    { label: t('finance.payment_other'), color: '#d9c6f7', stats: paymentStats.other_payments },
                   ].map(method => <div key={method.label} className="flex items-start justify-between gap-3">
-                    <dt className="flex min-w-0 items-center gap-2 text-xs text-[var(--workspace-muted)]"><span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ backgroundColor: method.color }} />{method.label}</dt>
+                    <dt className="flex min-w-0 items-center gap-2 text-xs text-[var(--workspace-muted)]"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: method.color }} />{method.label}</dt>
                     <dd className="text-right tabular-nums">
                       <p className="text-sm font-medium">{formatCurrency(method.stats?.total || 0, currency)}</p>
                       <p className="mt-0.5 text-xs text-[var(--workspace-muted)]">{Math.round(method.stats?.percentage || 0)}% ({method.stats?.count || 0})</p>
@@ -264,12 +251,15 @@ export default function Finance() {
         )}
 
         {profitReport?.expenses_by_category && profitReport.expenses_by_category.length > 0 && (
-          <Card className="min-w-0 p-4 sm:p-5" role="region" aria-labelledby={`${pageId}-categories`}>
-            <h2 id={`${pageId}-categories`} className="mb-4 text-sm font-semibold">{t('finance.expenses_by_category')}</h2>
+          <Card className="min-w-0 p-5 sm:p-6" role="region" aria-labelledby={`${pageId}-categories`}>
+            <h2 id={`${pageId}-categories`} className="mb-5 flex items-center gap-3 text-[17px] font-semibold tracking-[-0.02em]"><span className="x-icon" aria-hidden="true"><LuTags /></span>{t('finance.expenses_by_category')}</h2>
             <dl className="divide-y divide-[var(--workspace-line)]">
-              {(profitReport.expenses_by_category as CategoryTotal[]).map(item => <div key={item.category_id} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
-                <dt className="flex min-w-0 items-center gap-2 text-sm"><span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ backgroundColor: item.color || '#6B7280' }} /><span className="[overflow-wrap:anywhere]">{labels.expenseCategory({ code: item.category_code, name: item.category_name })}</span></dt>
-                <dd className="shrink-0 text-sm font-medium tabular-nums">{formatCurrency(item.total, currency)}</dd>
+              {(profitReport.expenses_by_category as CategoryTotal[]).map(item => <div key={item.category_id} className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 py-3 first:pt-0 last:pb-0">
+                <dt className="flex min-w-0 items-center gap-2 text-sm"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color || '#9f5aef' }} /><span className="[overflow-wrap:anywhere]">{labels.expenseCategory({ code: item.category_code, name: item.category_name })}</span></dt>
+                <dd className="shrink-0 text-sm font-semibold tabular-nums">{formatCurrency(item.total, currency)}</dd>
+                <dd aria-hidden="true" className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--workspace-fill)]">
+                  <span className="block h-full rounded-full" style={{ width: `${profitReport.expenses ? Math.min(100, (Number(item.total) / Number(profitReport.expenses)) * 100) : 0}%`, background: item.color || 'var(--x-gradient)' }} />
+                </dd>
               </div>)}
             </dl>
           </Card>
@@ -277,8 +267,8 @@ export default function Finance() {
       </div>
 
       <Card className="overflow-hidden" role="region" aria-labelledby={`${pageId}-expenses`}>
-        <div className="flex flex-wrap items-center gap-3 border-b border-[var(--workspace-line)] p-4">
-          <h2 id={`${pageId}-expenses`} className="text-sm font-semibold">{t('finance.expenses_list')}</h2>
+        <div className="flex flex-wrap items-center gap-3 border-b border-[var(--workspace-line)] p-4 sm:p-5">
+          <h2 id={`${pageId}-expenses`} className="flex items-center gap-3 text-[17px] font-semibold tracking-[-0.02em]"><span className="x-icon" aria-hidden="true"><LuReceiptText /></span>{t('finance.expenses_list')}</h2>
           <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
             <label htmlFor={`${pageId}-category`} className="text-xs text-[var(--workspace-muted)]">{t('finance.category')}</label>
             <Select id={`${pageId}-category`} value={selectedCategory || ''} onChange={event => setSelectedCategory(event.target.value ? parseInt(event.target.value) : null)} className="w-auto max-w-full">
@@ -318,14 +308,14 @@ export default function Finance() {
                 <tbody className="divide-y divide-[var(--workspace-line)]">
                   {expenseRows.map(expense => <tr key={expense.id} className="hover:bg-[var(--workspace-bg)]">
                     <td className="px-4 py-3 sm:px-5">
-                      <p className="text-sm font-medium [overflow-wrap:anywhere]">{expenseText(expense)}</p>
+                      <p className="text-sm font-semibold [overflow-wrap:anywhere]">{expenseText(expense)}</p>
                       <dl className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--workspace-muted)]">
                         <div><dt className="sr-only">{t('finance.date')}</dt><dd>{new Date(expense.expense_date).toLocaleDateString()}</dd></div>
-                        <div><dt className="sr-only">{t('finance.category')}</dt><dd className="flex items-center gap-1.5 [overflow-wrap:anywhere]">{expense.category ? <><span className="h-2 w-2 shrink-0 rounded-sm" style={{ backgroundColor: expense.category.color || '#6B7280' }} />{labels.expenseCategory(expense.category)}</> : '-'}</dd></div>
+                        <div><dt className="sr-only">{t('finance.category')}</dt><dd className="flex items-center gap-1.5 [overflow-wrap:anywhere]">{expense.category ? <><span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: expense.category.color || '#9f5aef' }} />{labels.expenseCategory(expense.category)}</> : '-'}</dd></div>
                         <div><dt className="sr-only">{t('finance.payment_method')}</dt><dd>{expense.payment_method}</dd></div>
                       </dl>
                     </td>
-                    <td className="px-3 py-3 text-right align-top text-sm font-medium tabular-nums [overflow-wrap:anywhere] sm:px-5">{expenseAmount(expense.amount, expense.currency)}</td>
+                    <td className="px-3 py-3 text-right align-top text-[15px] font-semibold tabular-nums tracking-[-0.01em] [overflow-wrap:anywhere] sm:px-5">{expenseAmount(expense.amount, expense.currency)}</td>
                     {(user?.role === 'admin' || user?.role === 'business_owner') && <td className="px-1 py-3 text-right align-top sm:px-4">
                       <Button variant="quiet" aria-label={t('common.delete')} title={t('common.delete')} className="min-h-8 px-1.5 py-1 text-red-600 dark:text-red-400"
                         onClick={() => { if (confirm(t('finance.confirm_delete'))) deleteMutation.mutate(expense.id) }}><LuTrash2 /></Button>
@@ -440,20 +430,20 @@ function ExpenseForm({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 p-4 backdrop-blur-sm"
       onClick={onCancel}
     >
       <div
-        className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[28px] border border-[var(--workspace-card-border)] bg-[var(--workspace-panel)] p-6 text-[var(--workspace-ink)] shadow-[var(--x-shadow-lift)] sm:p-7"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-lg font-semibold mb-4">{t('finance.add_expense')}</h3>
+        <h3 className="mb-5 flex items-center gap-3 text-[19px] font-semibold tracking-[-0.02em]"><span className="x-icon" aria-hidden="true"><LuReceiptText /></span>{t('finance.add_expense')}</h3>
         <form onSubmit={handleSubmit}>
           {formError && <div role="alert" className="mb-4"><FormError message={formError} /></div>}
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                <label className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">
                   {t('finance.amount')} *
                 </label>
                 <input
@@ -462,21 +452,19 @@ function ExpenseForm({
                   min="0"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className={`w-full px-4 py-2 border rounded-lg ${
-                    errors.amount ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`ui-input ${errors.amount ? '!border-red-500' : ''}`}
                   required
                 />
                 {errors.amount && <p className="text-red-500 text-xs mt-1">{errors.amount}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                <label className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">
                   {t('finance.currency')}
                 </label>
                 <select
                   value={formData.currency}
                   onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
+                  className="ui-input"
                 >
                   <option value="EUR">EUR</option>
                   <option value="CZK">CZK</option>
@@ -486,16 +474,14 @@ function ExpenseForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">
                 {t('finance.date')} *
               </label>
               <input
                 type="date"
                 value={formData.expense_date}
                 onChange={(e) => setFormData({ ...formData, expense_date: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-lg ${
-                  errors.expense_date ? 'border-red-500' : 'border-gray-300'
-                }`}
+                className={`ui-input ${errors.expense_date ? '!border-red-500' : ''}`}
                 required
               />
               {errors.expense_date && (
@@ -504,13 +490,13 @@ function ExpenseForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">
                 {t('finance.category')}
               </label>
               <select
                 value={formData.category_id}
                 onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
+                className="ui-input"
               >
                 <option value="">{t('finance.no_category')}</option>
                 {categories.map((cat) => (
@@ -522,13 +508,13 @@ function ExpenseForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">
                 {t('finance.payment_method')}
               </label>
               <select
                 value={formData.payment_method}
                 onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
+                className="ui-input"
               >
                 <option value="cash">{t('finance.payment_cash')}</option>
                 <option value="card">{t('finance.payment_card')}</option>
@@ -538,13 +524,13 @@ function ExpenseForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+              <label className="mb-1.5 block text-xs font-medium text-[var(--workspace-muted)]">
                 {t('finance.description')}
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600"
+                className="ui-input"
                 rows={3}
                 placeholder={t('finance.description_placeholder')}
               />
@@ -555,14 +541,14 @@ function ExpenseForm({
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-700"
+              className="ui-button ui-button-secondary"
             >
               {t('common.cancel')}
             </button>
             <button
               type="submit"
               disabled={createMutation.isPending}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="ui-button ui-button-primary"
             >
               {createMutation.isPending ? t('common.loading') : t('common.save')}
             </button>
