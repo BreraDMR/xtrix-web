@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 import { useTheme } from './hooks/useTheme'
 import PrivateRoute from './components/PrivateRoute'
 import Landing from './pages/Landing'
@@ -42,6 +42,8 @@ import { GiftPurchase, GiftCheckout, GiftReturn } from './pages/booking/GiftPurc
 import PortalLogin from './pages/client/PortalLogin'
 import ClientPortal from './pages/client/Portal'
 import LegacyHistory from './pages/client/LegacyHistory'
+import VisitorVisits from './pages/visitor/VisitorVisits'
+import { RequireVisitor } from './components/visitor/VisitorUi'
 import { VisitorForgotPassword, VisitorLogin, VisitorRegister, VisitorResetPassword, VisitorSignup } from './pages/visitor/VisitorAuth'
 import Layout from './components/Layout'
 import PublicFeatureGate from './components/subscription/PublicFeatureGate'
@@ -71,6 +73,8 @@ function App() {
         <Route path="/client/history" element={<PublicFeatureGate feature="email"><LegacyHistory /></PublicFeatureGate>} />
         {/* visitor cabinet: the salon's customers, a separate login from the CRM.
             /visitor/register, /visitor/reset-password and /visitor/email-change are fixed - the API puts them in emails */}
+        <Route path="/visitor" element={<Navigate to="/visitor/visits" replace />} />
+        <Route path="/visitor/visits" element={<RequireVisitor><VisitorVisits /></RequireVisitor>} />
         <Route path="/visitor/login" element={<VisitorLogin />} />
         <Route path="/visitor/signup" element={<VisitorSignup />} />
         <Route path="/visitor/forgot-password" element={<VisitorForgotPassword />} />

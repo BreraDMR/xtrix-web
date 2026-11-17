@@ -1,5 +1,6 @@
 import { INTL_LOCALE } from '../booking/intl'
 import type { Locale } from '../../store/localeStore'
+import type { Schema } from '../../api/types'
 
 export function browserTimeZone(): string {
   try { return Intl.DateTimeFormat().resolvedOptions().timeZone } catch { return 'UTC' }
@@ -44,4 +45,9 @@ export function formatMoney(amount: string, currency: string, locale: Locale): s
   } catch {
     return `${amount} ${currency}`
   }
+}
+
+export function visitServices(visit: Schema<'VisitorHistoryVisit'>): string {
+  const names = visit.items.length ? visit.items.map(item => item.service_name) : [visit.service_name]
+  return names.filter(Boolean).join(' · ')
 }

@@ -2313,6 +2313,26 @@ export type TranslationKey =
   | 'visitor.google.link'
   | 'visitor.google.failed'
   | 'visitor.google.linkHint'
+  | 'visitor.price.onRequest'
+  | 'visitor.visit.noService'
+  | 'visitor.time.salonZone'
+  | 'visitor.feed.title'
+  | 'visitor.feed.subtitle'
+  | 'visitor.feed.upcoming'
+  | 'visitor.feed.past'
+  | 'visitor.feed.cancelled'
+  | 'visitor.feed.all'
+  | 'visitor.feed.salon'
+  | 'visitor.feed.allSalons'
+  | 'visitor.feed.more'
+  | 'visitor.feed.cardFailed'
+  | 'visitor.feed.emptyCategory'
+  | 'visitor.feed.emptyTitle'
+  | 'visitor.feed.emptyText'
+  | 'visitor.feed.howBooking'
+  | 'visitor.feed.howBookingText'
+  | 'visitor.feed.howInvite'
+  | 'visitor.feed.howInviteText'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
@@ -5722,6 +5742,26 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visitor.google.link': {"en":"Connect Google","ru":"Подключить Google","cz":"Propojit Google"},
   'visitor.google.failed': {"en":"Google sign-in failed. Please try again.","ru":"Не удалось войти через Google. Попробуйте ещё раз.","cz":"Přihlášení přes Google se nezdařilo. Zkuste to znovu."},
   'visitor.google.linkHint': {"en":"If you already have an account with this email, sign in with your password and connect Google in your profile.","ru":"Если у вас уже есть аккаунт с этой почтой, войдите по паролю и подключите Google в профиле.","cz":"Pokud už máte účet s tímto e-mailem, přihlaste se heslem a propojte Google v profilu."},
+  'visitor.price.onRequest': {"en":"Price on request","ru":"Цена по запросу","cz":"Cena na dotaz"},
+  'visitor.visit.noService': {"en":"Visit","ru":"Визит","cz":"Návštěva"},
+  'visitor.time.salonZone': {"en":"salon time, {zone}","ru":"время салона, {zone}","cz":"čas salonu, {zone}"},
+  'visitor.feed.title': {"en":"My visits","ru":"Мои визиты","cz":"Moje návštěvy"},
+  'visitor.feed.subtitle': {"en":"Bookings from every salon you visit, in one list.","ru":"Записи во все ваши салоны в одном списке.","cz":"Rezervace ze všech vašich salonů v jednom seznamu."},
+  'visitor.feed.upcoming': {"en":"Upcoming","ru":"Предстоящие","cz":"Nadcházející"},
+  'visitor.feed.past': {"en":"Past","ru":"Прошедшие","cz":"Minulé"},
+  'visitor.feed.cancelled': {"en":"Cancelled","ru":"Отменённые","cz":"Zrušené"},
+  'visitor.feed.all': {"en":"All","ru":"Все","cz":"Vše"},
+  'visitor.feed.salon': {"en":"Salon","ru":"Салон","cz":"Salon"},
+  'visitor.feed.allSalons': {"en":"All salons","ru":"Все салоны","cz":"Všechny salony"},
+  'visitor.feed.more': {"en":"Show more","ru":"Показать ещё","cz":"Zobrazit další"},
+  'visitor.feed.cardFailed': {"en":"This visit can't be shown right now.","ru":"Этот визит сейчас не удаётся показать.","cz":"Tuto návštěvu teď nelze zobrazit."},
+  'visitor.feed.emptyCategory': {"en":"No visits here.","ru":"Здесь пока нет визитов.","cz":"Zatím tu nejsou žádné návštěvy."},
+  'visitor.feed.emptyTitle': {"en":"No visits yet","ru":"Пока нет визитов","cz":"Zatím žádné návštěvy"},
+  'visitor.feed.emptyText': {"en":"Your visits appear here once they are linked to your account. There are two ways:","ru":"Визиты появятся здесь, когда будут привязаны к вашему аккаунту. Есть два способа:","cz":"Návštěvy se tu objeví, jakmile budou propojené s vaším účtem. Jsou dva způsoby:"},
+  'visitor.feed.howBooking': {"en":"Book online","ru":"Онлайн-запись","cz":"Online rezervace"},
+  'visitor.feed.howBookingText': {"en":"After booking in a salon, choose \"Save to my account\" on the confirmation or in the link from the email.","ru":"После записи в салон нажмите «Сохранить в мой кабинет» на экране подтверждения или по ссылке из письма.","cz":"Po rezervaci v salonu zvolte „Uložit do mého účtu“ na potvrzení nebo v odkazu z e-mailu."},
+  'visitor.feed.howInvite': {"en":"Invitation from the salon","ru":"Приглашение от салона","cz":"Pozvánka od salonu"},
+  'visitor.feed.howInviteText': {"en":"Your salon can send you a link that adds your visits with them. Open it while signed in.","ru":"Салон может прислать ссылку, которая добавит ваши визиты в нём. Откройте её, войдя в кабинет.","cz":"Salon vám může poslat odkaz, který přidá vaše návštěvy u něj. Otevřete ho po přihlášení."},
 }
 
 export default translations
