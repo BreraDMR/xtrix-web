@@ -70,3 +70,22 @@ export function loginPath(next?: string, reauth = false): string {
   const query = params.toString()
   return `/visitor/login${query ? `?${query}` : ''}`
 }
+
+// An action refused by the "signed in within 5 minutes" rule is repeated after signing in again.
+export type Resume = { action: 'email-request'; email: string } | { action: 'email-confirm' } | { action: 'google-link' }
+const RESUME_KEY = 'visitor_resume'
+
+export function rememberResume(resume: Resume) {
+  try { sessionStorage.setItem(RESUME_KEY, JSON.stringify(resume)) } catch { /* ignore */ }
+}
+
+export function takeResume<A extends Resume['action']>(action: A): Extract<Resume, { action: A }> | null {
+  try {
+    const value = JSON.parse(sessionStorage.getItem(RESUME_KEY) ?? 'null') as Resume | null
+    if (value?.action !== action) return null
+    sessionStorage.removeItem(RESUME_KEY)
+    return value as Extract<Resume, { action: A }>
+  } catch {
+    return null
+  }
+}

@@ -45,6 +45,8 @@ import LegacyHistory from './pages/client/LegacyHistory'
 import VisitorVisits from './pages/visitor/VisitorVisits'
 import VisitorVisit from './pages/visitor/VisitorVisit'
 import VisitorClaim from './pages/visitor/VisitorClaim'
+import VisitorProfile from './pages/visitor/VisitorProfile'
+import VisitorEmailChange from './pages/visitor/VisitorEmailChange'
 import { RequireVisitor } from './components/visitor/VisitorUi'
 import { VisitorForgotPassword, VisitorLogin, VisitorRegister, VisitorResetPassword, VisitorSignup } from './pages/visitor/VisitorAuth'
 import Layout from './components/Layout'
@@ -79,6 +81,8 @@ function App() {
         <Route path="/visitor/visits" element={<RequireVisitor><VisitorVisits /></RequireVisitor>} />
         <Route path="/visitor/visits/:visitId" element={<RequireVisitor><VisitorVisit /></RequireVisitor>} />
         <Route path="/visitor/claim" element={<VisitorClaim />} />
+        <Route path="/visitor/profile" element={<RequireVisitor><VisitorProfile /></RequireVisitor>} />
+        <Route path="/visitor/email-change" element={<VisitorEmailChange />} />
         <Route path="/visitor/login" element={<VisitorLogin />} />
         <Route path="/visitor/signup" element={<VisitorSignup />} />
         <Route path="/visitor/forgot-password" element={<VisitorForgotPassword />} />

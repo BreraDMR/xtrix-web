@@ -8,7 +8,7 @@ import FormError from '../../components/FormError'
 import Input from '../../ui/Input'
 import VisitorGoogle from '../../components/visitor/VisitorGoogle'
 import { Notice } from '../../components/visitor/VisitorUi'
-import { afterSignIn, forgetFragmentToken, fragmentTokenReader } from '../../components/visitor/links'
+import { afterSignIn, forgetFragmentToken, fragmentTokenReader, safeNext } from '../../components/visitor/links'
 import { useLinkToken } from '../../hooks/useLinkToken'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useVisitorSession } from '../../store/visitorSession'
@@ -58,7 +58,8 @@ export function VisitorLogin() {
   const signedInWith = (data: Schema<'VisitorLoginOut'>) => {
     setSignedIn(true)
     startSession(data)
-    navigate(afterSignIn(next), { replace: true })
+    // re-authenticating returns to the action it was for, before any waiting booking link
+    navigate(reauth ? safeNext(next) ?? '/visitor/profile' : afterSignIn(next), { replace: true })
   }
 
   const submit = async (event: FormEvent) => {

@@ -2385,6 +2385,39 @@ export type TranslationKey =
   | 'visitor.claim.noLinkTitle'
   | 'visitor.claim.noLinkText'
   | 'visitor.claim.toFeed'
+  | 'visitor.profile.title'
+  | 'visitor.profile.account'
+  | 'visitor.profile.since'
+  | 'visitor.profile.password'
+  | 'visitor.profile.passwordSet'
+  | 'visitor.profile.passwordNone'
+  | 'visitor.profile.googleOn'
+  | 'visitor.profile.googleOff'
+  | 'visitor.email.title'
+  | 'visitor.email.text'
+  | 'visitor.email.new'
+  | 'visitor.email.submit'
+  | 'visitor.email.same'
+  | 'visitor.email.sent'
+  | 'visitor.email.confirmTitle'
+  | 'visitor.email.confirmText'
+  | 'visitor.email.confirm'
+  | 'visitor.email.doneTitle'
+  | 'visitor.email.doneText'
+  | 'visitor.email.invalid'
+  | 'visitor.methods.title'
+  | 'visitor.methods.passwordText'
+  | 'visitor.methods.noPasswordText'
+  | 'visitor.methods.changePassword'
+  | 'visitor.methods.setPassword'
+  | 'visitor.methods.googleText'
+  | 'visitor.methods.googleAgain'
+  | 'visitor.methods.googleLinked'
+  | 'visitor.sessions.title'
+  | 'visitor.sessions.signOut'
+  | 'visitor.sessions.everywhere'
+  | 'visitor.sessions.everywhereTitle'
+  | 'visitor.sessions.everywhereText'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
@@ -5866,6 +5899,39 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visitor.claim.noLinkTitle': {"en":"No link to save","ru":"Нет ссылки для сохранения","cz":"Žádný odkaz k uložení"},
   'visitor.claim.noLinkText': {"en":"Open the booking link from your email or the salon's invitation to save visits to your account.","ru":"Откройте ссылку на запись из письма или приглашение салона, чтобы сохранить визиты в кабинет.","cz":"Pro uložení návštěv otevřete odkaz na rezervaci z e-mailu nebo pozvánku salonu."},
   'visitor.claim.toFeed': {"en":"Go to my visits","ru":"Перейти к моим визитам","cz":"Přejít na moje návštěvy"},
+  'visitor.profile.title': {"en":"Profile","ru":"Профиль","cz":"Profil"},
+  'visitor.profile.account': {"en":"Account","ru":"Аккаунт","cz":"Účet"},
+  'visitor.profile.since': {"en":"Account since","ru":"Аккаунт создан","cz":"Účet od"},
+  'visitor.profile.password': {"en":"Password","ru":"Пароль","cz":"Heslo"},
+  'visitor.profile.passwordSet': {"en":"Set","ru":"Задан","cz":"Nastaveno"},
+  'visitor.profile.passwordNone': {"en":"Not set","ru":"Не задан","cz":"Nenastaveno"},
+  'visitor.profile.googleOn': {"en":"Connected","ru":"Подключён","cz":"Propojeno"},
+  'visitor.profile.googleOff': {"en":"Not connected","ru":"Не подключён","cz":"Nepropojeno"},
+  'visitor.email.title': {"en":"Change email","ru":"Смена почты","cz":"Změna e-mailu"},
+  'visitor.email.text': {"en":"We'll send a link to the new address. The change takes effect once you open it.","ru":"Мы отправим ссылку на новый адрес. Почта сменится, когда вы её откроете.","cz":"Na novou adresu pošleme odkaz. Změna platí po jeho otevření."},
+  'visitor.email.new': {"en":"New email","ru":"Новая почта","cz":"Nový e-mail"},
+  'visitor.email.submit': {"en":"Send the link","ru":"Отправить ссылку","cz":"Poslat odkaz"},
+  'visitor.email.same': {"en":"This is already your email.","ru":"Это и так ваша почта.","cz":"Tohle už je váš e-mail."},
+  'visitor.email.sent': {"en":"We've sent a link to {email}. Open it to finish the change.","ru":"Мы отправили ссылку на {email}. Откройте её, чтобы завершить смену.","cz":"Na {email} jsme poslali odkaz. Otevřete ho a změnu dokončete."},
+  'visitor.email.confirmTitle': {"en":"Confirm the new email","ru":"Подтвердите новую почту","cz":"Potvrďte nový e-mail"},
+  'visitor.email.confirmText': {"en":"Your account will use the new address for signing in and for emails.","ru":"Аккаунт будет использовать новый адрес для входа и писем.","cz":"Účet bude nový e-mail používat pro přihlášení i zprávy."},
+  'visitor.email.confirm': {"en":"Confirm","ru":"Подтвердить","cz":"Potvrdit"},
+  'visitor.email.doneTitle': {"en":"Email changed","ru":"Почта изменена","cz":"E-mail byl změněn"},
+  'visitor.email.doneText': {"en":"Use the new address the next time you sign in.","ru":"При следующем входе используйте новый адрес.","cz":"Při dalším přihlášení použijte novou adresu."},
+  'visitor.email.invalid': {"en":"The link has expired or has already been used. Request the change again in your profile.","ru":"Ссылка устарела или уже использована. Запросите смену почты ещё раз в профиле.","cz":"Odkaz vypršel nebo už byl použit. Požádejte o změnu znovu v profilu."},
+  'visitor.methods.title': {"en":"Sign-in methods","ru":"Способы входа","cz":"Způsoby přihlášení"},
+  'visitor.methods.passwordText': {"en":"We'll email you a link to choose a new password.","ru":"Мы пришлём на почту ссылку для нового пароля.","cz":"Pošleme vám e-mailem odkaz pro nové heslo."},
+  'visitor.methods.noPasswordText': {"en":"Add a password to sign in without Google too.","ru":"Задайте пароль, чтобы входить и без Google.","cz":"Nastavte si heslo, abyste se mohli přihlásit i bez Googlu."},
+  'visitor.methods.changePassword': {"en":"Change password","ru":"Сменить пароль","cz":"Změnit heslo"},
+  'visitor.methods.setPassword': {"en":"Set a password","ru":"Задать пароль","cz":"Nastavit heslo"},
+  'visitor.methods.googleText': {"en":"Sign in with your Google account instead of a password.","ru":"Входите через аккаунт Google вместо пароля.","cz":"Přihlašujte se účtem Google místo hesla."},
+  'visitor.methods.googleAgain': {"en":"You're signed in again. Now connect Google.","ru":"Вы снова вошли. Теперь подключите Google.","cz":"Jste znovu přihlášeni. Nyní propojte Google."},
+  'visitor.methods.googleLinked': {"en":"Google is connected.","ru":"Google подключён.","cz":"Google je propojen."},
+  'visitor.sessions.title': {"en":"Signing out","ru":"Выход","cz":"Odhlášení"},
+  'visitor.sessions.signOut': {"en":"Sign out","ru":"Выйти","cz":"Odhlásit se"},
+  'visitor.sessions.everywhere': {"en":"Sign out everywhere","ru":"Выйти на всех устройствах","cz":"Odhlásit všude"},
+  'visitor.sessions.everywhereTitle': {"en":"Sign out on all devices?","ru":"Выйти на всех устройствах?","cz":"Odhlásit na všech zařízeních?"},
+  'visitor.sessions.everywhereText': {"en":"Every device signed in to this account will be signed out, this one included.","ru":"Аккаунт выйдет на всех устройствах, включая это.","cz":"Účet se odhlásí na všech zařízeních, včetně tohoto."},
 }
 
 export default translations
