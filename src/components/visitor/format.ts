@@ -51,3 +51,8 @@ export function visitServices(visit: Schema<'VisitorHistoryVisit'>): string {
   const names = visit.items.length ? visit.items.map(item => item.service_name) : [visit.service_name]
   return names.filter(Boolean).join(' · ')
 }
+
+// "neděle 22. listopadu" -> "Neděle 22. listopadu"; CSS capitalize would also raise the month
+export function upperFirst(text: string): string {
+  return text ? text.charAt(0).toLocaleUpperCase() + text.slice(1) : text
+}

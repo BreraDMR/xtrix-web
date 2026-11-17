@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import visitorApi, { visitorKey } from '../../api/visitorClient'
+import visitorApi from '../../api/visitorClient'
+import { useVisitorGoogleConfig } from './googleConfig'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
 import type { Schema } from '../../api/types'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -16,11 +16,7 @@ type Props =
 // a failed config request): password sign-in and the rest of the page keep working.
 export default function VisitorGoogle(props: Props) {
   const { t, locale } = useTranslation()
-  const config = useQuery({
-    queryKey: visitorKey('google-config'),
-    retry: false,
-    queryFn: async () => (await visitorApi.get<Schema<'GoogleConfigOut'>>('/visitor/auth/google/config')).data,
-  })
+  const { clientId: configClientId } = useVisitorGoogleConfig()
   const target = useRef<HTMLDivElement>(null)
   const [error, setError] = useState('')
   const [hint, setHint] = useState('')
@@ -30,14 +26,14 @@ export default function VisitorGoogle(props: Props) {
   const latest = useRef(props)
   latest.current = props
 
-  const enabled = !!config.data?.enabled && !!config.data.client_id && !unavailable
+  const enabled = !!configClientId && !unavailable
   const linking = props.mode === 'link'
 
   useEffect(() => {
-    if (!enabled || !config.data?.client_id) return
+    if (!enabled || !configClientId) return
     let cancelled = false
     const element = target.current
-    const clientId = config.data.client_id
+    const clientId = configClientId
     const finish = async (credential: string, nonce: string) => {
       setBusy(true); setError(''); setHint('')
       try {
@@ -85,7 +81,7 @@ export default function VisitorGoogle(props: Props) {
     }
     void setup()
     return () => { cancelled = true; element?.replaceChildren() }
-  }, [enabled, config.data?.client_id, locale, attempt, linking, t])
+  }, [enabled, configClientId, locale, attempt, linking, t])
 
   if (!enabled) return null
   return <section aria-label={t(linking ? 'visitor.google.link' : 'visitor.google.title')} className="space-y-3">

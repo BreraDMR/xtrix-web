@@ -12,7 +12,7 @@ import Modal from '../../ui/Modal'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { Isolated, Notice, VisitorShell } from '../../components/visitor/VisitorUi'
 import { Price, StatusPill } from '../../components/visitor/VisitSummary'
-import { browserTimeZone, formatClock, formatVisitTime, safeTimeZone, visitServices, zoneLabel } from '../../components/visitor/format'
+import { browserTimeZone, formatClock, formatVisitTime, safeTimeZone, upperFirst, visitServices, zoneLabel } from '../../components/visitor/format'
 import { useTranslation } from '../../hooks/useTranslation'
 import { isoToZonedWallTime, zonedWallTimeToIso } from '../../utils/dates'
 
@@ -79,7 +79,7 @@ function VisitDetails({ visit }: { visit: Visit }) {
     <section className="ui-card p-5 sm:p-7">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[13px] font-medium capitalize text-[var(--workspace-accent)]">{formatVisitTime(visit.start, zone, locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p className="text-[13px] font-medium text-[var(--workspace-accent)]">{upperFirst(formatVisitTime(visit.start, zone, locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}</p>
           <h2 className="mt-1 font-display text-[28px] font-semibold leading-tight tracking-[-0.035em] tabular-nums sm:text-[34px]">
             {formatClock(visit.start, zone, locale)}{visit.end ? `–${formatClock(visit.end, zone, locale)}` : ''}
           </h2>

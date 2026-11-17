@@ -32,6 +32,8 @@ it('shows the account and its sign-in methods', async () => {
   expect(await screen.findByText('jana@example.com', { selector: 'dd' })).toBeInTheDocument()
   expect(screen.getByText('Not connected')).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Change password' })).toBeInTheDocument()
+  // Google is off on this server: no empty Google block
+  expect(screen.queryByText('Sign in with your Google account instead of a password.')).not.toBeInTheDocument()
 })
 
 it('asks to sign in again on the 5-minute rule and then repeats the email change', async () => {

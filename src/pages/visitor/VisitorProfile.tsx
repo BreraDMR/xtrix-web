@@ -15,6 +15,7 @@ import { Notice, VisitorShell } from '../../components/visitor/VisitorUi'
 import { formatVisitTime } from '../../components/visitor/format'
 import { takeResume } from '../../components/visitor/links'
 import { useReauth } from '../../components/visitor/useReauth'
+import { useVisitorGoogleConfig } from '../../components/visitor/googleConfig'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useVisitorSession } from '../../store/visitorSession'
 
@@ -123,6 +124,7 @@ function SignInMethods({ account }: { account: Account }) {
   const [message, setMessage] = useState<Message>(null)
   const [busy, setBusy] = useState(false)
   const [resumed] = useState(() => !!takeResume('google-link'))
+  const { clientId: googleClientId } = useVisitorGoogleConfig()
 
   const sendReset = async () => {
     setBusy(true); setMessage(null)
@@ -145,7 +147,7 @@ function SignInMethods({ account }: { account: Account }) {
       </div>
       <Button variant="secondary" disabled={busy} onClick={() => void sendReset()}>{t(busy ? 'common.loading' : account.has_password ? 'visitor.methods.changePassword' : 'visitor.methods.setPassword')}</Button>
     </div>
-    {!account.google_connected && <div className="mt-3 rounded-2xl bg-[var(--workspace-bg)] p-4">
+    {!account.google_connected && googleClientId && <div className="mt-3 rounded-2xl bg-[var(--workspace-bg)] p-4">
       <p className="text-sm font-semibold">Google</p>
       <p className="mt-0.5 text-[13px] text-[var(--workspace-muted)]">{t(resumed ? 'visitor.methods.googleAgain' : 'visitor.methods.googleText')}</p>
       <div className="mt-3">
