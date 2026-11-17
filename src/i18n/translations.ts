@@ -2333,6 +2333,40 @@ export type TranslationKey =
   | 'visitor.feed.howBookingText'
   | 'visitor.feed.howInvite'
   | 'visitor.feed.howInviteText'
+  | 'visitor.visit.title'
+  | 'visitor.visit.back'
+  | 'visitor.visit.gone'
+  | 'visitor.visit.address'
+  | 'visitor.visit.phone'
+  | 'visitor.visit.services'
+  | 'visitor.visit.price'
+  | 'visitor.visit.confirmedAt'
+  | 'visitor.time.yourZone'
+  | 'visitor.action.title'
+  | 'visitor.action.confirm'
+  | 'visitor.action.cancel'
+  | 'visitor.action.reschedule'
+  | 'visitor.action.confirmDone'
+  | 'visitor.action.cancelDone'
+  | 'visitor.action.rescheduleDone'
+  | 'visitor.action.failed'
+  | 'visitor.action.slotTaken'
+  | 'visitor.action.loadFailed'
+  | 'visitor.action.cancelTitle'
+  | 'visitor.action.cancelText'
+  | 'visitor.action.keep'
+  | 'visitor.action.rescheduleTitle'
+  | 'visitor.action.rescheduleText'
+  | 'visitor.action.day'
+  | 'visitor.action.time'
+  | 'visitor.action.priceKept'
+  | 'visitor.action.rescheduleSubmit'
+  | 'visitor.reason.unavailableSalon'
+  | 'visitor.reason.tooLate'
+  | 'visitor.reason.completed'
+  | 'visitor.reason.inProgress'
+  | 'visitor.reason.cancelled'
+  | 'visitor.reason.unavailable'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
@@ -5762,6 +5796,40 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visitor.feed.howBookingText': {"en":"After booking in a salon, choose \"Save to my account\" on the confirmation or in the link from the email.","ru":"После записи в салон нажмите «Сохранить в мой кабинет» на экране подтверждения или по ссылке из письма.","cz":"Po rezervaci v salonu zvolte „Uložit do mého účtu“ na potvrzení nebo v odkazu z e-mailu."},
   'visitor.feed.howInvite': {"en":"Invitation from the salon","ru":"Приглашение от салона","cz":"Pozvánka od salonu"},
   'visitor.feed.howInviteText': {"en":"Your salon can send you a link that adds your visits with them. Open it while signed in.","ru":"Салон может прислать ссылку, которая добавит ваши визиты в нём. Откройте её, войдя в кабинет.","cz":"Salon vám může poslat odkaz, který přidá vaše návštěvy u něj. Otevřete ho po přihlášení."},
+  'visitor.visit.title': {"en":"Visit","ru":"Визит","cz":"Návštěva"},
+  'visitor.visit.back': {"en":"All visits","ru":"Все визиты","cz":"Všechny návštěvy"},
+  'visitor.visit.gone': {"en":"This visit is no longer available. It may have been removed or moved to another account.","ru":"Этот визит больше недоступен. Возможно, он удалён или привязан к другому аккаунту.","cz":"Tato návštěva už není dostupná. Mohla být odstraněna nebo přiřazena k jinému účtu."},
+  'visitor.visit.address': {"en":"Address","ru":"Адрес","cz":"Adresa"},
+  'visitor.visit.phone': {"en":"Phone","ru":"Телефон","cz":"Telefon"},
+  'visitor.visit.services': {"en":"Services","ru":"Процедуры","cz":"Služby"},
+  'visitor.visit.price': {"en":"Price of the visit","ru":"Стоимость визита","cz":"Cena návštěvy"},
+  'visitor.visit.confirmedAt': {"en":"Confirmed {when}","ru":"Подтверждено {when}","cz":"Potvrzeno {when}"},
+  'visitor.time.yourZone': {"en":"your time zone is {zone}","ru":"ваш часовой пояс {zone}","cz":"vaše časové pásmo je {zone}"},
+  'visitor.action.title': {"en":"Manage the visit","ru":"Управление визитом","cz":"Správa návštěvy"},
+  'visitor.action.confirm': {"en":"Confirm the visit","ru":"Подтвердить визит","cz":"Potvrdit návštěvu"},
+  'visitor.action.cancel': {"en":"Cancel the visit","ru":"Отменить визит","cz":"Zrušit návštěvu"},
+  'visitor.action.reschedule': {"en":"Change the time","ru":"Перенести","cz":"Změnit čas"},
+  'visitor.action.confirmDone': {"en":"The visit is confirmed.","ru":"Визит подтверждён.","cz":"Návštěva je potvrzena."},
+  'visitor.action.cancelDone': {"en":"The visit is cancelled.","ru":"Визит отменён.","cz":"Návštěva je zrušena."},
+  'visitor.action.rescheduleDone': {"en":"The visit has a new time.","ru":"Визит перенесён.","cz":"Návštěva má nový čas."},
+  'visitor.action.failed': {"en":"The change didn't go through. Please try again.","ru":"Изменение не прошло. Попробуйте ещё раз.","cz":"Změna se nepovedla. Zkuste to znovu."},
+  'visitor.action.slotTaken': {"en":"That time is already taken. Please choose another one.","ru":"Это время уже занято. Выберите другое.","cz":"Tento čas je už obsazený. Vyberte prosím jiný."},
+  'visitor.action.loadFailed': {"en":"We couldn't check what can be changed right now. The visit details above are still current.","ru":"Сейчас не удалось проверить, что можно изменить. Данные визита выше актуальны.","cz":"Teď se nepodařilo ověřit, co lze změnit. Údaje o návštěvě výše jsou aktuální."},
+  'visitor.action.cancelTitle': {"en":"Cancel the visit?","ru":"Отменить визит?","cz":"Zrušit návštěvu?"},
+  'visitor.action.cancelText': {"en":"The salon will be told right away. To come after all, you would need to book again.","ru":"Салон сразу узнает об отмене. Чтобы всё-таки прийти, нужно будет записаться заново.","cz":"Salon se to hned dozví. Pokud byste přece jen chtěli přijít, bude potřeba se objednat znovu."},
+  'visitor.action.keep': {"en":"Keep the visit","ru":"Оставить визит","cz":"Ponechat návštěvu"},
+  'visitor.action.rescheduleTitle': {"en":"New time","ru":"Новое время","cz":"Nový čas"},
+  'visitor.action.rescheduleText': {"en":"Choose the day and time in the salon's time zone ({zone}). The salon checks that the time is free.","ru":"Выберите день и время по часовому поясу салона ({zone}). Салон проверит, свободно ли это время.","cz":"Vyberte den a čas v časovém pásmu salonu ({zone}). Salon ověří, zda je čas volný."},
+  'visitor.action.day': {"en":"Day","ru":"День","cz":"Den"},
+  'visitor.action.time': {"en":"Time","ru":"Время","cz":"Čas"},
+  'visitor.action.priceKept': {"en":"The price stays as it is.","ru":"Стоимость не изменится.","cz":"Cena zůstane stejná."},
+  'visitor.action.rescheduleSubmit': {"en":"Move the visit","ru":"Перенести визит","cz":"Přesunout návštěvu"},
+  'visitor.reason.unavailableSalon': {"en":"This salon doesn't take changes online. Please contact them directly.","ru":"Этот салон не принимает изменения онлайн. Свяжитесь с ним напрямую.","cz":"Tento salon nepřijímá změny online. Kontaktujte ho prosím přímo."},
+  'visitor.reason.tooLate': {"en":"It's too late to change this visit online. Please contact the salon.","ru":"Изменить этот визит онлайн уже поздно. Свяжитесь с салоном.","cz":"Na online změnu této návštěvy je už pozdě. Kontaktujte prosím salon."},
+  'visitor.reason.completed': {"en":"The visit is already over.","ru":"Визит уже завершён.","cz":"Návštěva už proběhla."},
+  'visitor.reason.inProgress': {"en":"The visit has already started.","ru":"Визит уже начался.","cz":"Návštěva už začala."},
+  'visitor.reason.cancelled': {"en":"The visit is cancelled.","ru":"Визит отменён.","cz":"Návštěva je zrušena."},
+  'visitor.reason.unavailable': {"en":"Online changes aren't possible for this visit. Please contact the salon.","ru":"Онлайн-изменения для этого визита недоступны. Свяжитесь с салоном.","cz":"Online změny u této návštěvy nejsou možné. Kontaktujte prosím salon."},
 }
 
 export default translations
