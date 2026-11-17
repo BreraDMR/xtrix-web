@@ -45,6 +45,7 @@ export default function PublicHeader() {
           </Link>
           <nav className="hidden items-center gap-7 text-[13px] text-[var(--workspace-muted)] lg:flex">
             {links.map(link => <a key={link.href} href={link.href} className="py-2 transition-colors hover:text-[var(--workspace-ink)]">{link.label}</a>)}
+            <Link to="/visitor/visits" className="py-2 transition-colors hover:text-[var(--workspace-ink)]">{t('landing.nav.clientCabinet')}</Link>
           </nav>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -60,6 +61,7 @@ export default function PublicHeader() {
       {mobileMenuOpen && <div id="landing-mobile-navigation" className="border-t border-[var(--workspace-line)] px-5 py-4 lg:hidden">
         <nav className="grid grid-cols-2 gap-2 text-sm text-[var(--workspace-muted)]">
           {links.map(link => <a key={link.href} href={link.href} onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-[var(--workspace-accent)]">{link.label}</a>)}
+          <Link to="/visitor/visits" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-[var(--workspace-accent)]">{t('landing.nav.clientCabinet')}</Link>
         </nav>
         <div className="mt-4 flex flex-wrap gap-2 border-t border-[var(--workspace-line)] pt-4">{accounts}</div>
       </div>}

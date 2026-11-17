@@ -39,6 +39,7 @@ export default function PublicFooter() {
                   <li><Link to="/login" className="hover:text-[var(--workspace-ink)]">{t('landing.hero.cta_login')}</Link></li>
                   <li><Link to="/register" className="hover:text-[var(--workspace-ink)]">{t('landing.cta.start')}</Link></li>
                 </>}
+              <li><Link to="/visitor/visits" className="hover:text-[var(--workspace-ink)]">{t('landing.nav.clientCabinet')}</Link></li>
             </ul>
           </div>
           <div>

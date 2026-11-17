@@ -2418,6 +2418,7 @@ export type TranslationKey =
   | 'visitor.sessions.everywhere'
   | 'visitor.sessions.everywhereTitle'
   | 'visitor.sessions.everywhereText'
+  | 'landing.nav.clientCabinet'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
@@ -5932,6 +5933,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visitor.sessions.everywhere': {"en":"Sign out everywhere","ru":"Выйти на всех устройствах","cz":"Odhlásit všude"},
   'visitor.sessions.everywhereTitle': {"en":"Sign out on all devices?","ru":"Выйти на всех устройствах?","cz":"Odhlásit na všech zařízeních?"},
   'visitor.sessions.everywhereText': {"en":"Every device signed in to this account will be signed out, this one included.","ru":"Аккаунт выйдет на всех устройствах, включая это.","cz":"Účet se odhlásí na všech zařízeních, včetně tohoto."},
+  'landing.nav.clientCabinet': {"en":"Client account","ru":"Кабинет клиента","cz":"Účet klienta"},
 }
 
 export default translations
