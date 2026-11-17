@@ -26,6 +26,7 @@ import type {
   PublicSlotsOut,
   PublicStaffOut,
 } from '../../api/types'
+import SaveToCabinet from '../../components/visitor/SaveToCabinet'
 import { formatCurrency, type Currency } from '../../utils/currency'
 
 type BookingStep = 'service' | 'staff' | 'time' | 'waitlist' | 'contact' | 'summary' | 'done'
@@ -199,6 +200,7 @@ function BookingSuccess({ booking, onNew }: { booking: PublicBookingOut; onNew: 
       {booking.manage_token && (
         <p className="mt-3 text-xs text-slate-500 dark:text-gray-400">{t('booking.manageHint')}</p>
       )}
+      {booking.manage_token && <SaveToCabinet manageToken={booking.manage_token} />}
     </section>
   )
 }

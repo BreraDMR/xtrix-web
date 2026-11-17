@@ -11,6 +11,7 @@ import { INTL_LOCALE } from '../../components/booking/intl'
 import { useTranslation } from '../../hooks/useTranslation'
 import type { TranslationKey } from '../../i18n/translations'
 import type { PublicBookingManageOut, PublicBookingRescheduleIn } from '../../api/types'
+import SaveToCabinet from '../../components/visitor/SaveToCabinet'
 import { formatCurrency, type Currency } from '../../utils/currency'
 
 const TOKEN_KEY = 'booking_manage_token'
@@ -407,6 +408,8 @@ function ManageBookingSession({ token }: { token: string | null }) {
           {t('bookingManage.linkValidUntil')} {formatDate(booking.token_expires_at, locale)}
         </p>
       </section>
+
+      <SaveToCabinet manageToken={token} />
 
       {notice && (
         <div

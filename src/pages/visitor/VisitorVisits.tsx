@@ -20,7 +20,7 @@ type Cursor = Schema<'VisitorHistoryCursor'>
 export default function VisitorVisits() {
   const { t } = useTranslation()
   const location = useLocation()
-  const notice = (location.state as { notice?: string } | null)?.notice
+  const { notice, tone } = (location.state as { notice?: string; tone?: 'info' | 'success' } | null) ?? {}
   const [category, setCategory] = useState<Category>('upcoming')
   const [businessId, setBusinessId] = useState<number | null>(null)
   // salons met so far, so the filter keeps its options while one salon is selected
@@ -62,7 +62,7 @@ export default function VisitorVisits() {
   const salonOptions = [...salons.entries()].sort((a, b) => a[1].localeCompare(b[1]))
 
   return <VisitorShell title={t('visitor.feed.title')} subtitle={t('visitor.feed.subtitle')}>
-    {notice && <Notice tone="success" className="mb-5">{notice}</Notice>}
+    {notice && <Notice tone={tone ?? 'success'} className="mb-5">{notice}</Notice>}
     <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
       <Tabs tabs={tabs} value={category} onChange={setCategory} label={t('visitor.feed.title')} className="!mb-0" />
       {salonOptions.length > 1 || businessId !== null ? <Select aria-label={t('visitor.feed.salon')} className="w-auto max-w-full"

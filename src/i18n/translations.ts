@@ -2367,6 +2367,24 @@ export type TranslationKey =
   | 'visitor.reason.inProgress'
   | 'visitor.reason.cancelled'
   | 'visitor.reason.unavailable'
+  | 'visitor.save.title'
+  | 'visitor.save.text'
+  | 'visitor.save.textSignedIn'
+  | 'visitor.save.action'
+  | 'visitor.claim.bookingTitle'
+  | 'visitor.claim.bookingText'
+  | 'visitor.claim.inviteTitle'
+  | 'visitor.claim.inviteText'
+  | 'visitor.claim.signInFirst'
+  | 'visitor.claim.waits'
+  | 'visitor.claim.saving'
+  | 'visitor.claim.savedBooking'
+  | 'visitor.claim.savedInvite'
+  | 'visitor.claim.invalid'
+  | 'visitor.claim.failed'
+  | 'visitor.claim.noLinkTitle'
+  | 'visitor.claim.noLinkText'
+  | 'visitor.claim.toFeed'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
@@ -5830,6 +5848,24 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visitor.reason.inProgress': {"en":"The visit has already started.","ru":"Визит уже начался.","cz":"Návštěva už začala."},
   'visitor.reason.cancelled': {"en":"The visit is cancelled.","ru":"Визит отменён.","cz":"Návštěva je zrušena."},
   'visitor.reason.unavailable': {"en":"Online changes aren't possible for this visit. Please contact the salon.","ru":"Онлайн-изменения для этого визита недоступны. Свяжитесь с салоном.","cz":"Online změny u této návštěvy nejsou možné. Kontaktujte prosím salon."},
+  'visitor.save.title': {"en":"Save to my account","ru":"Сохранить в мой кабинет","cz":"Uložit do mého účtu"},
+  'visitor.save.text': {"en":"Keep this visit with all your others. You'll sign in or create a free account first.","ru":"Храните этот визит вместе с остальными. Сначала нужно войти или создать бесплатный аккаунт.","cz":"Mějte tuto návštěvu u ostatních. Nejdřív se přihlásíte nebo si vytvoříte bezplatný účet."},
+  'visitor.save.textSignedIn': {"en":"Add this visit to the visits in your account.","ru":"Добавьте этот визит к остальным в вашем кабинете.","cz":"Přidejte tuto návštěvu k ostatním ve svém účtu."},
+  'visitor.save.action': {"en":"Save","ru":"Сохранить","cz":"Uložit"},
+  'visitor.claim.bookingTitle': {"en":"Save the booking to your account","ru":"Сохранение записи в кабинет","cz":"Uložení rezervace do účtu"},
+  'visitor.claim.bookingText': {"en":"The booking will appear among your visits and you can manage it from there.","ru":"Запись появится среди ваших визитов, и ею можно будет управлять оттуда.","cz":"Rezervace se objeví mezi vašimi návštěvami a budete ji moci spravovat odtud."},
+  'visitor.claim.inviteTitle': {"en":"Invitation from the salon","ru":"Приглашение от салона","cz":"Pozvánka od salonu"},
+  'visitor.claim.inviteText': {"en":"The salon invites you to see your visits with them in your account.","ru":"Салон приглашает вас видеть ваши визиты в нём в личном кабинете.","cz":"Salon vás zve, abyste viděli své návštěvy u něj ve svém účtu."},
+  'visitor.claim.signInFirst': {"en":"Sign in or create an account to continue.","ru":"Чтобы продолжить, войдите или создайте аккаунт.","cz":"Pro pokračování se přihlaste nebo si vytvořte účet."},
+  'visitor.claim.waits': {"en":"We'll remember this link on this device for a day, so you can finish signing up first.","ru":"Мы запомним эту ссылку на этом устройстве на сутки, чтобы вы успели завершить регистрацию.","cz":"Tento odkaz si na tomto zařízení zapamatujeme na den, abyste mohli nejdřív dokončit registraci."},
+  'visitor.claim.saving': {"en":"Saving to your account…","ru":"Сохраняем в кабинет…","cz":"Ukládáme do účtu…"},
+  'visitor.claim.savedBooking': {"en":"The booking is saved to your account.","ru":"Запись сохранена в вашем кабинете.","cz":"Rezervace je uložena ve vašem účtu."},
+  'visitor.claim.savedInvite': {"en":"Your visits with the salon are now in your account.","ru":"Ваши визиты в салоне теперь в кабинете.","cz":"Vaše návštěvy v salonu jsou teď ve vašem účtu."},
+  'visitor.claim.invalid': {"en":"The link is no longer valid. Ask the salon for a new one, or open the latest link from your email.","ru":"Ссылка больше не действует. Попросите у салона новую или откройте последнюю ссылку из письма.","cz":"Odkaz už neplatí. Požádejte salon o nový nebo otevřete nejnovější odkaz z e-mailu."},
+  'visitor.claim.failed': {"en":"The visit couldn't be saved. Please try again.","ru":"Не удалось сохранить визит. Попробуйте ещё раз.","cz":"Návštěvu se nepodařilo uložit. Zkuste to znovu."},
+  'visitor.claim.noLinkTitle': {"en":"No link to save","ru":"Нет ссылки для сохранения","cz":"Žádný odkaz k uložení"},
+  'visitor.claim.noLinkText': {"en":"Open the booking link from your email or the salon's invitation to save visits to your account.","ru":"Откройте ссылку на запись из письма или приглашение салона, чтобы сохранить визиты в кабинет.","cz":"Pro uložení návštěv otevřete odkaz na rezervaci z e-mailu nebo pozvánku salonu."},
+  'visitor.claim.toFeed': {"en":"Go to my visits","ru":"Перейти к моим визитам","cz":"Přejít na moje návštěvy"},
 }
 
 export default translations
