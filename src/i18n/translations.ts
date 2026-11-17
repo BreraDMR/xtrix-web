@@ -2269,6 +2269,50 @@ export type TranslationKey =
   | 'importWizard.error.formulaNotAllowed'
   | 'importWizard.error.malformedRow'
   | 'importWizard.error.rowFailed'
+  | 'visitor.cabinet'
+  | 'visitor.nav.visits'
+  | 'visitor.nav.profile'
+  | 'visitor.backToLogin'
+  | 'visitor.login.title'
+  | 'visitor.login.subtitle'
+  | 'visitor.login.reauthTitle'
+  | 'visitor.login.reauthText'
+  | 'visitor.login.submit'
+  | 'visitor.login.failed'
+  | 'visitor.login.createAccount'
+  | 'visitor.login.forgot'
+  | 'visitor.login.notCrm'
+  | 'visitor.login.crmLink'
+  | 'visitor.request.failed'
+  | 'visitor.request.sentTitle'
+  | 'visitor.request.sentText'
+  | 'visitor.request.sentHint'
+  | 'visitor.request.again'
+  | 'visitor.signup.title'
+  | 'visitor.signup.subtitle'
+  | 'visitor.signup.submit'
+  | 'visitor.forgot.title'
+  | 'visitor.forgot.subtitle'
+  | 'visitor.forgot.submit'
+  | 'visitor.link.invalidTitle'
+  | 'visitor.link.invalidText'
+  | 'visitor.link.requestNew'
+  | 'visitor.password.new'
+  | 'visitor.password.repeat'
+  | 'visitor.register.title'
+  | 'visitor.register.subtitle'
+  | 'visitor.register.submit'
+  | 'visitor.register.conflict'
+  | 'visitor.register.conflictTitle'
+  | 'visitor.reset.title'
+  | 'visitor.reset.subtitle'
+  | 'visitor.reset.submit'
+  | 'visitor.reset.doneTitle'
+  | 'visitor.reset.doneText'
+  | 'visitor.google.title'
+  | 'visitor.google.link'
+  | 'visitor.google.failed'
+  | 'visitor.google.linkHint'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
@@ -5634,6 +5678,50 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'landing.footer.product': {"en":"Product","ru":"Продукт","cz":"Produkt"},
   'landing.footer.account': {"en":"Account","ru":"Аккаунт","cz":"Účet"},
   'landing.footer.legal': {"en":"Legal","ru":"Документы","cz":"Právní informace"},
+  'visitor.cabinet': {"en":"My account","ru":"Мой кабинет","cz":"Můj účet"},
+  'visitor.nav.visits': {"en":"Visits","ru":"Визиты","cz":"Návštěvy"},
+  'visitor.nav.profile': {"en":"Profile","ru":"Профиль","cz":"Profil"},
+  'visitor.backToLogin': {"en":"Back to sign in","ru":"Вернуться ко входу","cz":"Zpět na přihlášení"},
+  'visitor.login.title': {"en":"Sign in to your account","ru":"Вход в личный кабинет","cz":"Přihlášení do účtu"},
+  'visitor.login.subtitle': {"en":"All your salon visits in one place: upcoming, past and cancelled.","ru":"Все ваши визиты в салоны в одном месте: будущие, прошедшие и отменённые.","cz":"Všechny vaše návštěvy salonů na jednom místě: nadcházející, minulé i zrušené."},
+  'visitor.login.reauthTitle': {"en":"Sign in again","ru":"Войдите ещё раз","cz":"Přihlaste se znovu"},
+  'visitor.login.reauthText': {"en":"For your security, this change needs a fresh sign-in. After signing in we'll bring you back.","ru":"Для безопасности это действие требует свежего входа. После входа вы вернётесь обратно.","cz":"Kvůli bezpečnosti tato změna vyžaduje nové přihlášení. Po přihlášení se vrátíte zpět."},
+  'visitor.login.submit': {"en":"Sign in","ru":"Войти","cz":"Přihlásit se"},
+  'visitor.login.failed': {"en":"Could not sign in. Please try again.","ru":"Не удалось войти. Попробуйте ещё раз.","cz":"Přihlášení se nezdařilo. Zkuste to znovu."},
+  'visitor.login.createAccount': {"en":"Create an account","ru":"Создать аккаунт","cz":"Vytvořit účet"},
+  'visitor.login.forgot': {"en":"Forgot your password?","ru":"Забыли пароль?","cz":"Zapomněli jste heslo?"},
+  'visitor.login.notCrm': {"en":"Do you run a salon?","ru":"Вы владелец или мастер салона?","cz":"Provozujete salon?"},
+  'visitor.login.crmLink': {"en":"Sign in to the Xtrix CRM","ru":"Вход в CRM Xtrix","cz":"Přihlášení do Xtrix CRM"},
+  'visitor.request.failed': {"en":"Something went wrong. Please try again.","ru":"Что-то пошло не так. Попробуйте ещё раз.","cz":"Něco se nepovedlo. Zkuste to znovu."},
+  'visitor.request.sentTitle': {"en":"Check your inbox","ru":"Проверьте почту","cz":"Zkontrolujte e-mail"},
+  'visitor.request.sentText': {"en":"If {email} can be used, we've sent a link there. Open it to continue.","ru":"Если адрес {email} подходит, мы отправили на него ссылку. Откройте её, чтобы продолжить.","cz":"Pokud lze adresu {email} použít, poslali jsme na ni odkaz. Otevřete ho a pokračujte."},
+  'visitor.request.sentHint': {"en":"The email may take a few minutes. Check your spam folder too.","ru":"Письмо может идти несколько минут. Проверьте и папку «Спам».","cz":"E-mail může dorazit až za pár minut. Podívejte se i do spamu."},
+  'visitor.request.again': {"en":"Use a different email","ru":"Указать другой адрес","cz":"Použít jiný e-mail"},
+  'visitor.signup.title': {"en":"Create your account","ru":"Создайте аккаунт","cz":"Vytvořte si účet"},
+  'visitor.signup.subtitle': {"en":"Enter your email and we'll send you a link to set a password.","ru":"Укажите почту — мы пришлём ссылку, чтобы задать пароль.","cz":"Zadejte e-mail a pošleme vám odkaz pro nastavení hesla."},
+  'visitor.signup.submit': {"en":"Send the link","ru":"Отправить ссылку","cz":"Poslat odkaz"},
+  'visitor.forgot.title': {"en":"Reset your password","ru":"Восстановление пароля","cz":"Obnovení hesla"},
+  'visitor.forgot.subtitle': {"en":"Enter the email of your account and we'll send you a link to set a new password.","ru":"Укажите почту аккаунта — мы пришлём ссылку для нового пароля.","cz":"Zadejte e-mail účtu a pošleme vám odkaz pro nové heslo."},
+  'visitor.forgot.submit': {"en":"Send the link","ru":"Отправить ссылку","cz":"Poslat odkaz"},
+  'visitor.link.invalidTitle': {"en":"The link is no longer valid","ru":"Ссылка больше не действует","cz":"Odkaz už neplatí"},
+  'visitor.link.invalidText': {"en":"The link has expired or has already been used. Request a new one.","ru":"Срок действия ссылки истёк или она уже использована. Запросите новую.","cz":"Platnost odkazu vypršela nebo už byl použit. Vyžádejte si nový."},
+  'visitor.link.requestNew': {"en":"Request a new link","ru":"Запросить новую ссылку","cz":"Vyžádat nový odkaz"},
+  'visitor.password.new': {"en":"New password","ru":"Новый пароль","cz":"Nové heslo"},
+  'visitor.password.repeat': {"en":"Repeat the password","ru":"Повторите пароль","cz":"Zopakujte heslo"},
+  'visitor.register.title': {"en":"Set your password","ru":"Задайте пароль","cz":"Nastavte si heslo"},
+  'visitor.register.subtitle': {"en":"One last step: choose a password for your account.","ru":"Последний шаг: придумайте пароль для аккаунта.","cz":"Poslední krok: zvolte si heslo k účtu."},
+  'visitor.register.submit': {"en":"Create the account","ru":"Создать аккаунт","cz":"Vytvořit účet"},
+  'visitor.register.conflict': {"en":"An account can't be created from this link.","ru":"По этой ссылке нельзя создать аккаунт.","cz":"Z tohoto odkazu nelze vytvořit účet."},
+  'visitor.register.conflictTitle': {"en":"Account not created","ru":"Аккаунт не создан","cz":"Účet nebyl vytvořen"},
+  'visitor.reset.title': {"en":"Choose a new password","ru":"Новый пароль","cz":"Zvolte nové heslo"},
+  'visitor.reset.subtitle': {"en":"Enter a new password for your account.","ru":"Введите новый пароль для аккаунта.","cz":"Zadejte nové heslo k účtu."},
+  'visitor.reset.submit': {"en":"Save the password","ru":"Сохранить пароль","cz":"Uložit heslo"},
+  'visitor.reset.doneTitle': {"en":"Password changed","ru":"Пароль изменён","cz":"Heslo bylo změněno"},
+  'visitor.reset.doneText': {"en":"You can now sign in with the new password.","ru":"Теперь можно войти с новым паролем.","cz":"Nyní se můžete přihlásit novým heslem."},
+  'visitor.google.title': {"en":"Sign in with Google","ru":"Вход через Google","cz":"Přihlášení přes Google"},
+  'visitor.google.link': {"en":"Connect Google","ru":"Подключить Google","cz":"Propojit Google"},
+  'visitor.google.failed': {"en":"Google sign-in failed. Please try again.","ru":"Не удалось войти через Google. Попробуйте ещё раз.","cz":"Přihlášení přes Google se nezdařilo. Zkuste to znovu."},
+  'visitor.google.linkHint': {"en":"If you already have an account with this email, sign in with your password and connect Google in your profile.","ru":"Если у вас уже есть аккаунт с этой почтой, войдите по паролю и подключите Google в профиле.","cz":"Pokud už máte účet s tímto e-mailem, přihlaste se heslem a propojte Google v profilu."},
 }
 
 export default translations

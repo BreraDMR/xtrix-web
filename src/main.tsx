@@ -6,6 +6,7 @@ import './index.css'
 import './ui/theme.css'
 import { applyTheme, savedTheme } from './utils/theme'
 import { bindSessionCache } from './api/sessionCache'
+import { bindVisitorCache } from './api/visitorClient'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,6 +18,7 @@ const queryClient = new QueryClient({
 })
 
 bindSessionCache(queryClient)
+bindVisitorCache(queryClient)
 
 applyTheme(savedTheme())
 

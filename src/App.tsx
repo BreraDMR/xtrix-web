@@ -42,6 +42,7 @@ import { GiftPurchase, GiftCheckout, GiftReturn } from './pages/booking/GiftPurc
 import PortalLogin from './pages/client/PortalLogin'
 import ClientPortal from './pages/client/Portal'
 import LegacyHistory from './pages/client/LegacyHistory'
+import { VisitorForgotPassword, VisitorLogin, VisitorRegister, VisitorResetPassword, VisitorSignup } from './pages/visitor/VisitorAuth'
 import Layout from './components/Layout'
 import PublicFeatureGate from './components/subscription/PublicFeatureGate'
 import { LegacyRedirect, ParameterizedLegacyRedirect } from './utils/routing'
@@ -68,6 +69,13 @@ function App() {
         <Route path="/client" element={<PublicFeatureGate feature="email"><ClientPortal /></PublicFeatureGate>} />
         <Route path="/client/portal" element={<PublicFeatureGate feature="email"><PortalLogin /></PublicFeatureGate>} />
         <Route path="/client/history" element={<PublicFeatureGate feature="email"><LegacyHistory /></PublicFeatureGate>} />
+        {/* visitor cabinet: the salon's customers, a separate login from the CRM.
+            /visitor/register, /visitor/reset-password and /visitor/email-change are fixed - the API puts them in emails */}
+        <Route path="/visitor/login" element={<VisitorLogin />} />
+        <Route path="/visitor/signup" element={<VisitorSignup />} />
+        <Route path="/visitor/forgot-password" element={<VisitorForgotPassword />} />
+        <Route path="/visitor/register" element={<VisitorRegister />} />
+        <Route path="/visitor/reset-password" element={<VisitorResetPassword />} />
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/privacy" element={<Privacy />} />
 

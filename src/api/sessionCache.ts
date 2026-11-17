@@ -11,6 +11,10 @@ export function bindSessionCache(client: QueryClient) {
   return useAuthStore.subscribe((next, previous) => {
     const changedScope = scope(next.user) !== scope(previous.user)
     const changedUnknownSession = next.token !== previous.token && (!next.user || !previous.user)
-    if (changedScope || changedUnknownSession || next.sessionRevision !== previous.sessionRevision) client.clear()
+    if (changedScope || changedUnknownSession || next.sessionRevision !== previous.sessionRevision) {
+      // the visitor cabinet has its own session (visitorClient.ts) and keeps its data
+      client.removeQueries({ predicate: query => query.queryKey[0] !== 'visitor' })
+      client.getMutationCache().clear()
+    }
   })
 }
