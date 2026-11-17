@@ -4,13 +4,10 @@ import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 import type { Schema } from '../api/types'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
-import { formatCurrency } from '../utils/currency'
 import { dayEnd, dayStart, today } from '../utils/dates'
 
 export default function LoyaltyAnalytics() {
   const { t } = useTranslation()
-  const currency = useBusinessCurrency()
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const now = new Date()
     return today(new Date(now.getFullYear(), now.getMonth() - 1, 1))
@@ -158,7 +155,7 @@ export default function LoyaltyAnalytics() {
                       {client.points?.toFixed(0) || '0'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                      {formatCurrency(client.cashback, currency)}
+                      {client.cashback == null ? '—' : `${client.cashback} ${client.cashback_currency ?? ''}`.trim()}
                     </td>
                   </tr>
                 ))}

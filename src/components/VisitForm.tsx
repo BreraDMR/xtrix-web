@@ -1268,7 +1268,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             {clientBalance.points > 0 && (
               <p className="text-xs text-gray-600 mb-2 dark:text-gray-400">
                 {t('loyalty.client_balance')}: {clientBalance.points.toFixed(0)} {t('loyalty.points')}
-                {clientBalance.cashback > 0 && `, ${clientBalance.cashback.toFixed(2)} € ${t('loyalty.cashback')}`}
+                {clientBalance.cashback != null && clientBalance.cashback > 0 && `, ${clientBalance.cashback.toFixed(2)} ${clientBalance.cashback_currency ?? ''} ${t('loyalty.cashback')}`}
               </p>
             )}
           </div>

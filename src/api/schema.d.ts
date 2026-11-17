@@ -1064,6 +1064,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/businesses/me/legacy-visit-currency": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** How many old visits have no saved currency */
+        get: operations["preview_legacy_visit_currency_businesses_me_legacy_visit_currency_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/businesses/me/legacy-visit-currency/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** State the currency of old visits that have none */
+        post: operations["confirm_legacy_visit_currency_businesses_me_legacy_visit_currency_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/businesses/me/notification-deliveries": {
         parameters: {
             query?: never;
@@ -1520,6 +1554,23 @@ export interface paths {
         put?: never;
         /** Generate Client Qr Code */
         post: operations["generate_client_qr_code_clients__client_id__qr_code_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/clients/{client_id}/visitor-invitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Issue Visitor Invitation */
+        post: operations["issue_visitor_invitation_clients__client_id__visitor_invitations_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3847,6 +3898,400 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/visitor/auth/email/change/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm Email Change */
+        post: operations["confirm_email_change_visitor_auth_email_change_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/email/change/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Email Change */
+        post: operations["request_email_change_visitor_auth_email_change_request_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/google/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Google Config */
+        get: operations["google_config_visitor_auth_google_config_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/google/link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Google Link */
+        post: operations["google_link_visitor_auth_google_link_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/google/link/nonce": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Google Link Nonce */
+        post: operations["google_link_nonce_visitor_auth_google_link_nonce_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/google/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Google Login */
+        post: operations["google_login_visitor_auth_google_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/google/nonce": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Google Nonce */
+        post: operations["google_nonce_visitor_auth_google_nonce_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Login */
+        post: operations["login_visitor_auth_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Logout */
+        post: operations["logout_visitor_auth_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/logout-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Logout All */
+        post: operations["logout_all_visitor_auth_logout_all_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/password/reset/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm Password Reset */
+        post: operations["confirm_password_reset_visitor_auth_password_reset_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/password/reset/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Password Reset */
+        post: operations["request_password_reset_visitor_auth_password_reset_request_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/register/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete Registration */
+        post: operations["complete_registration_visitor_auth_register_complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/auth/register/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Registration */
+        post: operations["request_registration_visitor_auth_register_request_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/claims/client-invite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept Client Invitation */
+        post: operations["accept_client_invitation_visitor_claims_client_invite_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/claims/manage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Claim Guest Visit */
+        post: operations["claim_guest_visit_visitor_claims_manage_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Account */
+        get: operations["read_account_visitor_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/visits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Visits */
+        get: operations["list_visits_visitor_visits_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/visits/{visit_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Visit */
+        get: operations["read_visit_visitor_visits__visit_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/visits/{visit_id}/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Visit Actions
+         * @description Current action hints. Commands recheck authority, time, billing and catalog; no slot is reserved.
+         */
+        get: operations["read_visit_actions_visitor_visits__visit_id__actions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/visits/{visit_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel an explicitly granted visitor booking */
+        post: operations["cancel_visit_visitor_visits__visit_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/visits/{visit_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm an explicitly granted visitor booking */
+        post: operations["confirm_visit_visitor_visits__visit_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/visits/{visit_id}/reschedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Move an explicitly granted visitor booking without changing its stored quote */
+        post: operations["reschedule_visit_visitor_visits__visit_id__reschedule_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/visits/": {
         parameters: {
             query?: never;
@@ -3969,6 +4414,62 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/visits/{visit_id}/loyalty-price": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the saved service price after recorded bonus deductions */
+        get: operations["read_visit_loyalty_price_visits__visit_id__loyalty_price_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visits/{visit_id}/price": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the stored quote and its optimistic fingerprint */
+        get: operations["read_visit_price_visits__visit_id__price_get"];
+        /** Replace an unsettled quote with explicit item prices and currency */
+        put: operations["write_visit_price_visits__visit_id__price_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visits/{visit_id}/price-corrections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Price corrections of one visit, oldest first */
+        get: operations["list_visit_price_corrections_visits__visit_id__price_corrections_get"];
+        put?: never;
+        /**
+         * Correct the quote of a visit that already has payments or bonuses
+         * @description The old payments stay in their own currency. Retrying with the same idempotency_key and body returns the saved correction.
+         */
+        post: operations["correct_visit_price_visits__visit_id__price_corrections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/visits/{visit_id}/questionnaire": {
         parameters: {
             query?: never;
@@ -4031,6 +4532,47 @@ export interface paths {
         put?: never;
         /** Restore Visit */
         post: operations["restore_visit_visits__visit_id__restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visits/{visit_id}/settlement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * What was paid and what is still owed on one visit, in its own currency
+         * @description outstanding/overpayment are null with outstanding_reason when any amount is unknown, a checkout is in flight, or money sits in a replaced currency.
+         */
+        get: operations["read_visit_settlement_visits__visit_id__settlement_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visits/{visit_id}/settlement-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Charges and manual receipts/refunds of one visit, oldest first */
+        get: operations["list_visit_settlement_entries_visits__visit_id__settlement_entries_get"];
+        put?: never;
+        /**
+         * Record an explicit charge, or a manual receipt/refund with its exact amount
+         * @description The amount must be in the currency of the current visit price. Retrying with the same idempotency_key and body returns the saved entry.
+         */
+        post: operations["record_visit_settlement_entry_visits__visit_id__settlement_entries_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4163,6 +4705,10 @@ export interface components {
             business_count?: number | null;
             /** Business Type */
             business_type?: string | null;
+            /** By Currency */
+            by_currency?: components["schemas"]["BenchmarkCurrencyValue"][];
+            /** Currency */
+            currency?: string | null;
             /** Reason */
             reason?: string | null;
         };
@@ -4248,6 +4794,17 @@ export interface components {
             chronic_diseases?: string | null;
             /** Pregnancy */
             pregnancy?: boolean | null;
+        };
+        /** BenchmarkCurrencyValue */
+        BenchmarkCurrencyValue: {
+            /** Average Check */
+            average_check: string | null;
+            /** Business Count */
+            business_count: number;
+            /** Currency */
+            currency: string;
+            /** Visit Count */
+            visit_count: number;
         };
         /** BlockSlotCreate */
         BlockSlotCreate: {
@@ -4467,6 +5024,8 @@ export interface components {
         };
         /** CalculateSalaryRequest */
         CalculateSalaryRequest: {
+            /** Currency */
+            currency?: string | null;
             /**
              * Notes
              * @description Calculation notes
@@ -4676,6 +5235,47 @@ export interface components {
             /** Visit Id */
             visit_id: number;
         };
+        /** CashbackBalanceOut */
+        CashbackBalanceOut: {
+            /** Amount */
+            amount: string | null;
+            /** Currency */
+            currency: string | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+        };
+        /** CashbackCurrencyAmount */
+        CashbackCurrencyAmount: {
+            /** Amount */
+            amount: string | null;
+            /** Currency */
+            currency: string | null;
+        };
+        /** CashbackCurrencyStatistics */
+        CashbackCurrencyStatistics: {
+            /** Balance */
+            balance: string | null;
+            /** Currency */
+            currency: string | null;
+            /** Earned */
+            earned: string | null;
+            /** Redemption Rate */
+            redemption_rate: number | null;
+            /** Spent */
+            spent: string | null;
+        };
+        /** CashbackCurrencyTrend */
+        CashbackCurrencyTrend: {
+            /** Currency */
+            currency: string | null;
+            /** Earned */
+            earned: string | null;
+            /** Spent */
+            spent: string | null;
+        };
         /** ClientCreate */
         ClientCreate: {
             /** Birth Date */
@@ -4722,12 +5322,42 @@ export interface components {
                 [key: string]: unknown;
             }[];
         };
+        /** ClientInviteAcceptIn */
+        ClientInviteAcceptIn: {
+            /**
+             * Token
+             * Format: password
+             */
+            token: string;
+        };
+        /** ClientInviteIssueIn */
+        ClientInviteIssueIn: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+        };
+        /** ClientInviteIssueOut */
+        ClientInviteIssueOut: {
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Token */
+            token: string;
+        };
         /** ClientLoyaltyBalance */
         ClientLoyaltyBalance: {
             /** Business Id */
             business_id: number;
             /** Cashback */
-            cashback: number;
+            cashback: number | null;
+            /** Cashback Balances */
+            cashback_balances?: components["schemas"]["CashbackBalanceOut"][];
+            /** Cashback Currency */
+            cashback_currency?: string | null;
             /** Client Id */
             client_id: number;
             level?: components["schemas"]["LoyaltyLevelOut"] | null;
@@ -4880,7 +5510,11 @@ export interface components {
         /** ClientPortalLoyaltyOut */
         ClientPortalLoyaltyOut: {
             /** Cashback */
-            cashback: number;
+            cashback: number | null;
+            /** Cashback Balances */
+            cashback_balances?: components["schemas"]["CashbackBalanceOut"][];
+            /** Cashback Currency */
+            cashback_currency?: string | null;
             /** Level Benefits */
             level_benefits?: string | null;
             /** Level Name */
@@ -5091,20 +5725,40 @@ export interface components {
             /** Specialist Id */
             specialist_id: number;
         };
+        /** ClientSpendingAverage */
+        ClientSpendingAverage: {
+            /** Average */
+            average: string | null;
+            /** Client Count */
+            client_count: number;
+            /** Currency */
+            currency: string | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+        };
         /** ClientStatisticsResponse */
         ClientStatisticsResponse: {
             /** Average Spending */
             average_spending?: number | null;
+            /** Average Spending By Currency */
+            average_spending_by_currency?: components["schemas"]["ClientSpendingAverage"][];
             /** Clients By Gender */
             clients_by_gender: {
                 [key: string]: number;
             };
+            /** Currency */
+            currency?: string | null;
             /** New Clients */
             new_clients: number;
             /** Top Spenders */
             top_spenders: {
                 [key: string]: unknown;
             }[];
+            /** Top Spenders By Currency */
+            top_spenders_by_currency?: components["schemas"]["FinancialCurrencyClients"][];
             /** Total Clients */
             total_clients: number;
         };
@@ -5291,6 +5945,30 @@ export interface components {
             /** Visits */
             visits: number;
         };
+        /**
+         * CurrencyMoneySlice
+         * @description Money of one row in one stored visit currency; count = priced visits.
+         */
+        CurrencyMoneySlice: {
+            /** Amount */
+            amount: string | null;
+            /** Average */
+            average: string | null;
+            /**
+             * Client Count
+             * @default 0
+             */
+            client_count: number;
+            /** Count */
+            count: number;
+            /** Currency */
+            currency: string | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+        };
         /** EmployeeCreate */
         EmployeeCreate: {
             /**
@@ -5299,6 +5977,8 @@ export interface components {
              * @default 0
              */
             base_salary: number | null;
+            /** Base Salary Currency */
+            base_salary_currency?: string | null;
             /**
              * Business Owner Id
              * @description Business owner ID (optional, admin only)
@@ -5306,10 +5986,9 @@ export interface components {
             business_owner_id?: number | null;
             /**
              * Commission Percentage
-             * @description Commission % per visit
              * @default 0
              */
-            commission_percentage: number | null;
+            commission_percentage: number | string | null;
             /**
              * Employee User Id
              * @description Employee's user ID
@@ -5347,6 +6026,10 @@ export interface components {
              * @default 0
              */
             base_salary: number | null;
+            /** Base Salary Currency */
+            base_salary_currency?: string | null;
+            /** Base Salary Exact */
+            base_salary_exact?: string | null;
             /** Business Owner Id */
             business_owner_id: number;
             /**
@@ -5411,6 +6094,8 @@ export interface components {
              * @default 0
              */
             base_salary: number | null;
+            /** Base Salary Currency */
+            base_salary_currency?: string | null;
             /**
              * Business Id
              * @description Business to attach to (taken from the caller by default)
@@ -5420,7 +6105,7 @@ export interface components {
              * Commission Percentage
              * @default 0
              */
-            commission_percentage: number | null;
+            commission_percentage: number | string | null;
             /**
              * Email
              * @description Employee email
@@ -5467,6 +6152,10 @@ export interface components {
              * @default 0
              */
             base_salary: number | null;
+            /** Base Salary Currency */
+            base_salary_currency?: string | null;
+            /** Base Salary Exact */
+            base_salary_exact?: string | null;
             /** Business Owner Id */
             business_owner_id: number;
             /**
@@ -5518,8 +6207,10 @@ export interface components {
         EmployeeUpdate: {
             /** Base Salary */
             base_salary?: number | null;
+            /** Base Salary Currency */
+            base_salary_currency?: string | null;
             /** Commission Percentage */
-            commission_percentage?: number | null;
+            commission_percentage?: number | string | null;
             /** Is Active */
             is_active?: boolean | null;
             /** Notes */
@@ -5543,6 +6234,29 @@ export interface components {
             is_payer: boolean;
             /** Period */
             period: string;
+        };
+        /** EntityCurrencyValue */
+        EntityCurrencyValue: {
+            /** Amount */
+            amount: string | null;
+            /** Average */
+            average: string | null;
+            /**
+             * Client Count
+             * @default 0
+             */
+            client_count: number;
+            /** Count */
+            count: number;
+            /** Currency */
+            currency: string | null;
+            /** Per Client */
+            per_client?: string | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
         };
         /** ExecuteOut */
         ExecuteOut: {
@@ -5620,16 +6334,25 @@ export interface components {
         };
         /** ExpenseCategoryTotal */
         ExpenseCategoryTotal: {
+            /** By Currency */
+            by_currency?: components["schemas"]["ExpenseCurrencyTotal"][];
             /** Category Code */
             category_code?: string | null;
             /** Category Id */
-            category_id: number;
+            category_id?: number | null;
             /** Category Name */
-            category_name: string;
+            category_name?: string | null;
             /** Color */
             color?: string | null;
+            /** Currency */
+            currency?: string | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
             /** Total */
-            total: number;
+            total?: number | null;
         };
         /** ExpenseCategoryUpdate */
         ExpenseCategoryUpdate: {
@@ -5668,6 +6391,20 @@ export interface components {
              */
             payment_method: string;
         };
+        /** ExpenseCurrencyTotal */
+        ExpenseCurrencyTotal: {
+            /** Count */
+            count: number;
+            /** Currency */
+            currency?: string | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+            /** Total */
+            total?: string | null;
+        };
         /** ExpenseOut */
         ExpenseOut: {
             /** Amount */
@@ -5705,6 +6442,8 @@ export interface components {
              * @default other
              */
             payment_method: string;
+            /** Salary Payment Id */
+            salary_payment_id?: number | null;
             /**
              * Source
              * @description null for manual expenses, salary_payment for automatic ones
@@ -5731,26 +6470,101 @@ export interface components {
             /** Payment Method */
             payment_method?: string | null;
         };
+        /** FinancialClientQuote */
+        FinancialClientQuote: {
+            /** Amount */
+            amount: string | null;
+            /** Client Id */
+            client_id: number;
+            /** Client Name */
+            client_name: string;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+            /** Visit Count */
+            visit_count: number;
+        };
+        /** FinancialCurrencyClients */
+        FinancialCurrencyClients: {
+            /** Clients */
+            clients: components["schemas"]["FinancialClientQuote"][];
+            /** Currency */
+            currency: string | null;
+        };
+        /** FinancialCurrencyValue */
+        FinancialCurrencyValue: {
+            /** Amount */
+            amount: string | null;
+            /** Average */
+            average: string | null;
+            /** Count */
+            count: number;
+            /** Currency */
+            currency: string | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+        };
+        /** FinancialQuotePeriod */
+        FinancialQuotePeriod: {
+            /** By Currency */
+            by_currency: components["schemas"]["FinancialCurrencyValue"][];
+            /** Count */
+            count: number;
+            /** Currency */
+            currency: string | null;
+            /** Month */
+            month?: number | null;
+            /** Period */
+            period: string;
+            /** Revenue */
+            revenue: number | null;
+            /** Year */
+            year?: number | null;
+        };
+        /** FinancialQuoteSummary */
+        FinancialQuoteSummary: {
+            /** By Currency */
+            by_currency: components["schemas"]["FinancialCurrencyValue"][];
+            /** Count */
+            count: number;
+            /** Currency */
+            currency: string | null;
+            /** Revenue */
+            revenue: number | null;
+        };
         /** FinancialReportResponse */
         FinancialReportResponse: {
             /** Average Revenue Per Visit */
             average_revenue_per_visit?: number | null;
+            /** By Currency */
+            by_currency?: components["schemas"]["FinancialCurrencyValue"][];
+            /** Currency */
+            currency?: string | null;
             /** Revenue By Period */
-            revenue_by_period: {
-                [key: string]: unknown;
-            }[];
+            revenue_by_period: components["schemas"]["FinancialQuotePeriod"][];
             /** Revenue By Status */
             revenue_by_status: {
-                [key: string]: {
-                    [key: string]: unknown;
-                };
+                [key: string]: components["schemas"]["FinancialQuoteSummary"];
             };
             /** Top Clients */
             top_clients: {
                 [key: string]: unknown;
             }[];
+            /** Top Clients By Currency */
+            top_clients_by_currency?: components["schemas"]["FinancialCurrencyClients"][];
             /** Total Revenue */
-            total_revenue: number;
+            total_revenue: number | null;
+            /**
+             * Value Basis
+             * @default quoted_service_price
+             * @constant
+             */
+            value_basis: "quoted_service_price";
         };
         /** FindClientPlanned */
         FindClientPlanned: {
@@ -5793,23 +6607,52 @@ export interface components {
             /** Specialist Id */
             specialist_id?: number | null;
         };
+        /** ForecastCurrencyPoint */
+        ForecastCurrencyPoint: {
+            /** Forecasted Value */
+            forecasted_value: string | null;
+            /** Period */
+            period: string;
+        };
+        /** ForecastCurrencyValue */
+        ForecastCurrencyValue: {
+            /** Currency */
+            currency: string | null;
+            /** Forecast */
+            forecast: components["schemas"]["ForecastCurrencyPoint"][];
+            /** Historical Average */
+            historical_average: string | null;
+            /** Last Value */
+            last_value: string | null;
+            /** Months */
+            months: number;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+        };
         /** ForecastData */
         ForecastData: {
             /** Forecasted Value */
-            forecasted_value: number;
+            forecasted_value: number | null;
             /** Period */
             period: string;
         };
         /** ForecastResponse */
         ForecastResponse: {
+            /** By Currency */
+            by_currency?: components["schemas"]["ForecastCurrencyValue"][];
+            /** Currency */
+            currency?: string | null;
             /** Forecast */
             forecast: components["schemas"]["ForecastData"][];
             /** Forecast Type */
             forecast_type: string;
             /** Historical Average */
-            historical_average: number;
+            historical_average: number | null;
             /** Last Value */
-            last_value: number;
+            last_value: number | null;
             /** Periods */
             periods: number;
         };
@@ -5915,6 +6758,10 @@ export interface components {
         GiftLedgerEntryOut: {
             /** Amount Delta */
             amount_delta: number;
+            /** Coverage Amount Exact */
+            coverage_amount_exact?: string | null;
+            /** Coverage Currency */
+            coverage_currency?: string | null;
             /**
              * Created At
              * Format: date-time
@@ -6076,6 +6923,10 @@ export interface components {
             /** Applied Visits */
             applied_visits: number;
             certificate: components["schemas"]["GiftCertificateOut"];
+            /** Coverage Amount Exact */
+            coverage_amount_exact?: string | null;
+            /** Coverage Currency */
+            coverage_currency?: string | null;
             /** Entry Id */
             entry_id: number;
         };
@@ -6091,6 +6942,10 @@ export interface components {
         /** GiftReversalOut */
         GiftReversalOut: {
             certificate: components["schemas"]["GiftCertificateOut"];
+            /** Coverage Amount Exact */
+            coverage_amount_exact?: string | null;
+            /** Coverage Currency */
+            coverage_currency?: string | null;
             /** Entry Id */
             entry_id: number;
             /** Restored Amount */
@@ -6363,6 +7218,31 @@ export interface components {
             title: string;
             /** Type */
             type: string;
+        };
+        /** LegacyVisitCurrencyConfirmIn */
+        LegacyVisitCurrencyConfirmIn: {
+            /** Currency */
+            currency: string;
+            /** Expected Count */
+            expected_count: number;
+        };
+        /** LegacyVisitCurrencyConfirmOut */
+        LegacyVisitCurrencyConfirmOut: {
+            /** Currency */
+            currency: string;
+            /** Updated Visits */
+            updated_visits: number;
+        };
+        /** LegacyVisitCurrencyOut */
+        LegacyVisitCurrencyOut: {
+            /** Business Currency */
+            business_currency?: string | null;
+            /** First Visit At */
+            first_visit_at?: string | null;
+            /** Last Visit At */
+            last_visit_at?: string | null;
+            /** Unknown Visits */
+            unknown_visits: number;
         };
         /** LevelDistributionItem */
         LevelDistributionItem: {
@@ -6829,17 +7709,21 @@ export interface components {
         /** LoyaltyStatisticsResponse */
         LoyaltyStatisticsResponse: {
             /** Active Cashback Balance */
-            active_cashback_balance: number;
+            active_cashback_balance: string | null;
             /** Active Points Balance */
             active_points_balance: number;
+            /** Cashback By Currency */
+            cashback_by_currency?: components["schemas"]["CashbackCurrencyStatistics"][];
+            /** Cashback Currency */
+            cashback_currency?: string | null;
             /** Cashback Redemption Rate */
-            cashback_redemption_rate: number;
+            cashback_redemption_rate: number | null;
             /** Points Redemption Rate */
             points_redemption_rate: number;
             /** Total Cashback Earned */
-            total_cashback_earned: number;
+            total_cashback_earned: string | null;
             /** Total Cashback Spent */
-            total_cashback_spent: number;
+            total_cashback_spent: string | null;
             /** Total Participants */
             total_participants: number;
             /** Total Points Earned */
@@ -6853,8 +7737,16 @@ export interface components {
             business_id: number;
             /** Cashback Amount */
             cashback_amount: number | null;
+            /** Cashback Amount Exact */
+            cashback_amount_exact?: string | null;
             /** Cashback Balance After */
             cashback_balance_after: number | null;
+            /** Cashback Balance After Exact */
+            cashback_balance_after_exact?: string | null;
+            /** Cashback Currency */
+            cashback_currency?: string | null;
+            /** Cashback Requires Review */
+            readonly cashback_requires_review: boolean;
             /** Client Id */
             client_id: number;
             /**
@@ -6864,6 +7756,10 @@ export interface components {
             created_at: string;
             /** Description */
             description: string | null;
+            /** Discount Amount Exact */
+            discount_amount_exact?: string | null;
+            /** Discount Currency */
+            discount_currency?: string | null;
             /** Expiry Date */
             expiry_date: string | null;
             /** Id */
@@ -7443,19 +8339,50 @@ export interface components {
             /** Message */
             message: string;
         };
+        /** PaymentCurrencyValue */
+        PaymentCurrencyValue: {
+            /** Count */
+            count: number;
+            /** Currency */
+            currency: string | null;
+            /** Payments By Method */
+            payments_by_method: {
+                [key: string]: components["schemas"]["PaymentMethodCurrencyStats"];
+            };
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+            /** Total */
+            total: string | null;
+        };
+        /** PaymentMethodCurrencyStats */
+        PaymentMethodCurrencyStats: {
+            /** Count */
+            count: number;
+            /** Percentage */
+            percentage: number | null;
+            /** Total */
+            total: string | null;
+        };
         /** PaymentMethodStats */
         PaymentMethodStats: {
             /** Count */
             count: number;
             /** Percentage */
-            percentage: number;
+            percentage: number | null;
             /** Total */
-            total: number;
+            total: number | null;
         };
         /** PaymentStatisticsResponse */
         PaymentStatisticsResponse: {
+            /** By Currency */
+            by_currency?: components["schemas"]["PaymentCurrencyValue"][];
             card_payments: components["schemas"]["PaymentMethodStats"];
             cash_payments: components["schemas"]["PaymentMethodStats"];
+            /** Currency */
+            currency?: string | null;
             other_payments: components["schemas"]["PaymentMethodStats"];
             /** Payments By Method */
             payments_by_method: {
@@ -7464,7 +8391,7 @@ export interface components {
             /** Total Count */
             total_count: number;
             /** Total Payments */
-            total_payments: number;
+            total_payments: number | null;
         };
         /** PlanOut */
         PlanOut: {
@@ -7505,10 +8432,14 @@ export interface components {
         };
         /** PointsUsageTrendItem */
         PointsUsageTrendItem: {
+            /** Cashback By Currency */
+            cashback_by_currency?: components["schemas"]["CashbackCurrencyTrend"][];
+            /** Cashback Currency */
+            cashback_currency?: string | null;
             /** Cashback Earned */
-            cashback_earned: number;
+            cashback_earned: string | null;
             /** Cashback Spent */
-            cashback_spent: number;
+            cashback_spent: string | null;
             /** Period */
             period: string;
             /** Points Earned */
@@ -7523,12 +8454,45 @@ export interface components {
             /** Trends */
             trends: components["schemas"]["PointsUsageTrendItem"][];
         };
+        /** PopularService */
+        PopularService: {
+            /** Average Price */
+            average_price?: number | null;
+            /** By Currency */
+            by_currency?: components["schemas"]["CurrencyMoneySlice"][];
+            /** Currency */
+            currency?: string | null;
+            /** Service Id */
+            service_id: number;
+            /** Service Name */
+            service_name: string;
+            /** Total Revenue */
+            total_revenue: number | null;
+            /** Visit Count */
+            visit_count: number;
+        };
         /** PopularServicesResponse */
         PopularServicesResponse: {
             /** Services */
-            services: {
-                [key: string]: unknown;
-            }[];
+            services: components["schemas"]["PopularService"][];
+        };
+        /**
+         * PriorCurrencySettlementOut
+         * @description Money left under a currency the visit price was corrected away from. Never converted.
+         */
+        PriorCurrencySettlementOut: {
+            /** Benefit Rows */
+            benefit_rows: number;
+            /** Currency */
+            currency: string;
+            /** Entry Rows */
+            entry_rows: number;
+            /** Provider Net */
+            provider_net: string | null;
+            /** Provider Received */
+            provider_received: string | null;
+            /** Provider Refunded */
+            provider_refunded: string | null;
         };
         /** ProductCreate */
         ProductCreate: {
@@ -7711,19 +8675,50 @@ export interface components {
             /** Visit Id */
             visit_id?: number | null;
         };
+        /** ProfitCurrencySlice */
+        ProfitCurrencySlice: {
+            /** Currency */
+            currency?: string | null;
+            /** Expense Count */
+            expense_count: number;
+            /** Expenses */
+            expenses?: string | null;
+            /** Profit */
+            profit?: string | null;
+            /** Profit Margin */
+            profit_margin?: number | null;
+            /** Quote Count */
+            quote_count: number;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+            /** Revenue */
+            revenue?: string | null;
+        };
         /** ProfitDay */
         ProfitDay: {
+            /** By Currency */
+            by_currency?: components["schemas"]["ProfitCurrencySlice"][];
+            /** Currency */
+            currency?: string | null;
             /**
              * Date
              * Format: date
              */
             date: string;
             /** Expenses */
-            expenses: number;
+            expenses?: number | null;
             /** Profit */
-            profit: number;
+            profit?: number | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
             /** Revenue */
-            revenue: number;
+            revenue?: number | null;
         };
         /** ProfitReportPeriod */
         ProfitReportPeriod: {
@@ -7740,25 +8735,44 @@ export interface components {
         };
         /** ProfitReportResponse */
         ProfitReportResponse: {
+            /** By Currency */
+            by_currency?: components["schemas"]["ProfitCurrencySlice"][];
+            /** Currency */
+            currency?: string | null;
             /** Daily */
             daily: components["schemas"]["ProfitDay"][];
             /** Expenses */
-            expenses: number;
+            expenses?: number | null;
             /** Expenses By Category */
             expenses_by_category: components["schemas"]["ExpenseCategoryTotal"][];
             period: components["schemas"]["ProfitReportPeriod"];
             /** Profit */
-            profit: number;
+            profit?: number | null;
             /**
              * Profit Margin
              * @description Profit as a percent of revenue, 0 when there is no revenue
              */
-            profit_margin: number;
+            profit_margin?: number | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
             /** Revenue */
-            revenue: number;
+            revenue?: number | null;
+            /**
+             * Value Basis
+             * @default quoted_service_price
+             * @constant
+             */
+            value_basis: "quoted_service_price";
         };
         /** PromotionEffectivenessItem */
         PromotionEffectivenessItem: {
+            /** Cashback By Currency */
+            cashback_by_currency?: components["schemas"]["CashbackCurrencyAmount"][];
+            /** Cashback Currency */
+            cashback_currency?: string | null;
             /** End Date */
             end_date: string;
             /** Is Active */
@@ -7772,7 +8786,7 @@ export interface components {
             /** Start Date */
             start_date: string;
             /** Total Cashback Awarded */
-            total_cashback_awarded: number;
+            total_cashback_awarded: string | null;
             /** Total Points Awarded */
             total_points_awarded: number;
             /** Unique Clients */
@@ -7857,7 +8871,7 @@ export interface components {
             /** Confirmed At */
             confirmed_at?: string | null;
             /** Currency */
-            currency: string;
+            currency?: string | null;
             /**
              * End
              * Format: date-time
@@ -8555,11 +9569,10 @@ export interface components {
         };
         /** SalaryAdjustmentCreate */
         SalaryAdjustmentCreate: {
-            /**
-             * Amount
-             * @description Can be negative (penalty)
-             */
-            amount: number;
+            /** Amount */
+            amount: number | string;
+            /** Currency */
+            currency?: string | null;
             /**
              * Description
              * @description Description
@@ -8578,6 +9591,8 @@ export interface components {
              * @description Can be negative (penalty)
              */
             amount: number;
+            /** Amount Exact */
+            amount_exact?: string | null;
             /**
              * Created At
              * Format: date-time
@@ -8585,6 +9600,8 @@ export interface components {
             created_at: string;
             /** Created By Id */
             created_by_id: number;
+            /** Currency */
+            currency?: string | null;
             /**
              * Description
              * @description Description
@@ -8613,12 +9630,18 @@ export interface components {
              * @default 0
              */
             adjustments_total: number;
+            /** Adjustments Total Exact */
+            adjustments_total_exact?: string | null;
             /**
              * Base Salary
              * @description Fixed part of the salary
              * @default 0
              */
             base_salary: number;
+            /** Base Salary Exact */
+            base_salary_exact?: string | null;
+            /** Business Id Snapshot */
+            business_id_snapshot?: number | null;
             /**
              * Calculated At
              * Format: date-time
@@ -8641,6 +9664,8 @@ export interface components {
              * @default 0
              */
             commission_amount: number;
+            /** Commission Amount Exact */
+            commission_amount_exact?: string | null;
             /**
              * Commission Percentage
              * @description Commission percentage
@@ -8657,6 +9682,8 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Currency */
+            currency?: string | null;
             /**
              * Employee Id
              * @description Employee ID
@@ -8681,6 +9708,8 @@ export interface components {
              * @default 0
              */
             paid_amount: number;
+            /** Paid Amount Exact */
+            paid_amount_exact?: string | null;
             /**
              * Paid At
              * @description Date of the last payment
@@ -8709,18 +9738,25 @@ export interface components {
              * @description Period start
              */
             period_start: string;
+            salary_period?: components["schemas"]["SalaryPeriodOut"] | null;
+            /** Salary Period Id */
+            salary_period_id?: number | null;
             /**
              * Total Revenue
              * @description Total visit revenue
              * @default 0
              */
             total_revenue: number;
+            /** Total Revenue Exact */
+            total_revenue_exact?: string | null;
             /**
              * Total Salary
              * @description Total salary
              * @default 0
              */
             total_salary: number;
+            /** Total Salary Exact */
+            total_salary_exact?: string | null;
             /**
              * Total Visits
              * @description Total visits
@@ -8733,6 +9769,8 @@ export interface components {
              * @default 0
              */
             total_with_adjustments: number;
+            /** Total With Adjustments Exact */
+            total_with_adjustments_exact?: string | null;
             /**
              * Updated At
              * Format: date-time
@@ -8747,12 +9785,18 @@ export interface components {
              * @default 0
              */
             adjustments_total: number;
+            /** Adjustments Total Exact */
+            adjustments_total_exact?: string | null;
             /**
              * Base Salary
              * @description Fixed part of the salary
              * @default 0
              */
             base_salary: number;
+            /** Base Salary Exact */
+            base_salary_exact?: string | null;
+            /** Business Id Snapshot */
+            business_id_snapshot?: number | null;
             /**
              * Calculated At
              * Format: date-time
@@ -8775,6 +9819,8 @@ export interface components {
              * @default 0
              */
             commission_amount: number;
+            /** Commission Amount Exact */
+            commission_amount_exact?: string | null;
             /**
              * Commission Percentage
              * @description Commission percentage
@@ -8791,6 +9837,8 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Currency */
+            currency?: string | null;
             /**
              * Employee Id
              * @description Employee ID
@@ -8815,6 +9863,8 @@ export interface components {
              * @default 0
              */
             paid_amount: number;
+            /** Paid Amount Exact */
+            paid_amount_exact?: string | null;
             /**
              * Paid At
              * @description Date of the last payment
@@ -8838,18 +9888,25 @@ export interface components {
              * @description Period start
              */
             period_start: string;
+            salary_period?: components["schemas"]["SalaryPeriodOut"] | null;
+            /** Salary Period Id */
+            salary_period_id?: number | null;
             /**
              * Total Revenue
              * @description Total visit revenue
              * @default 0
              */
             total_revenue: number;
+            /** Total Revenue Exact */
+            total_revenue_exact?: string | null;
             /**
              * Total Salary
              * @description Total salary
              * @default 0
              */
             total_salary: number;
+            /** Total Salary Exact */
+            total_salary_exact?: string | null;
             /**
              * Total Visits
              * @description Total visits
@@ -8862,6 +9919,8 @@ export interface components {
              * @default 0
              */
             total_with_adjustments: number;
+            /** Total With Adjustments Exact */
+            total_with_adjustments_exact?: string | null;
             /**
              * Updated At
              * Format: date-time
@@ -8883,11 +9942,10 @@ export interface components {
         };
         /** SalaryPaymentCreate */
         SalaryPaymentCreate: {
-            /**
-             * Amount
-             * @description Payment amount
-             */
-            amount: number;
+            /** Amount */
+            amount: number | string;
+            /** Currency */
+            currency?: string | null;
             /**
              * Notes
              * @description Notes
@@ -8919,6 +9977,8 @@ export interface components {
              * @description Payment amount
              */
             amount: number;
+            /** Amount Exact */
+            amount_exact?: string | null;
             /**
              * Created At
              * Format: date-time
@@ -8926,6 +9986,8 @@ export interface components {
             created_at: string;
             /** Created By Id */
             created_by_id: number;
+            /** Currency */
+            currency?: string | null;
             /** Id */
             id: number;
             /**
@@ -8962,7 +10024,9 @@ export interface components {
         /** SalaryPaymentUpdate */
         SalaryPaymentUpdate: {
             /** Amount */
-            amount?: number | null;
+            amount?: number | string | null;
+            /** Currency */
+            currency?: string | null;
             /** Notes */
             notes?: string | null;
             /** Payment Date */
@@ -8971,6 +10035,38 @@ export interface components {
             payment_method?: ("cash" | "card" | "transfer" | "other") | null;
             /** Status */
             status?: ("completed" | "pending" | "failed") | null;
+        };
+        /** SalaryPeriodOut */
+        SalaryPeriodOut: {
+            /** Base Salary Currency */
+            base_salary_currency?: string | null;
+            /** Base Salary Exact */
+            base_salary_exact: string;
+            /** Business Id */
+            business_id: number;
+            /** Commission Percentage */
+            commission_percentage: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Created By Id */
+            created_by_id?: number | null;
+            /** Employee Id */
+            employee_id: number;
+            /** Id */
+            id: number;
+            /**
+             * Period End
+             * Format: date-time
+             */
+            period_end: string;
+            /**
+             * Period Start
+             * Format: date-time
+             */
+            period_start: string;
         };
         /** SandboxPaymentOutcomeIn */
         SandboxPaymentOutcomeIn: {
@@ -9040,15 +10136,19 @@ export interface components {
         /** ServiceAnalytics */
         ServiceAnalytics: {
             /** Average Price */
-            average_price: number;
+            average_price: number | null;
+            /** By Currency */
+            by_currency?: components["schemas"]["EntityCurrencyValue"][];
+            /** Currency */
+            currency?: string | null;
             /** Ltv Per Client */
-            ltv_per_client: number;
+            ltv_per_client: number | null;
             /** Service Id */
             service_id: number;
             /** Service Name */
             service_name: string;
             /** Total Revenue */
-            total_revenue: number;
+            total_revenue: number | null;
             /** Unique Clients */
             unique_clients: number;
             /** Visit Count */
@@ -9282,15 +10382,19 @@ export interface components {
         /** SpecialistAnalytics */
         SpecialistAnalytics: {
             /** Average Check */
-            average_check: number;
+            average_check: number | null;
+            /** By Currency */
+            by_currency?: components["schemas"]["EntityCurrencyValue"][];
+            /** Currency */
+            currency?: string | null;
             /** Revenue Per Client */
-            revenue_per_client: number;
+            revenue_per_client: number | null;
             /** Specialist Id */
             specialist_id: number;
             /** Specialist Name */
             specialist_name: string;
             /** Total Revenue */
-            total_revenue: number;
+            total_revenue: number | null;
             /** Unique Clients */
             unique_clients: number;
             /** Visit Count */
@@ -9674,7 +10778,11 @@ export interface components {
         /** TopClientItem */
         TopClientItem: {
             /** Cashback */
-            cashback: number;
+            cashback: string | null;
+            /** Cashback Balances */
+            cashback_balances?: components["schemas"]["CashbackBalanceOut"][];
+            /** Cashback Currency */
+            cashback_currency?: string | null;
             /** Client Id */
             client_id: number;
             /** Client Name */
@@ -9741,24 +10849,52 @@ export interface components {
             /** Text */
             text: string;
         };
+        /** TrendCurrencyValue */
+        TrendCurrencyValue: {
+            /** Change */
+            change: string | null;
+            /** Change Percent */
+            change_percent: number | null;
+            /** Currency */
+            currency: string | null;
+            /** Current Count */
+            current_count: number;
+            /** Current Value */
+            current_value: string | null;
+            /** Previous Count */
+            previous_count: number;
+            /** Previous Value */
+            previous_value: string | null;
+            /**
+             * Requires Review
+             * @default false
+             */
+            requires_review: boolean;
+            /** Trend Direction */
+            trend_direction: string | null;
+        };
         /** TrendsAnalysisResponse */
         TrendsAnalysisResponse: {
+            /** By Currency */
+            by_currency?: components["schemas"]["TrendCurrencyValue"][];
             /** Change */
-            change: number;
+            change: number | null;
             /** Change Percent */
-            change_percent: number;
+            change_percent: number | null;
             /** Comparison Type */
             comparison_type: string;
+            /** Currency */
+            currency?: string | null;
             /** Current Value */
-            current_value: number;
+            current_value: number | null;
             /** Metric */
             metric: string;
             /** Period Label */
             period_label: string;
             /** Previous Value */
-            previous_value: number;
+            previous_value: number | null;
             /** Trend Direction */
-            trend_direction: string;
+            trend_direction: string | null;
         };
         /** TwoFactorEnable */
         TwoFactorEnable: {
@@ -9817,9 +10953,9 @@ export interface components {
         UsePointsRequest: {
             /**
              * Cashback To Use
-             * @description Cashback to use
+             * @description Cashback to use in the visit currency
              */
-            cashback_to_use?: number | null;
+            cashback_to_use?: number | string | null;
             /**
              * Points To Use
              * @description Points to use
@@ -10130,6 +11266,33 @@ export interface components {
             /** Specialist Id */
             specialist_id?: number | null;
         };
+        /** VisitItemPriceChange */
+        VisitItemPriceChange: {
+            /** Item Id */
+            item_id: number;
+            /** Price */
+            price: number | string;
+        };
+        /** VisitLoyaltyPriceOut */
+        VisitLoyaltyPriceOut: {
+            /** Currency */
+            currency: string | null;
+            /** Loyalty Discount */
+            loyalty_discount: string | null;
+            /** Message */
+            message?: string | null;
+            /**
+             * Price After Loyalty
+             * @description Service price after bonuses; excludes gifts and received payments
+             */
+            price_after_loyalty: string | null;
+            /** Quoted Total */
+            quoted_total: string | null;
+            /** Requires Review */
+            requires_review: boolean;
+            /** Visit Id */
+            visit_id: number;
+        };
         /** VisitOut */
         VisitOut: {
             /** Client Confirmed At */
@@ -10154,6 +11317,11 @@ export interface components {
             id: number;
             /** Items */
             items?: components["schemas"]["VisitItemOut"][];
+            /**
+             * Loyalty Warning
+             * @description Localized result warning; check bonus history before retrying
+             */
+            loyalty_warning?: string | null;
             /** Note */
             note?: string | null;
             /**
@@ -10182,6 +11350,215 @@ export interface components {
              * @description Products used
              */
             used_products?: components["schemas"]["UsedProduct"][] | null;
+        };
+        /** VisitPriceChange */
+        VisitPriceChange: {
+            /** Currency */
+            currency: string;
+            /** Expected Quote */
+            expected_quote: string;
+            /** Items */
+            items?: components["schemas"]["VisitItemPriceChange"][] | null;
+            /** Legacy Price */
+            legacy_price?: number | string | null;
+        };
+        /**
+         * VisitPriceCorrectionIn
+         * @description A new quote for a visit that already has money or bonuses recorded on it.
+         */
+        VisitPriceCorrectionIn: {
+            /** Currency */
+            currency: string;
+            /** Expected Quote */
+            expected_quote: string;
+            /** Idempotency Key */
+            idempotency_key: string;
+            /** Items */
+            items?: components["schemas"]["VisitItemPriceChange"][] | null;
+            /** Legacy Price */
+            legacy_price?: number | string | null;
+            /**
+             * Prior Payment Action
+             * @enum {string}
+             */
+            prior_payment_action: "refund_due" | "retained";
+            /** Reason */
+            reason: string;
+        };
+        /** VisitPriceCorrectionOut */
+        VisitPriceCorrectionOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            /** New Currency */
+            new_currency: string;
+            /** New Total */
+            new_total: string;
+            /** Old Currency */
+            old_currency: string | null;
+            /** Old Total */
+            old_total: string | null;
+            /** Prior Payment Action */
+            prior_payment_action: string;
+            /** Reason */
+            reason: string;
+            /** Visit Id */
+            visit_id: number;
+        };
+        /** VisitPriceCorrectionResultOut */
+        VisitPriceCorrectionResultOut: {
+            correction: components["schemas"]["VisitPriceCorrectionOut"];
+            quote: components["schemas"]["VisitPriceQuoteOut"];
+            /** Replayed */
+            replayed: boolean;
+        };
+        /** VisitPriceItemQuoteOut */
+        VisitPriceItemQuoteOut: {
+            /** Item Id */
+            item_id: number;
+            /** Position */
+            position: number;
+            /** Price */
+            price: string | null;
+            /** Service Id */
+            service_id: number | null;
+            /** Specialist Id */
+            specialist_id: number;
+        };
+        /** VisitPriceQuoteOut */
+        VisitPriceQuoteOut: {
+            /** Currency */
+            currency: string | null;
+            /** Expected Quote */
+            expected_quote: string;
+            /** Items */
+            items: components["schemas"]["VisitPriceItemQuoteOut"][];
+            /** Total */
+            total: string | null;
+            /** Visit Id */
+            visit_id: number;
+        };
+        /**
+         * VisitSettlementEntryIn
+         * @description One charge, manual receipt or manual refund. Same key + same body = the saved entry back.
+         */
+        VisitSettlementEntryIn: {
+            /** Amount */
+            amount: number | string;
+            /** Currency */
+            currency: string;
+            /** Idempotency Key */
+            idempotency_key: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "charge" | "manual_receipt" | "manual_refund";
+            /** Reason */
+            reason: string;
+            /**
+             * Reference
+             * @description Receipt or document number, if there is one
+             */
+            reference?: string | null;
+        };
+        /** VisitSettlementEntryOut */
+        VisitSettlementEntryOut: {
+            /** Actor User Id */
+            actor_user_id: number | null;
+            /** Amount */
+            amount: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Currency */
+            currency: string;
+            /** Id */
+            id: number;
+            /** Kind */
+            kind: string;
+            /** Reason */
+            reason: string;
+            /** Reference */
+            reference: string | null;
+            /** Visit Id */
+            visit_id: number;
+        };
+        /** VisitSettlementEntryResultOut */
+        VisitSettlementEntryResultOut: {
+            entry: components["schemas"]["VisitSettlementEntryOut"];
+            /** Replayed */
+            replayed: boolean;
+        };
+        /**
+         * VisitSettlementOut
+         * @description What was paid and what is still owed, all in the visit's own saved currency.
+         */
+        VisitSettlementOut: {
+            /** Charges */
+            charges: string | null;
+            /** Currency */
+            currency: string | null;
+            /** Gift Money Coverage */
+            gift_money_coverage: string | null;
+            /** Gift Package Coverage */
+            gift_package_coverage: string | null;
+            /** Gift Units Coverage */
+            gift_units_coverage: number | null;
+            /** Gross Quote */
+            gross_quote: string | null;
+            /** Has Pending Checkout */
+            has_pending_checkout: boolean;
+            /** Loyalty Discount */
+            loyalty_discount: string | null;
+            /**
+             * Manual Payment Recorded
+             * @description Old "paid manually" marker without an amount
+             */
+            manual_payment_recorded: boolean;
+            /** Manual Received */
+            manual_received: string | null;
+            /** Manual Refunded */
+            manual_refunded: string | null;
+            /** Message */
+            message?: string | null;
+            /**
+             * Outstanding
+             * @description Still to pay; null when any amount is unknown
+             */
+            outstanding: string | null;
+            /**
+             * Outstanding Reason
+             * @description Why outstanding is null, a stable code
+             */
+            outstanding_reason: string | null;
+            /**
+             * Overpayment
+             * @description Paid above what is owed; null when any amount is unknown
+             */
+            overpayment: string | null;
+            /** Price After Loyalty */
+            price_after_loyalty: string | null;
+            /** Prior Currency Settlements */
+            prior_currency_settlements: components["schemas"]["PriorCurrencySettlementOut"][];
+            /** Provider Net */
+            provider_net: string | null;
+            /** Provider Received */
+            provider_received: string | null;
+            /** Provider Refunded */
+            provider_refunded: string | null;
+            /** Reasons */
+            reasons: string[];
+            /** Requires Review */
+            requires_review: boolean;
+            /** Visit Id */
+            visit_id: number;
         };
         /** VisitStatisticsResponse */
         VisitStatisticsResponse: {
@@ -10223,6 +11600,233 @@ export interface components {
             service_name?: string | null;
             /** Status */
             status?: string | null;
+        };
+        /** VisitorAccountOut */
+        VisitorAccountOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Email */
+            email: string;
+            /**
+             * Email Verified At
+             * Format: date-time
+             */
+            email_verified_at: string;
+            /** Google Connected */
+            google_connected: boolean;
+            /** Has Password */
+            has_password: boolean;
+            /** Id */
+            id: number;
+        };
+        /** VisitorBookingAction */
+        VisitorBookingAction: {
+            /** Allowed */
+            allowed: boolean;
+            /** Reason */
+            reason: ("visitor_actions_unavailable" | "booking_confirm_completed" | "booking_confirm_in_progress" | "booking_confirm_cancelled" | "booking_confirm_unavailable" | "booking_confirm_started" | "booking_cancel_completed" | "booking_cancel_in_progress" | "booking_cancel_already" | "booking_cancel_unavailable" | "booking_cancel_too_late" | "booking_reschedule_completed" | "booking_reschedule_in_progress" | "booking_reschedule_cancelled" | "booking_reschedule_unavailable" | "booking_reschedule_started" | "booking_reschedule_too_late") | null;
+        };
+        /** VisitorBookingActions */
+        VisitorBookingActions: {
+            cancel: components["schemas"]["VisitorBookingAction"];
+            confirm: components["schemas"]["VisitorBookingAction"];
+            reschedule: components["schemas"]["VisitorBookingAction"];
+        };
+        /** VisitorEmailChangeConfirmIn */
+        VisitorEmailChangeConfirmIn: {
+            /**
+             * Token
+             * Format: password
+             */
+            token: string;
+        };
+        /** VisitorEmailChangeRequestIn */
+        VisitorEmailChangeRequestIn: {
+            /** Email */
+            email: string;
+        };
+        /** VisitorGoogleLinkIn */
+        VisitorGoogleLinkIn: {
+            /**
+             * Credential
+             * Format: password
+             */
+            credential: string;
+            /**
+             * Nonce
+             * Format: password
+             */
+            nonce: string;
+        };
+        /** VisitorGoogleLoginIn */
+        VisitorGoogleLoginIn: {
+            /**
+             * Credential
+             * Format: password
+             */
+            credential: string;
+            /**
+             * Nonce
+             * Format: password
+             */
+            nonce: string;
+        };
+        /** VisitorGoogleNonceIn */
+        VisitorGoogleNonceIn: Record<string, never>;
+        /** VisitorHistoryBusiness */
+        VisitorHistoryBusiness: {
+            /** Address */
+            address: string | null;
+            /** Email */
+            email: string | null;
+            /** Name */
+            name: string;
+            /** Phone */
+            phone: string | null;
+            /** Timezone */
+            timezone: string | null;
+        };
+        /** VisitorHistoryCursor */
+        VisitorHistoryCursor: {
+            /** As Of */
+            as_of?: string | null;
+            /**
+             * Date Start
+             * Format: date-time
+             */
+            date_start: string;
+            /** Id */
+            id: number;
+        };
+        /** VisitorHistoryItem */
+        VisitorHistoryItem: {
+            /** Duration Minutes */
+            duration_minutes: number;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /** Id */
+            id: number;
+            /** Position */
+            position: number;
+            price: components["schemas"]["VisitorHistoryMoney"] | null;
+            /** Service Name */
+            service_name: string | null;
+            /** Staff Name */
+            staff_name: string | null;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** VisitorHistoryMoney */
+        VisitorHistoryMoney: {
+            /** Amount */
+            amount: string;
+            /** Currency */
+            currency: string;
+        };
+        /** VisitorHistoryPage */
+        VisitorHistoryPage: {
+            /** Entries */
+            entries: components["schemas"]["VisitorHistoryVisit"][];
+            next_cursor: components["schemas"]["VisitorHistoryCursor"] | null;
+        };
+        /** VisitorHistoryVisit */
+        VisitorHistoryVisit: {
+            business: components["schemas"]["VisitorHistoryBusiness"];
+            /** Business Id */
+            business_id: number;
+            /** Confirmed At */
+            confirmed_at: string | null;
+            /** End */
+            end: string | null;
+            /** Id */
+            id: number;
+            /** Items */
+            items: components["schemas"]["VisitorHistoryItem"][];
+            price: components["schemas"]["VisitorHistoryMoney"] | null;
+            /** Service Name */
+            service_name: string | null;
+            /** Staff Name */
+            staff_name: string | null;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /** Status */
+            status: string | null;
+        };
+        /** VisitorLoginIn */
+        VisitorLoginIn: {
+            /** Email */
+            email: string;
+            /**
+             * Password
+             * Format: password
+             */
+            password: string;
+        };
+        /** VisitorLoginOut */
+        VisitorLoginOut: {
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Session Token */
+            session_token: string;
+        };
+        /** VisitorManageClaimIn */
+        VisitorManageClaimIn: {
+            /**
+             * Token
+             * Format: password
+             */
+            token: string;
+        };
+        /** VisitorPasswordResetIn */
+        VisitorPasswordResetIn: {
+            /**
+             * New Password
+             * Format: password
+             */
+            new_password: string;
+            /**
+             * Token
+             * Format: password
+             */
+            token: string;
+        };
+        /** VisitorRegistrationIn */
+        VisitorRegistrationIn: {
+            /**
+             * New Password
+             * Format: password
+             */
+            new_password: string;
+            /**
+             * Token
+             * Format: password
+             */
+            token: string;
+        };
+        /** VisitorRegistrationRequestIn */
+        VisitorRegistrationRequestIn: {
+            /** Email */
+            email: string;
+        };
+        /** VisitorRegistrationRequestOut */
+        VisitorRegistrationRequestOut: {
+            /** Message */
+            message: string;
         };
         /** WaitlistEntryOut */
         WaitlistEntryOut: {
@@ -12820,6 +14424,79 @@ export interface operations {
             };
         };
     };
+    preview_legacy_visit_currency_businesses_me_legacy_visit_currency_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LegacyVisitCurrencyOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_legacy_visit_currency_businesses_me_legacy_visit_currency_confirm_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LegacyVisitCurrencyConfirmIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LegacyVisitCurrencyConfirmOut"];
+                };
+            };
+            /** @description Count changed since the preview, nothing to confirm, or busy. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_notification_deliveries_businesses_me_notification_deliveries_get: {
         parameters: {
             query?: {
@@ -13650,9 +15327,12 @@ export interface operations {
     export_clients_csv_clients_export_csv_get: {
         parameters: {
             query?: {
-                owner_id?: number | null;
                 phone?: string | null;
                 name?: string | null;
+                q?: string | null;
+                gender?: ("male" | "female" | "other") | null;
+                sort_by?: "id" | "full_name" | "contact_phone" | "contact_email" | "gender" | "birth_date" | "created_at";
+                sort_order?: "asc" | "desc";
             };
             header?: {
                 "Accept-Language"?: string | null;
@@ -13685,9 +15365,12 @@ export interface operations {
     export_clients_excel_clients_export_excel_get: {
         parameters: {
             query?: {
-                owner_id?: number | null;
                 phone?: string | null;
                 name?: string | null;
+                q?: string | null;
+                gender?: ("male" | "female" | "other") | null;
+                sort_by?: "id" | "full_name" | "contact_phone" | "contact_email" | "gender" | "birth_date" | "created_at";
+                sort_order?: "asc" | "desc";
             };
             header?: {
                 "Accept-Language"?: string | null;
@@ -14145,6 +15828,43 @@ export interface operations {
             };
         };
     };
+    issue_visitor_invitation_clients__client_id__visitor_invitations_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientInviteIssueIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientInviteIssueOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_employees_employees__get: {
         parameters: {
             query?: {
@@ -14291,7 +16011,9 @@ export interface operations {
     };
     get_my_current_salary_employees_me_salary_current_get: {
         parameters: {
-            query?: never;
+            query?: {
+                currency?: string | null;
+            };
             header?: {
                 "Accept-Language"?: string | null;
             };
@@ -14498,7 +16220,9 @@ export interface operations {
     };
     get_employee_current_salary_employees__employee_id__salary_current_get: {
         parameters: {
-            query?: never;
+            query?: {
+                currency?: string | null;
+            };
             header?: {
                 "Accept-Language"?: string | null;
             };
@@ -19998,6 +21722,774 @@ export interface operations {
             };
         };
     };
+    confirm_email_change_visitor_auth_email_change_confirm_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorEmailChangeConfirmIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_email_change_visitor_auth_email_change_request_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorEmailChangeRequestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorRegistrationRequestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    google_config_visitor_auth_google_config_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleConfigOut"];
+                };
+            };
+        };
+    };
+    google_link_visitor_auth_google_link_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorGoogleLinkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    google_link_nonce_visitor_auth_google_link_nonce_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorGoogleNonceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleNonceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    google_login_visitor_auth_google_login_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorGoogleLoginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorLoginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    google_nonce_visitor_auth_google_nonce_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorGoogleNonceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleNonceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    login_visitor_auth_login_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorLoginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorLoginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    logout_visitor_auth_logout_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    logout_all_visitor_auth_logout_all_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_password_reset_visitor_auth_password_reset_confirm_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorPasswordResetIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_password_reset_visitor_auth_password_reset_request_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorRegistrationRequestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorRegistrationRequestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_registration_visitor_auth_register_complete_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorRegistrationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorLoginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_registration_visitor_auth_register_request_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorRegistrationRequestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorRegistrationRequestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    accept_client_invitation_visitor_claims_client_invite_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientInviteAcceptIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    claim_guest_visit_visitor_claims_manage_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorManageClaimIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_account_visitor_me_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorAccountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_visits_visitor_visits_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                business_id?: number | null;
+                category?: "all" | "upcoming" | "past" | "cancelled";
+                as_of?: string | null;
+                after_start?: string | null;
+                after_id?: number | null;
+            };
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorHistoryPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_visit_visitor_visits__visit_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorHistoryVisit"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_visit_actions_visitor_visits__visit_id__actions_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitorBookingActions"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_visit_visitor_visits__visit_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    confirm_visit_visitor_visits__visit_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reschedule_visit_visitor_visits__visit_id__reschedule_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublicBookingRescheduleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     visits_list_visits__get: {
         parameters: {
             query?: {
@@ -20088,6 +22580,10 @@ export interface operations {
                 specialist_id?: number | null;
                 date_from?: string | null;
                 date_to?: string | null;
+                q?: string | null;
+                status?: ("planned" | "completed" | "cancelled" | "in_progress") | null;
+                sort_by?: "id" | "date_start" | "service_name" | "client_name" | "status" | "price";
+                sort_order?: "asc" | "desc";
             };
             header?: {
                 "Accept-Language"?: string | null;
@@ -20124,6 +22620,10 @@ export interface operations {
                 specialist_id?: number | null;
                 date_from?: string | null;
                 date_to?: string | null;
+                q?: string | null;
+                status?: ("planned" | "completed" | "cancelled" | "in_progress") | null;
+                sort_by?: "id" | "date_start" | "service_name" | "client_name" | "status" | "price";
+                sort_order?: "asc" | "desc";
             };
             header?: {
                 "Accept-Language"?: string | null;
@@ -20318,6 +22818,13 @@ export interface operations {
                     "application/json": components["schemas"]["VisitOut"];
                 };
             };
+            /** @description A recorded settlement or pending payment blocks quote changes; busy bookings can be retried. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Validation Error */
             422: {
                 headers: {
@@ -20353,6 +22860,193 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_visit_loyalty_price_visits__visit_id__loyalty_price_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitLoyaltyPriceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_visit_price_visits__visit_id__price_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitPriceQuoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    write_visit_price_visits__visit_id__price_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitPriceChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitPriceQuoteOut"];
+                };
+            };
+            /** @description The quote changed, a payment is pending, or a separate settlement correction is required. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_visit_price_corrections_visits__visit_id__price_corrections_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitPriceCorrectionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    correct_visit_price_visits__visit_id__price_corrections_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitPriceCorrectionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitPriceCorrectionResultOut"];
+                };
+            };
+            /** @description Nothing to correct, quote changed, payment pending, or key reused. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -20485,6 +23179,116 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_visit_settlement_visits__visit_id__settlement_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitSettlementOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_visit_settlement_entries_visits__visit_id__settlement_entries_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitSettlementEntryOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_visit_settlement_entry_visits__visit_id__settlement_entries_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                visit_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitSettlementEntryIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitSettlementEntryResultOut"];
+                };
+            };
+            /** @description Currency differs or is unknown, the key was reused, or the visit is busy. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

@@ -296,14 +296,14 @@ export default function Analytics() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.change')}</h3>
-                  <p className={`text-3xl font-bold ${trendsData.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {trendsData.change >= 0 ? '+' : ''}{trendsData.change?.toFixed(2)}
+                  <p className={`text-3xl font-bold ${(trendsData.change ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {trendsData.change == null ? '—' : `${trendsData.change >= 0 ? '+' : ''}${trendsData.change.toFixed(2)}`}
                   </p>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.change_percent')}</h3>
-                  <p className={`text-3xl font-bold ${trendsData.change_percent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {trendsData.change_percent >= 0 ? '+' : ''}{trendsData.change_percent?.toFixed(2)}%
+                  <p className={`text-3xl font-bold ${(trendsData.change_percent ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {trendsData.change_percent == null ? '—' : `${trendsData.change_percent >= 0 ? '+' : ''}${trendsData.change_percent.toFixed(2)}%`}
                     <span className="ml-2 text-2xl">
                       {trendsData.trend_direction === 'up' ? '📈' : trendsData.trend_direction === 'down' ? '📉' : '➡️'}
                     </span>
