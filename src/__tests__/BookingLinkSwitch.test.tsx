@@ -16,7 +16,8 @@ function deferred(){let resolve!:(value:unknown)=>void;let reject!:(value:unknow
 beforeEach(()=>{vi.clearAllMocks();resetStores();sessionStorage.clear();vi.mocked(api.get).mockImplementation(async(url,config)=>{const token=String(config?.headers?.[url==='/public/questionnaires'?'X-Questionnaire-Token':'X-Booking-Token']);return{data:url==='/public/questionnaires'?form(token):booking(token)}});vi.mocked(api.post).mockImplementation(async(_url,_body,config)=>({data:booking(String(config?.headers?.['X-Booking-Token']))}))})
 it.each([['native','confirm'],['native','cancel'],['native','reschedule'],['router','confirm'],['router','cancel'],['router','reschedule']] as const)('uses the new manage token for %s link then %s',async(method,action)=>{
  mount('/manage');await screen.findByText('Business A');await next(method);
- expect(screen.queryByText('Business A')).not.toBeInTheDocument();await screen.findByText('Business B');
+ // router navigation renders in a transition, so the switch may land a tick later under load
+ await waitFor(()=>expect(screen.queryByText('Business A')).not.toBeInTheDocument());await screen.findByText('Business B');
  if(action==='confirm')await userEvent.click(screen.getByRole('button',{name:'Confirm booking'}));
  if(action==='cancel'){await userEvent.click(screen.getByRole('button',{name:'Cancel booking'}));await userEvent.click(screen.getByRole('button',{name:'Yes, cancel'}))}
  if(action==='reschedule'){await userEvent.click(screen.getByRole('button',{name:'Reschedule'}));fireEvent.change(document.querySelector('#manage-new-start')!,{target:{value:'2030-06-02T10:00'}});await userEvent.click(screen.getByRole('button',{name:'Move booking'}))}
