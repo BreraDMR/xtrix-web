@@ -129,7 +129,7 @@ it.each([null, 'Mars/Base'])('labels the actual fallback zone for %s in the visi
 })
 
 it('keeps all public details when salon changes are unavailable, without rendering private fields', async () => {
-  const denied = { allowed: false, reason: 'visitor_actions_unavailable' }
+  const denied = { allowed: false, reason: 'visitor_actions_unavailable' } as const
   open({
     'GET /visitor/visits/812': { status: 200, data: { ...visit, confirmed_at: '2030-11-19T09:00:00Z',
       note: 'PRIVATE CRM NOTE', client_email: 'private@example.com', subscription_status: 'PRIVATE BILLING',
@@ -159,6 +159,7 @@ it.each([
   ['new_unknown_reason', "Online changes aren't possible for this visit. Please contact the salon."],
 ])('explains %s using a public hint', async (reason, text) => {
   const denied = { allowed: false, reason }
-  open({ 'GET /visitor/visits/812/actions': actions({ confirm: denied, cancel: denied, reschedule: denied }) })
+  // Include an unknown wire reason to exercise forwards-compatible hints.
+  open({ 'GET /visitor/visits/812/actions': { status: 200, data: { confirm: denied, cancel: denied, reschedule: denied } } })
   expect(await screen.findByText(text)).toBeInTheDocument()
 })
