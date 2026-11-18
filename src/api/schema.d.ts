@@ -4927,6 +4927,8 @@ export interface components {
             name: string;
             /** Phone */
             phone?: string | null;
+            /** @description Main specialty, one of GET /specialist-profiles/types; the front can shape the UI by its category */
+            specialist_type?: components["schemas"]["SpecialistType"] | null;
             /**
              * Timezone
              * @description IANA timezone, e.g. Europe/Prague
@@ -4980,6 +4982,13 @@ export interface components {
             /** Phone */
             phone?: string | null;
             /**
+             * Specialist Category
+             * @description beauty|wellness|healthcare, from specialist_type; null when not picked
+             */
+            readonly specialist_category: string | null;
+            /** Specialist Type */
+            specialist_type?: string | null;
+            /**
              * Timezone
              * @description IANA timezone, e.g. Europe/Prague
              * @default UTC
@@ -5016,6 +5025,8 @@ export interface components {
             name?: string | null;
             /** Phone */
             phone?: string | null;
+            /** @description Main specialty, one of GET /specialist-profiles/types; the front can shape the UI by its category; null clears it */
+            specialist_type?: components["schemas"]["SpecialistType"] | null;
             /**
              * Timezone
              * @description IANA timezone
@@ -7003,6 +7014,7 @@ export interface components {
              * @enum {string}
              */
             role: "business_owner" | "specialist";
+            specialist_type?: components["schemas"]["SpecialistType"] | null;
             /** Totp Token */
             totp_token?: string | null;
         };
@@ -10543,6 +10555,11 @@ export interface components {
             /** Specialization */
             specialization?: string | null;
         };
+        /**
+         * SpecialistType
+         * @enum {string}
+         */
+        SpecialistType: "massage" | "cosmetologist" | "barber" | "hairdresser" | "physiotherapist" | "nutritionist" | "therapist" | "dentist" | "dermatologist" | "doctor" | "esthetician" | "nail_technician" | "lash_technician" | "makeup_artist" | "aromatherapist" | "fitness_coach" | "yoga_instructor" | "psychologist" | "psychotherapist" | "cardiologist" | "neurologist" | "orthopedist" | "gynecologist" | "urologist" | "ophthalmologist" | "endocrinologist" | "pediatrician" | "surgeon" | "oncologist";
         /** SubscriptionAccessOut */
         SubscriptionAccessOut: {
             /** Ai Daily Limit */
@@ -11056,6 +11073,11 @@ export interface components {
              * @description admin|business_owner|specialist|employee|client
              */
             role: string;
+            /**
+             * Specialist Category
+             * @description beauty|wellness|healthcare, from specialist_type; null when unknown
+             */
+            readonly specialist_category: string | null;
             /**
              * Specialist Type
              * @description Type of specialist (only for role='specialist')
