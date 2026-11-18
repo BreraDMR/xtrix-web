@@ -25,6 +25,8 @@ export default function VisitorGoogle(props: Props) {
   const [attempt, setAttempt] = useState(0)
   const latest = useRef(props)
   latest.current = props
+  const translate = useRef(t)
+  translate.current = t
 
   const enabled = !!configClientId && !unavailable
   const linking = props.mode === 'link'
@@ -52,9 +54,9 @@ export default function VisitorGoogle(props: Props) {
         if (status === 503) setUnavailable(true)
         else if (status === 403 && current.mode === 'link') current.onReauth()
         else if (status === 409) {
-          setError(apiErrorMessage(failure, t('visitor.google.failed')))
-          if (current.mode === 'login') setHint(t('visitor.google.linkHint'))
-        } else setError(t('visitor.google.failed'))
+          setError(apiErrorMessage(failure, translate.current('visitor.google.failed')))
+          if (current.mode === 'login') setHint(translate.current('visitor.google.linkHint'))
+        } else setError(translate.current('visitor.google.failed'))
         setAttempt(value => value + 1)
       } finally {
         if (!cancelled) setBusy(false)
@@ -81,7 +83,7 @@ export default function VisitorGoogle(props: Props) {
     }
     void setup()
     return () => { cancelled = true; element?.replaceChildren() }
-  }, [enabled, configClientId, locale, attempt, linking, t])
+  }, [enabled, configClientId, locale, attempt, linking])
 
   if (!enabled) return null
   return <section aria-label={t(linking ? 'visitor.google.link' : 'visitor.google.title')} className="space-y-3">
