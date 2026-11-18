@@ -5,6 +5,7 @@ import VisitorVisit from '../pages/visitor/VisitorVisit'
 import { resetStores } from '../test/render'
 import { error, mockVisitorApi, renderVisitor, resetVisitor, signInVisitor, type Reply } from '../test/visitor'
 import type { Schema } from '../api/types'
+import { browserTimeZone } from '../components/visitor/format'
 
 const originalShow = Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'showModal')
 Object.defineProperty(HTMLDialogElement.prototype, 'showModal', { configurable: true, value: function(this: HTMLDialogElement) { this.open = true } })
@@ -108,4 +109,57 @@ it('says when the visit is gone', async () => {
   renderVisitor({ '/visitor/visits/:visitId': <VisitorVisit /> }, '/visitor/visits/812')
   expect(await screen.findByText(/This visit is no longer available/)).toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'All visits' })).toHaveAttribute('href', '/visitor/visits')
+})
+
+it('names the salon zone even when it matches the browser', async () => {
+  open({
+    'GET /visitor/visits/812': { status: 200, data: { ...visit, business: { ...visit.business, timezone: browserTimeZone() } } },
+    'GET /visitor/visits/812/actions': actions(),
+  })
+  expect(await screen.findByText(`salon time, ${browserTimeZone()}`)).toBeInTheDocument()
+})
+
+it.each([null, 'Mars/Base'])('labels the actual fallback zone for %s in the visit details', async timezone => {
+  open({
+    'GET /visitor/visits/812': { status: 200, data: { ...visit, business: { ...visit.business, timezone } } },
+    'GET /visitor/visits/812/actions': actions(),
+  })
+  expect(await screen.findByText(`your time zone is ${browserTimeZone()}`)).toBeInTheDocument()
+  expect(screen.queryByText(/salon time,/)).not.toBeInTheDocument()
+})
+
+it('keeps all public details when salon changes are unavailable, without rendering private fields', async () => {
+  const denied = { allowed: false, reason: 'visitor_actions_unavailable' } as const
+  open({
+    'GET /visitor/visits/812': { status: 200, data: { ...visit, confirmed_at: '2030-11-19T09:00:00Z',
+      note: 'PRIVATE CRM NOTE', client_email: 'private@example.com', subscription_status: 'PRIVATE BILLING',
+      items: [...visit.items].reverse() } },
+    'GET /visitor/visits/812/actions': actions({ confirm: denied, cancel: denied, reschedule: denied }),
+  })
+  expect(await screen.findByText("This salon doesn't take changes online. Please contact them directly.")).toBeInTheDocument()
+  expect(screen.getByText('Main 1, Prague')).toBeInTheDocument()
+  expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('10:00–11:30')
+  expect(screen.getByText(/Confirmed/)).toBeInTheDocument()
+  const items = within(screen.getByRole('region', { name: 'Services' })).getAllByRole('listitem')
+  expect(items[0]).toHaveTextContent('Haircut')
+  expect(items[1]).toHaveTextContent('Styling')
+  expect(screen.getByText('CZK 1,050.00')).toBeInTheDocument()
+  expect(screen.queryByText(/PRIVATE|private@example.com/)).not.toBeInTheDocument()
+  for (const name of ['Confirm the visit', 'Cancel the visit', 'Change the time']) {
+    expect(screen.queryByRole('button', { name })).not.toBeInTheDocument()
+  }
+})
+
+it.each([
+  ['booking_confirm_completed', 'The visit is already over.'],
+  ['booking_cancel_in_progress', 'The visit has already started.'],
+  ['booking_reschedule_started', 'The visit has already started.'],
+  ['booking_cancel_already', 'The visit is cancelled.'],
+  ['booking_confirm_cancelled', 'The visit is cancelled.'],
+  ['new_unknown_reason', "Online changes aren't possible for this visit. Please contact the salon."],
+])('explains %s using a public hint', async (reason, text) => {
+  const denied = { allowed: false, reason }
+  // Include an unknown wire reason to exercise forwards-compatible hints.
+  open({ 'GET /visitor/visits/812/actions': { status: 200, data: { confirm: denied, cancel: denied, reschedule: denied } } })
+  expect(await screen.findByText(text)).toBeInTheDocument()
 })
