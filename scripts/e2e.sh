@@ -81,6 +81,10 @@ export CAPTURE_MAIL_FILE="$tmp/capture-mail.jsonl"
 # synthetic sender so the email channel counts as configured; capture never dials out
 export SMTP_HOST=smtp.invalid
 export SMTP_FROM=notifications@example.com
+# Visitor proof links use the durable queue, with delivery still caught by the local sink.
+export VISITOR_AUTH_MAIL_MODE=live
+export VISITOR_PROOF_MAIL_KEYS
+VISITOR_PROOF_MAIL_KEYS="e2e:$(openssl rand -base64 32)"
 # the waitlist TTL fixture runs SQL against this throwaway database
 export E2E_PG_CONTAINER="$PG_CONTAINER"
 export E2E_PG_DB=xtrix_e2e_test
