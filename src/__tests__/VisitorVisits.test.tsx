@@ -133,7 +133,7 @@ it('resets cursors on category and salon changes, keeping discovered salon optio
   expect(screen.getByRole('option', { name: 'Salon Anna' })).toBeInTheDocument()
   await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Salon' }), '')
   await screen.findAllByText('Haircut')
-  await userEvent.click(screen.getByRole('tab', { name: 'All', exact: true }))
+  await userEvent.click(screen.getByRole('tab', { name: /^All$/ }))
   await waitFor(() => expect(calls.at(-1)?.params).toEqual({ category: 'all', limit: 25 }))
   await userEvent.click(screen.getByRole('button', { name: 'Show more' }))
   await waitFor(() => expect(calls.at(-1)?.params).toEqual({ category: 'all', limit: 25, after_start: cursor.date_start, after_id: 1 }))
