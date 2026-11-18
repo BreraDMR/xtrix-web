@@ -6,6 +6,7 @@ import { RequireVisitor } from '../components/visitor/VisitorUi'
 import { resetStores } from '../test/render'
 import { error, mockVisitorApi, renderVisitor, resetVisitor, signInVisitor } from '../test/visitor'
 import type { Schema } from '../api/types'
+import { browserTimeZone } from '../components/visitor/format'
 
 type Visit = Schema<'VisitorHistoryVisit'>
 const business = (name: string, timezone: string | null = 'Europe/Prague') => ({ name, address: 'Main 1', phone: null, email: null, timezone })
@@ -45,6 +46,28 @@ it('shows exact amounts per visit, price on request and never a total', async ()
 it('names the salon time zone when it differs from the browser', async () => {
   feed({ 'GET /visitor/visits': page([visit(1, { business: business('Far away', 'Pacific/Kiritimati') })]) })
   expect(await screen.findByText('salon time, Pacific/Kiritimati')).toBeInTheDocument()
+})
+
+it('names the salon zone even when it matches the browser', async () => {
+  feed({ 'GET /visitor/visits': page([visit(1, { business: business('Local', browserTimeZone()) })]) })
+  expect(await screen.findByText(`salon time, ${browserTimeZone()}`)).toBeInTheDocument()
+})
+
+it.each([null, 'Mars/Base'])('labels the actual fallback zone for %s instead of claiming salon time', async zone => {
+  feed({ 'GET /visitor/visits': page([visit(1, { business: business('Unknown', zone) })]) })
+  expect(await screen.findByText(`your time zone is ${browserTimeZone()}`)).toBeInTheDocument()
+  expect(screen.queryByText(/salon time,/)).not.toBeInTheDocument()
+})
+
+it('shows the local calendar year and the Prague DST change in the visible card', async () => {
+  feed({ 'GET /visitor/visits': page([
+    visit(1, { start: '2030-10-27T00:30:00Z', end: '2030-10-27T01:30:00Z' }),
+    visit(2, { start: '2030-12-31T23:30:00Z', end: null }),
+  ]) })
+  const list = await screen.findByRole('list')
+  expect(list).toHaveTextContent('02:30–02:30')
+  expect(within(list).getByText('2030')).toBeInTheDocument()
+  expect(within(list).getByText('2031')).toBeInTheDocument()
 })
 
 it('keeps the list when one salon sends a broken time zone', async () => {
@@ -90,4 +113,28 @@ it('offers a retry when the list fails to load', async () => {
   feed({ 'GET /visitor/visits': error(500, 'Server trouble') })
   expect(await screen.findByRole('alert')).toHaveTextContent('Server trouble')
   expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument()
+})
+
+it('resets cursors on category and salon changes, keeping discovered salon options', async () => {
+  const cursor = { date_start: '2030-11-20T09:00:00Z', id: 1, as_of: '2030-11-13T08:00:00Z' }
+  const { calls } = feed({ 'GET /visitor/visits': config => {
+    if (config.params.business_id) return page([])
+    return config.params.after_id ? page([visit(3, { service_name: 'Next page' })])
+      : page([visit(1), visit(2, { business_id: 4, business: business('Studio B') })], cursor)
+  } })
+  await userEvent.click(await screen.findByRole('button', { name: 'Show more' }))
+  await screen.findByText('Next page')
+  await userEvent.click(screen.getByRole('tab', { name: 'Cancelled' }))
+  await waitFor(() => expect(calls.at(-1)?.params).toEqual({ category: 'cancelled', limit: 25 }))
+  expect(screen.queryByText('Next page')).not.toBeInTheDocument()
+  await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Salon' }), 'Studio B')
+  await waitFor(() => expect(calls.at(-1)?.params).toEqual({ category: 'cancelled', limit: 25, business_id: 4 }))
+  expect(await screen.findByText('No visits here.')).toBeInTheDocument()
+  expect(screen.getByRole('option', { name: 'Salon Anna' })).toBeInTheDocument()
+  await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Salon' }), '')
+  await screen.findAllByText('Haircut')
+  await userEvent.click(screen.getByRole('tab', { name: /^All$/ }))
+  await waitFor(() => expect(calls.at(-1)?.params).toEqual({ category: 'all', limit: 25 }))
+  await userEvent.click(screen.getByRole('button', { name: 'Show more' }))
+  await waitFor(() => expect(calls.at(-1)?.params).toEqual({ category: 'all', limit: 25, after_start: cursor.date_start, after_id: 1 }))
 })
