@@ -47,7 +47,7 @@ export default function VisitorProfile() {
         : account && <div className="space-y-5">
           <Section icon={<LuShieldCheck />} title={t('visitor.profile.account')}>
             <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
-              <div><dt className="text-xs text-[var(--workspace-muted)]">{t('field.email')}</dt><dd className="mt-0.5 font-medium [overflow-wrap:anywhere]">{account.email}</dd></div>
+              <div><dt className="text-xs text-[var(--workspace-muted)]">{t('field.email')}</dt><dd className="mt-0.5 font-medium [overflow-wrap:anywhere]">{account.email}</dd>{account.email_verified_at && <dd className="mt-1 text-xs text-[var(--tint-green-ink)]">{t('visitor.profile.emailVerified')}</dd>}</div>
               <div><dt className="text-xs text-[var(--workspace-muted)]">{t('visitor.profile.since')}</dt><dd className="mt-0.5 font-medium">{formatVisitTime(account.created_at, null, locale, { dateStyle: 'long' })}</dd></div>
               <div><dt className="text-xs text-[var(--workspace-muted)]">{t('visitor.profile.password')}</dt><dd className="mt-0.5 font-medium">{t(account.has_password ? 'visitor.profile.passwordSet' : 'visitor.profile.passwordNone')}</dd></div>
               <div><dt className="text-xs text-[var(--workspace-muted)]">Google</dt><dd className="mt-0.5 font-medium">{t(account.google_connected ? 'visitor.profile.googleOn' : 'visitor.profile.googleOff')}</dd></div>
@@ -169,7 +169,8 @@ function Sessions() {
 
   // The local session ends right away; the server call only revokes the token there.
   const signOut = () => {
-    visitorApi.post('/visitor/auth/logout').catch(() => {})
+    const token = useVisitorSession.getState().session?.token
+    if (token) visitorApi.post('/visitor/auth/logout', null, { headers: { 'X-Visitor-Token': token } }).catch(() => {})
     end()
     navigate('/visitor/login', { replace: true })
   }

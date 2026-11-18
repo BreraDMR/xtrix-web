@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeEach, expect, it } from 'vitest'
+import { useAuthStore } from '../store/authStore'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import VisitorProfile from '../pages/visitor/VisitorProfile'
@@ -104,4 +105,55 @@ it('signs out locally even when the server call fails', async () => {
   await userEvent.click(await screen.findByRole('button', { name: 'Sign out' }))
   await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/visitor/login'))
   expect(useVisitorSession.getState().session).toBeNull()
+})
+
+it('sends the exact revoked token even though local sign-out clears it immediately', async () => {
+  const owner = { id: 1, full_name: 'Jana', role: 'business_owner', business_id: 10 }
+  useAuthStore.getState().setAuth('crm-token', owner)
+  const { calls } = mockVisitorApi({ 'GET /visitor/me': me, ...noGoogle, 'POST /visitor/auth/logout': { status: 204 } })
+  const { client } = renderVisitor(routes, '/visitor/profile')
+  client.setQueryData(['clients'], ['CRM data'])
+  await userEvent.click(await screen.findByRole('button', { name: 'Sign out', exact: true }))
+  await waitFor(() => expect(calls.find(call => call.url === '/visitor/auth/logout')).toBeDefined())
+  const logout = calls.find(call => call.url === '/visitor/auth/logout')!
+  expect(logout.headers['X-Visitor-Token']).toBe('visitor-token')
+  expect(logout.headers.Authorization).toBeUndefined()
+  expect(useVisitorSession.getState().session).toBeNull()
+  expect(useAuthStore.getState().token).toBe('crm-token')
+  expect(client.getQueryData(['clients'])).toEqual(['CRM data'])
+  expect(client.getQueryData(['visitor', 'me'])).toBeUndefined()
+})
+
+it('clears all locally revoked credentials after confirming the new contact and keeps the success screen', async () => {
+  window.location.hash = '#token=change-1'
+  mockVisitorApi({ 'POST /visitor/auth/email/change/confirm': { status: 204 } })
+  renderVisitor(routes, '/visitor/email-change')
+  await userEvent.click(await screen.findByRole('button', { name: 'Confirm', exact: true }))
+  expect(await screen.findByRole('heading', { name: 'Email changed' })).toBeInTheDocument()
+  expect(useVisitorSession.getState().session).toBeNull()
+  expect(sessionStorage.getItem('visitor_session')).toBeNull()
+  expect(sessionStorage.getItem('visitor_email_change_token')).toBeNull()
+  expect(screen.getByRole('link', { name: 'Back to sign in' })).toHaveAttribute('href', '/visitor/login')
+})
+
+it('shows the confirmed contact in the profile', async () => {
+  mockVisitorApi({ 'GET /visitor/me': me, ...noGoogle })
+  renderVisitor(routes, '/visitor/profile')
+  expect(await screen.findByText('Email verified')).toBeInTheDocument()
+})
+
+it('keeps the session when signing out everywhere fails and allows retry', async () => {
+  let attempts = 0
+  mockVisitorApi({ 'GET /visitor/me': me, ...noGoogle,
+    'POST /visitor/auth/logout-all': () => ++attempts === 1 ? error(503, 'Try later') : { status: 204 },
+  })
+  renderVisitor(routes, '/visitor/profile')
+  await userEvent.click(await screen.findByRole('button', { name: 'Sign out everywhere' }))
+  const dialog = screen.getByRole('dialog', { name: 'Sign out on all devices?' })
+  await userEvent.click(within(dialog).getByRole('button', { name: 'Sign out everywhere' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Try later')
+  expect(useVisitorSession.getState().session?.token).toBe('visitor-token')
+  await userEvent.click(within(dialog).getByRole('button', { name: 'Sign out everywhere' }))
+  await waitFor(() => expect(useVisitorSession.getState().session).toBeNull())
+  expect(attempts).toBe(2)
 })
