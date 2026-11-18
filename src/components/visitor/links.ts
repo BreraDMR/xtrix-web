@@ -41,8 +41,8 @@ export function savePendingClaim(claim: PendingClaim) {
 export function pendingClaim(): PendingClaim | null {
   try {
     const value = JSON.parse(localStorage.getItem(PENDING_KEY) ?? 'null') as (PendingClaim & { savedAt?: number }) | null
-    if (value && (value.kind === 'manage' || value.kind === 'invite') && typeof value.token === 'string'
-      && typeof value.savedAt === 'number' && Date.now() - value.savedAt < PENDING_TTL) return { kind: value.kind, token: value.token }
+    if (value && (value.kind === 'manage' || value.kind === 'invite') && typeof value.token === 'string' && value.token.trim().length > 0
+      && typeof value.savedAt === 'number' && value.savedAt <= Date.now() && Date.now() - value.savedAt < PENDING_TTL) return { kind: value.kind, token: value.token }
     localStorage.removeItem(PENDING_KEY)
   } catch { /* ignore */ }
   return null

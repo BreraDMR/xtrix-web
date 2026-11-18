@@ -87,3 +87,43 @@ it('offers saving a guest booking with the token in the fragment only', () => {
   renderWithProviders(<SaveToCabinet manageToken="manage/abc" />)
   expect(screen.getByRole('link', { name: 'Save' })).toHaveAttribute('href', '/visitor/claim#token=manage%2Fabc')
 })
+
+it('does not resurrect a cleared claim from a legacy tab copy', async () => {
+  signInVisitor()
+  sessionStorage.setItem('visitor_claim_link', JSON.stringify({ kind: 'manage', token: 'forgotten' }))
+  const { calls } = mockVisitorApi({})
+  claimPage('')
+  expect(await screen.findByRole('heading', { name: 'No link to save' })).toBeInTheDocument()
+  expect(calls).toHaveLength(0)
+  expect(sessionStorage.getItem('visitor_claim_link')).toBeNull()
+})
+
+it('expires the saved link even when the tab still has a copy', async () => {
+  signInVisitor()
+  const claim = { kind: 'manage', token: 'expired' }
+  sessionStorage.setItem('visitor_claim_link', JSON.stringify(claim))
+  localStorage.setItem('visitor_pending_claim', JSON.stringify({ ...claim, savedAt: Date.now() - 86_400_001 }))
+  const { calls } = mockVisitorApi({})
+  claimPage('')
+  expect(await screen.findByRole('heading', { name: 'No link to save' })).toBeInTheDocument()
+  expect(calls).toHaveLength(0)
+  expect(pendingClaim()).toBeNull()
+})
+
+it('forgets the previous link when a malformed new link is opened', async () => {
+  localStorage.setItem('visitor_pending_claim', JSON.stringify({ kind: 'manage', token: 'previous', savedAt: Date.now() }))
+  const { calls } = mockVisitorApi({})
+  claimPage('#token=')
+  expect(await screen.findByRole('heading', { name: 'No link to save' })).toBeInTheDocument()
+  expect(pendingClaim()).toBeNull()
+  expect(calls).toHaveLength(0)
+})
+
+it.each(['', '   '])('ignores an empty stored credential (%j)', async token => {
+  signInVisitor()
+  localStorage.setItem('visitor_pending_claim', JSON.stringify({ kind: 'manage', token, savedAt: Date.now() }))
+  const { calls } = mockVisitorApi({})
+  claimPage('')
+  expect(await screen.findByRole('heading', { name: 'No link to save' })).toBeInTheDocument()
+  expect(calls).toHaveLength(0)
+})

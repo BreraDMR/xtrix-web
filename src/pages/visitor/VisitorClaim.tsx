@@ -14,8 +14,10 @@ import { useVisitorSession } from '../../store/visitorSession'
 const CLAIM_KEY = 'visitor_claim_link'
 
 // #token=<manage token> from a booking, or #invite=<token> from a salon's invitation.
-// Read once, kept for the tab and as the pending claim so signing in or up can come back.
+// One expiring pending link survives signing in or up, including another tab.
 function readClaim(): string | null {
+  // Discard the old independent tab copy: it had no expiry and survived logout.
+  try { sessionStorage.removeItem(CLAIM_KEY) } catch { /* ignore */ }
   const hadFragment = window.location.hash.length > 1
   try {
     const params = new URLSearchParams(window.location.hash.replace(/^#/, ''))
@@ -24,17 +26,15 @@ function readClaim(): string | null {
     const claim: PendingClaim | null = manage ? { kind: 'manage', token: manage } : invite ? { kind: 'invite', token: invite } : null
     if (claim) {
       const value = JSON.stringify(claim)
-      try { sessionStorage.setItem(CLAIM_KEY, value) } catch { /* memory only */ }
       savePendingClaim(claim)
       try { window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`) } catch { /* ignore */ }
       return value
     }
   } catch { /* fall through */ }
-  if (hadFragment) return null
-  try {
-    const stored = sessionStorage.getItem(CLAIM_KEY)
-    if (stored) return stored
-  } catch { /* ignore */ }
+  if (hadFragment) {
+    clearPendingClaim()
+    return null
+  }
   const pending = pendingClaim()
   return pending ? JSON.stringify(pending) : null
 }
