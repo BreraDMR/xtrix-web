@@ -1,6 +1,7 @@
 import { beforeEach, expect, it, vi } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import VisitorVisit from '../pages/visitor/VisitorVisit'
 import VisitorVisits from '../pages/visitor/VisitorVisits'
 import VisitorProfile from '../pages/visitor/VisitorProfile'
 import { VisitorLogin } from '../pages/visitor/VisitorAuth'
@@ -73,4 +74,41 @@ it('signs in with a password and reads visits while email sending is down', asyn
 it('links salon clients to their account from the landing page', () => {
   renderWithProviders(<Landing />)
   expect(screen.getAllByRole('link', { name: 'Client account' })[0]).toHaveAttribute('href', '/visitor/visits')
+})
+
+it('keeps other salons readable when one visit has no business metadata', async () => {
+  signInVisitor()
+  mockVisitorApi({ 'GET /visitor/visits': { status: 200, data: { entries: [visit(1), visit(2, { business: null }), visit(3)], next_cursor: null } } })
+  vi.spyOn(console, 'error').mockImplementation(() => {})
+  const swallow = (event: ErrorEvent) => event.preventDefault()
+  window.addEventListener('error', swallow)
+  try {
+    renderVisitor({ '/visitor/visits': <VisitorVisits /> }, '/visitor/visits')
+    expect(await screen.findByText('Service 1')).toBeInTheDocument()
+    expect(screen.getByText('Service 3')).toBeInTheDocument()
+    expect(screen.getByText("This visit can't be shown right now.")).toBeInTheDocument()
+  } finally {
+    window.removeEventListener('error', swallow)
+    vi.mocked(console.error).mockRestore()
+  }
+})
+
+it('keeps confirmed visit details when the action integration returns unreadable data', async () => {
+  signInVisitor()
+  mockVisitorApi({
+    'GET /visitor/visits/1': { status: 200, data: visit(1) },
+    'GET /visitor/visits/1/actions': { status: 200, data: { confirm: null } },
+  })
+  vi.spyOn(console, 'error').mockImplementation(() => {})
+  const swallow = (event: ErrorEvent) => event.preventDefault()
+  window.addEventListener('error', swallow)
+  try {
+    renderVisitor({ '/visitor/visits/:visitId': <VisitorVisit /> }, '/visitor/visits/1')
+    expect(await screen.findByText("We couldn't check what can be changed right now. The visit details above are still current.")).toBeInTheDocument()
+    expect(screen.getByText('Service 1')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'All visits' })).toBeInTheDocument()
+  } finally {
+    window.removeEventListener('error', swallow)
+    vi.mocked(console.error).mockRestore()
+  }
 })

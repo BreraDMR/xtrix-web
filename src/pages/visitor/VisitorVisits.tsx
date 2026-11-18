@@ -46,7 +46,7 @@ export default function VisitorVisits() {
   const visits = useMemo(() => feed.data?.pages.flatMap(page => page.entries) ?? [], [feed.data])
   useEffect(() => {
     setSalons(previous => {
-      const missing = visits.filter(entry => !previous.has(entry.business_id))
+      const missing = visits.filter(entry => entry.business?.name && !previous.has(entry.business_id))
       if (!missing.length) return previous
       const next = new Map(previous)
       for (const entry of missing) next.set(entry.business_id, entry.business.name)
