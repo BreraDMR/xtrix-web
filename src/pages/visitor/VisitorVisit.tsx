@@ -12,7 +12,7 @@ import Modal from '../../ui/Modal'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { Isolated, Notice, VisitorShell } from '../../components/visitor/VisitorUi'
 import { Price, StatusPill } from '../../components/visitor/VisitSummary'
-import { browserTimeZone, formatClock, formatVisitTime, safeTimeZone, upperFirst, visitServices, zoneLabel } from '../../components/visitor/format'
+import { browserTimeZone, formatClock, formatVisitTime, safeTimeZone, upperFirst, visitServices } from '../../components/visitor/format'
 import { useTranslation } from '../../hooks/useTranslation'
 import { isoToZonedWallTime, zonedWallTimeToIso } from '../../utils/dates'
 
@@ -72,7 +72,8 @@ function Row({ icon, label, children }: { icon: ReactNode; label: string; childr
 function VisitDetails({ visit }: { visit: Visit }) {
   const { t, locale } = useTranslation()
   const zone = visit.business.timezone
-  const other = zoneLabel(zone)
+  const salonZone = safeTimeZone(zone)
+  const displayedZone = salonZone ?? browserTimeZone()
   const staff = visit.staff_name ?? visit.items.find(item => item.staff_name)?.staff_name
   const { business } = visit
   return <div className="space-y-5">
@@ -83,7 +84,7 @@ function VisitDetails({ visit }: { visit: Visit }) {
           <h2 className="mt-1 font-display text-[28px] font-semibold leading-tight tracking-[-0.035em] tabular-nums sm:text-[34px]">
             {formatClock(visit.start, zone, locale)}{visit.end ? `–${formatClock(visit.end, zone, locale)}` : ''}
           </h2>
-          {other && <p className="mt-1 text-xs text-[var(--workspace-muted)]">{t('visitor.time.salonZone').replace('{zone}', other)} · {t('visitor.time.yourZone').replace('{zone}', browserTimeZone())}</p>}
+          <p className="mt-1 text-xs text-[var(--workspace-muted)]">{t(salonZone ? 'visitor.time.salonZone' : 'visitor.time.yourZone').replace('{zone}', displayedZone)}{salonZone && salonZone !== browserTimeZone() ? ` · ${t('visitor.time.yourZone').replace('{zone}', browserTimeZone())}` : ''}</p>
           <p className="mt-3 text-[17px] font-semibold [overflow-wrap:anywhere]">{visitServices(visit) || t('visitor.visit.noService')}</p>
         </div>
         <StatusPill status={visit.status} />
