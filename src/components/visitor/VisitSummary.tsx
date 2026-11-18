@@ -4,7 +4,7 @@ import type { Schema } from '../../api/types'
 import type { TranslationKey } from '../../i18n/translations'
 import { useTranslation } from '../../hooks/useTranslation'
 import { avatarBackground } from '../../utils/avatar'
-import { formatClock, formatMoney, formatVisitTime, visitServices, zoneLabel } from './format'
+import { browserTimeZone, formatClock, formatMoney, formatVisitTime, safeTimeZone, visitServices } from './format'
 
 export type VisitorVisit = Schema<'VisitorHistoryVisit'>
 type Money = Schema<'VisitorHistoryMoney'> | null
@@ -34,14 +34,16 @@ export function Price({ price, className = '' }: { price: Money; className?: str
     : <span className={`text-[var(--workspace-muted)] ${className}`}>{t('visitor.price.onRequest')}</span>
 }
 
-// One visit in the feed. Times are the salon's own, with its zone named when it differs from ours.
+// Always name the displayed zone, including the browser fallback for old salon data.
 export default function VisitSummary({ visit }: { visit: VisitorVisit }) {
   const { t, locale } = useTranslation()
   const zone = visit.business.timezone
-  const other = zoneLabel(zone)
+  const salonZone = safeTimeZone(zone)
+  const displayedZone = salonZone ?? browserTimeZone()
   const start = new Date(visit.start)
   const day = formatVisitTime(visit.start, zone, locale, { day: 'numeric' })
   const month = formatVisitTime(visit.start, zone, locale, { month: 'short' })
+  const year = formatVisitTime(visit.start, zone, locale, { year: 'numeric' })
   const weekday = formatVisitTime(visit.start, zone, locale, { weekday: 'long' })
   const cancelled = visit.status === 'cancelled'
   const staff = visit.staff_name ?? visit.items.find(item => item.staff_name)?.staff_name
@@ -51,6 +53,7 @@ export default function VisitSummary({ visit }: { visit: VisitorVisit }) {
       style={cancelled ? undefined : { background: avatarBackground(visit.business_id) }}>
       <span className="font-display text-[22px] font-semibold leading-none tabular-nums">{Number.isNaN(start.getTime()) ? '—' : day}</span>
       <span className="mt-1 text-[11px] font-medium uppercase tracking-wide opacity-90">{month}</span>
+      <span className="mt-1 text-[11px] tabular-nums opacity-90">{year}</span>
     </div>
     <div className="min-w-0 flex-1">
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1.5">
@@ -61,7 +64,7 @@ export default function VisitSummary({ visit }: { visit: VisitorVisit }) {
         <LuClock className="h-3.5 w-3.5" aria-hidden="true" />
         <span className="capitalize">{weekday}</span>
         <span className="tabular-nums">{formatClock(visit.start, zone, locale)}{visit.end ? `–${formatClock(visit.end, zone, locale)}` : ''}</span>
-        {other && <span className="rounded-full bg-[var(--workspace-fill)] px-2 py-0.5 text-[11px]">{t('visitor.time.salonZone').replace('{zone}', other)}</span>}
+        <span className="rounded-full bg-[var(--workspace-fill)] px-2 py-0.5 text-[11px] [overflow-wrap:anywhere]">{t(salonZone ? 'visitor.time.salonZone' : 'visitor.time.yourZone').replace('{zone}', displayedZone)}</span>
       </p>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[13px]">
         <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-[var(--workspace-muted)]">
