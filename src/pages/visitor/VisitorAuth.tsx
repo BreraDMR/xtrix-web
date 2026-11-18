@@ -95,7 +95,7 @@ export function VisitorLogin() {
 
 // register/request and password/reset/request answer the same whether the address has an
 // account or not, so the page only ever says "check your inbox".
-function EmailRequest({ endpoint, title, subtitle, submitLabel }: { endpoint: string; title: string; subtitle: string; submitLabel: string }) {
+function EmailRequest({ endpoint, title, subtitle, submitLabel, children }: { endpoint: string; title: string; subtitle: string; submitLabel: string; children?: ReactNode }) {
   const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [sentTo, setSentTo] = useState('')
@@ -135,13 +135,22 @@ function EmailRequest({ endpoint, title, subtitle, submitLabel }: { endpoint: st
       <Field label={t('field.email')} error={fieldError}><Input type="email" autoComplete="email" required value={email} onChange={event => setEmail(event.target.value)} /></Field>
       <button type="submit" disabled={busy || !email.trim()} className="ui-button ui-button-primary w-full">{busy ? t('common.loading') : submitLabel}</button>
     </form>
+    {children}
     <p className="text-center text-sm"><Link to="/visitor/login" className={linkClass}>{t('visitor.backToLogin')}</Link></p>
   </AuthShell>
 }
 
 export function VisitorSignup() {
   const { t } = useTranslation()
-  return <EmailRequest endpoint="/visitor/auth/register/request" title={t('visitor.signup.title')} subtitle={t('visitor.signup.subtitle')} submitLabel={t('visitor.signup.submit')} />
+  const navigate = useNavigate()
+  const startSession = useStartSession()
+  return <EmailRequest endpoint="/visitor/auth/register/request" title={t('visitor.signup.title')} subtitle={t('visitor.signup.subtitle')} submitLabel={t('visitor.signup.submit')}>
+    <VisitorGoogle mode="login" onSignedIn={data => {
+      startSession(data)
+      navigate(afterSignIn(null), { replace: true })
+    }} />
+    <p className="text-xs leading-relaxed text-[var(--workspace-muted)]">{t('visitor.login.notCrm')} <Link to="/login" className={linkClass}>{t('visitor.login.crmLink')}</Link></p>
+  </EmailRequest>
 }
 
 export function VisitorForgotPassword() {
