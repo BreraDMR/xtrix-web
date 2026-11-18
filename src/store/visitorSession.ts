@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 // The visitor (a salon's customer) has a login of its own, unrelated to the CRM session in
-// authStore. The token goes into X-Visitor-Token, lives 30 days and is never refreshed.
+// authStore. Its X-Visitor-Token stays in this tab until it closes or the token expires.
 const KEY = 'visitor_session'
 
 export interface VisitorSession {
@@ -17,13 +17,15 @@ function valid(value: unknown): value is VisitorSession {
 }
 
 function readStored(): VisitorSession | null {
+  // Older builds shared this credential across tabs. Require a fresh visitor sign-in.
+  try { localStorage.removeItem(KEY) } catch { /* storage can be blocked */ }
   try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(KEY) ?? 'null')
+    const parsed: unknown = JSON.parse(sessionStorage.getItem(KEY) ?? 'null')
     if (valid(parsed)) return { token: parsed.token, expiresAt: parsed.expiresAt }
-    localStorage.removeItem(KEY)
   } catch {
     // storage blocked or corrupted: no stored session
   }
+  try { sessionStorage.removeItem(KEY) } catch { /* nothing accessible */ }
   return null
 }
 
@@ -37,11 +39,11 @@ export const useVisitorSession = create<VisitorSessionState>(set => ({
   session: typeof window !== 'undefined' ? readStored() : null,
   start: (token, expiresAt) => {
     const session = { token, expiresAt }
-    try { localStorage.setItem(KEY, JSON.stringify(session)) } catch { /* keep it in memory */ }
+    try { sessionStorage.setItem(KEY, JSON.stringify(session)) } catch { /* keep it in memory */ }
     set({ session })
   },
   end: () => {
-    try { localStorage.removeItem(KEY) } catch { /* nothing stored */ }
+    try { sessionStorage.removeItem(KEY) } catch { /* nothing stored */ }
     set({ session: null })
   },
 }))
@@ -57,11 +59,3 @@ export function visitorToken(): string | null {
   return session.token
 }
 
-// Another tab signed in or out.
-if (typeof window !== 'undefined') {
-  window.addEventListener('storage', event => {
-    if (event.key !== KEY && event.key !== null) return
-    const next = readStored()
-    if (next?.token !== useVisitorSession.getState().session?.token) useVisitorSession.setState({ session: next })
-  })
-}
