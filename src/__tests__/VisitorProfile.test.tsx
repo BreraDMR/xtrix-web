@@ -113,7 +113,7 @@ it('sends the exact revoked token even though local sign-out clears it immediate
   const { calls } = mockVisitorApi({ 'GET /visitor/me': me, ...noGoogle, 'POST /visitor/auth/logout': { status: 204 } })
   const { client } = renderVisitor(routes, '/visitor/profile')
   client.setQueryData(['clients'], ['CRM data'])
-  await userEvent.click(await screen.findByRole('button', { name: 'Sign out', exact: true }))
+  await userEvent.click(await screen.findByRole('button', { name: 'Sign out' }))
   await waitFor(() => expect(calls.find(call => call.url === '/visitor/auth/logout')).toBeDefined())
   const logout = calls.find(call => call.url === '/visitor/auth/logout')!
   expect(logout.headers['X-Visitor-Token']).toBe('visitor-token')
@@ -128,7 +128,7 @@ it('clears all locally revoked credentials after confirming the new contact and 
   window.location.hash = '#token=change-1'
   mockVisitorApi({ 'POST /visitor/auth/email/change/confirm': { status: 204 } })
   renderVisitor(routes, '/visitor/email-change')
-  await userEvent.click(await screen.findByRole('button', { name: 'Confirm', exact: true }))
+  await userEvent.click(await screen.findByRole('button', { name: 'Confirm' }))
   expect(await screen.findByRole('heading', { name: 'Email changed' })).toBeInTheDocument()
   expect(useVisitorSession.getState().session).toBeNull()
   expect(sessionStorage.getItem('visitor_session')).toBeNull()
