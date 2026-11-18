@@ -36,7 +36,7 @@ test('ask the assistant in text, check the plan, confirm, and the visit shows up
   await expect(card.getByText(/Valid for \d+:\d\d/)).toBeVisible()
 
   await card.getByRole('button', { name: 'Confirm' }).click()
-  await expect(card.getByText('Sasha booked the visit')).toHaveCount(2)
+  await expect(card.getByText('Sasha booked the visit')).toHaveCount(1)
   await expect(card.getByText('Sasha found the client')).toBeVisible()
   await expect(card.getByText('Sasha found free time')).toBeVisible()
   await expect(card.getByRole('button', { name: 'Confirm' })).toHaveCount(0)
