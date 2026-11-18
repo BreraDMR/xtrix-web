@@ -183,7 +183,9 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
       setEntries([])
       return
     }
-    const mapped: Entry[] = msgs.map((m) => {
+    // A later saved plan replaces earlier cards, just like a live reply does.
+    const latestPlanIndex = msgs.reduce((latest, message, index) => message.plan ? index : latest, -1)
+    const mapped: Entry[] = msgs.map((m, index) => {
       if (m.role === 'user') {
         return { id: nextId.current++, kind: 'user', text: m.text }
       }
@@ -193,7 +195,8 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
           kind: 'plan',
           plan: m.plan,
           request: m.text,
-          phase: m.result ? 'done' : m.status === 'expired' ? 'expired' : 'open',
+          phase: m.result ? 'done' : m.status === 'expired' ? 'expired'
+            : index < latestPlanIndex ? (confirmable(m.plan) ? 'replaced' : 'answered') : 'open',
           ...(m.result ? { result: m.result } : {}),
         }
       }

@@ -609,6 +609,48 @@ describe('saved chats and history', () => {
     id, conversation_id: 'conv-1', ordinal: 1, request_id: 'req-1', role, status: 'succeeded', text, ...over,
   })
 
+  it.each(['open', 'done', 'question'] as const)('restores superseded cards when the newest plan is %s', async (latest) => {
+    setSavedConversationId('conv-1', 5, 1)
+    const newest = bookingPlan({ plan_id: 'plan-new', summary: 'Book Clara at twelve',
+      ...(latest === 'question' ? { actions: [], questions: ['Which day?'] } : {}) })
+    vi.mocked(api.get).mockImplementation(routes({
+      '/assistant/status': status(),
+      '/businesses/me': null,
+      '/assistant/conversations': { items: [conv('conv-1', 'Chat')], total: 1, limit: 50, offset: 0 },
+      '/assistant/conversations/conv-1/messages': {
+        items: [
+          msg('m-old', 'assistant', 'Book at ten', { plan: bookingPlan() }),
+          msg('m-question', 'assistant', 'Clarification', {
+            plan: bookingPlan({ plan_id: 'plan-question', summary: 'Clarification', actions: [], questions: ['Which time?'] }),
+          }),
+          msg('m-new', 'assistant', newest.summary, { plan: newest, ...(latest === 'done' ? { result: executed() } : {}) }),
+        ], next_before: null,
+      },
+    }))
+    renderWithProviders(<AssistantLauncher />)
+    const panel = await openPanel()
+    const old = await within(panel).findByRole('article', { name: 'Book Clara for a haircut' })
+    expect(within(old).queryByRole('button', { name: 'Confirm' })).not.toBeInTheDocument()
+    expect(within(old).getByText('Replaced by a newer plan')).toBeInTheDocument()
+    expect(within(panel).queryAllByRole('button', { name: 'Confirm' })).toHaveLength(latest === 'open' ? 1 : 0)
+    if (latest === 'done') expect(within(panel).getAllByText('Sasha booked the visit').length).toBeGreaterThan(0)
+  })
+
+  it('keeps the latest plan available after a failed generation with no replacement plan', async () => {
+    setSavedConversationId('conv-1', 5, 1)
+    vi.mocked(api.get).mockImplementation(routes({
+      '/assistant/status': status(), '/businesses/me': null,
+      '/assistant/conversations': { items: [conv('conv-1', 'Chat')], total: 1, limit: 50, offset: 0 },
+      '/assistant/conversations/conv-1/messages': {
+        items: [msg('m-old', 'assistant', 'Book at ten', { plan: bookingPlan() }),
+          msg('m-failed', 'assistant', '', { status: 'failed', error_code: 'ai_busy' })], next_before: null,
+      },
+    }))
+    renderWithProviders(<AssistantLauncher />)
+    const panel = await openPanel()
+    expect(await within(panel).findByRole('button', { name: 'Confirm' })).toBeEnabled()
+  })
+
   it('drops the previous chat right away when the next one fails to load', async () => {
     setSavedConversationId('conv-1', 5, 1)
     vi.mocked(api.get).mockImplementation(routes({
