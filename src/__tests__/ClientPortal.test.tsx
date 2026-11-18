@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 
@@ -204,6 +204,67 @@ describe('client portal', () => {
       expect(await screen.findByRole('alert')).toBeInTheDocument()
       expect(screen.queryByText('Portal Cut')).not.toBeInTheDocument()
     }
+  })
+
+  it.each(['loyalty', 'questionnaires'])('keeps visits and the other section when %s fails and retries only that section', async section => {
+    sessionStorage.setItem('client_portal_token', TOKEN)
+    const read = routes({ '/public/client-portal/session': session, '/public/client-portal/visits': visits,
+      '/public/client-portal/loyalty': loyalty, '/public/client-portal/questionnaires': questionnaires })
+    let failed = true
+    vi.mocked(api.get).mockImplementation((url, config) => {
+      if (failed && url === `/public/client-portal/${section}`) return Promise.reject(apiError(503, 'Unavailable'))
+      return read(url, config)
+    })
+    renderPortal()
+    expect(await screen.findAllByText('Portal Cut')).toHaveLength(2)
+    expect(screen.getByText(section === 'loyalty' ? 'Intake' : '42')).toBeInTheDocument()
+    expect(screen.queryByText(section === 'loyalty' ? "The salon hasn't added loyalty points yet." : 'No submitted questionnaires.')).not.toBeInTheDocument()
+    const alert = await screen.findByRole('alert')
+    const count = vi.mocked(api.get).mock.calls.length
+    failed = false
+    await userEvent.click(within(alert).getByRole('button', { name: 'Retry' }))
+    expect(await screen.findByText(section === 'loyalty' ? '42' : 'Intake')).toBeInTheDocument()
+    expect(api.get).toHaveBeenCalledTimes(count + 1)
+    expect(api.get).toHaveBeenLastCalledWith(`/public/client-portal/${section}`, expect.anything())
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it.each(['loyalty', 'questionnaires'])('does not wait for slow %s before showing visits', async section => {
+    sessionStorage.setItem('client_portal_token', TOKEN)
+    const read = routes({ '/public/client-portal/session': session, '/public/client-portal/visits': visits,
+      '/public/client-portal/loyalty': loyalty, '/public/client-portal/questionnaires': questionnaires })
+    vi.mocked(api.get).mockImplementation((url, config) => url === `/public/client-portal/${section}`
+      ? new Promise(() => {}) : read(url, config))
+    renderPortal()
+    expect(await screen.findAllByText('Portal Cut')).toHaveLength(2)
+    expect(screen.getByRole('button', { name: 'Sign out' })).toBeInTheDocument()
+  })
+
+  it('keeps account, questionnaires and points when visits fail without inventing a cashback currency', async () => {
+    sessionStorage.setItem('client_portal_token', TOKEN)
+    const read = routes({ '/public/client-portal/session': session,
+      '/public/client-portal/loyalty': loyalty, '/public/client-portal/questionnaires': questionnaires })
+    vi.mocked(api.get).mockImplementation((url, config) => url === '/public/client-portal/visits'
+      ? Promise.reject(apiError(500, 'Unavailable')) : read(url, config))
+    renderPortal()
+    expect(await screen.findByText('42')).toBeInTheDocument()
+    expect(screen.getByText('Intake')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Sign out' })).toBeInTheDocument()
+    expect(screen.queryByText('€4.20')).not.toBeInTheDocument()
+    expect(screen.queryByText('No upcoming visits.')).not.toBeInTheDocument()
+  })
+
+  it.each(['session', 'visits', 'loyalty', 'questionnaires'])('clears private data on a 401 from %s', async section => {
+    sessionStorage.setItem('client_portal_token', TOKEN)
+    const read = routes({ '/public/client-portal/session': session, '/public/client-portal/visits': visits,
+      '/public/client-portal/loyalty': loyalty, '/public/client-portal/questionnaires': questionnaires })
+    vi.mocked(api.get).mockImplementation((url, config) => url === `/public/client-portal/${section}`
+      ? Promise.reject(apiError(401, 'Expired')) : read(url, config))
+    const { queryClient } = renderPortal()
+    expect(await screen.findByRole('heading', { name: 'Session ended' })).toBeInTheDocument()
+    await waitFor(() => expect(sessionStorage.getItem('client_portal_token')).toBeNull())
+    expect(screen.queryByText('Portal Cut')).not.toBeInTheDocument()
+    expect(queryClient.getQueryData(['client-portal', 'visits', TOKEN])).toBeUndefined()
   })
 
   it('opens manage booking through a fresh MANAGE token instead of repeating the rules', async () => {

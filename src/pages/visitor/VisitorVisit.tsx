@@ -48,7 +48,7 @@ export default function VisitorVisit() {
   })
   const gone = !Number.isInteger(id) || id <= 0 || apiErrorStatus(visit.error) === 404
 
-  return <VisitorShell title={visit.data?.business.name ?? t('visitor.visit.title')}
+  return <VisitorShell title={visit.data?.business?.name ?? t('visitor.visit.title')}
     actions={<Link to="/visitor/visits" className="ui-button ui-button-secondary"><LuArrowLeft aria-hidden="true" />{t('visitor.visit.back')}</Link>}>
     {gone ? <Notice tone="warning">{t('visitor.visit.gone')}</Notice>
       : visit.isPending ? <div className="py-12"><LoadingSpinner /></div>
@@ -120,7 +120,9 @@ function VisitDetails({ visit }: { visit: Visit }) {
       <Price price={visit.price} className="font-display text-[22px] font-semibold tracking-[-0.02em]" />
     </section>
 
-    <VisitActions visit={visit} />
+    <Isolated key={visit.id} fallback={<Notice tone="warning">{t('visitor.action.loadFailed')}</Notice>}>
+      <VisitActions visit={visit} />
+    </Isolated>
   </div>
 }
 

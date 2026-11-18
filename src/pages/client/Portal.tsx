@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -61,6 +61,20 @@ function StatusBadge({ status }: { status: string }) {
       {key ? t(key) : status}
     </span>
   )
+}
+
+function SectionState({ query, children }: {
+  query: { isPending: boolean; isError: boolean; refetch: () => unknown }
+  children?: ReactNode
+}) {
+  const { t } = useTranslation()
+  if (query.isPending) return <div className="flex justify-center py-8"><LoadingSpinner /></div>
+  if (query.isError) return <div role="alert" className="mt-3 rounded-xl bg-red-50 p-4 text-sm text-red-800 dark:bg-red-950 dark:text-red-200">
+    <p>{t('portal.loadError')}</p>
+    <button type="button" onClick={() => void query.refetch()}
+      className="mt-3 rounded-md border border-current px-4 py-2 font-medium">{t('common.retry')}</button>
+  </div>
+  return <>{children}</>
 }
 
 function SignedOut() {
@@ -264,82 +278,50 @@ export default function Portal() {
     }
   }
 
-  if (!token || expired) return <SignedOut />
+  if (!token || expired || unauthorized) return <SignedOut />
 
-  if (queries.some((query) => query.isLoading)) {
-    return (
-      <ClientShell title={t('portal.title')}>
-        <div className="flex justify-center py-24">
-          <LoadingSpinner size="lg" />
-        </div>
-      </ClientShell>
-    )
-  }
-
-  if (queries.some((query) => query.isError)) {
-    return (
-      <ClientShell title={t('portal.title')}>
-        <section
-          role="alert"
-          className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200"
-        >
-          <p>{t('portal.loadError')}</p>
-          <button
-            type="button"
-            onClick={() => void queryClient.invalidateQueries({ queryKey: ['client-portal'] })}
-            className="mt-3 rounded-md border border-red-300 px-4 py-2 text-sm font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
-          >
-            {t('common.retry')}
-          </button>
-        </section>
-      </ClientShell>
-    )
-  }
+  const logoutButton = <button type="button" onClick={() => void handleLogout()} disabled={loggingOut}
+    className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-50 disabled:opacity-50 dark:border-gray-600 dark:hover:bg-gray-700">
+    {t('portal.logout')}
+  </button>
 
   const session = sessionQuery.data
   const visits = visitsQuery.data
   const loyalty = loyaltyQuery.data
   const forms = formsQuery.data
-  if (!session || !visits || !loyalty || !forms) return <SignedOut />
+  if (!session) return <ClientShell title={t('portal.title')} actions={logoutButton}>
+    <SectionState query={sessionQuery} />
+  </ClientShell>
 
-  const currency = visits.currency as Currency
-  const points = new Intl.NumberFormat(INTL_LOCALE[locale], { maximumFractionDigits: 2 }).format(
-    loyalty.points,
-  )
-  const hasLoyalty = loyalty.points !== 0 || loyalty.cashback !== 0 || Boolean(loyalty.level_name)
+  // Currency belongs to the visits response; don't guess one if that section is down.
+  const currency = visits?.currency as Currency | undefined
+  const points = loyalty && new Intl.NumberFormat(INTL_LOCALE[locale], { maximumFractionDigits: 2 }).format(loyalty.points)
+  const hasLoyalty = loyalty && (loyalty.points !== 0 || loyalty.cashback !== 0 || Boolean(loyalty.level_name))
 
-  const renderVisit = (visit: ClientPortalVisitOut) => (
-    <VisitCard
+  const renderVisit = (visit: ClientPortalVisitOut) => {
+    if (!visits) return null
+    return <VisitCard
       key={visit.id}
       visit={visit}
       timezone={visits.timezone}
-      currency={currency}
+      currency={visits.currency as Currency}
       bookingSlug={visits.booking_slug ?? null}
       bookingEnabled={visits.booking_enabled}
       managing={managingId === visit.id}
       onManage={(item) => void handleManage(item)}
     />
-  )
+  }
 
   return (
     <ClientShell
       title={t('portal.title')}
-      actions={
-        <button
-          type="button"
-          onClick={() => void handleLogout()}
-          disabled={loggingOut}
-          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-50 disabled:opacity-50 dark:border-gray-600 dark:hover:bg-gray-700"
-        >
-          {t('portal.logout')}
-        </button>
-      }
+      actions={logoutButton}
     >
       <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800">
         <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{t('portal.signedInAs')}</p>
         <h1 className="mt-1 text-2xl font-bold">{session.client_name}</h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{session.business_name}</p>
-        {!visits.booking_enabled && (
+        {visits && !visits.booking_enabled && (
           <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
             {t('portal.bookingDisabled')}
           </p>
@@ -355,109 +337,118 @@ export default function Portal() {
         </div>
       )}
 
-      <section className="mt-6">
-        <h2 className="text-lg font-semibold">{t('portal.upcoming')}</h2>
-        <div className="mt-3 space-y-3">
-          {visits.upcoming.length === 0 ? (
-            <p className="rounded-xl bg-white p-4 text-sm text-slate-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
-              {t('portal.noUpcoming')}
-            </p>
-          ) : (
-            visits.upcoming.map(renderVisit)
-          )}
-        </div>
-        <p className="mt-3 text-xs text-slate-500 dark:text-gray-400">{t('portal.manageHint')}</p>
-      </section>
+      <SectionState query={visitsQuery}>
+        {visits && <>
+        <section className="mt-6">
+          <h2 className="text-lg font-semibold">{t('portal.upcoming')}</h2>
+          <div className="mt-3 space-y-3">
+            {visits.upcoming.length === 0 ? (
+              <p className="rounded-xl bg-white p-4 text-sm text-slate-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
+                {t('portal.noUpcoming')}
+              </p>
+            ) : (
+              visits.upcoming.map(renderVisit)
+            )}
+          </div>
+          <p className="mt-3 text-xs text-slate-500 dark:text-gray-400">{t('portal.manageHint')}</p>
+        </section>
 
-      <section className="mt-6">
-        <h2 className="text-lg font-semibold">{t('portal.past')}</h2>
-        <div className="mt-3 space-y-3">
-          {visits.past.length === 0 ? (
-            <p className="rounded-xl bg-white p-4 text-sm text-slate-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
-              {t('portal.noPast')}
-            </p>
-          ) : (
-            visits.past.map(renderVisit)
-          )}
-        </div>
-      </section>
+        <section className="mt-6">
+          <h2 className="text-lg font-semibold">{t('portal.past')}</h2>
+          <div className="mt-3 space-y-3">
+            {visits.past.length === 0 ? (
+              <p className="rounded-xl bg-white p-4 text-sm text-slate-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
+                {t('portal.noPast')}
+              </p>
+            ) : (
+              visits.past.map(renderVisit)
+            )}
+          </div>
+        </section>
+
+        </>}
+      </SectionState>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <section className="rounded-2xl bg-white p-5 shadow-sm dark:bg-gray-800">
           <h2 className="text-lg font-semibold">{t('portal.loyalty.title')}</h2>
-          {!hasLoyalty ? (
-            <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('portal.loyalty.empty')}</p>
-          ) : (
-            <dl className="mt-3 divide-y divide-slate-100 text-sm dark:divide-gray-700">
-              <div className="flex justify-between gap-3 py-2">
-                <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.points')}</dt>
-                <dd className="font-semibold">{points}</dd>
-              </div>
-              <div className="flex justify-between gap-3 py-2">
-                <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.cashback')}</dt>
-                <dd className="font-semibold">{formatCurrency(loyalty.cashback, currency)}</dd>
-              </div>
-              {loyalty.level_name && (
+          <SectionState query={loyaltyQuery}>
+            {loyalty && (!hasLoyalty ? (
+              <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('portal.loyalty.empty')}</p>
+            ) : (
+              <dl className="mt-3 divide-y divide-slate-100 text-sm dark:divide-gray-700">
                 <div className="flex justify-between gap-3 py-2">
-                  <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.level')}</dt>
-                  <dd className="text-right font-medium">{loyalty.level_name}</dd>
+                  <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.points')}</dt>
+                  <dd className="font-semibold">{points}</dd>
                 </div>
-              )}
-              {loyalty.level_benefits && (
-                <div className="py-2">
-                  <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.benefits')}</dt>
-                  <dd className="mt-1 whitespace-pre-line">{loyalty.level_benefits}</dd>
+                <div className="flex justify-between gap-3 py-2">
+                  <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.cashback')}</dt>
+                  <dd className="font-semibold">{currency ? formatCurrency(loyalty.cashback, currency) : '—'}</dd>
                 </div>
-              )}
-            </dl>
-          )}
+                {loyalty.level_name && (
+                  <div className="flex justify-between gap-3 py-2">
+                    <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.level')}</dt>
+                    <dd className="text-right font-medium">{loyalty.level_name}</dd>
+                  </div>
+                )}
+                {loyalty.level_benefits && (
+                  <div className="py-2">
+                    <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.benefits')}</dt>
+                    <dd className="mt-1 whitespace-pre-line">{loyalty.level_benefits}</dd>
+                  </div>
+                )}
+              </dl>
+            ))}
+          </SectionState>
         </section>
 
         <section className="rounded-2xl bg-white p-5 shadow-sm dark:bg-gray-800">
           <h2 className="text-lg font-semibold">{t('portal.forms.title')}</h2>
-          {forms.items.length === 0 ? (
-            <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('portal.forms.empty')}</p>
-          ) : (
-            <div className="mt-3 space-y-2">
-              {forms.items.map((form: ClientPortalQuestionnaireOut) => (
-                <details
-                  key={form.id}
-                  className="rounded-lg border border-slate-200 p-3 dark:border-gray-700"
-                >
-                  <summary className="cursor-pointer text-sm font-medium">
-                    {form.name}
-                    <span className="ml-2 text-xs font-normal text-slate-500 dark:text-gray-400">
-                      {formatDate(form.submitted_at, locale)}
-                    </span>
-                  </summary>
-                  <p className="mt-2 text-xs text-slate-500 dark:text-gray-400">
-                    {t('portal.forms.version')} {form.version}
-                  </p>
-                  <dl className="mt-2 space-y-1 text-sm">
-                    {form.fields.map((field, index) => {
-                      const key = typeof field.key === 'string' ? field.key : ''
-                      const label =
-                        typeof field.label === 'string' && field.label
-                          ? field.label
-                          : key || `${t('portal.forms.answers')} ${index + 1}`
-                      const value = answerText(key ? form.answers[key] : '')
-                      return (
-                        <div key={`${form.id}-${key || index}`} className="flex justify-between gap-3">
-                          <dt className="text-slate-500 dark:text-gray-400">{label}</dt>
-                          <dd className="text-right font-medium">{value || '—'}</dd>
-                        </div>
-                      )
-                    })}
-                  </dl>
-                  {form.fields.length === 0 && (
-                    <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
-                      {t('portal.forms.noAnswers')}
+          <SectionState query={formsQuery}>
+            {forms && (forms.items.length === 0 ? (
+              <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('portal.forms.empty')}</p>
+            ) : (
+              <div className="mt-3 space-y-2">
+                {forms.items.map((form: ClientPortalQuestionnaireOut) => (
+                  <details
+                    key={form.id}
+                    className="rounded-lg border border-slate-200 p-3 dark:border-gray-700"
+                  >
+                    <summary className="cursor-pointer text-sm font-medium">
+                      {form.name}
+                      <span className="ml-2 text-xs font-normal text-slate-500 dark:text-gray-400">
+                        {formatDate(form.submitted_at, locale)}
+                      </span>
+                    </summary>
+                    <p className="mt-2 text-xs text-slate-500 dark:text-gray-400">
+                      {t('portal.forms.version')} {form.version}
                     </p>
-                  )}
-                </details>
-              ))}
-            </div>
-          )}
+                    <dl className="mt-2 space-y-1 text-sm">
+                      {form.fields.map((field, index) => {
+                        const key = typeof field.key === 'string' ? field.key : ''
+                        const label =
+                          typeof field.label === 'string' && field.label
+                            ? field.label
+                            : key || `${t('portal.forms.answers')} ${index + 1}`
+                        const value = answerText(key ? form.answers[key] : '')
+                        return (
+                          <div key={`${form.id}-${key || index}`} className="flex justify-between gap-3">
+                            <dt className="text-slate-500 dark:text-gray-400">{label}</dt>
+                            <dd className="text-right font-medium">{value || '—'}</dd>
+                          </div>
+                        )
+                      })}
+                    </dl>
+                    {form.fields.length === 0 && (
+                      <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
+                        {t('portal.forms.noAnswers')}
+                      </p>
+                    )}
+                  </details>
+                ))}
+              </div>
+            ))}
+          </SectionState>
         </section>
       </div>
     </ClientShell>
