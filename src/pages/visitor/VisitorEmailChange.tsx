@@ -61,7 +61,8 @@ export default function VisitorEmailChange() {
     <Link to="/visitor/login" className="ui-button ui-button-primary w-full">{t('visitor.backToLogin')}</Link>
   </AuthShell>
 
-  if (!session) return <Navigate to={loginPath('/visitor/email-change')} replace />
+  // The store can publish revocation before React applies the successful response.
+  if (!session && state !== 'busy') return <Navigate to={loginPath('/visitor/email-change')} replace />
 
   return <AuthShell title={t('visitor.email.confirmTitle')} description={t('visitor.email.confirmText')}>
     {error && <Notice tone="error">{error}</Notice>}

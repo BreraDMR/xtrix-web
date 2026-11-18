@@ -6,7 +6,7 @@ import VisitorProfile from '../pages/visitor/VisitorProfile'
 import VisitorEmailChange from '../pages/visitor/VisitorEmailChange'
 import { VisitorLogin } from '../pages/visitor/VisitorAuth'
 import { RequireVisitor } from '../components/visitor/VisitorUi'
-import { savePendingClaim } from '../components/visitor/links'
+import { rememberResume, savePendingClaim } from '../components/visitor/links'
 import { resetStores } from '../test/render'
 import { error, mockVisitorApi, renderVisitor, resetVisitor, signInVisitor } from '../test/visitor'
 import { useVisitorSession } from '../store/visitorSession'
@@ -156,4 +156,14 @@ it('keeps the session when signing out everywhere fails and allows retry', async
   await userEvent.click(within(dialog).getByRole('button', { name: 'Sign out everywhere' }))
   await waitFor(() => expect(useVisitorSession.getState().session).toBeNull())
   expect(attempts).toBe(2)
+})
+
+it('keeps email-change success after automatic confirmation following recent authentication', async () => {
+  window.location.hash = '#token=change-1'
+  rememberResume({ action: 'email-confirm' })
+  mockVisitorApi({ 'POST /visitor/auth/email/change/confirm': { status: 204 } })
+  renderVisitor(routes, '/visitor/email-change')
+  expect(await screen.findByRole('heading', { name: 'Email changed' })).toBeInTheDocument()
+  expect(screen.getByTestId('location')).toHaveTextContent('/visitor/email-change')
+  expect(useVisitorSession.getState().session).toBeNull()
 })

@@ -42,7 +42,7 @@ export function VisitorShell({ title, subtitle, actions, children }: { title: st
       <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           <h1 className="page-title">{title}</h1>
-          {subtitle && <p className="page-subtitle">{subtitle}</p>}
+          {subtitle && <p className="page-subtitle [overflow-wrap:anywhere]">{subtitle}</p>}
         </div>
         {actions}
       </div>
