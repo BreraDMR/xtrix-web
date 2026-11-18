@@ -2387,6 +2387,7 @@ export type TranslationKey =
   | 'visitor.claim.toFeed'
   | 'visitor.profile.title'
   | 'visitor.profile.account'
+  | 'visitor.profile.emailVerified'
   | 'visitor.profile.since'
   | 'visitor.profile.password'
   | 'visitor.profile.passwordSet'
@@ -5902,6 +5903,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visitor.claim.toFeed': {"en":"Go to my visits","ru":"Перейти к моим визитам","cz":"Přejít na moje návštěvy"},
   'visitor.profile.title': {"en":"Profile","ru":"Профиль","cz":"Profil"},
   'visitor.profile.account': {"en":"Account","ru":"Аккаунт","cz":"Účet"},
+  'visitor.profile.emailVerified': {"en":"Email verified","ru":"Почта подтверждена","cz":"E-mail ověřen"},
   'visitor.profile.since': {"en":"Account since","ru":"Аккаунт создан","cz":"Účet od"},
   'visitor.profile.password': {"en":"Password","ru":"Пароль","cz":"Heslo"},
   'visitor.profile.passwordSet': {"en":"Set","ru":"Задан","cz":"Nastaveno"},

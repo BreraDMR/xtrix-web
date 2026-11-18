@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
-import visitorApi, { visitorKey } from '../../api/visitorClient'
+import visitorApi from '../../api/visitorClient'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
 import AuthShell from '../../components/auth/AuthShell'
 import { Notice } from '../../components/visitor/VisitorUi'
@@ -18,7 +17,6 @@ const readToken = fragmentTokenReader('token', STORAGE_KEY)
 // session, signed in within the last 5 minutes; the token waits in the tab meanwhile.
 export default function VisitorEmailChange() {
   const { t } = useTranslation()
-  const client = useQueryClient()
   const reauth = useReauth()
   const token = useLinkToken(readToken)
   const session = useVisitorSession(state => state.session)
@@ -28,11 +26,13 @@ export default function VisitorEmailChange() {
 
   const confirm = async () => {
     if (!token) return
+    const authenticatedToken = useVisitorSession.getState().session?.token
     setState('busy'); setError('')
     try {
       await visitorApi.post('/visitor/auth/email/change/confirm', { token })
       forgetFragmentToken(STORAGE_KEY)
-      void client.invalidateQueries({ queryKey: visitorKey('me') })
+      // Confirmation revokes every visitor session, including the one used here.
+      if (useVisitorSession.getState().session?.token === authenticatedToken) useVisitorSession.getState().end()
       setState('done')
     } catch (failure) {
       const status = apiErrorStatus(failure)
@@ -56,12 +56,13 @@ export default function VisitorEmailChange() {
     <Link to="/visitor/profile" className="ui-button ui-button-primary w-full">{t('visitor.nav.profile')}</Link>
   </AuthShell>
 
-  if (!session) return <Navigate to={loginPath('/visitor/email-change')} replace />
-
   if (state === 'done') return <AuthShell title={t('visitor.email.doneTitle')}>
     <Notice tone="success">{t('visitor.email.doneText')}</Notice>
-    <Link to="/visitor/profile" className="ui-button ui-button-primary w-full">{t('visitor.nav.profile')}</Link>
+    <Link to="/visitor/login" className="ui-button ui-button-primary w-full">{t('visitor.backToLogin')}</Link>
   </AuthShell>
+
+  // The store can publish revocation before React applies the successful response.
+  if (!session && state !== 'busy') return <Navigate to={loginPath('/visitor/email-change')} replace />
 
   return <AuthShell title={t('visitor.email.confirmTitle')} description={t('visitor.email.confirmText')}>
     {error && <Notice tone="error">{error}</Notice>}
