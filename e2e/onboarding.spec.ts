@@ -52,9 +52,13 @@ test('new owner skips the welcome, resumes after reload and makes the first visi
   await page.getByRole('button', { name: 'Create Business' }).first().click()
   await field(page, /^Business Name/).fill('Onboarding Salon')
   await field(page, /^Business Type/).selectOption('salon')
+  await field(page, /^Currency/).selectOption('CZK')
+  await page.getByRole('combobox', { name: 'Business time zone', exact: true }).selectOption('America/New_York')
   await page.getByRole('button', { name: 'Create Business' }).click()
   await expect(page.getByRole('main').getByText('Onboarding Salon', { exact: true })).toBeVisible()
 
+  const business = await request.get(`${apiUrl}/businesses/me`, { headers: owner.headers })
+  expect(await business.json()).toMatchObject({ timezone: 'America/New_York', currency: 'CZK' })
   await page.goto('/app')
   await expect(page.getByRole('heading', { name: 'Welcome to Xtrix' })).toHaveCount(0)
   // the quick tour follows the welcome once the business exists, skipping it must not block setup
