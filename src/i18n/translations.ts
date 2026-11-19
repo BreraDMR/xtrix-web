@@ -1451,6 +1451,8 @@ export type TranslationKey =
   | 'landing.footer.privacy'
   | 'landing.footer.terms'
   | 'landing.footer.status_preview'
+  | 'landing.footer.privacy_preview'
+  | 'landing.footer.terms_preview'
   | 'landing.footer.contact_support'
   | 'landing.hero.trial_note'
   | 'landing.hero.tour_link'
@@ -4163,6 +4165,16 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     en: 'Legal documentation preview',
     ru: 'Предварительный просмотр документов',
     cz: 'Náhled právní dokumentace',
+  },
+  'landing.footer.privacy_preview': {
+    en: 'Xtrix isolates salon and client records. Personal data is used only to provide booking and client management services for the relevant business.',
+    ru: 'Xtrix обеспечивает изоляцию данных салонов и клиентов. Персональные данные используются исключительно для предоставления услуг бронирования и ведения клиентской базы соответствующего бизнеса.',
+    cz: 'Xtrix odděluje záznamy salonů a klientů. Osobní údaje se používají výhradně k poskytování rezervací a správě klientské databáze příslušného podniku.',
+  },
+  'landing.footer.terms_preview': {
+    en: 'Subscription terms and security rules govern use of the service. The project is under active development; business details will be published before public payments are enabled.',
+    ru: 'Использование сервиса регулируется условиями подписки и правилами безопасности. Настоящий проект находится в активной разработке, коммерческие реквизиты будут опубликованы до запуска публичных платежей.',
+    cz: 'Používání služby se řídí podmínkami předplatného a bezpečnostními pravidly. Projekt se aktivně vyvíjí; obchodní údaje budou zveřejněny před spuštěním veřejných plateb.',
   },
   'landing.footer.contact_support': {
     en: 'Support & Questions',

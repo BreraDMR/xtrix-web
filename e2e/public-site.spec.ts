@@ -60,3 +60,53 @@ test('unhandled routes render clean 404 page without infinite redirects', async 
   await expect(homeLink).toBeVisible()
   await expect(homeLink).toHaveAttribute('href', '/')
 })
+
+test('all legacy bookmarks retain query and fragment through the guest login guard', async ({ page }) => {
+  for (const path of ['clients', 'visits', 'calendar', 'services', 'profile', 'employees',
+    'employees/123/salary', 'my-salary', 'business', 'inventory', 'finance', 'analytics',
+    'loyalty', 'subscription', 'settings']) {
+    await page.goto(`/${path}?source=old%20bookmark#saved-section`)
+    await expect.poll(() => new URL(page.url()).pathname).toBe('/login')
+    expect(new URL(page.url()).searchParams.get('returnTo')).toBe(`/app/${path}?source=old%20bookmark#saved-section`)
+  }
+  await page.goto('/app')
+  await expect(page).toHaveURL(/\/login\?returnTo=%2Fapp$/)
+  await page.reload()
+  await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible()
+})
+
+test('legacy CheckoutReturn survives login and verifies the exact session without claiming payment', async ({ page }) => {
+  const path = '/app/subscription?success=true&session_id=cs_test_site11#receipt'
+  await page.goto('/subscription?success=true&session_id=cs_test_site11#receipt')
+  await expect.poll(() => new URL(page.url()).searchParams.get('returnTo')).toBe(path)
+  const verification = page.waitForRequest(request => request.url().endsWith('/subscriptions/checkout/session/cs_test_site11'))
+  const owner = seedUser('owner_a')
+  await page.getByLabel('Email').fill(owner.email)
+  await page.getByLabel('Password').fill(owner.password)
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click()
+  await expect.poll(() => new URL(page.url()).pathname + new URL(page.url()).search + new URL(page.url()).hash).toBe(path)
+  expect((await verification).method()).toBe('GET')
+  await expect(page.getByText('Could not verify the payment. Please try again.', { exact: true })).toBeVisible()
+  await expect(page.getByText('Your paid subscription is active.', { exact: true })).toHaveCount(0)
+})
+
+test('public account links open real pages and unsafe returnTo stays in this workspace', async ({ page }) => {
+  for (const href of ['/register', '/login', '/visitor/visits']) {
+    await page.goto('/')
+    await page.locator(`footer a[href="${href}"]`).click()
+    await expect(page.locator('form')).toBeVisible()
+    await expect(page).toHaveURL(href === '/visitor/visits' ? /\/visitor\/login\?next=/ : new RegExp(href + '$'))
+  }
+  await page.goto('/login?returnTo=%2F%2Fescape.invalid%2Foutside')
+  const owner = seedUser('owner_a')
+  // Keep this form's unsafe returnTo when signing in.
+  await page.getByLabel('Email').fill(owner.email)
+  await page.getByLabel('Password').fill(owner.password)
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click()
+  await expect(page).toHaveURL(/\/app$/)
+  await page.goto('/unknown-authenticated-site11')
+  await page.getByRole('link', { name: 'Go to CRM Workspace', exact: true }).click()
+  await expect(page).toHaveURL(/\/app$/)
+  await page.reload()
+  await expect(page.locator('#workspace-navigation .crm-brand a')).toHaveAttribute('href', '/app')
+})

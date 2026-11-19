@@ -59,7 +59,7 @@ it.each(['Privacy Policy', 'Terms of Service'])('keeps %s as a named legal previ
   await userEvent.click(opener)
   const preview = screen.getByRole('dialog', { name: title })
   expect(within(preview).getByText('Legal documentation preview')).toBeInTheDocument()
-  expect(preview).toHaveTextContent(title === 'Privacy Policy' ? 'Xtrix обеспечивает изоляцию данных' : 'Настоящий проект находится в активной разработке')
+  expect(preview).toHaveTextContent(title === 'Privacy Policy' ? 'Xtrix isolates salon and client records' : 'The project is under active development')
   fireEvent(preview, new Event('cancel', { cancelable: true }))
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   expect(opener).toHaveFocus()

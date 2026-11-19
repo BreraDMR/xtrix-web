@@ -4181,7 +4181,42 @@ export interface paths {
         get: operations["read_account_visitor_me_get"];
         put?: never;
         post?: never;
+        /** Delete Account */
+        delete: operations["delete_account_visitor_me_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/push-tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Register this phone for visit reminders */
+        put: operations["register_push_token_visitor_push_tokens_put"];
+        post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitor/push-tokens/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Stop visit reminders on this phone */
+        delete: operations["unregister_push_token_visitor_push_tokens__token__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -11824,6 +11859,19 @@ export interface components {
             /**
              * Token
              * Format: password
+             */
+            token: string;
+        };
+        /** VisitorPushTokenIn */
+        VisitorPushTokenIn: {
+            /**
+             * Platform
+             * @enum {string}
+             */
+            platform: "ios" | "android";
+            /**
+             * Token
+             * @description Expo push token, ExponentPushToken[...]
              */
             token: string;
         };
@@ -22293,6 +22341,102 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["VisitorAccountOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_account_visitor_me_delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    register_push_token_visitor_push_tokens_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisitorPushTokenIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unregister_push_token_visitor_push_tokens__token__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Visitor-Token"?: string | null;
+                "Accept-Language"?: string | null;
+            };
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

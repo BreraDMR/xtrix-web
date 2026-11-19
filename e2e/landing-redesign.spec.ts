@@ -8,23 +8,50 @@ async function selectLanguage(page: Page, locale: Locale) {
 }
 
 for (const locale of ['en', 'ru', 'cz'] as const) {
+  for (const theme of ['light', 'dark'] as const) {
   for (const width of [375, 1280]) {
-    test(`public workspace presentation stays localized and contained at ${width}px in ${locale}`, async ({ page }) => {
+    test(`public workspace presentation stays localized and contained at ${width}px in ${locale}, ${theme}`, async ({ page }) => {
       const text = (key: TranslationKey) => translations[key][locale]
       await page.setViewportSize({ width, height: 900 })
+      await page.addInitScript(value => localStorage.setItem('theme', value), theme)
+      await page.emulateMedia({ colorScheme: theme })
       await page.goto('/')
       await selectLanguage(page, locale)
+      await expect(page.locator('html')).toHaveClass(theme === 'dark' ? /dark/ : /^(?!.*dark)/)
       const main = page.getByRole('main')
       await expect(main.getByRole('heading', { level: 1 })).toHaveText(text('landing.hero.title'))
       await expect(main.getByRole('link', { name: text('landing.hero.cta_start'), exact: true })).toHaveAttribute('href', '/register')
       await expect(main.getByRole('link', { name: text('landing.hero.cta_login'), exact: true })).toHaveAttribute('href', '/login')
       await expect(page.getByRole('figure', { name: text('landing.preview.sampleNotice') })).toBeVisible()
       for (const id of ['features', 'tour', 'pricing', 'faq', 'contact']) await expect(page.locator(`#${id}`)).toBeVisible()
+      await page.getByRole('button', { name: text('landing.tour.assistant_tab'), exact: true }).click()
+      await expect(page.getByRole('region', { name: text('landing.tour.step3_title'), exact: true })).toBeVisible()
       await page.getByRole('button', { name: text('landing.tour.clients_tab'), exact: true }).click()
       await expect(page.getByRole('region', { name: text('landing.tour.step2_title'), exact: true })).toBeVisible()
+      for (const document of ['privacy', 'terms'] as const) {
+        const title = text(`landing.footer.${document}`)
+        const trigger = page.getByRole('button', { name: title, exact: true })
+        await trigger.click()
+        const dialog = page.getByRole('dialog', { name: title, exact: true })
+        await expect(dialog).toContainText(text(`landing.footer.${document}_preview`))
+        await expect(dialog).toContainText(text('landing.footer.status_preview'))
+        await page.keyboard.press('Escape')
+        await expect(dialog).toBeHidden()
+        await expect(trigger).toBeFocused()
+      }
+      for (const link of await page.locator('a[href^="#"]').all()) {
+        const href = await link.getAttribute('href')
+        await expect(page.locator(href!)).toHaveCount(1)
+      }
+      for (const href of ['/register', '/login', '/visitor/visits']) {
+        const links = page.locator(`a[href="${href}"]`)
+        expect(await links.count()).toBeGreaterThan(0)
+        for (const link of await links.all()) await expect(link).not.toHaveText('')
+      }
       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1)
-      await page.screenshot({ path: `.local-checks/landing-redesign-${locale}-${width}.png`, fullPage: true, animations: 'disabled' })
+      await page.screenshot({ path: `.local-checks/p34/landing-${locale}-${theme}-${width}.png`, fullPage: true, animations: 'disabled' })
     })
+  }
   }
 }
 
