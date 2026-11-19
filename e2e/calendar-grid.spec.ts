@@ -125,7 +125,8 @@ test('day and week grids keep long names, Prague time and dark theme intact', as
   // a long staff name truncates inside its own header instead of widening the page
   const employeeHeader = page.locator(`[title="${EMPLOYEE_NAME}"]`)
   await expect(employeeHeader).toBeVisible()
-  await expect(employeeHeader).toHaveCSS('text-overflow', 'ellipsis')
+  // the name itself is the truncating span, next to the colour initial
+  await expect(employeeHeader.locator('span.truncate')).toHaveCSS('text-overflow', 'ellipsis')
   expect(await pageOverflow(page)).toBeLessThanOrEqual(1)
 
   // working windows, the lunch block and free gaps all render, even in the dark theme
