@@ -7,6 +7,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import DepositStep from '../../components/booking/DepositStep'
 import { INTL_LOCALE } from '../../components/booking/intl'
+import { useLinkToken } from '../../hooks/useLinkToken'
 import { useTranslation } from '../../hooks/useTranslation'
 import type { TranslationKey } from '../../i18n/translations'
 import type { WaitlistMessageOut, WaitlistOfferAcceptOut, WaitlistOfferOut } from '../../api/types'
@@ -15,6 +16,7 @@ import { formatCurrency, type Currency } from '../../utils/currency'
 const TOKEN_KEY = 'waitlist_offer_token'
 
 function initialToken(): string | null {
+  const hadFragment = window.location.hash.length > 1
   let fromHash = ''
   try {
     const params = new URLSearchParams(window.location.hash.replace(/^#/, ''))
@@ -30,11 +32,17 @@ function initialToken(): string | null {
       // private windows may reject storage, the page still works
     }
     try {
-      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`)
+      // keep the router's history entry, otherwise back/forward loses its index
+      window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`)
     } catch {
       // ignore
     }
     return token
+  }
+  if (hadFragment) {
+    // an empty #token= is a new (broken) link, so the old offer must not stay on screen
+    try { sessionStorage.removeItem(TOKEN_KEY) } catch { /* storage may be unavailable */ }
+    return null
   }
   try {
     return sessionStorage.getItem(TOKEN_KEY)
@@ -67,8 +75,14 @@ function PublicFrame({ children }: { children: ReactNode }) {
 }
 
 export default function WaitlistOffer() {
+  // a second offer mail opened in the same tab only changes the fragment;
+  // the key throws away the first offer's result and pending actions
+  const token = useLinkToken(initialToken)
+  return <WaitlistOfferSession key={token ?? 'missing'} token={token} />
+}
+
+function WaitlistOfferSession({ token }: { token: string | null }) {
   const { t, locale } = useTranslation()
-  const [token] = useState(initialToken)
   const [accepted, setAccepted] = useState<WaitlistOfferAcceptOut | null>(null)
   const [declined, setDeclined] = useState(false)
   const [actionError, setActionError] = useState<unknown>(null)
