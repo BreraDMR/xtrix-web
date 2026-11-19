@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import Button from '../../ui/Button'
 import { apiErrorMessage } from '../../api/errors'
 import { useOnboarding, useUpdateOnboarding } from '../../hooks/useOnboarding'
 import { useTranslation } from '../../hooks/useTranslation'
+import { useNativeDialog } from '../../hooks/useNativeDialog'
 import type { TranslationKey } from '../../i18n/translations'
 
 const STEPS: { title: TranslationKey; body: TranslationKey }[] = [
@@ -13,32 +14,25 @@ const STEPS: { title: TranslationKey; body: TranslationKey }[] = [
 ]
 
 export default function ProductTour() {
-  const { t } = useTranslation()
   const { data } = useOnboarding()
   const update = useUpdateOnboarding()
-  const [open, setOpen] = useState(false)
+  if (!data || !data.welcome_dismissed || data.tour_completed || data.tour_dismissed) return null
+  return <TourDialog update={update} />
+}
+
+function TourDialog({ update }: { update: ReturnType<typeof useUpdateOnboarding> }) {
+  const { t } = useTranslation()
   const [stepIndex, setStepIndex] = useState(0)
-  const dialogRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!data) return
-    if (data.welcome_dismissed && !data.tour_completed && !data.tour_dismissed) {
-      setOpen(true)
-    }
-  }, [data])
-
-  useEffect(() => {
-    if (open) dialogRef.current?.focus()
-  }, [open])
+  const { dialog, isTopDialog } = useNativeDialog()
 
   const finish = () => {
     if (update.isPending) return
-    update.mutate({ tour_completed: true }, { onSuccess: () => setOpen(false) })
+    update.mutate({ tour_completed: true })
   }
 
   const skip = () => {
     if (update.isPending) return
-    update.mutate({ tour_dismissed: true }, { onSuccess: () => setOpen(false) })
+    update.mutate({ tour_dismissed: true })
   }
 
   const next = () => {
@@ -48,38 +42,30 @@ export default function ProductTour() {
 
   const back = () => setStepIndex(Math.max(0, stepIndex - 1))
 
-  useEffect(() => {
-    if (!open) return
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        skip()
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault()
-        next()
-      } else if (event.key === 'ArrowLeft') {
-        event.preventDefault()
-        back()
-      }
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  })
-
-  if (!open || !data) return null
-
   const step = STEPS[stepIndex]
   const lastStep = stepIndex === STEPS.length - 1
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
+      <dialog
+        ref={dialog}
+        onCancel={event => {
+          event.preventDefault()
+          event.stopPropagation()
+          if (isTopDialog()) skip()
+        }}
+        onKeyDown={event => {
+          if (!isTopDialog() || update.isPending) return
+          if (event.key === 'ArrowRight') {
+            event.preventDefault()
+            next()
+          } else if (event.key === 'ArrowLeft') {
+            event.preventDefault()
+            back()
+          }
+        }}
         aria-labelledby="onboarding-tour-title"
         tabIndex={-1}
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl outline-none dark:bg-gray-900"
+        className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-2xl border-0 bg-[var(--workspace-panel)] p-6 text-[var(--workspace-ink)] shadow-xl outline-none backdrop:bg-black/40"
       >
         <p className="text-xs uppercase tracking-wide text-[var(--workspace-muted)]">
           {t('onboarding.tour.title')} · {stepIndex + 1}/{STEPS.length}
@@ -119,7 +105,6 @@ export default function ProductTour() {
             />
           ))}
         </div>
-      </div>
-    </div>
+      </dialog>
   )
 }
