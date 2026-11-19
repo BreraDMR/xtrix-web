@@ -117,6 +117,8 @@ function workingIntervals(dayKey: string, data: StaffScheduleData): MinuteInterv
 function visitIntervals(visits: VisitOut[], dayKey: string, timeZone: string): MinuteInterval[] {
   const intervals: MinuteInterval[] = []
   for (const visit of visits) {
+    // the API doesn't count cancelled visits as taken, so the free window stays free
+    if (visit.status === 'cancelled') continue
     const start = new Date(visit.date_start)
     if (Number.isNaN(start.getTime())) continue
     const end = visit.date_end ? new Date(visit.date_end) : null

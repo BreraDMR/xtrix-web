@@ -67,8 +67,12 @@ function rangeForDay(visit: CalendarEvent, dayKey: string, timeZone: string) {
   }
 }
 
-// overlapping events get side-by-side lanes inside a connected cluster
-function layoutDay(visits: CalendarEvent[], dayKey: string, timeZone: string): DayEvent[] {
+const MIN_CARD_HEIGHT = 30
+
+// overlapping events get side-by-side lanes inside a connected cluster. A card never gets
+// shorter than MIN_CARD_HEIGHT, so lanes are packed by how tall the card is drawn, not by
+// the visit itself - otherwise two 15-minute visits in a row land on top of each other.
+function layoutDay(visits: CalendarEvent[], dayKey: string, timeZone: string, minMinutes = 0): DayEvent[] {
   const ranges: Omit<DayEvent, 'lane' | 'lanes'>[] = []
   for (const visit of visits) {
     const range = rangeForDay(visit, dayKey, timeZone)
@@ -91,16 +95,17 @@ function layoutDay(visits: CalendarEvent[], dayKey: string, timeZone: string): D
   }
 
   for (const range of ranges) {
+    const drawnEnd = Math.max(range.endMin, range.startMin + minMinutes)
     if (cluster.length > 0 && range.startMin >= clusterEnd) flush()
     let lane = laneEnds.findIndex((end) => end <= range.startMin)
     if (lane === -1) {
       lane = laneEnds.length
-      laneEnds.push(range.endMin)
+      laneEnds.push(drawnEnd)
     } else {
-      laneEnds[lane] = range.endMin
+      laneEnds[lane] = drawnEnd
     }
     cluster.push({ ...range, lane, lanes: 1 })
-    clusterEnd = Math.max(clusterEnd, range.endMin)
+    clusterEnd = Math.max(clusterEnd, drawnEnd)
   }
   if (cluster.length > 0) flush()
   return laidOut
@@ -167,7 +172,10 @@ export default function DayGrid({
   const timeline = dayTimeline(dayKey, zone)
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
   const title = format(parseISO(dayKey), locale === 'cz' ? 'EEEE d. MMMM' : 'EEEE, d MMMM', { locale: dateLocale })
-  const events = useMemo(() => layoutDay(visits, dayKey, zone), [visits, dayKey, zone])
+  const events = useMemo(
+    () => layoutDay(visits, dayKey, zone, (MIN_CARD_HEIGHT / hourHeight) * 60),
+    [visits, dayKey, zone, hourHeight],
+  )
 
   const previewStyle = preview && preview.dayKey === dayKey
     ? {
@@ -328,7 +336,7 @@ export default function DayGrid({
                 statusLabel,
               ].filter(Boolean).join(', ')
               const top = (event.startMin / 60) * hourHeight
-              const height = Math.max(((event.endMin - event.startMin) / 60) * hourHeight, 30)
+              const height = Math.max(((event.endMin - event.startMin) / 60) * hourHeight, MIN_CARD_HEIGHT)
               const width = 100 / event.lanes
               const style = {
                 top,
