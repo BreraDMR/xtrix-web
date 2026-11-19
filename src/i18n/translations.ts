@@ -1634,6 +1634,7 @@ export type TranslationKey =
   | 'schedule.reason'
   | 'schedule.reasonPlaceholder'
   | 'schedule.confirmDelete'
+  | 'schedule.error.nonexistentTime'
   | 'schedule.error.timeRange'
   | 'schedule.error.bufferRange'
   | 'schedule.error.horizonRange'
@@ -4295,6 +4296,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'schedule.reason': { en: 'Note', ru: 'Заметка', cz: 'Poznámka' },
   'schedule.reasonPlaceholder': { en: 'e.g. vacation', ru: 'например, отпуск', cz: 'např. dovolená' },
   'schedule.confirmDelete': { en: 'Confirm delete', ru: 'Подтвердить удаление', cz: 'Potvrdit smazání' },
+  'schedule.error.nonexistentTime': { en: 'This time does not exist in the business time zone because the clocks change. Choose another time.', ru: 'Такого времени нет в часовом поясе бизнеса из-за перевода часов. Выберите другое время.', cz: 'Tento čas v časovém pásmu firmy kvůli změně času neexistuje. Vyberte jiný čas.' },
   'schedule.error.timeRange': { en: 'The end must be at least an hour after the start.', ru: 'Конец должен быть минимум на час позже начала.', cz: 'Konec musí být alespoň o hodinu po začátku.' },
   'schedule.error.bufferRange': { en: 'Buffers must be whole minutes from 0 to 1440.', ru: 'Буферы — целые минуты от 0 до 1440.', cz: 'Časové rezervy jsou celé minuty od 0 do 1440.' },
   'schedule.error.horizonRange': { en: 'The horizon must be from 1 to 365 days.', ru: 'Горизонт должен быть от 1 до 365 дней.', cz: 'Horizont musí být 1 až 365 dní.' },
