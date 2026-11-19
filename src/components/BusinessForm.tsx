@@ -1,5 +1,5 @@
 import { useTranslation } from '../hooks/useTranslation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 import api from '../api/client'
 import FormError from './FormError'
 import { validateEmail, validatePhone } from '../utils/validation'
@@ -12,6 +12,9 @@ import { ASSISTANT_GENDERS, DEFAULT_ASSISTANT_GENDER, DEFAULT_ASSISTANT_NAMES, a
 import type { TranslationKey } from '../i18n/translations'
 
 // same order as the API enum
+const TIMEZONES = ['UTC', ...((Intl as typeof Intl & { supportedValuesOf?: (key: string) => string[] })
+  .supportedValuesOf?.('timeZone') ?? ['Europe/Prague', 'Europe/London', 'America/New_York'])]
+
 const BUSINESS_TYPES: BusinessType[] = ['salon', 'clinic', 'medical', 'dental', 'hospital', 'individual']
 
 interface BusinessFormProps {
@@ -28,12 +31,13 @@ interface BusinessData {
   email?: string
   description?: string
   currency?: string
+  timezone: string
   // the API takes these on update only
   assistant_name: string
   assistant_gender: AssistantGender
 }
 
-const BUSINESS_FIELDS = ['name', 'business_type', 'address', 'phone', 'email', 'description', 'currency', 'assistant_name', 'assistant_gender']
+const BUSINESS_FIELDS = ['name', 'business_type', 'address', 'phone', 'email', 'description', 'currency', 'timezone', 'assistant_name', 'assistant_gender']
 
 const NAME_PROBLEM: Record<'tooLong' | 'invalid', TranslationKey> = {
   tooLong: 'business.assistantNameTooLong',
@@ -43,6 +47,7 @@ const NAME_PROBLEM: Record<'tooLong' | 'invalid', TranslationKey> = {
 export default function BusinessForm({ businessId, onSuccess, onCancel }: BusinessFormProps) {
   const { t, locale } = useTranslation()
   const labels = useLabels()
+  const timezoneId = useId()
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -50,6 +55,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
     name: '',
     business_type: 'salon',
     currency: 'EUR',
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
     assistant_name: '',
     assistant_gender: DEFAULT_ASSISTANT_GENDER,
   })
@@ -73,6 +79,7 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
         email: data.email || '',
         description: data.description || '',
         currency: data.currency || 'EUR',
+        timezone: data.timezone || 'UTC',
         assistant_name: data.assistant_name || '',
         assistant_gender: ASSISTANT_GENDERS.includes(data.assistant_gender) ? data.assistant_gender : DEFAULT_ASSISTANT_GENDER,
       })
@@ -223,6 +230,17 @@ export default function BusinessForm({ businessId, onSuccess, onCancel }: Busine
           <option value="UAH">UAH (₴)</option>
         </select>
         {fieldErrors.currency && <FormError message={fieldErrors.currency} />}
+      </div>
+
+      <div>
+        <label htmlFor={timezoneId} className="block text-sm font-medium mb-1">{t('schedule.rules.timezone')}</label>
+        <select id={timezoneId} required value={formData.timezone}
+          aria-invalid={fieldErrors.timezone ? true : undefined}
+          onChange={event => setFormData({ ...formData, timezone: event.target.value })}
+          className="w-full px-3 py-2 border rounded-md">
+          {[...new Set([formData.timezone, ...TIMEZONES])].sort().map(zone => <option key={zone} value={zone}>{zone}</option>)}
+        </select>
+        {fieldErrors.timezone && <FormError message={fieldErrors.timezone} />}
       </div>
 
       {businessId && (
