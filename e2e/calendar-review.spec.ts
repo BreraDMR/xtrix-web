@@ -138,7 +138,7 @@ for (const { language, theme, width } of CASES) {
     expect(ownerCut.x + ownerCut.width).toBeLessThanOrEqual(staffCut.x + 1)
 
     await expect(page.getByTitle('Training')).toContainText(t('calendar.blocked'))
-    await expect(page.locator(`[title="${STAFF_NAME}"]`)).toHaveCSS('text-overflow', 'ellipsis')
+    await expect(page.locator(`[title="${STAFF_NAME}"] span.truncate`)).toHaveCSS('text-overflow', 'ellipsis')
     expect(await pageOverflow(page)).toBeLessThanOrEqual(1)
     await page.screenshot({ path: test.info().outputPath(`calendar-day-${language}-${theme}-${width}.png`), fullPage: true })
 
