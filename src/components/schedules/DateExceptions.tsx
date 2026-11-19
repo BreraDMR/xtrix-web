@@ -8,7 +8,7 @@ import Input from '../../ui/Input'
 import LoadingSpinner from '../LoadingSpinner'
 import QueryError from '../QueryError'
 import { useTranslation } from '../../hooks/useTranslation'
-import { isValidTimeWindow, showDay, showZonedDateTime, today, zonedWallTimeToIso } from '../../utils/dates'
+import { isValidTimeWindow, isoToZonedWallTime, showDay, showZonedDateTime, today, zonedWallTimeToIso } from '../../utils/dates'
 import type { BlockSlotOut, ScheduleExceptionOut } from '../../api/types'
 
 interface Props {
@@ -120,6 +120,14 @@ export default function DateExceptions({ specialistId, timeZone }: Props) {
     }
     const start = zonedWallTimeToIso(blockForm.day, blockForm.start, timeZone)
     const end = zonedWallTimeToIso(blockForm.day, blockForm.end, timeZone)
+    // A spring clock change can leave a wall time with no real UTC instant.
+    const startWall = isoToZonedWallTime(start, timeZone)
+    const endWall = isoToZonedWallTime(end, timeZone)
+    if (startWall.day !== blockForm.day || startWall.time !== blockForm.start
+      || endWall.day !== blockForm.day || endWall.time !== blockForm.end) {
+      setBlockError(t('schedule.error.nonexistentTime'))
+      return
+    }
     if (end <= start) {
       setBlockError(t('schedule.error.timeRange'))
       return

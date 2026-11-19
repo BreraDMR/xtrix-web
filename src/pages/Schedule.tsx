@@ -5,6 +5,7 @@ import Button from '../ui/Button'
 import Card from '../ui/Card'
 import Select from '../ui/Select'
 import LoadingSpinner from '../components/LoadingSpinner'
+import QueryError from '../components/QueryError'
 import WeeklyEditor from '../components/schedules/WeeklyEditor'
 import DateExceptions from '../components/schedules/DateExceptions'
 import BookingRules from '../components/schedules/BookingRules'
@@ -41,7 +42,7 @@ export default function Schedule() {
     || ((user.role === 'business_owner' || user.role === 'specialist') && !user.employer_id)
   )
 
-  const { data: business, isLoading: businessLoading } = useMyBusiness(!!user && canManageSchedule)
+  const { data: business, isLoading: businessLoading, isError: businessError, refetch: refetchBusiness } = useMyBusiness(!!user && canManageSchedule)
 
   const { data: employees } = useQuery<EmployeeRow[]>({
     queryKey: ['employees', true],
@@ -81,6 +82,8 @@ export default function Schedule() {
       </Card>
     )
   }
+
+  if (businessError) return <QueryError retry={refetchBusiness} />
 
   return (
     <div>
