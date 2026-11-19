@@ -258,7 +258,7 @@
     .crm-sidebar { width: var(--navigation-width); }
     .crm-workspace { margin-left: var(--navigation-width); }
     .crm-app[data-sidebar-compact='true'] .crm-brand { padding-inline: 18px; }
-    .crm-app[data-sidebar-compact='true'] .crm-business { margin-inline: 8px; padding: 9px; }
+    .crm-app[data-sidebar-compact='true'] .crm-business { margin-inline: 8px; padding: 9px; justify-content: center; }
     .crm-app[data-sidebar-compact='true'] .crm-navtext { display: none; }
     .crm-app[data-sidebar-compact='true'] .crm-navlabel { height: 1px; padding: 0; margin: 18px 20px 10px; overflow: hidden; color: transparent; background: var(--workspace-line); }
     .crm-app[data-sidebar-compact='true'] .crm-navlink { justify-content: center; margin-inline: 12px; padding-inline: 0; }
