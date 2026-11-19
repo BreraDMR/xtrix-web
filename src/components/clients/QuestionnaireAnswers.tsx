@@ -5,11 +5,13 @@ import { apiErrorStatus } from '../../api/errors'
 import { INTL_LOCALE } from '../booking/intl'
 import FormError from '../FormError'
 import LoadingSpinner from '../LoadingSpinner'
+import QuestionnaireLink from './QuestionnaireLink'
 import { useTranslation } from '../../hooks/useTranslation'
 import type { QuestionnaireAnswersOut, QuestionnaireField } from '../../api/types'
 
 interface QuestionnaireAnswersProps {
   visitId: number
+  serviceId?: number | null
 }
 
 function optionLabel(field: Extract<QuestionnaireField, { options: unknown }>, value: string): string {
@@ -35,7 +37,7 @@ function answerText(field: QuestionnaireField, value: unknown, yes: string, no: 
   }
 }
 
-export default function QuestionnaireAnswers({ visitId }: QuestionnaireAnswersProps) {
+export default function QuestionnaireAnswers({ visitId, serviceId }: QuestionnaireAnswersProps) {
   const { t, locale } = useTranslation()
 
   const { data, isLoading, isError, error, refetch } = useQuery<QuestionnaireAnswersOut>({
@@ -57,8 +59,8 @@ export default function QuestionnaireAnswers({ visitId }: QuestionnaireAnswersPr
 
   if (isError) {
     const status = apiErrorStatus(error)
-    // no published questionnaire was sent for this visit, or the guest has not answered yet
-    if (status === 404) return null
+    // the guest has not answered yet (or the service has no questionnaire): offer a link
+    if (status === 404) return <QuestionnaireLink visitId={visitId} serviceId={serviceId} />
     if (status === 403) {
       return (
         <div className="border-t border-gray-200 pt-4 dark:border-gray-700">

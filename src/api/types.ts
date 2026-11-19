@@ -109,6 +109,7 @@ export type QuestionnaireFormOut = Schema<'QuestionnaireFormOut'>
 export type QuestionnaireAnswersIn = Schema<'QuestionnaireAnswersIn'>
 export type QuestionnaireSubmittedOut = Schema<'QuestionnaireSubmittedOut'>
 export type QuestionnaireAnswersOut = Schema<'QuestionnaireAnswersOut'>
+export type QuestionnaireTokenOut = Schema<'QuestionnaireTokenOut'>
 export type QuestionnaireField = QuestionnaireTemplateOut['fields'][number]
 export type QuestionnaireFieldType = QuestionnaireField['type']
 export type QuestionnaireOption = Schema<'QuestionnaireOption'>
