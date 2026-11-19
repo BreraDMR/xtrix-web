@@ -2697,7 +2697,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.waitlist.notBooking": {"en": "This is not a booking and does not hold a time.", "ru": "Это не запись и не резерв времени.", "cz": "Toto není rezervace ani rezervace času."},
   "booking.waitlist.explanation": {"en": "If a suitable slot frees up, you may get a time-limited offer by email. The time is not held for you until you accept it.", "ru": "Если подходящее окно освободится, на email придёт предложение с ограниченным сроком. До подтверждения время за вами не закреплено.", "cz": "Když se uvolní vhodný termín, přijde vám e-mailem nabídka s omezenou platností. Do potvrzení není čas pro vás blokován."},
   "booking.waitlist.join": {"en": "Send request", "ru": "Отправить заявку", "cz": "Odeslat žádost"},
-  "booking.waitlist.decline": {"en": "Don't join", "ru": "Не вставать", "cz": "Nezařazovat se"},
+  "booking.waitlist.decline": {"en": "Don't join", "ru": "Отказаться", "cz": "Nezařazovat se"},
   "booking.waitlist.joinedTitle": {"en": "Request saved", "ru": "Заявка сохранена", "cz": "Žádost uložena"},
   "booking.waitlist.joinedText": {"en": "The salon will see your preferences. If a matching time frees up, you may receive an email with a time-limited offer.", "ru": "Салон увидит ваши пожелания. Если подходящее время освободится, вы можете получить письмо с предложением на ограниченный срок.", "cz": "Salon uvidí vaše preference. Pokud se uvolní vhodný termín, můžete dostat e-mail s nabídkou na omezenou dobu."},
   "booking.waitlist.leave": {"en": "Leave the waitlist", "ru": "Убрать заявку", "cz": "Odebrat žádost"},
