@@ -63,3 +63,25 @@ it('opens the named mobile navigation by keyboard and closes it with Escape or a
   await userEvent.click(within(menu).getByRole('link', { name: 'Features' }))
   expect(button).toHaveAttribute('aria-expanded', 'false')
 })
+
+
+it.each([
+  ['en', 'Privacy Policy', 'Terms of Service', 'Xtrix isolates salon and client records', 'Subscription terms'],
+  ['ru', 'Политика конфиденциальности', 'Условия использования', 'Xtrix обеспечивает изоляцию данных', 'Использование сервиса регулируется'],
+  ['cz', 'Zásady ochrany osobních údajů', 'Obchodní podmínky', 'Xtrix odděluje záznamy salonů a klientů', 'Používání služby se řídí'],
+] as const)('localizes both legal previews and keeps their draft notice in %s', async (locale, privacy, terms, privacyBody, termsBody) => {
+  useLocaleStore.setState({ locale })
+  renderWithProviders(<Landing />)
+  const footer = within(screen.getByRole('contentinfo'))
+  for (const [title, body] of [[privacy, privacyBody], [terms, termsBody]]) {
+    const trigger = footer.getByRole('button', { name: title })
+    await userEvent.click(trigger)
+    const dialog = screen.getByRole('dialog', { name: title })
+    expect(within(dialog).getByText(body, { exact: false })).toBeInTheDocument()
+    expect(dialog).toHaveTextContent(locale === 'en' ? 'Legal documentation preview'
+      : locale === 'ru' ? 'Предварительный просмотр документов' : 'Náhled právní dokumentace')
+    if (locale !== 'ru') expect(dialog.textContent).not.toMatch(/[А-Яа-яЁё]/)
+    await userEvent.click(within(dialog).getAllByRole('button', { name: locale === 'en' ? 'Close' : locale === 'ru' ? 'Закрыть' : 'Zavřít' }).at(-1)!)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  }
+})

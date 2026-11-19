@@ -59,9 +59,7 @@ export default function PublicFooter() {
         <div className="p-5">
           <p className="rounded-md border border-[var(--workspace-line)] bg-[var(--workspace-bg)] p-3 text-xs font-medium text-[var(--workspace-muted)]">{t('landing.footer.status_preview')}</p>
           <p className="mt-4 text-sm leading-relaxed text-[var(--workspace-muted)]">
-            {modalDocument === 'privacy'
-              ? 'Xtrix обеспечивает изоляцию данных салонов и клиентов. Персональные данные используются исключительно для предоставления услуг бронирования и ведения клиентской базы соответствующего бизнеса.'
-              : 'Использование сервиса регулируется условиями подписки и правилами безопасности. Настоящий проект находится в активной разработке, коммерческие реквизиты будут опубликованы до запуска публичных платежей.'}
+            {t(modalDocument === 'privacy' ? 'landing.footer.privacy_preview' : 'landing.footer.terms_preview')}
           </p>
           <div className="mt-6 flex justify-end"><Button variant="secondary" onClick={() => setModalDocument(null)}>{t('common.close')}</Button></div>
         </div>
