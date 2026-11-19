@@ -1317,7 +1317,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         {fieldErrors.note && <FormError message={fieldErrors.note} />}
       </div>
 
-      {visitId && <QuestionnaireAnswers visitId={visitId} />}
+      {visitId && <QuestionnaireAnswers visitId={visitId} serviceId={formData.service_id} />}
 
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         <button

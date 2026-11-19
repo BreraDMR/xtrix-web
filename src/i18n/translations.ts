@@ -1867,6 +1867,15 @@ export type TranslationKey =
   | 'questionnaireAnswers.submittedAt'
   | 'questionnaireAnswers.noAccess'
   | 'questionnaireAnswers.loadError'
+  | 'questionnaireLink.hint'
+  | 'questionnaireLink.create'
+  | 'questionnaireLink.label'
+  | 'questionnaireLink.copy'
+  | 'questionnaireLink.copied'
+  | 'questionnaireLink.copyError'
+  | 'questionnaireLink.validUntil'
+  | 'questionnaireLink.notAvailable'
+  | 'questionnaireLink.error'
   | 'gift.tab'
   | 'gift.offersTitle'
   | 'gift.offersSubtitle'
@@ -4874,6 +4883,31 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
     en: 'Could not load the questionnaire answers.',
     ru: 'Не удалось загрузить ответы анкеты.',
     cz: 'Odpovědi z dotazníku se nepodařilo načíst.',
+  },
+  'questionnaireLink.hint': {
+    en: 'The guest has not filled in the questionnaire yet. Create a link for this visit and send it to them.',
+    ru: 'Гость ещё не заполнил анкету. Создайте ссылку для этого визита и отправьте её гостю.',
+    cz: 'Host zatím dotazník nevyplnil. Vytvořte odkaz pro tuto návštěvu a pošlete mu ho.',
+  },
+  'questionnaireLink.create': { en: 'Create questionnaire link', ru: 'Создать ссылку на анкету', cz: 'Vytvořit odkaz na dotazník' },
+  'questionnaireLink.label': { en: 'Questionnaire link', ru: 'Ссылка на анкету', cz: 'Odkaz na dotazník' },
+  'questionnaireLink.copy': { en: 'Copy link', ru: 'Скопировать ссылку', cz: 'Zkopírovat odkaz' },
+  'questionnaireLink.copied': { en: 'Link copied', ru: 'Ссылка скопирована', cz: 'Odkaz zkopírován' },
+  'questionnaireLink.copyError': {
+    en: 'Could not copy. Select the link and copy it manually.',
+    ru: 'Не удалось скопировать. Выделите ссылку и скопируйте вручную.',
+    cz: 'Kopírování se nezdařilo. Označte odkaz a zkopírujte ho ručně.',
+  },
+  'questionnaireLink.validUntil': { en: 'Valid until', ru: 'Действует до', cz: 'Platí do' },
+  'questionnaireLink.notAvailable': {
+    en: 'This service has no published questionnaire yet.',
+    ru: 'У этой услуги пока нет опубликованной анкеты.',
+    cz: 'Tato služba zatím nemá zveřejněný dotazník.',
+  },
+  'questionnaireLink.error': {
+    en: 'Could not create the link. Try again.',
+    ru: 'Не удалось создать ссылку. Попробуйте ещё раз.',
+    cz: 'Odkaz se nepodařilo vytvořit. Zkuste to znovu.',
   },
 
   'gift.tab': { en: 'Gift certificates', ru: 'Подарочные сертификаты', cz: 'Dárkové certifikáty' },
