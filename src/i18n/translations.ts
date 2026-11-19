@@ -4720,9 +4720,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'notifications.delivery.retry': { en: 'Retry', ru: 'Повторить', cz: 'Zopakovat' },
   'notifications.delivery.retrying': { en: 'Retrying...', ru: 'Повтор...', cz: 'Opakování...' },
   'notifications.delivery.retryQueued': {
-    en: 'Retry queued. The worker will try again.',
-    ru: 'Повтор поставлен в очередь. Worker попробует снова.',
-    cz: 'Opakování zařazeno do fronty. Worker se pokusí znovu.',
+    en: 'Retry queued. We will try to send it again shortly.',
+    ru: 'Повтор поставлен в очередь. Скоро попробуем отправить снова.',
+    cz: 'Opakování zařazeno do fronty. Brzy to zkusíme odeslat znovu.',
   },
   'notifications.delivery.retryError': {
     en: 'Could not retry this delivery.',
