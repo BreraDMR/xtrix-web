@@ -628,7 +628,10 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       setFormError(message)
       if (!field) return
       setInvalidField(field)
-      document.getElementById(fid(field))?.focus()
+      const target = document.getElementById(fid(field))
+      target?.focus()
+      // the side panel scrolls on its own, focus alone left the field off screen on a phone
+      target?.scrollIntoView?.({ block: 'center' })
     }
     if (itemsMode && !itemsComplete) {
       setFormError(t('visits.itemsIncomplete'))
