@@ -110,6 +110,15 @@ function psql(statement: string) {
   ], { stdio: ['ignore', 'pipe', 'pipe'] })
 }
 
+function psqlValue(query: string): string {
+  const container = process.env.E2E_PG_CONTAINER
+  const database = process.env.E2E_PG_DB
+  if (!container || !database) throw new Error('E2E_PG_CONTAINER and E2E_PG_DB are required')
+  return execFileSync('docker', [
+    'exec', container, 'psql', '-U', 'postgres', '-d', database, '-v', 'ON_ERROR_STOP=1', '-At', '-c', query,
+  ], { stdio: ['ignore', 'pipe', 'pipe'] }).toString().trim()
+}
+
 function batchIdFromUrl(page: { url(): string }): number {
   const value = new URL(page.url()).searchParams.get('batch')
   if (!value) throw new Error(`no batch id in ${page.url()}`)
@@ -214,6 +223,14 @@ test('an owner imports clients and visits, sees row errors, survives a reload an
     await request.get(`${apiUrl}/clients/${existing.id}`, { headers: owner.headers }),
   )
   expect(existingAfter.full_name).toBe('Existing Guest')
+
+  // money check against the fixture: prices as written, in the salon's own currency
+  const money = psqlValue(`
+    SELECT string_agg(v.price::text || ' ' || coalesce(v.currency_snapshot, 'none')
+                      || ' ' || coalesce((v.currency_snapshot = b.currency)::text, 'false'), ',' ORDER BY v.price)
+    FROM visits v JOIN clients c ON c.id = v.client_id JOIN businesses b ON b.id = v.business_id
+    WHERE c.contact_phone IN ('+420700900111', '+420700900112')`)
+  expect(money).toMatch(/^30 [A-Z]{3} true,45 [A-Z]{3} true$/)
 
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download CSV report' }).click()
