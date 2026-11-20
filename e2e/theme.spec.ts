@@ -1,5 +1,16 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import { apiUrl, newOwner, openAs, stabilizeTrialDate } from './helpers'
+
+// read the colour a theme token resolves to right now, so the test follows theme.css
+// instead of pinning hex values that go stale with every palette change
+const tokenColor = (page: Page, token: string) => page.evaluate(name => {
+  const probe = document.createElement('div')
+  probe.style.background = `var(${name})`
+  document.body.appendChild(probe)
+  const colour = getComputedStyle(probe).backgroundColor
+  probe.remove()
+  return colour
+}, token)
 
 test('account theme applies on the dashboard and follows the system when selected', async ({ page, request }) => {
   const owner = await newOwner(request)
@@ -10,7 +21,8 @@ test('account theme applies on the dashboard and follows the system when selecte
   await page.emulateMedia({ colorScheme: 'light' })
   await openAs(page, owner)
   await expect(page.locator('html')).toHaveClass(/dark/)
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(22, 28, 25)')
+  const darkBg = await tokenColor(page, '--workspace-bg')
+  await expect(page.locator('body')).toHaveCSS('background-color', darkBg)
   await page.reload()
   await expect(page.locator('html')).toHaveClass(/dark/)
 
@@ -19,13 +31,16 @@ test('account theme applies on the dashboard and follows the system when selecte
   await expect(page.locator('html')).not.toHaveClass(/dark/)
   await page.emulateMedia({ colorScheme: 'dark' })
   await expect(page.locator('html')).toHaveClass(/dark/)
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(22, 28, 25)')
+  await expect(page.locator('body')).toHaveCSS('background-color', darkBg)
   await page.goto('/clients')
-  await expect(page.locator('main .ui-card').filter({ has: page.locator('table') })).toHaveCSS('background-color', 'rgb(30, 39, 34)')
+  await expect(page.locator('main .ui-card').filter({ has: page.locator('table') }))
+    .toHaveCSS('background-color', await tokenColor(page, '--workspace-panel'))
   await expect(page.locator('html')).toHaveClass(/dark/)
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(page.locator('html')).not.toHaveClass(/dark/)
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(247, 247, 243)')
+  const lightBg = await tokenColor(page, '--workspace-bg')
+  expect(lightBg).not.toBe(darkBg)
+  await expect(page.locator('body')).toHaveCSS('background-color', lightBg)
 })
 
 for (const width of [1280, 375]) {
