@@ -1559,6 +1559,7 @@ export type TranslationKey =
   | 'onboarding.checklist.collapse'
   | 'onboarding.checklist.title'
   | 'onboarding.checklist.description'
+  | 'onboarding.checklist.settingsLink'
   | 'onboarding.checklist.progressLabel'
   | 'onboarding.checklist.hide'
   | 'onboarding.checklist.locked'
@@ -4248,7 +4249,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'onboarding.checklist.expand': { en: 'Show all steps', ru: 'Все шаги настройки', cz: 'Zobrazit všechny kroky' },
   'onboarding.checklist.collapse': { en: 'Collapse steps', ru: 'Свернуть шаги', cz: 'Sbalit kroky' },
   'onboarding.checklist.title': { en: 'Getting started', ru: 'С чего начать', cz: 'Jak začít' },
-  'onboarding.checklist.description': { en: 'You can return to these steps later.', ru: 'К этим шагам можно вернуться позже.', cz: 'K těmto krokům se můžete vrátit později.' },
+  'onboarding.checklist.description': { en: 'Hide them any time and bring them back in {settings}.', ru: 'Шаги можно скрыть и вернуть в {settings}.', cz: 'Kroky můžete skrýt a vrátit je v {settings}.' },
+  'onboarding.checklist.settingsLink': { en: 'Settings', ru: 'настройках', cz: 'Nastavení' },
   'onboarding.checklist.progressLabel': { en: 'Completed', ru: 'Выполнено', cz: 'Hotovo' },
   'onboarding.checklist.hide': { en: 'Hide checklist', ru: 'Скрыть список', cz: 'Skrýt seznam' },
   'onboarding.checklist.locked': { en: 'Available in an upcoming release', ru: 'Появится в ближайшем обновлении', cz: 'Bude v některé z příštích aktualizací' },

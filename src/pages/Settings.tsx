@@ -2,8 +2,8 @@ import Button from '../ui/Button'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Card from '../ui/Card'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '../hooks/useTranslation'
 import { useLocaleStore } from '../store/localeStore'
@@ -128,7 +128,16 @@ export default function Settings() {
     updatePreferencesMutation.mutate({ [field]: value })
   }
 
-  if (isLoadingBusiness || isLoadingPreferences) {
+  const { hash } = useLocation()
+  const loading = isLoadingBusiness || isLoadingPreferences
+  useEffect(() => {
+    // links like /app/settings#settings-onboarding should land on that card,
+    // the router itself doesn't scroll to a hash
+    if (loading || !hash) return
+    document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: 'start' })
+  }, [hash, loading])
+
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <LoadingSpinner size="lg" />
