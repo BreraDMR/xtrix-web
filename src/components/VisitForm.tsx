@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useId, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import api from '../api/client'
 import FormError from './FormError'
@@ -14,10 +14,12 @@ import { formatCurrency } from '../utils/currency'
 import LoadingSpinner from './LoadingSpinner'
 import QuestionnaireAnswers from './clients/QuestionnaireAnswers'
 import { useTranslation } from '../hooks/useTranslation'
+import Button from '../ui/Button'
 
 interface VisitFormProps {
   visitId?: number
-  onSuccess: () => void
+  // gets the saved visit, so the caller can say what happened and offer the next step
+  onSuccess: (visit?: VisitOut) => void
   onCancel: () => void
   initialDateStart?: Date
   initialDateEnd?: Date
@@ -104,6 +106,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const giftRequestKey = useRef('')
   const lastSavedVisitId = useRef<number | null>(null)
   const visitSaved = useRef(false)
+  const savedVisit = useRef<VisitOut | undefined>(undefined)
+  const uid = useId()
+  const fid = (name: string) => `${uid}-${name}`
+  const errorId = fid('error')
+  // which field our own check refused - it gets marked and focused, the message stays on top
+  const [invalidField, setInvalidField] = useState<string | null>(null)
+  const [moreOpen, setMoreOpen] = useState(false)
   const [clients, setClients] = useState<ClientOut[]>([])
   const [clientsLoading, setClientsLoading] = useState(false)
   const [clientsFailed, setClientsFailed] = useState(false)
@@ -136,6 +145,9 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     status: 'planned',
   }))
   
+  // once the person touches the form again, the old mark goes; the message on top stays till the next try
+  useEffect(() => { setInvalidField(null) }, [formData, showClientSearch])
+
   const [pointsToUse, setPointsToUse] = useState<number>(0)
   const [cashbackToUse, setCashbackToUse] = useState<number>(0)
   
@@ -495,7 +507,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         updates.price = selectedService.price
       }
 
-      if (selectedService.name && !formData.service_name) {
+      const previousName = services.find(s => s.id === formData.service_id)?.name
+      if (selectedService.name && (!formData.service_name || formData.service_name === previousName)) {
         updates.service_name = selectedService.name
       }
 
@@ -595,7 +608,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     setFormError('')
     try {
       await redeemGift(savedVisitId)
-      onSuccess()
+      onSuccess(savedVisit.current)
     } catch (error) {
       setFormError(apiErrorMessage(error, t('gift.applyError')))
     } finally {
@@ -609,26 +622,34 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     if (submitting.current || visitSaved.current) return
     setFormError('')
     setFieldErrors({})
+    setInvalidField(null)
+    const refuse = (message: string, field?: string) => {
+      setFormError(message)
+      if (!field) return
+      setInvalidField(field)
+      document.getElementById(fid(field))?.focus()
+    }
     if (itemsMode && !itemsComplete) {
       setFormError(t('visits.itemsIncomplete'))
       return
     }
     if (!Number.isFinite(resolveVisitInstant(formData.date_start, startInstant.current).getTime()) ||
         (!itemsMode && formData.date_end && !Number.isFinite(resolveVisitInstant(formData.date_end, endInstant.current).getTime()))) {
-      setFormError(t('validation.localTime'))
+      refuse(t('validation.localTime'),
+        Number.isFinite(resolveVisitInstant(formData.date_start, startInstant.current).getTime()) ? 'date_end' : 'date_start')
       return
     }
     if (!itemsMode && formData.date_end && (!Number.isFinite(resolveVisitInstant(formData.date_end, endInstant.current).getTime()) || resolveVisitInstant(formData.date_end, endInstant.current) <= resolveVisitInstant(formData.date_start, startInstant.current))) {
-      setFormError(t('validation.visitEnd'))
+      refuse(t('validation.visitEnd'), 'date_end')
       return
     }
     if (!itemsMode && formData.price !== undefined && (!Number.isFinite(formData.price) || formData.price < 0)) {
-      setFormError(t('validation.price'))
+      refuse(t('validation.price'), 'price')
       return
     }
     if (giftCertificate) {
       if (giftScopeMismatch) {
-        setFormError(t('gift.scopeMismatch'))
+        refuse(t('gift.scopeMismatch'), 'gift')
         return
       }
       if (giftCertificate.kind === 'money' && giftAmount) {
@@ -639,13 +660,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           parsed > giftCertificate.money_balance ||
           (payableTotal != null && parsed > payableTotal)
         ) {
-          setFormError(t('gift.amountTooHigh'))
+          refuse(t('gift.amountTooHigh'), 'gift_amount')
           return
         }
       }
     }
     if (!formData.client_id) {
-      setFormError(t('visits.selectClient'))
+      refuse(t('visits.selectClient'), showClientSearch ? 'client_search' : 'client_id')
       return
     }
     submitting.current = true
@@ -684,11 +705,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
       let savedVisitId = visitId
       if (visitId) {
-        const { data } = await api.put(`/visits/${visitId}`, submitData)
+        const { data } = await api.put<VisitOut>(`/visits/${visitId}`, submitData)
         savedVisitId = data.id || visitId
+        savedVisit.current = data
       } else {
-        const { data } = await api.post('/visits/', submitData)
+        const { data } = await api.post<VisitOut>('/visits/', submitData)
         savedVisitId = data.id
+        savedVisit.current = data
       }
       
       if (savedVisitId == null) throw new Error('Visit was saved without an id')
@@ -718,7 +741,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         }
       }
       
-      onSuccess()
+      onSuccess(savedVisit.current)
     } catch (error) {
       const { fields, general } = apiFormErrors(error, VISIT_FIELDS, t('visits.saveError'))
       setFieldErrors(fields)
@@ -729,6 +752,53 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
     }
   }
 
+  // a catalogue service already names the visit, so a custom name is the rare case;
+  // a free visit (or a service we can't see) keeps the name up front
+  const catalogName = services.find(s => s.id === formData.service_id)?.name
+  const customNameIsRare = !itemsMode && Boolean(catalogName)
+  const customNameDiffers = customNameIsRare && Boolean(formData.service_name) && formData.service_name !== catalogName
+  const hasMore = customNameIsRare || Boolean(currentClientId)
+  // something in there is applied or broken - keep it in sight, don't let it fold away
+  const morePinned = Boolean(giftCertificate || giftError || pointsToUse > 0 || cashbackToUse > 0 ||
+    (customNameIsRare && fieldErrors.service_name))
+  const showMore = hasMore && (moreOpen || morePinned)
+
+  useEffect(() => {
+    // an edited visit with its own name opens the section by itself
+    if (customNameDiffers) setMoreOpen(true)
+  }, [customNameDiffers])
+
+  const invalid = (name: string) => {
+    const ours = invalidField === name
+    const server = fieldErrors[name]
+    return {
+      'aria-invalid': ours || server ? true : undefined,
+      'aria-describedby': ours ? errorId : server ? fid(`${name}-error`) : undefined,
+    }
+  }
+  const fieldError = (name: string) => fieldErrors[name]
+    ? <div id={fid(`${name}-error`)}><FormError message={fieldErrors[name]} /></div>
+    : null
+  const labelClass = 'mb-1 block text-sm font-medium'
+  const sectionClass = 'space-y-3 border-t border-[var(--workspace-line)] pt-4'
+  const subheadClass = 'text-sm font-medium text-[var(--workspace-ink)]'
+  const hintClass = 'text-xs text-[var(--workspace-muted)]'
+
+  const serviceNameField = (
+    <div>
+      <label htmlFor={fid('service_name')} className={labelClass}>{t('visits.serviceName')}</label>
+      <input
+        id={fid('service_name')}
+        {...invalid('service_name')}
+        type="text"
+        value={formData.service_name || ''}
+        onChange={(e) => setFormData({ ...formData, service_name: e.target.value })}
+        className="ui-input"
+      />
+      {fieldError('service_name')}
+    </div>
+  )
+
   if (savedWithLoyaltyError || savedWithGiftError) {
     return (
       <div className="space-y-4">
@@ -736,18 +806,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         <div role="alert"><FormError message={formError} /></div>
         <div className="flex gap-2">
           {savedWithGiftError && (
-            <button
-              type="button"
-              onClick={() => void retryGift()}
-              disabled={retryingGift}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg disabled:opacity-60"
-            >
+            <Button onClick={() => void retryGift()} disabled={retryingGift}>
               {t('gift.useGift')}
-            </button>
+            </Button>
           )}
-          <button type="button" onClick={onSuccess} className="px-4 py-2 border border-gray-300 rounded-lg dark:border-gray-600">
+          <Button variant="secondary" onClick={() => onSuccess(savedVisit.current)}>
             {t('common.close')}
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -755,109 +820,98 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {formError && <div role="alert"><FormError message={formError} /></div>}
+      {formError && <div role="alert" id={errorId}><FormError message={formError} /></div>}
       {clientsFailed && <QueryError retry={loadClients} />}
       {servicesFailed && <QueryError retry={loadServices} />}
       <div>
-        <label className="block text-sm font-medium mb-1">{t('visits.client')} *</label>
+        {/* the label stays a direct child here: helpers and people look for the field next to it */}
+        <label htmlFor={fid(showClientSearch ? 'client_search' : 'client_id')} className={labelClass}>{t('visits.client')} *</label>
+        <div className="mb-2 flex gap-1">
+          <Button
+            variant={showClientSearch ? 'quiet' : 'secondary'}
+            aria-pressed={!showClientSearch}
+            onClick={() => setShowClientSearch(false)}
+            className="!min-h-0 !px-3 !py-1 text-sm"
+          >
+            {t('visits.clientList')}
+          </Button>
+          <Button
+            variant={showClientSearch ? 'secondary' : 'quiet'}
+            aria-pressed={showClientSearch}
+            onClick={() => setShowClientSearch(true)}
+            className="!min-h-0 !px-3 !py-1 text-sm"
+          >
+            {t('visits.clientSearch')}
+          </Button>
+        </div>
         <div className="space-y-2">
-          {}
-          <div className="flex gap-2 mb-2">
-            <button
-              type="button"
-              onClick={() => setShowClientSearch(false)}
-              className={`px-3 py-1 text-sm rounded-md ${
-                !showClientSearch
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {t('visits.clientList')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowClientSearch(true)}
-              className={`px-3 py-1 text-sm rounded-md ${
-                showClientSearch
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {t('visits.clientSearch')}
-            </button>
-          </div>
-
           {showClientSearch ? (
             <div className="space-y-2">
-              {}
               <input
+                id={fid('client_search')}
+                {...invalid('client_search')}
                 type="text"
                 value={clientSearchQuery}
                 onChange={(e) => setClientSearchQuery(e.target.value)}
                 placeholder={t('visits.searchClientPlaceholder')}
-                className="w-full px-3 py-2 border rounded-md"
+                className="ui-input"
                 disabled={searchingClient}
               />
-              
+
               {searchingClient && (
-                <div className="text-sm text-gray-500 flex items-center gap-2 dark:text-gray-400">
+                <div className={`flex items-center gap-2 ${hintClass} text-sm`}>
                   <LoadingSpinner size="sm" />
                   {t('visits.searching')}
                 </div>
               )}
 
               {clientNotFound && !searchingClient && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">{t('visits.clientNotFound')}</p>
+                <p className={`${hintClass} text-sm`}>{t('visits.clientNotFound')}</p>
               )}
 
               {nameMatches.length > 0 && (
-                <div className="border rounded-md divide-y">
+                <div className="divide-y divide-[var(--workspace-line)] rounded-[var(--radius-control)] border border-[var(--workspace-line)]">
                   {nameMatches.map((client) => (
                     <button
                       key={client.id}
                       type="button"
                       onClick={() => pickClient(client)}
-                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-900"
+                      className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--workspace-fill)]"
                     >
                       {client.full_name}
-                      {client.contact_phone && <span className="text-gray-500 dark:text-gray-400"> · {client.contact_phone}</span>}
+                      {client.contact_phone && <span className="text-[var(--workspace-muted)]"> · {client.contact_phone}</span>}
                     </button>
                   ))}
                 </div>
               )}
 
               {selectedClient && (
-                <div className="p-3 border rounded-md bg-gray-50 dark:bg-gray-900">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium">{selectedClient.full_name}</p>
-                      {selectedClient.contact_phone && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400">📞 {selectedClient.contact_phone}</p>
-                      )}
-                      {selectedClient.contact_email && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400">✉️ {selectedClient.contact_email}</p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {}
+                <div className="rounded-[var(--radius-control)] border border-[var(--workspace-line)] bg-[var(--workspace-bg)] p-3">
+                  <p className="font-medium">{selectedClient.full_name}</p>
+                  {selectedClient.contact_phone && (
+                    <p className="text-sm text-[var(--workspace-muted)]">📞 {selectedClient.contact_phone}</p>
+                  )}
+                  {selectedClient.contact_email && (
+                    <p className="text-sm text-[var(--workspace-muted)]">✉️ {selectedClient.contact_email}</p>
+                  )}
+
                   {selectedClient.basic_medical_info && (
-                    <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                      <p className="text-xs font-medium text-gray-700 mb-1 dark:text-gray-300">
+                    <div className="mt-2 border-t border-[var(--workspace-line)] pt-2">
+                      <p className="mb-1 text-xs font-medium text-[var(--workspace-ink)]">
                         {t('visits.basicMedicalInfo')}
                       </p>
                       {selectedClient.basic_medical_info.allergies && (
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <p className={hintClass}>
                           <span className="font-medium">{t('clientForm.allergies')}:</span> {selectedClient.basic_medical_info.allergies}
                         </p>
                       )}
                       {selectedClient.basic_medical_info.chronic_diseases && (
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <p className={hintClass}>
                           <span className="font-medium">{t('clientForm.chronicDiseases')}:</span> {selectedClient.basic_medical_info.chronic_diseases}
                         </p>
                       )}
                       {selectedClient.basic_medical_info.pregnancy && (
-                        <p className="text-xs text-yellow-700 font-medium">⚠️ {t('clientForm.pregnancy')}</p>
+                        <p className="text-xs font-medium text-yellow-700 dark:text-yellow-300">⚠️ {t('clientForm.pregnancy')}</p>
                       )}
                     </div>
                   )}
@@ -866,11 +920,12 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             </div>
           ) : (
             <select
-              aria-invalid={fieldErrors.client_id ? true : undefined}
+              id={fid('client_id')}
+              {...invalid('client_id')}
               value={formData.client_id}
               onChange={(e) => setFormData({ ...formData, client_id: parseInt(e.target.value) })}
               required
-              className="w-full px-3 py-2 border rounded-md"
+              className="ui-input"
             >
               <option value={0}>{t('visits.selectClient')}</option>
               {clients.map((client) => (
@@ -880,65 +935,61 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               ))}
             </select>
           )}
-          {fieldErrors.client_id && <FormError message={fieldErrors.client_id} />}
+          {fieldError('client_id')}
         </div>
       </div>
 
       {itemsMode ? (
-        <div className="space-y-3 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
+        <div className="space-y-3 rounded-[var(--radius-control)] border border-[var(--workspace-line)] p-3">
           <div className="flex items-center justify-between gap-2">
-            <label className="block text-sm font-medium">{t('visits.service')} *</label>
-            <button
-              type="button"
-              onClick={addItem}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-900"
-            >
+            <p className="text-sm font-medium">{t('visits.service')} *</p>
+            <Button variant="secondary" onClick={addItem} className="!min-h-0 !py-1.5 text-sm">
               + {t('visits.addService')}
-            </button>
+            </Button>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">{t('visits.chainHint')}</p>
+          <p className={hintClass}>{t('visits.chainHint')}</p>
 
           {items.map((item, index) => (
             <div
               key={index}
               data-visit-item={index}
-              className="space-y-2 rounded-md border border-gray-200 p-3 dark:border-gray-700"
+              className="space-y-2 rounded-[var(--radius-control)] border border-[var(--workspace-line)] p-3"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                <span className="text-xs font-semibold text-[var(--workspace-muted)]">
                   {index + 1}
                 </span>
                 <div className="flex items-center gap-1">
-                  <button
-                    type="button"
+                  <Button
+                    variant="secondary"
                     aria-label={`${t('visits.moveServiceUp')} ${index + 1}`}
                     title={t('visits.moveServiceUp')}
                     disabled={index === 0}
                     onClick={() => moveItem(index, -1)}
-                    className="rounded border border-gray-300 px-2 py-0.5 text-sm disabled:opacity-40 dark:border-gray-600"
+                    className="!min-h-0 !px-2 !py-0.5 text-sm"
                   >
                     ↑
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    variant="secondary"
                     aria-label={`${t('visits.moveServiceDown')} ${index + 1}`}
                     title={t('visits.moveServiceDown')}
                     disabled={index === items.length - 1}
                     onClick={() => moveItem(index, 1)}
-                    className="rounded border border-gray-300 px-2 py-0.5 text-sm disabled:opacity-40 dark:border-gray-600"
+                    className="!min-h-0 !px-2 !py-0.5 text-sm"
                   >
                     ↓
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    variant="danger"
                     aria-label={`${t('visits.removeService')} ${index + 1}`}
                     title={t('visits.removeService')}
                     disabled={items.length <= 1}
                     onClick={() => removeItem(index)}
-                    className="rounded border border-gray-300 px-2 py-0.5 text-sm text-red-600 disabled:opacity-40 dark:border-gray-600 dark:text-red-400"
+                    className="!min-h-0 !px-2 !py-0.5 text-sm"
                   >
                     ×
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -946,7 +997,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                 aria-label={`${t('visits.service')} ${index + 1}`}
                 value={item.service_id ?? ''}
                 onChange={(e) => void handleItemServiceChange(index, e.target.value)}
-                className="w-full px-3 py-2 border rounded-md"
+                className="ui-input"
               >
                 <option value="">{t('visits.selectService')}</option>
                 {services.map((service) => (
@@ -966,7 +1017,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                       ? { ...row, specialist_id: specialistId }
                       : row))
                   }}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="ui-input"
                 >
                   {item.specialists.map((spec) => (
                     <option key={spec.id} value={spec.id}>
@@ -977,7 +1028,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               )}
 
               {item.service_id && (
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className={hintClass}>
                   {item.duration_minutes ?? 0} {t('services.min')} ·{' '}
                   {item.price === null || item.price === undefined
                     ? t('booking.priceOnRequest')
@@ -987,18 +1038,18 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             </div>
           ))}
 
-          <div className="grid grid-cols-1 gap-1 border-t border-gray-200 pt-2 text-sm dark:border-gray-700 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-1 border-t border-[var(--workspace-line)] pt-2 text-sm sm:grid-cols-3">
             <p>
-              <span className="text-gray-500 dark:text-gray-400">{t('visits.chainTotal')}: </span>
+              <span className="text-[var(--workspace-muted)]">{t('visits.chainTotal')}: </span>
               <span className="font-medium">{itemsHavePrice ? formatCurrency(itemsTotalPrice, currency) : t('booking.priceOnRequest')}</span>
             </p>
             <p>
-              <span className="text-gray-500 dark:text-gray-400">{t('visits.chainDuration')}: </span>
+              <span className="text-[var(--workspace-muted)]">{t('visits.chainDuration')}: </span>
               <span className="font-medium">{itemsTotalMinutes} {t('services.min')}</span>
             </p>
             {chainEnd && (
               <p>
-                <span className="text-gray-500 dark:text-gray-400">{t('visits.chainEnd')}: </span>
+                <span className="text-[var(--workspace-muted)]">{t('visits.chainEnd')}: </span>
                 <span className="font-medium">{format(new Date(chainEnd), 'HH:mm')}</span>
               </p>
             )}
@@ -1006,12 +1057,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         </div>
       ) : (
         <div>
-          <label className="block text-sm font-medium mb-1">{t('visits.service')}</label>
+          <label htmlFor={fid('service_id')} className={labelClass}>{t('visits.service')}</label>
           <select
-            aria-invalid={fieldErrors.service_id ? true : undefined}
+            id={fid('service_id')}
+            {...invalid('service_id')}
             value={formData.service_id || ''}
             onChange={(e) => handleServiceChange(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
+            className="ui-input"
           >
             <option value="">{t('visits.selectService')}</option>
             {services.map((service) => (
@@ -1020,28 +1072,25 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               </option>
             ))}
           </select>
-          {fieldErrors.service_id && <FormError message={fieldErrors.service_id} />}
+          {fieldError('service_id')}
           {services.length > 0 && (
-            <button
-              type="button"
-              onClick={addItem}
-              className="mt-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-900"
-            >
+            <Button variant="quiet" onClick={addItem} className="mt-1 !min-h-0 !px-0 !py-1 text-sm">
               + {t('visits.addService')}
-            </button>
+            </Button>
           )}
         </div>
       )}
 
       {!itemsMode && formData.service_id && availableSpecialists.length > 0 && (
         <div>
-          <label className="block text-sm font-medium mb-1">{t('visits.specialist')} *</label>
+          <label htmlFor={fid('specialist_id')} className={labelClass}>{t('visits.specialist')} *</label>
           <select
-            aria-invalid={fieldErrors.specialist_id ? true : undefined}
+            id={fid('specialist_id')}
+            {...invalid('specialist_id')}
             value={formData.specialist_id}
             onChange={(e) => setFormData({ ...formData, specialist_id: parseInt(e.target.value) })}
             required
-            className="w-full px-3 py-2 border rounded-md"
+            className="ui-input"
           >
             {availableSpecialists.map((spec) => (
               <option key={spec.id} value={spec.id}>
@@ -1049,53 +1098,43 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               </option>
             ))}
           </select>
-          {fieldErrors.specialist_id && <FormError message={fieldErrors.specialist_id} />}
+          {fieldError('specialist_id')}
         </div>
       )}
 
-      {!itemsMode && (
-        <div>
-          <label className="block text-sm font-medium mb-1">{t('visits.serviceName')}</label>
-          <input
-            aria-invalid={fieldErrors.service_name ? true : undefined}
-            type="text"
-            value={formData.service_name || ''}
-            onChange={(e) => setFormData({ ...formData, service_name: e.target.value })}
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          {fieldErrors.service_name && <FormError message={fieldErrors.service_name} />}
-        </div>
-      )}
+      {!itemsMode && !customNameIsRare && serviceNameField}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium mb-1">{t('visits.startDateTime')} *</label>
+          <label htmlFor={fid('date_start')} className={labelClass}>{t('visits.startDateTime')} *</label>
           <input
-            aria-invalid={fieldErrors.date_start ? true : undefined}
+            id={fid('date_start')}
+            {...invalid('date_start')}
             type="datetime-local"
             style={{ minWidth: 0, maxWidth: '100%' }}
             value={formData.date_start}
             onChange={(e) => handleDateStartChange(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded-md"
+            className="ui-input"
           />
-          {fieldErrors.date_start && <FormError message={fieldErrors.date_start} />}
+          {fieldError('date_start')}
         </div>
         {!itemsMode ? (
           <div>
-            <label className="block text-sm font-medium mb-1">{t('visits.endDateTime')}</label>
+            <label htmlFor={fid('date_end')} className={labelClass}>{t('visits.endDateTime')}</label>
             <input
-              aria-invalid={fieldErrors.date_end ? true : undefined}
+              id={fid('date_end')}
+              {...invalid('date_end')}
               type="datetime-local"
               style={{ minWidth: 0, maxWidth: '100%' }}
               value={formData.date_end || ''}
               onChange={(e) => { endInstant.current = null; setFormData({ ...formData, date_end: e.target.value }) }}
-              className="w-full px-3 py-2 border rounded-md"
+              className="ui-input"
             />
-            {fieldErrors.date_end && <FormError message={fieldErrors.date_end} />}
+            {fieldError('date_end')}
           </div>
         ) : (
-          <div className="flex items-end pb-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className={`flex items-end pb-2 text-sm text-[var(--workspace-muted)]`}>
             {chainEnd
               ? `${t('visits.chainEnd')} ${format(new Date(chainEnd), 'HH:mm')}`
               : t('visits.chainHint')}
@@ -1103,12 +1142,13 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {!itemsMode && (
           <div>
-            <label className="block text-sm font-medium mb-1">{t('visits.price')}</label>
+            <label htmlFor={fid('price')} className={labelClass}>{t('visits.price')}</label>
             <input
-              aria-invalid={fieldErrors.price ? true : undefined}
+              id={fid('price')}
+              {...invalid('price')}
               type="number"
               min="0"
               step="0.01"
@@ -1116,221 +1156,246 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               onChange={(e) =>
                 setFormData({ ...formData, price: e.target.value ? parseFloat(e.target.value) : undefined })
               }
-              className="w-full px-3 py-2 border rounded-md"
+              className="ui-input"
             />
-            {fieldErrors.price && <FormError message={fieldErrors.price} />}
+            {fieldError('price')}
           </div>
         )}
         <div>
-          <label className="block text-sm font-medium mb-1">{t('visits.status')}</label>
+          <label htmlFor={fid('status')} className={labelClass}>{t('visits.status')}</label>
           <select
-            aria-invalid={fieldErrors.status ? true : undefined}
+            id={fid('status')}
+            {...invalid('status')}
             value={formData.status}
             onChange={(e) => {
               const newStatus = e.target.value
-              setFormData({ 
-                ...formData, 
+              setFormData({
+                ...formData,
                 status: newStatus,
                 payment_method: newStatus === 'completed' ? formData.payment_method : undefined
               })
             }}
-            className="w-full px-3 py-2 border rounded-md"
+            className="ui-input"
           >
             <option value="planned">{t('visits.planned')}</option>
             <option value="in_progress">{t('visits.inProgress')}</option>
             <option value="completed">{t('visits.completed')}</option>
             <option value="cancelled">{t('visits.cancelled')}</option>
           </select>
-          {fieldErrors.status && <FormError message={fieldErrors.status} />}
+          {fieldError('status')}
         </div>
       </div>
 
-      {}
       {formData.status === 'completed' && (
         <div>
-          <label className="block text-sm font-medium mb-1">
+          <label htmlFor={fid('payment_method')} className={labelClass}>
             {t('finance.payment_method')} {amountDue ? `(${t('common.required_field')})` : ''}
           </label>
           <select
-            aria-invalid={fieldErrors.payment_method ? true : undefined}
+            id={fid('payment_method')}
+            {...invalid('payment_method')}
             value={formData.payment_method || ''}
             onChange={(e) => setFormData({ ...formData, payment_method: e.target.value || undefined })}
             required={!!amountDue}
-            className="w-full px-3 py-2 border rounded-md"
+            className="ui-input"
           >
             <option value="">{t('visits.selectPaymentMethod')}</option>
             <option value="card">{t('finance.payment_card')}</option>
             <option value="cash">{t('finance.payment_cash')}</option>
             <option value="other">{t('visits.paymentOther')}</option>
           </select>
-          {fieldErrors.payment_method && <FormError message={fieldErrors.payment_method} />}
+          {fieldError('payment_method')}
         </div>
       )}
 
-      {currentClientId && (
-        <div className="border-t border-gray-200 pt-4 mt-4 dark:border-gray-700">
-          <h3 className="text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">{t('gift.useGift')}</h3>
-          {!giftCertificate ? (
-            <>
-              <p className="text-xs text-gray-600 mb-2 dark:text-gray-400">{t('gift.codeHint')}</p>
-              <div className="flex flex-wrap gap-2">
-                <input
-                  value={giftLookupCode}
-                  onChange={(event) => setGiftLookupCode(event.target.value)}
-                  aria-label={t('gift.code')}
-                  placeholder={t('gift.code')}
-                  className="min-w-0 flex-1 px-3 py-2 border rounded-md"
-                />
-                <button
-                  type="button"
-                  onClick={() => void lookupGift()}
-                  disabled={lookingUpGift || !giftLookupCode.trim()}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 disabled:opacity-60 dark:border-gray-600 dark:hover:bg-gray-700"
-                >
-                  {t('gift.lookup')}
-                </button>
-              </div>
-              {giftError && <div role="alert" className="mt-2"><FormError message={giftError} /></div>}
-            </>
-          ) : (
-            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-800 dark:bg-emerald-950">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div className="text-sm">
-                  <p className="font-medium text-emerald-900 dark:text-emerald-100">
-                    {giftCertificate.kind === 'money' ? t('gift.kindMoney') : t('gift.kindPackage')} ·{' '}
-                    •••• {giftCertificate.code_last4}
+      <div>
+        <label htmlFor={fid('note')} className={labelClass}>{t('visits.notes')}</label>
+        <textarea
+          id={fid('note')}
+          {...invalid('note')}
+          value={formData.note || ''}
+          onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+          rows={3}
+          className="ui-input"
+        />
+        {fieldError('note')}
+      </div>
+
+      {hasMore && (
+        <div className="border-t border-[var(--workspace-line)] pt-3">
+          <button
+            type="button"
+            aria-expanded={showMore}
+            aria-controls={fid('more')}
+            onClick={() => setMoreOpen(!showMore)}
+            className="flex w-full items-center justify-between gap-3 rounded-[var(--radius-control)] py-1 text-left"
+          >
+            <span>
+              <span className="block text-sm font-medium text-[var(--workspace-accent)]">{t('visits.moreOptions')}</span>
+              <span className={`block ${hintClass}`}>{t('visits.moreOptionsHint')}</span>
+            </span>
+            <span aria-hidden="true" className="text-[var(--workspace-muted)]">{showMore ? '▴' : '▾'}</span>
+          </button>
+        </div>
+      )}
+
+      {showMore && (
+        <div id={fid('more')} className="space-y-4">
+          {customNameIsRare && serviceNameField}
+
+          {currentClientId && (
+            <div className={sectionClass}>
+              <h3 className={subheadClass}>{t('gift.useGift')}</h3>
+              {!giftCertificate ? (
+                <>
+                  <p className={hintClass}>{t('gift.codeHint')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <input
+                      id={fid('gift')}
+                      {...invalid('gift')}
+                      value={giftLookupCode}
+                      onChange={(event) => setGiftLookupCode(event.target.value)}
+                      aria-label={t('gift.code')}
+                      placeholder={t('gift.code')}
+                      className="ui-input min-w-0 flex-1"
+                    />
+                    <Button
+                      variant="secondary"
+                      onClick={() => void lookupGift()}
+                      disabled={lookingUpGift || !giftLookupCode.trim()}
+                    >
+                      {t('gift.lookup')}
+                    </Button>
+                  </div>
+                  {giftError && <div role="alert" className="mt-2"><FormError message={giftError} /></div>}
+                </>
+              ) : (
+                <div id={fid('gift')} tabIndex={-1} className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-800 dark:bg-emerald-950">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="text-sm">
+                      <p className="font-medium text-emerald-900 dark:text-emerald-100">
+                        {giftCertificate.kind === 'money' ? t('gift.kindMoney') : t('gift.kindPackage')} ·{' '}
+                        •••• {giftCertificate.code_last4}
+                      </p>
+                      <p className="mt-1 text-emerald-800 dark:text-emerald-200">
+                        {giftCertificate.kind === 'money'
+                          ? `${t('gift.balance')}: ${formatCurrency(giftCertificate.money_balance, currency)}`
+                          : `${t('gift.visitsLeft')}: ${giftCertificate.visits_remaining} / ${giftCertificate.visits_total}`}
+                      </p>
+                      <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">
+                        {t('gift.forService')}:{' '}
+                        {giftScopeIds.length === 0
+                          ? t('gift.anyService')
+                          : giftScopeIds
+                              .map((id) => services.find((service) => service.id === id)?.name ?? `#${id}`)
+                              .join(', ')}
+                      </p>
+                      <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">
+                        {t('gift.validUntil')}: {new Date(giftCertificate.expires_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={resetGift}
+                      className="rounded-md border border-emerald-300 px-3 py-1 text-xs font-medium text-emerald-800 hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-200 dark:hover:bg-emerald-900"
+                    >
+                      {t('gift.remove')}
+                    </button>
+                  </div>
+                  {giftCertificate.kind === 'money' && (
+                    <label className="mt-3 block text-sm">
+                      <span className="mb-1 block font-medium text-emerald-900 dark:text-emerald-100">
+                        {t('gift.amountToUse')}
+                      </span>
+                      <input
+                        id={fid('gift_amount')}
+                        {...invalid('gift_amount')}
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        max={giftMoneyMax}
+                        value={giftAmount}
+                        onChange={(event) => setGiftAmount(event.target.value)}
+                        placeholder={giftMoneyMax.toFixed(2)}
+                        className="ui-input"
+                      />
+                      <span className="mt-1 block text-xs text-emerald-700 dark:text-emerald-300">
+                        {t('gift.amountHint')}
+                      </span>
+                    </label>
+                  )}
+                  <p className="mt-2 text-sm font-medium text-emerald-900 dark:text-emerald-100">
+                    {t('gift.amountDue')}: {formatCurrency(amountDue ?? 0, currency)}
                   </p>
-                  <p className="mt-1 text-emerald-800 dark:text-emerald-200">
-                    {giftCertificate.kind === 'money'
-                      ? `${t('gift.balance')}: ${formatCurrency(giftCertificate.money_balance, currency)}`
-                      : `${t('gift.visitsLeft')}: ${giftCertificate.visits_remaining} / ${giftCertificate.visits_total}`}
-                  </p>
-                  <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">
-                    {t('gift.forService')}:{' '}
-                    {giftScopeIds.length === 0
-                      ? t('gift.anyService')
-                      : giftScopeIds
-                          .map((id) => services.find((service) => service.id === id)?.name ?? `#${id}`)
-                          .join(', ')}
-                  </p>
-                  <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">
-                    {t('gift.validUntil')}: {new Date(giftCertificate.expires_at).toLocaleDateString()}
-                  </p>
+                  {giftScopeMismatch && (
+                    <div role="alert" className="mt-2"><FormError message={t('gift.scopeMismatch')} /></div>
+                  )}
+                  {giftError && <div role="alert" className="mt-2"><FormError message={giftError} /></div>}
                 </div>
-                <button
-                  type="button"
-                  onClick={resetGift}
-                  className="rounded-md border border-emerald-300 px-3 py-1 text-xs font-medium text-emerald-800 hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-200 dark:hover:bg-emerald-900"
-                >
-                  {t('gift.remove')}
-                </button>
+              )}
+            </div>
+          )}
+
+          {currentClientId && clientBalance && (
+            <div className={sectionClass}>
+              <div>
+                <h3 className={subheadClass}>{t('loyalty.use_points')}</h3>
+                {giftCertificate && (
+                  <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">{t('gift.loyaltyDisabled')}</p>
+                )}
+                {clientBalance.points > 0 && (
+                  <p className={`mt-1 ${hintClass}`}>
+                    {t('loyalty.client_balance')}: {clientBalance.points.toFixed(0)} {t('loyalty.points')}
+                    {clientBalance.cashback != null && clientBalance.cashback > 0 && `, ${clientBalance.cashback.toFixed(2)} ${clientBalance.cashback_currency ?? ''} ${t('loyalty.cashback')}`}
+                  </p>
+                )}
               </div>
-              {giftCertificate.kind === 'money' && (
-                <label className="mt-3 block text-sm">
-                  <span className="mb-1 block font-medium text-emerald-900 dark:text-emerald-100">
-                    {t('gift.amountToUse')}
-                  </span>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor={fid('points')} className={labelClass}>{t('loyalty.points_to_use')}</label>
                   <input
+                    id={fid('points')}
                     type="number"
-                    min="0.01"
                     step="0.01"
-                    max={giftMoneyMax}
-                    value={giftAmount}
-                    onChange={(event) => setGiftAmount(event.target.value)}
-                    placeholder={giftMoneyMax.toFixed(2)}
-                    className="w-full rounded-md border border-emerald-300 px-3 py-2 dark:border-emerald-700 dark:bg-gray-700"
+                    min="0"
+                    max={clientBalance.points || 0}
+                    value={pointsToUse || ''}
+                    onChange={(e) => setPointsToUse(e.target.value ? parseFloat(e.target.value) : 0)}
+                    disabled={Boolean(giftCertificate)}
+                    className="ui-input"
+                    placeholder="0"
                   />
-                  <span className="mt-1 block text-xs text-emerald-700 dark:text-emerald-300">
-                    {t('gift.amountHint')}
-                  </span>
-                </label>
-              )}
-              <p className="mt-2 text-sm font-medium text-emerald-900 dark:text-emerald-100">
-                {t('gift.amountDue')}: {formatCurrency(amountDue ?? 0, currency)}
-              </p>
-              {giftScopeMismatch && (
-                <div role="alert" className="mt-2"><FormError message={t('gift.scopeMismatch')} /></div>
-              )}
-              {giftError && <div role="alert" className="mt-2"><FormError message={giftError} /></div>}
+                </div>
+                <div>
+                  <label htmlFor={fid('cashback')} className={labelClass}>{t('loyalty.cashback_to_use')}</label>
+                  <input
+                    id={fid('cashback')}
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max={clientBalance.cashback || 0}
+                    value={cashbackToUse || ''}
+                    onChange={(e) => setCashbackToUse(e.target.value ? parseFloat(e.target.value) : 0)}
+                    disabled={Boolean(giftCertificate)}
+                    className="ui-input"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>
       )}
 
-      {}
-      {currentClientId && clientBalance && (
-        <div className="border-t border-gray-200 pt-4 mt-4 dark:border-gray-700">
-          <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">{t('loyalty.use_points')}</h3>
-            {giftCertificate && (
-              <p className="text-xs text-amber-700 mb-2 dark:text-amber-300">{t('gift.loyaltyDisabled')}</p>
-            )}
-            {clientBalance.points > 0 && (
-              <p className="text-xs text-gray-600 mb-2 dark:text-gray-400">
-                {t('loyalty.client_balance')}: {clientBalance.points.toFixed(0)} {t('loyalty.points')}
-                {clientBalance.cashback != null && clientBalance.cashback > 0 && `, ${clientBalance.cashback.toFixed(2)} ${clientBalance.cashback_currency ?? ''} ${t('loyalty.cashback')}`}
-              </p>
-            )}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">{t('loyalty.points_to_use')}</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max={clientBalance.points || 0}
-                value={pointsToUse || ''}
-                onChange={(e) => setPointsToUse(e.target.value ? parseFloat(e.target.value) : 0)}
-                disabled={Boolean(giftCertificate)}
-                className="w-full px-3 py-2 border rounded-md disabled:opacity-60"
-                placeholder="0"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">{t('loyalty.cashback_to_use')}</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max={clientBalance.cashback || 0}
-                value={cashbackToUse || ''}
-                onChange={(e) => setCashbackToUse(e.target.value ? parseFloat(e.target.value) : 0)}
-                disabled={Boolean(giftCertificate)}
-                className="w-full px-3 py-2 border rounded-md disabled:opacity-60"
-                placeholder="0"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div>
-        <label className="block text-sm font-medium mb-1">{t('visits.notes')}</label>
-        <textarea
-          aria-invalid={fieldErrors.note ? true : undefined}
-          value={formData.note || ''}
-          onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-          rows={3}
-          className="w-full px-3 py-2 border rounded-md"
-        />
-        {fieldErrors.note && <FormError message={fieldErrors.note} />}
-      </div>
-
       {visitId && <QuestionnaireAnswers visitId={visitId} serviceId={formData.service_id} />}
 
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-all dark:border-gray-600 dark:hover:bg-gray-900 dark:text-gray-300"
-        >
+      <div className="flex justify-end gap-3 border-t border-[var(--workspace-line)] pt-4">
+        <Button variant="secondary" onClick={onCancel}>
           {t('common.cancel')}
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={loading || clientsLoading || clientsFailed || servicesLoading || servicesFailed}
-          className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center gap-2"
         >
           {loading ? (
             <>
@@ -1340,9 +1405,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
           ) : (
             visitId ? t('visits.updateVisit') : t('visits.createVisit')
           )}
-        </button>
+        </Button>
       </div>
     </form>
   )
 }
-

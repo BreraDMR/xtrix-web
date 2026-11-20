@@ -10,6 +10,7 @@ import { zonedDayKey } from '../../utils/dates'
 import { dayTimeline, timelineIso, timelineLabel } from './timeline'
 import type { DayOverlay, MinuteInterval } from './schedule'
 import type { CalendarEvent } from './chain'
+import { VISIT_STATUS_MARK } from '../../utils/statusPill'
 
 export type { CalendarVisit } from './chain'
 
@@ -121,13 +122,6 @@ const STATUS_CLASS: Record<string, string> = {
 
 const statusClass = (status?: string | null): string => STATUS_CLASS[status ?? ''] ?? STATUS_CLASS.planned
 
-// a shape next to the colour, so statuses stay apart for colour-blind eyes and in print
-const STATUS_MARK: Record<string, string> = {
-  planned: '○',
-  in_progress: '◐',
-  completed: '✓',
-  cancelled: '✕',
-}
 
 // ticks once a minute, enough for the "now" line
 function useNow(): number {
@@ -389,7 +383,7 @@ export default function DayGrid({
                     className={`block truncate text-[11px] font-semibold leading-tight ${segment?.isChain ? 'pr-6' : ''}`}
                   >
                     <span data-status-mark aria-hidden="true" className="mr-1">
-                      {STATUS_MARK[visit.status ?? ''] ?? STATUS_MARK.planned}
+                      {VISIT_STATUS_MARK[visit.status ?? ''] ?? VISIT_STATUS_MARK.planned}
                     </span>
                     {name}
                   </span>

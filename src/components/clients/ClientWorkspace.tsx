@@ -18,6 +18,7 @@ import ClientForm from '../ClientForm'
 import ClientPersonalReportModal from '../ClientPersonalReportModal'
 import ClientNotes from './ClientNotes'
 import ClientTags from './ClientTags'
+import { VISIT_STATUS_MARK } from '../../utils/statusPill'
 import type {
   ClientOut,
   ClientOverviewOut,
@@ -37,8 +38,6 @@ function formatDay(iso: string, timeZone?: string) {
 // the overview endpoint returns at most this many past visits (RECENT_VISIT_LIMIT in the API)
 const RECENT_VISIT_LIMIT = 20
 
-// same shapes as the calendar, so a status reads without relying on colour
-const STATUS_MARK: Record<string, string> = { planned: '○', in_progress: '◐', completed: '✓', cancelled: '✕' }
 const STATUS_CLASS: Record<string, string> = {
   planned: 'x-status-planned', in_progress: 'x-status-in-progress',
   completed: 'x-status-completed', cancelled: 'x-status-cancelled',
@@ -175,7 +174,7 @@ function VisitRow({
         <div className="flex items-center gap-3">
           <span data-status={visit.status}
             className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[visit.status] ?? 'border border-[var(--workspace-line)] text-[var(--workspace-muted)]'}`}>
-            {STATUS_MARK[visit.status] && <span aria-hidden="true">{STATUS_MARK[visit.status]}</span>}
+            {VISIT_STATUS_MARK[visit.status] && <span aria-hidden="true">{VISIT_STATUS_MARK[visit.status]}</span>}
             <span>{statusLabel}</span>
           </span>
           {visit.price !== null && visit.price !== undefined && (

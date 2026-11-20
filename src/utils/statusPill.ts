@@ -8,3 +8,9 @@ export function visitStatusClass(status: string | null | undefined): string {
     default: return 'x-status x-status-cancelled'
   }
 }
+
+// a sign next to the colour, so a status reads without colour too (calendar, client card, visit list)
+export const VISIT_STATUS_MARK: Record<string, string> = { planned: '○', in_progress: '◐', completed: '✓', cancelled: '✕' }
+export function visitStatusMark(status: string | null | undefined): string {
+  return VISIT_STATUS_MARK[status ?? ''] ?? ''
+}

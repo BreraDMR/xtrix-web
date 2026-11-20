@@ -106,8 +106,9 @@ describe('VisitForm', () => {
     renderWithProviders(<VisitForm onSuccess={onSuccess} onCancel={() => {}} />)
 
     await pickClient()
-    // the form's labels aren't tied to their inputs, so go from the label text
-    const pointsField = (await screen.findByText(/points to use/i)).parentElement!.querySelector('input')!
+    // points sit under More options
+    await userEvent.click(await screen.findByRole('button', { name: /More options/ }))
+    const pointsField = await screen.findByLabelText(/points to use/i)
     await userEvent.type(pointsField, '10')
     await userEvent.click(screen.getByRole('button', { name: /create visit/i }))
 

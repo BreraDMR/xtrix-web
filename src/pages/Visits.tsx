@@ -29,7 +29,7 @@ import { today } from '../utils/dates'
 import { allPages } from '../api/allPages'
 import { useAuthStore } from '../store/authStore'
 import { useMediaQuery } from '../hooks/useMediaQuery'
-import { visitStatusClass } from '../utils/statusPill'
+import { visitStatusClass, visitStatusMark } from '../utils/statusPill'
 
 type Visit = VisitOut
 
@@ -123,6 +123,10 @@ export default function Visits() {
   }
 
   const statusClass = visitStatusClass
+  const statusMark = (status: string | null | undefined) => {
+    const mark = visitStatusMark(status)
+    return mark ? <span aria-hidden="true">{mark}</span> : null
+  }
   const hasFilters = Boolean(searchQuery || statusFilter || dateFrom || dateTo)
   // on a phone service and status fold into the client and date cells, so nothing scrolls sideways
   const phone = useMediaQuery('(max-width: 639px)')
@@ -227,7 +231,7 @@ export default function Visits() {
                       <span>{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
                       <span className="text-xs tabular-nums text-[var(--workspace-muted)]">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
                     </time>
-                    {phone && <span className={`mt-1.5 inline-flex rounded-full px-2.5 py-0.5 text-[11px] ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>}
+                    {phone && <span className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] ${statusClass(visit.status)}`}>{statusMark(visit.status)}{getStatusTranslation(visit.status)}</span>}
                   </td>
                   <td role="cell" className={`break-words ${phone ? 'px-3' : 'px-4'} py-3 align-top font-medium [overflow-wrap:anywhere]`}>
                     {visit.client_name || '-'}
@@ -236,7 +240,7 @@ export default function Visits() {
                   {!phone && <td role="cell" className="break-words px-4 py-3 align-top text-[var(--workspace-muted)] [overflow-wrap:anywhere]">{visit.service_name || '-'}</td>}
                   {!phone && (
                     <td role="cell" className="px-4 py-3 align-top">
-                      <span className={`inline-flex rounded-full px-3 py-0.5 text-[11px] ${statusClass(visit.status)}`}>{getStatusTranslation(visit.status)}</span>
+                      <span className={`inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-[11px] ${statusClass(visit.status)}`}>{statusMark(visit.status)}{getStatusTranslation(visit.status)}</span>
                     </td>
                   )}
                   <td role="cell" className={`${phone ? 'whitespace-nowrap px-2' : 'break-words px-4 [overflow-wrap:anywhere]'} py-3 align-top tabular-nums`}>

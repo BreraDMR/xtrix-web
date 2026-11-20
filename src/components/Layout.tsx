@@ -14,11 +14,15 @@ import PilotSubscription from './subscription/PilotSubscription'
 import LoadingSpinner from './LoadingSpinner'
 import QueryError from './QueryError'
 import VisitForm from './VisitForm'
+import { format } from 'date-fns'
+import { cs, enUS, ru } from 'date-fns/locale'
+import { useLocaleStore } from '../store/localeStore'
+import type { VisitOut } from '../api/types'
 import Button from '../ui/Button'
 import SidePanel from '../ui/SidePanel'
 import { useLabels } from '../i18n/labels'
 import {
-  LuBell, LuBriefcase, LuCalendar, LuChartLine, LuChevronLeft, LuChevronRight, LuCircleDollarSign, LuCircleUser, LuClipboardList, LuClock, LuDoorOpen, LuHandshake, LuHeart, LuIdCard, LuLayoutGrid, LuLogOut, LuMegaphone, LuMenu, LuPlus, LuReceiptText, LuSettings, LuShieldCheck, LuShoppingCart, LuUpload, LuUserPen, LuUserPlus, LuWallet, LuX,
+  LuBell, LuBriefcase, LuCircleCheck, LuCalendar, LuChartLine, LuChevronLeft, LuChevronRight, LuCircleDollarSign, LuCircleUser, LuClipboardList, LuClock, LuDoorOpen, LuHandshake, LuHeart, LuIdCard, LuLayoutGrid, LuLogOut, LuMegaphone, LuMenu, LuPlus, LuReceiptText, LuSettings, LuShieldCheck, LuShoppingCart, LuUpload, LuUserPen, LuUserPlus, LuWallet, LuX,
 } from 'react-icons/lu'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -45,11 +49,18 @@ export default function Layout() {
   const { role: roleLabel } = useLabels()
   const queryClient = useQueryClient()
   const [isCreatingVisit, setIsCreatingVisit] = useState(false)
+  // after a visit is made from the header: say which one and offer to open it again
+  const [createdVisit, setCreatedVisit] = useState<VisitOut | null>(null)
+  const [openedVisit, setOpenedVisit] = useState<number | null>(null)
+  const locale = useLocaleStore((state) => state.locale)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCompact, setIsCompact] = useSidebarPreference()
   const [offline, setOffline] = useState(!navigator.onLine)
   const sidebar = useRef<HTMLElement>(null)
   useSyncUiLanguage()
+
+  // the notice belongs to the page it was made on
+  useEffect(() => { setCreatedVisit(null) }, [location.pathname])
 
   useEffect(() => {
     const online = () => setOffline(false)
@@ -153,11 +164,20 @@ export default function Layout() {
   const isBilling = location.pathname === '/app/subscription'
   // the one place a new visit starts from; calendar slots still prefill their own form
   const canCreateVisit = access?.crm_mode === 'full'
-  const savedVisit = () => {
-    setIsCreatingVisit(false)
+  const refreshVisits = () => {
     for (const key of ['visits', 'visits-statistics', 'profit-current-month', 'clients-statistics', 'client-visits', 'client-overview']) {
       void queryClient.invalidateQueries({ queryKey: [key] })
     }
+  }
+  const savedVisit = (visit?: VisitOut) => {
+    setIsCreatingVisit(false)
+    setCreatedVisit(visit && typeof visit.id === 'number' ? visit : null)
+    refreshVisits()
+  }
+  const savedOpenedVisit = () => {
+    setOpenedVisit(null)
+    setCreatedVisit(null)
+    refreshVisits()
   }
   const isUnavailable = access?.pilot_mode && ['/app/campaigns', '/app/questionnaires', '/app/notifications'].some(path => location.pathname === path || location.pathname.startsWith(path + '/'))
 
@@ -211,6 +231,20 @@ export default function Layout() {
         </header>
         <main id="workspace-main" className="crm-main mx-auto w-full min-w-0 max-w-[1540px] flex-1 p-4 pt-6 pb-[calc(88px+env(safe-area-inset-bottom))] sm:p-6 sm:pb-[calc(88px+env(safe-area-inset-bottom))] lg:p-8">
           {offline && <div role="status" className="mb-5 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-900/20 dark:text-amber-100">{t('common.offline')}</div>}
+          {createdVisit && <div role="status" aria-labelledby="visit-created-title"
+            className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-panel)] px-4 py-2.5 text-sm shadow-sm">
+            <LuCircleCheck aria-hidden="true" className="h-4 w-4 shrink-0 text-[var(--tone-success)]" />
+            <span id="visit-created-title" className="font-semibold">{t('visits.created')}</span>
+            <span className="min-w-0 text-[var(--workspace-muted)] [overflow-wrap:anywhere]">
+              {[createdVisit.client_name, createdVisit.date_start && format(new Date(createdVisit.date_start), 'PPp',
+                { locale: locale === 'ru' ? ru : locale === 'cz' ? cs : enUS })].filter(Boolean).join(' · ')}
+            </span>
+            <span className="ml-auto flex items-center gap-1">
+              {canCreateVisit && <Button variant="quiet" className="!min-h-0 !py-1" onClick={() => setOpenedVisit(createdVisit.id)}>{t('visits.openVisit')}</Button>}
+              <button type="button" aria-label={t('common.close')} title={t('common.close')} onClick={() => setCreatedVisit(null)}
+                className="rounded-full p-1.5 text-[var(--workspace-muted)] hover:bg-[var(--workspace-hover)] hover:text-[var(--workspace-ink)]"><LuX aria-hidden="true" className="h-4 w-4" /></button>
+            </span>
+          </div>}
           {accessQuery.isLoading ? <LoadingSpinner /> : accessQuery.isError ? <QueryError retry={accessQuery.refetch} /> : !access ? null
             : access.crm_mode === 'blocked' && !isBilling ? <PilotSubscription access={access} />
               : isUnavailable ? <p role="status" className="rounded-xl border border-gray-200 p-6 dark:border-gray-700">{t('pilot.unavailable')}</p>
@@ -223,6 +257,9 @@ export default function Layout() {
       </div>
       {isCreatingVisit && canCreateVisit && <SidePanel title={t('visits.newVisit')} onClose={() => setIsCreatingVisit(false)}>
         <VisitForm onSuccess={savedVisit} onCancel={() => setIsCreatingVisit(false)} />
+      </SidePanel>}
+      {openedVisit !== null && canCreateVisit && <SidePanel title={t('visits.editVisit')} onClose={() => setOpenedVisit(null)}>
+        <VisitForm visitId={openedVisit} onSuccess={savedOpenedVisit} onCancel={() => setOpenedVisit(null)} />
       </SidePanel>}
       <nav className="crm-mobile-nav" aria-label={t('nav.quick')}>
         {links(primaryItems.filter(item => ['/app', '/app/calendar', '/app/clients'].includes(item.path)))}

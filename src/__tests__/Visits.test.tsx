@@ -47,6 +47,16 @@ describe('Visits client names', () => {
     expect(vi.mocked(api.get).mock.calls.map(call => call[0]).every(url => ['/visits/', '/businesses/me'].includes(url))).toBe(true)
   })
 
+  it('marks each status with a sign, not only a colour', async () => {
+    vi.mocked(api.get).mockImplementation(visitRoutes([
+      { ...visits[0], status: 'completed' }, { ...visits[1], client_name: 'Eva', status: 'cancelled' },
+    ]))
+    renderWithProviders(<Visits />)
+    const done = await screen.findByRole('cell', { name: /Completed/ })
+    expect(done).toHaveTextContent('✓')
+    expect(screen.getByRole('cell', { name: /Cancelled/ })).toHaveTextContent('✕')
+  })
+
   it('keeps visits visible when their client is unavailable', async () => {
     vi.mocked(api.get).mockImplementation(visitRoutes(visits.map(row => ({ ...row, client_name: undefined }))))
     renderWithProviders(<Visits />)
