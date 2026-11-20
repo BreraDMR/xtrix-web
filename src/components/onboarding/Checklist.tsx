@@ -38,13 +38,16 @@ export default function Checklist() {
   if (steps.length === 0 || data.completed_steps >= data.total_steps) return null
   const next = steps.find(step => step.key === data.next_step) || steps.find(step => !step.completed)
   const visibleSteps = expanded || !next ? steps : [next]
+  // the sentence names where hidden steps come back, the place itself is a link
+  const [before, after = ''] = t('onboarding.checklist.description').split('{settings}')
 
   return (
     <Card className="mb-5 p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-sm font-semibold tracking-tight">{t('onboarding.checklist.title')}</h2>
-          <p className="mt-1 text-xs text-[var(--workspace-muted)]">{t('onboarding.checklist.description')}</p>
+          <p className="mt-1 text-xs text-[var(--workspace-muted)]">{before}<Link to="/app/settings#settings-onboarding"
+            className="text-[var(--workspace-accent)] underline underline-offset-2">{t('onboarding.checklist.settingsLink')}</Link>{after}</p>
         </div>
         <Button
           variant="quiet"
