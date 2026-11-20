@@ -63,7 +63,7 @@
 
 body {
   margin: 0;
-  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif);
+  font-family: var(--font-text, -apple-system, BlinkMacSystemFont, 'Inter Variable', 'Inter', 'Segoe UI', sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--workspace-bg, #f5f5f7);

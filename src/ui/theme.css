@@ -24,8 +24,8 @@
     --x-lavender-border: #e6d7fa;
     --x-gradient: linear-gradient(100deg, #e04aa8 0%, #9f5aef 100%);
     --x-gradient-diag: linear-gradient(135deg, #e85bb3 0%, #9f5aef 100%);
-    --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
-    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Variable", "Inter", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
     --ease: cubic-bezier(.2, .8, .2, 1);
     --x-shadow-lift: 0 1px 2px rgba(17, 12, 34, .04), 0 12px 32px rgba(17, 12, 34, .06), 0 32px 64px -24px rgba(91, 33, 182, .14);
     --tint-green: #e6f6ee; --tint-green-ink: #1f8a55;

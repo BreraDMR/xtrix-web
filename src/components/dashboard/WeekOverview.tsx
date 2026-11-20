@@ -99,7 +99,7 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
                 <XAxis dataKey="key" axisLine={false} tickLine={false} interval={0} height={34}
                   tick={({ x, y, index }: { x: number; y: number; index: number }) => (
                     <g transform={`translate(${x},${y + 8})`}>
-                      <text textAnchor="middle" fill="#86868b" fontSize={10.5} fontFamily="-apple-system, BlinkMacSystemFont, Inter, sans-serif">
+                      <text textAnchor="middle" fill="#86868b" fontSize={10.5} fontFamily="-apple-system, BlinkMacSystemFont, 'Inter Variable', Inter, sans-serif">
                         <tspan x={0} dy={0} style={{ textTransform: 'capitalize' }}>{occupancy[index]?.day}</tspan>
                         <tspan x={0} dy={12}>{occupancy[index]?.date}</tspan>
                       </text>
