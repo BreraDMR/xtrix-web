@@ -5,6 +5,12 @@ export type TranslationKey =
   | 'today.timeZone'
   | 'today.staffUnavailable'
   | 'today.retryStaff'
+  | 'today.now'
+  | 'today.next'
+  | 'today.notClosed'
+  | 'today.needsAttention'
+  | 'today.closeFirst'
+  | 'today.comingUp'
   | 'dashboard.overview'
   | 'dashboard.thisWeek'
   | 'dashboard.occupancy'
@@ -2461,6 +2467,12 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "today.timeZone": {"en": "Business time zone", "ru": "Часовой пояс бизнеса", "cz": "Časové pásmo podniku"},
   "today.staffUnavailable": {"en": "Specialist names are unavailable. Appointments are still shown.", "ru": "Имена специалистов недоступны. Записи по-прежнему показаны.", "cz": "Jména specialistů nejsou dostupná. Návštěvy se nadále zobrazují."},
   "today.retryStaff": {"en": "Retry names", "ru": "Загрузить имена повторно", "cz": "Znovu načíst jména"},
+  "today.now": {"en": "Now", "ru": "Сейчас", "cz": "Právě teď"},
+  "today.next": {"en": "Next", "ru": "Следующий", "cz": "Další"},
+  "today.notClosed": {"en": "Not closed", "ru": "Не закрыт", "cz": "Neuzavřeno"},
+  "today.needsAttention": {"en": "Needs attention: {count} appointments ended but are not marked completed or cancelled", "ru": "Требует внимания: закончились, но не отмечены завершёнными или отменёнными — {count}", "cz": "Vyžaduje pozornost: skončily, ale nejsou označené jako dokončené nebo zrušené — {count}"},
+  "today.closeFirst": {"en": "Close the first one", "ru": "Закрыть первый", "cz": "Uzavřít první"},
+  "today.comingUp": {"en": "Coming up", "ru": "Ближайшие записи", "cz": "Nejbližší návštěvy"},
   "dashboard.overview": {"en": "Business overview", "ru": "Обзор бизнеса", "cz": "Přehled podnikání"},
   "dashboard.thisWeek": {"en": "This week", "ru": "Эта неделя", "cz": "Tento týden"},
   "dashboard.occupancy": {"en": "Occupancy level", "ru": "Уровень загрузки", "cz": "Úroveň obsazenosti"},
