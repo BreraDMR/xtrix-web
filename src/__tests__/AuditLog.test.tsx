@@ -149,6 +149,57 @@ describe('action log', () => {
     expect(click).toHaveBeenCalled()
   })
 
+  it('names every event type the API writes instead of showing raw keys', async () => {
+    const items = [
+      event({ id: 21, action: 'visit.deleted', changes: { status: 'planned' } }),
+      event({ id: 22, action: 'visit.restored', changes: { status: 'planned' } }),
+      event({
+        id: 23,
+        action: 'visit.repriced',
+        changes: { fields: ['price', 'currency_snapshot', 'items'], price: { old: '50.00', new: '60.00' } },
+      }),
+      event({
+        id: 24,
+        action: 'visit.price_corrected',
+        changes: { correction_id: 9, prior_payment_action: 'refund_due', currency_snapshot: { old: 'EUR', new: 'EUR' } },
+      }),
+      event({
+        id: 25,
+        action: 'visit.settlement_entry_recorded',
+        changes: { entry_id: 4, kind: 'manual_refund', amount: '10.00', currency: 'EUR' },
+      }),
+      event({
+        id: 26,
+        action: 'business.legacy_visit_currency_confirmed',
+        entity_type: 'business',
+        entity_id: 1,
+        changes: { currency: 'EUR', updated_visits: 3 },
+      }),
+    ]
+    vi.mocked(api.get).mockImplementation(
+      routes({ '/businesses/me': BUSINESS, '/businesses/me/audit': auditPage(items) }) as never,
+    )
+
+    renderWithProviders(<AuditLog />)
+
+    const table = await screen.findByRole('table')
+    expect(within(table).getByText('Visit deleted')).toBeInTheDocument()
+    expect(within(table).getByText('Visit restored')).toBeInTheDocument()
+    expect(within(table).getByText('Visit price changed')).toBeInTheDocument()
+    expect(within(table).getByText('Visit price corrected')).toBeInTheDocument()
+    expect(within(table).getByText('Visit payment entry recorded')).toBeInTheDocument()
+    expect(within(table).getByText('Old visit currency confirmed')).toBeInTheDocument()
+    expect(table.textContent).toContain('Business #1')
+    expect(within(table).getByText(/Changed: Price, Currency, Items/)).toBeInTheDocument()
+    expect(within(table).getByText(/Earlier payment: Refund due/)).toBeInTheDocument()
+    expect(within(table).getByText(/Entry type: Manual refund/)).toBeInTheDocument()
+    expect(within(table).getByText(/Updated visits: 3/)).toBeInTheDocument()
+    const text = table.textContent ?? ''
+    for (const raw of ['visit.', 'business.', 'currency_snapshot', 'prior_payment_action', 'manual_refund', 'refund_due', 'updated_visits']) {
+      expect(text).not.toContain(raw)
+    }
+  })
+
   it('shows the access message for a forbidden journal', async () => {
     vi.mocked(api.get).mockImplementation(((url: string) => {
       if (url === '/businesses/me') return Promise.resolve({ data: BUSINESS })
@@ -176,6 +227,8 @@ describe('action log', () => {
     expect(within(actionSelect).queryByRole('option', { name: 'Questionnaire submitted' })).not.toBeInTheDocument()
     expect(within(entitySelect).queryByRole('option', { name: 'Payment' })).not.toBeInTheDocument()
     expect(within(entitySelect).queryByRole('option', { name: 'Questionnaire' })).not.toBeInTheDocument()
+    expect(within(actionSelect).queryByRole('option', { name: 'Visit price corrected' })).not.toBeInTheDocument()
+    expect(within(actionSelect).queryByRole('option', { name: 'Visit payment entry recorded' })).not.toBeInTheDocument()
     expect(within(actionSelect).getByRole('option', { name: 'Visit created' })).toBeInTheDocument()
   })
 })

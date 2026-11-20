@@ -37,6 +37,12 @@ const ACTION_KEYS: Record<string, TranslationKey> = {
   'visit.updated': 'audit.action.visitUpdated',
   'visit.moved': 'audit.action.visitMoved',
   'visit.cancelled': 'audit.action.visitCancelled',
+  'visit.deleted': 'audit.action.visitDeleted',
+  'visit.restored': 'audit.action.visitRestored',
+  'visit.repriced': 'audit.action.visitRepriced',
+  'visit.price_corrected': 'audit.action.visitPriceCorrected',
+  'visit.settlement_entry_recorded': 'audit.action.visitSettlementEntryRecorded',
+  'business.legacy_visit_currency_confirmed': 'audit.action.legacyVisitCurrencyConfirmed',
   'payment.paid': 'audit.action.paymentPaid',
   'payment.failed': 'audit.action.paymentFailed',
   'payment.refunded': 'audit.action.paymentRefunded',
@@ -49,6 +55,7 @@ const ENTITY_KEYS: Record<string, TranslationKey> = {
   payment: 'audit.entity.payment',
   questionnaire: 'audit.entity.questionnaire',
   client: 'audit.entity.client',
+  business: 'audit.entity.business',
 }
 
 const ROLE_KEYS: Record<string, TranslationKey> = {
@@ -89,6 +96,25 @@ const FIELD_KEYS: Record<string, TranslationKey> = {
   answered_count: 'audit.field.answeredCount',
   photo_url: 'audit.field.photoUrl',
   note: 'audit.field.note',
+  currency_snapshot: 'audit.field.currency',
+  correction_id: 'audit.field.correctionId',
+  prior_payment_action: 'audit.field.priorPaymentAction',
+  entry_id: 'audit.field.entryId',
+  kind: 'audit.field.entryKind',
+  updated_visits: 'audit.field.updatedVisits',
+}
+
+// Enum values the API stores as codes; anything new still falls back to the raw code.
+const VALUE_KEYS: Record<string, Record<string, TranslationKey>> = {
+  kind: {
+    charge: 'audit.value.charge',
+    manual_receipt: 'audit.value.manualReceipt',
+    manual_refund: 'audit.value.manualRefund',
+  },
+  prior_payment_action: {
+    refund_due: 'audit.value.refundDue',
+    retained: 'audit.value.retained',
+  },
 }
 
 const ACTION_OPTIONS: { value: string; key: TranslationKey; family: string }[] = [
@@ -96,6 +122,17 @@ const ACTION_OPTIONS: { value: string; key: TranslationKey; family: string }[] =
   { value: 'visit.updated', key: 'audit.action.visitUpdated', family: 'visit' },
   { value: 'visit.moved', key: 'audit.action.visitMoved', family: 'visit' },
   { value: 'visit.cancelled', key: 'audit.action.visitCancelled', family: 'visit' },
+  { value: 'visit.deleted', key: 'audit.action.visitDeleted', family: 'visit' },
+  { value: 'visit.restored', key: 'audit.action.visitRestored', family: 'visit' },
+  // price and settlement events carry amounts, so they follow the finance rights
+  { value: 'visit.repriced', key: 'audit.action.visitRepriced', family: 'payment' },
+  { value: 'visit.price_corrected', key: 'audit.action.visitPriceCorrected', family: 'payment' },
+  { value: 'visit.settlement_entry_recorded', key: 'audit.action.visitSettlementEntryRecorded', family: 'payment' },
+  {
+    value: 'business.legacy_visit_currency_confirmed',
+    key: 'audit.action.legacyVisitCurrencyConfirmed',
+    family: 'business',
+  },
   { value: 'client.updated', key: 'audit.action.clientUpdated', family: 'client' },
   { value: 'payment.paid', key: 'audit.action.paymentPaid', family: 'payment' },
   { value: 'payment.failed', key: 'audit.action.paymentFailed', family: 'payment' },
@@ -108,6 +145,7 @@ const ENTITY_OPTIONS: { value: string; key: TranslationKey; family: string }[] =
   { value: 'client', key: 'audit.entity.client', family: 'client' },
   { value: 'payment', key: 'audit.entity.payment', family: 'payment' },
   { value: 'questionnaire', key: 'audit.entity.questionnaire', family: 'questionnaire' },
+  { value: 'business', key: 'audit.entity.business', family: 'business' },
 ]
 
 function scalarText(value: unknown): string {
@@ -184,6 +222,8 @@ export default function AuditLog() {
 
   const valueText = (key: string, value: unknown): string => {
     if (key === 'status' && typeof value === 'string') return visitStatus(value)
+    const valueKey = typeof value === 'string' ? VALUE_KEYS[key]?.[value] : undefined
+    if (valueKey) return t(valueKey)
     if ((key === 'date_start' || key === 'date_end') && typeof value === 'string') {
       const date = new Date(value)
       if (!Number.isNaN(date.getTime())) return formatDateTime(value)
