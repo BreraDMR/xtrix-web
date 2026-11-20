@@ -91,28 +91,28 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
               <BarChart data={occupancy} margin={{ top: 10, right: 6, left: -22, bottom: 0 }}>
                 <defs>
                   <linearGradient id="x-bar-gradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stopColor="#9f5aef" />
-                    <stop offset="1" stopColor="#e04aa8" />
+                    <stop offset="0" stopColor="var(--chart-1)" />
+                    <stop offset="1" stopColor="var(--chart-2)" />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} stroke="var(--workspace-line)" strokeDasharray="0" />
                 <XAxis dataKey="key" axisLine={false} tickLine={false} interval={0} height={34}
                   tick={({ x, y, index }: { x: number; y: number; index: number }) => (
                     <g transform={`translate(${x},${y + 8})`}>
-                      <text textAnchor="middle" fill="#86868b" fontSize={10.5} fontFamily="-apple-system, BlinkMacSystemFont, 'Inter Variable', Inter, sans-serif">
+                      <text textAnchor="middle" fill="var(--chart-axis)" fontSize={10.5} fontFamily="-apple-system, BlinkMacSystemFont, 'Inter Variable', Inter, sans-serif">
                         <tspan x={0} dy={0} style={{ textTransform: 'capitalize' }}>{occupancy[index]?.day}</tspan>
                         <tspan x={0} dy={12}>{occupancy[index]?.date}</tspan>
                       </text>
                     </g>
                   )} />
                 <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} tickFormatter={(value) => `${value}%`}
-                  axisLine={false} tickLine={false} tick={{ fill: '#aeaeb2', fontSize: 10 }} />
-                <Tooltip cursor={{ fill: 'rgba(0,0,0,0.03)' }}
-                  contentStyle={{ borderRadius: 12, border: '1px solid rgba(0,0,0,.06)', boxShadow: '0 8px 24px rgba(0,0,0,.08)', fontSize: 12 }}
+                  axisLine={false} tickLine={false} tick={{ fill: 'var(--chart-axis-soft)', fontSize: 10 }} />
+                <Tooltip cursor={{ fill: 'var(--workspace-hover)' }}
+                  contentStyle={{ borderRadius: 12, border: '1px solid var(--workspace-card-border)', boxShadow: '0 8px 24px rgba(0,0,0,.08)', fontSize: 12, background: 'var(--chart-tooltip-bg)', color: 'var(--workspace-ink)' }}
                   labelFormatter={(_label, payload) => payload?.[0]?.payload ? `${payload[0].payload.day} ${payload[0].payload.date}` : ''}
                   formatter={(_value, _name, item) => [`${item.payload.count} ${t('dashboard.visitsCount')}`, '']} />
                 <Bar dataKey="value" barSize={28} minPointSize={3} radius={[8, 8, 8, 8]} isAnimationActive={false}>
-                  {occupancy.map((entry) => <Cell key={entry.key} fill={entry.key === todayKey ? 'url(#x-bar-gradient)' : '#e9ddfb'} />)}
+                  {occupancy.map((entry) => <Cell key={entry.key} fill={entry.key === todayKey ? 'url(#x-bar-gradient)' : 'var(--chart-track)'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

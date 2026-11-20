@@ -90,8 +90,8 @@ function BusinessOverview() {
             <DonutProgress value={completion} caption={`${completed} / ${total}`} />
             <dl className="w-full divide-y divide-[var(--workspace-line)]">
               {row(t('dashboard.completedVisits'), completed, 'bg-brand-pink')}
-              {row(t('dashboard.plannedVisits'), visits.data?.visits_by_status?.planned ?? 0, 'bg-[#d2d2d7]')}
-              {row(t('dashboard.cancelledVisits'), visits.data?.visits_by_status?.cancelled ?? 0, 'bg-[#ff6b6b]')}
+              {row(t('dashboard.plannedVisits'), visits.data?.visits_by_status?.planned ?? 0, 'bg-[var(--workspace-control)]')}
+              {row(t('dashboard.cancelledVisits'), visits.data?.visits_by_status?.cancelled ?? 0, 'bg-[var(--chart-negative)]')}
               {row(t('dashboard.totalVisits'), visits.data?.total_visits ?? '—')}
             </dl>
           </div>}

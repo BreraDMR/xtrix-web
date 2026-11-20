@@ -46,7 +46,7 @@ export default function Tabs<T extends string>({ tabs, value, onChange, label, c
             aria-selected={selected}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(tab.id)}
-            className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[13.5px] font-medium tracking-[-0.01em] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-focus)] ${
+            className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[length:var(--text-control)] font-medium tracking-[-0.01em] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--workspace-focus)] ${
               selected
                 ? 'bg-[var(--workspace-panel)] text-[var(--workspace-ink)] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)]'
                 : 'text-[var(--workspace-muted)] hover:text-[var(--workspace-ink)]'

@@ -220,9 +220,9 @@ export default function Finance() {
                       endAngle={-270}
                       dataKey="value"
                     >
-                      <Cell fill="#9f5aef" />
-                      <Cell fill="#e04aa8" />
-                      <Cell fill="#d9c6f7" />
+                      <Cell fill="var(--chart-1)" />
+                      <Cell fill="var(--chart-2)" />
+                      <Cell fill="var(--chart-muted)" />
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
@@ -230,9 +230,9 @@ export default function Finance() {
               <div className="w-full min-w-0 flex-1">
                 <dl className="space-y-3">
                   {[
-                    { label: t('finance.payment_card'), color: '#9f5aef', stats: paymentStats.card_payments },
-                    { label: t('finance.payment_cash'), color: '#e04aa8', stats: paymentStats.cash_payments },
-                    { label: t('finance.payment_other'), color: '#d9c6f7', stats: paymentStats.other_payments },
+                    { label: t('finance.payment_card'), color: 'var(--chart-1)', stats: paymentStats.card_payments },
+                    { label: t('finance.payment_cash'), color: 'var(--chart-2)', stats: paymentStats.cash_payments },
+                    { label: t('finance.payment_other'), color: 'var(--chart-muted)', stats: paymentStats.other_payments },
                   ].map(method => <div key={method.label} className="flex items-start justify-between gap-3">
                     <dt className="flex min-w-0 items-center gap-2 text-xs text-[var(--workspace-muted)]"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: method.color }} />{method.label}</dt>
                     <dd className="text-right tabular-nums">
@@ -255,7 +255,7 @@ export default function Finance() {
             <h2 id={`${pageId}-categories`} className="mb-5 flex items-center gap-3 text-[17px] font-semibold tracking-[-0.02em]"><span className="x-icon" aria-hidden="true"><LuTags /></span>{t('finance.expenses_by_category')}</h2>
             <dl className="divide-y divide-[var(--workspace-line)]">
               {(profitReport.expenses_by_category as CategoryTotal[]).map(item => <div key={item.category_id} className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 py-3 first:pt-0 last:pb-0">
-                <dt className="flex min-w-0 items-center gap-2 text-sm"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color || '#9f5aef' }} /><span className="[overflow-wrap:anywhere]">{labels.expenseCategory({ code: item.category_code, name: item.category_name })}</span></dt>
+                <dt className="flex min-w-0 items-center gap-2 text-sm"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color || 'var(--chart-1)' }} /><span className="[overflow-wrap:anywhere]">{labels.expenseCategory({ code: item.category_code, name: item.category_name })}</span></dt>
                 <dd className="shrink-0 text-sm font-semibold tabular-nums">{formatCurrency(item.total, currency)}</dd>
                 <dd aria-hidden="true" className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--workspace-fill)]">
                   <span className="block h-full rounded-full" style={{ width: `${profitReport.expenses ? Math.min(100, (Number(item.total) / Number(profitReport.expenses)) * 100) : 0}%`, background: item.color || 'var(--x-gradient)' }} />
@@ -311,7 +311,7 @@ export default function Finance() {
                       <p className="text-sm font-semibold [overflow-wrap:anywhere]">{expenseText(expense)}</p>
                       <dl className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--workspace-muted)]">
                         <div><dt className="sr-only">{t('finance.date')}</dt><dd>{new Date(expense.expense_date).toLocaleDateString()}</dd></div>
-                        <div><dt className="sr-only">{t('finance.category')}</dt><dd className="flex items-center gap-1.5 [overflow-wrap:anywhere]">{expense.category ? <><span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: expense.category.color || '#9f5aef' }} />{labels.expenseCategory(expense.category)}</> : '-'}</dd></div>
+                        <div><dt className="sr-only">{t('finance.category')}</dt><dd className="flex items-center gap-1.5 [overflow-wrap:anywhere]">{expense.category ? <><span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: expense.category.color || 'var(--chart-1)' }} />{labels.expenseCategory(expense.category)}</> : '-'}</dd></div>
                         <div><dt className="sr-only">{t('finance.payment_method')}</dt><dd>{expense.payment_method}</dd></div>
                       </dl>
                     </td>
