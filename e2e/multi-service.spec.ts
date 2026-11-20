@@ -159,7 +159,7 @@ for (const { language, theme, width } of CASES) {
 
     // grabbing the second service still opens and moves the whole chain
     await cards.nth(1).click()
-    const dialog = page.getByRole('dialog', { name: t('calendar.moveTitle') })
+    const dialog = page.getByRole('dialog', { name: t('calendar.detailsTitle') })
     await expect(dialog).toBeVisible()
     await expect(dialog.locator('input[type="time"]')).toHaveValue('10:00')
     await dialog.locator('input[type="time"]').fill('14:00')
