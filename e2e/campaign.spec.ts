@@ -3,6 +3,7 @@ import fs from 'node:fs'
 
 import { test, expect, type APIRequestContext, type APIResponse, type Page } from '@playwright/test'
 import { apiUrl, newOwner, openAs, unique, type Session } from './helpers'
+import translations, { type TranslationKey } from '../src/i18n/translations'
 
 const TIMEZONE = 'Europe/Prague'
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -175,18 +176,19 @@ async function findClient(request: APIRequestContext, owner: Session, email: str
   return client
 }
 
-async function createDraftThroughUi(page: Page, data: { name: string; subject: string; body: string }) {
-  await page.getByRole('button', { name: 'New campaign' }).click()
+async function createDraftThroughUi(page: Page, data: { name: string; subject: string; body: string }, language: 'en' | 'ru' | 'cz' = 'en') {
+  const t = (key: TranslationKey) => translations[key][language]
+  await page.getByRole('button', { name: t('campaigns.new') }).click()
   const form = page.getByRole('dialog')
-  await form.getByLabel('Campaign name').fill(data.name)
-  await form.getByLabel('Email subject').fill(data.subject)
-  await form.getByLabel('Message text').fill(data.body)
-  await form.getByLabel('No visits for').fill(String(INACTIVE_DAYS))
+  await form.getByLabel(t('campaigns.name')).fill(data.name)
+  await form.getByLabel(t('campaigns.subject')).fill(data.subject)
+  await form.getByLabel(t('campaigns.body')).fill(data.body)
+  await form.getByLabel(t('campaigns.inactiveDays')).fill(String(INACTIVE_DAYS))
 
   const created = page.waitForResponse(
     (response) => response.url().endsWith('/businesses/me/campaigns') && response.request().method() === 'POST',
   )
-  await form.getByRole('button', { name: 'Save draft' }).click()
+  await form.getByRole('button', { name: t('campaigns.create') }).click()
   const response = await created
   expect(response.status()).toBe(201)
   return (await response.json()) as CampaignRow
@@ -395,3 +397,77 @@ test('cancelling a queued campaign stops the captured delivery', async ({ page, 
   expect(stats.cancelled).toBe(1)
   expect(stats.captured).toBe(0)
 })
+
+// Independent review: real API, job and local capture for every language/theme/width.
+for (const language of ['en', 'ru', 'cz'] as const) {
+  for (const theme of ['light', 'dark'] as const) {
+    for (const width of [375, 1280]) {
+      test(`campaign review ${language} ${theme} ${width}`, async ({ page, request }) => {
+        test.slow()
+        const t = (key: TranslationKey) => translations[key][language]
+        await page.setViewportSize({ width, height: 900 })
+        const salon = await createSalon(request)
+        const first = { name: 'Review First', email: `${unique('first')}@example.com` }
+        const second = { name: 'Review Second', email: `${unique('second')}@example.com` }
+        await bookGuest(request, salon, 12, first)
+        await bookGuest(request, salon, 13, second)
+        ageClientRelations(salon.businessName)
+        await openAs(page, salon.owner, '/app/campaigns')
+        await json(await request.put(`${apiUrl}/user-preferences/me`, {
+          headers: salon.owner.headers, data: { language, theme },
+        }))
+        await page.reload()
+        await expect(page.getByRole('heading', { name: t('campaigns.title'), level: 1 })).toBeVisible()
+        await expect.poll(() => page.locator('html').evaluate((el) => el.classList.contains('dark'))).toBe(theme === 'dark')
+        const body = '{name}, we would like to welcome you back to {business}.\n' +
+          'Choose a convenient time for your next appointment. This is the entire approved message.'
+        const campaign = await createDraftThroughUi(page, {
+          name: unique('Review'), subject: 'A personal invitation for {name}', body,
+        }, language)
+        await expect(page.getByText(body, { exact: true })).toBeVisible()
+        await expect(page.getByText(t('campaigns.willReceive').replace('{n}', '2')).first()).toBeVisible()
+        const snapshot = async (state: string) => {
+          expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true)
+          await page.screenshot({ path: test.info().outputPath(`${state}-${language}-${theme}-${width}.png`), fullPage: true })
+        }
+        await snapshot('draft')
+        await page.getByRole('button', { name: t('campaigns.confirm') }).click()
+        await expect(page.getByRole('dialog')).toContainText(t('campaigns.confirmHint'))
+        await snapshot('confirm')
+        await page.getByRole('dialog').getByRole('button', { name: t('campaigns.confirmAction'), exact: true }).click()
+        await expect(page.getByRole('button', { name: t('campaigns.send') })).toBeEnabled()
+        await page.getByRole('button', { name: t('campaigns.send') }).click()
+        await page.getByRole('dialog').getByRole('button', { name: t('campaigns.sendAction'), exact: true }).click()
+        await expect(page.getByText(t('campaigns.status.sending'), { exact: true }).first()).toBeVisible()
+        runCampaignJob()
+        runCampaignJob()
+        const mails = capturedMail().filter((row) =>
+          [first.email, second.email].includes(row.recipient) && row.text.includes('/unsubscribe#token='))
+        expect(mails).toHaveLength(2)
+        expect(mails.find((row) => row.recipient === first.email)?.text).toContain('Review First')
+        expect(mails.every((row) => row.text.includes(salon.businessName))).toBe(true)
+        await page.reload()
+        await expect(page.getByText(t('campaigns.statsTitle'))).toBeVisible()
+        await snapshot('summary')
+        const linkA = unsubscribeLink(mails.find((row) => row.recipient === first.email)!)
+        const linkB = unsubscribeLink(mails.find((row) => row.recipient === second.email)!)
+        await page.goto(linkA)
+        await expect(page.getByRole('button', { name: t('unsubscribe.action'), exact: true })).toBeVisible()
+        await page.getByRole('button', { name: t('unsubscribe.action'), exact: true }).click()
+        await expect(page.getByText(t('unsubscribe.done'))).toBeVisible()
+        // Only the fragment changes: this must not reload the document to select the second consent.
+        await page.goto(linkB)
+        await expect(page.getByText('s***@example.com')).toBeVisible()
+        await expect(page.getByRole('button', { name: t('unsubscribe.action'), exact: true })).toBeVisible()
+        await snapshot('unsubscribe-second')
+        await page.getByRole('button', { name: t('unsubscribe.action'), exact: true }).click()
+        await expect(page.getByText(t('unsubscribe.done'))).toBeVisible()
+        const stats = await json<CampaignStats>(await request.get(`${apiUrl}/businesses/me/campaigns/${campaign.id}/stats`, {
+          headers: salon.owner.headers,
+        }))
+        expect(stats.unsubscribed).toBe(2)
+        expect(stats.captured).toBe(2)
+      })
+    }
+  }
+}
