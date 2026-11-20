@@ -158,6 +158,74 @@ describe('TodayAgenda', () => {
     expect(vi.mocked(api.get).mock.calls.filter(([url]) => url === '/visits/')).toHaveLength(visitsBefore)
   })
 
+  it('marks what is on now, what comes next and what ended without being closed', async () => {
+    // now is 12:00Z; every row is today in Prague
+    const row = (id: number, name: string, start: string, end: string, status: string): VisitOut => ({
+      ...makeRows(1)[0], id, client_id: id, client_name: name,
+      date_start: `2026-10-22T${start}:00Z`, date_end: `2026-10-22T${end}:00Z`, status })
+    serve([
+      row(1, 'Cancelled early', '07:00', '08:00', 'cancelled'),
+      row(2, 'Forgotten guest', '08:00', '09:00', 'planned'),
+      row(3, 'Done guest', '09:00', '10:00', 'completed'),
+      row(4, 'Running late', '10:00', '11:00', 'in_progress'),
+      row(5, 'Chair guest', '11:30', '12:30', 'in_progress'),
+      row(6, 'Next guest', '13:00', '14:00', 'planned'),
+      row(7, 'Parallel next', '13:00', '13:30', 'planned'),
+      row(8, 'Evening guest', '15:00', '16:00', 'planned'),
+    ])
+    const onEdit = vi.fn()
+    renderWithProviders(<TodayAgenda timeZone="Europe/Prague" onEdit={onEdit} />)
+    await screen.findByText('Evening guest')
+    const item = (name: string) => within(screen.getByText(name).closest('li')!)
+    expect(item('Forgotten guest').getByText('Not closed')).toBeInTheDocument()
+    expect(item('Running late').getByText('Not closed')).toBeInTheDocument()
+    expect(item('Chair guest').getByText('Now')).toBeInTheDocument()
+    expect(item('Next guest').getByText('Next')).toBeInTheDocument()
+    expect(item('Parallel next').getByText('Next')).toBeInTheDocument()
+    for (const name of ['Cancelled early', 'Done guest', 'Evening guest']) {
+      expect(item(name).queryByText(/^(Now|Next|Not closed)$/)).not.toBeInTheDocument()
+    }
+    expect(screen.getAllByText('Not closed')).toHaveLength(2)
+    expect(screen.getByText('Needs attention: 2 appointments ended but are not marked completed or cancelled'))
+      .toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Close the first one: Forgotten guest' }))
+    expect(onEdit).toHaveBeenCalledWith(2)
+  })
+
+  it('does not offer to close anything in a read-only salon but still names the problem', async () => {
+    serve(makeRows(1))
+    renderWithProviders(
+      <WorkspaceAccessContext.Provider value={{ ...access, crm_mode: 'read_only' }}>
+        <TodayAgenda timeZone="Europe/Prague" onEdit={vi.fn()} />
+      </WorkspaceAccessContext.Provider>,
+    )
+    expect(await screen.findByText(/Needs attention: 1 appointments/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Close the first one/ })).not.toBeInTheDocument()
+  })
+
+  it('shows the next three planned appointments after an empty day', async () => {
+    vi.mocked(api.get).mockImplementation((url, config) => {
+      if (url !== '/visits/') return Promise.reject(apiError(404, 'Unexpected URL'))
+      const params = config?.params as VisitParams
+      if (params.date_from === '2026-10-21T22:00:00.000Z') return Promise.resolve({ data: pageOf([], params) })
+      const later = makeRows(3).map((visit, index) => ({ ...visit, client_name: `Later ${index + 1}`,
+        date_start: `2026-10-2${4 + index}T08:00:00Z`, date_end: `2026-10-2${4 + index}T09:00:00Z` }))
+      return Promise.resolve({ data: pageOf(later, params) })
+    })
+    const onEdit = vi.fn()
+    renderWithProviders(<TodayAgenda timeZone="Europe/Prague" onEdit={onEdit} />)
+    expect(await screen.findByText('No appointments today')).toBeInTheDocument()
+    const upcoming = await screen.findByRole('list', { name: 'Coming up' })
+    expect(within(upcoming).getAllByRole('listitem')).toHaveLength(3)
+    expect(within(upcoming).getByText('Later 1').closest('li')).toHaveTextContent('Sat 24 Oct, 10:00')
+    await userEvent.click(within(upcoming).getByRole('button', { name: 'Edit: Later 3' }))
+    expect(onEdit).toHaveBeenCalledWith(3)
+    const upcomingCall = vi.mocked(api.get).mock.calls.map(([, config]) => config?.params as VisitParams)
+      .find(params => params.date_from !== '2026-10-21T22:00:00.000Z')
+    expect(upcomingCall).toEqual({ page: 1, per_page: 3, status: 'planned', date_from: '2026-10-22T22:00:00.000Z',
+      sort_by: 'date_start', sort_order: 'asc' })
+  })
+
   it('switches to the next business day while the page stays open', async () => {
     vi.useRealTimers()
     vi.useFakeTimers()

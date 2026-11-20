@@ -54,3 +54,23 @@ it('leaves out the money card for someone who may not see financials instead of 
   expect(screen.queryByRole('heading', { name: 'This month' })).not.toBeInTheDocument()
   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 })
+
+it('puts the day first: appointments above setup prompts, the week and the month', async () => {
+  vi.mocked(api.get).mockImplementation(routes({ '/businesses/me': { id: 1, currency: 'CZK', timezone: 'Europe/Prague' },
+    '/onboarding/me': { persona: 'owner', welcome_dismissed: false, checklist_dismissed: true,
+      completed_steps: 1, total_steps: 3, progress_percent: 33, next_step: 'service',
+      steps: [{ key: 'business', completed: true, available: true }, { key: 'service', completed: false, available: true },
+        { key: 'schedule', completed: false, available: true }] },
+    '/expenses/reports/profit': { revenue: 0, expenses: 0, profit: 0 },
+    '/analytics/visits/statistics': { total_visits: 0 }, '/analytics/clients/statistics': { total_clients: 0 },
+    '/employees/': [], '/visits/': [] }))
+  renderWithProviders(<Dashboard />)
+  const agenda = await screen.findByRole('region', { name: "Today's appointments" })
+  const welcome = await screen.findByRole('heading', { name: 'Welcome to Xtrix' })
+  const week = screen.getByRole('heading', { name: 'This week' })
+  const month = screen.getByRole('heading', { name: 'Business overview' })
+  const follows = (a: Element, b: Element) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING)
+  expect(follows(agenda, welcome)).toBe(true)
+  expect(follows(welcome, week)).toBe(true)
+  expect(follows(week, month)).toBe(true)
+})

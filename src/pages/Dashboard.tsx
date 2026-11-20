@@ -146,10 +146,9 @@ export default function Dashboard() {
         <Link to="/app/calendar" aria-label={t('dashboard.openCalendar')} className="ui-button ui-button-secondary"><LuCalendar />{t('nav.calendar')}</Link>
       </div>
     </div>
-    <Welcome />
-    <Checklist />
+    {/* the day comes first; setup prompts sit under it so they never push today's clients down */}
     <TodayAgenda timeZone={timeZone} onEdit={setEditingVisit} />
-    <div className="mt-5"><ServiceStep /><StaffStep /></div>
+    <div className="mt-5"><Welcome /><Checklist /><ServiceStep /><StaffStep /></div>
     <WeekOverview timeZone={timeZone} />
     <BusinessOverview />
     <ProductTour />
