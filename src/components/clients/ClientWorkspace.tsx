@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { LuArrowLeft, LuPrinter } from 'react-icons/lu'
@@ -9,7 +9,7 @@ import { useLabels } from '../../i18n/labels'
 import { useWorkspaceAccessContext } from '../../hooks/useWorkspaceAccess'
 import { useMyBusiness } from '../../hooks/useMyBusiness'
 import { formatCurrency, type Currency } from '../../utils/currency'
-import { showDay, showZonedDateTime } from '../../utils/dates'
+import { isoToZonedWallTime, showDay, showZonedDateTime } from '../../utils/dates'
 import Button from '../../ui/Button'
 import Card from '../../ui/Card'
 import LoadingSpinner from '../LoadingSpinner'
@@ -28,6 +28,20 @@ import type {
 
 function formatDateTime(iso: string, timeZone?: string) {
   return timeZone ? showZonedDateTime(iso, timeZone) : new Date(iso).toLocaleString()
+}
+
+function formatDay(iso: string, timeZone?: string) {
+  return timeZone ? showDay(isoToZonedWallTime(iso, timeZone).day) : new Date(iso).toLocaleDateString()
+}
+
+// the overview endpoint returns at most this many past visits (RECENT_VISIT_LIMIT in the API)
+const RECENT_VISIT_LIMIT = 20
+
+// same shapes as the calendar, so a status reads without relying on colour
+const STATUS_MARK: Record<string, string> = { planned: '○', in_progress: '◐', completed: '✓', cancelled: '✕' }
+const STATUS_CLASS: Record<string, string> = {
+  planned: 'x-status-planned', in_progress: 'x-status-in-progress',
+  completed: 'x-status-completed', cancelled: 'x-status-cancelled',
 }
 
 function formatAnswer(value: unknown) {
@@ -159,8 +173,10 @@ function VisitRow({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="rounded-full border border-[var(--workspace-line)] px-2 py-0.5 text-xs text-[var(--workspace-muted)]">
-            {statusLabel}
+          <span data-status={visit.status}
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[visit.status] ?? 'border border-[var(--workspace-line)] text-[var(--workspace-muted)]'}`}>
+            {STATUS_MARK[visit.status] && <span aria-hidden="true">{STATUS_MARK[visit.status]}</span>}
+            <span>{statusLabel}</span>
           </span>
           {visit.price !== null && visit.price !== undefined && (
             <span className="text-sm tabular-nums text-[var(--workspace-ink)]">
@@ -205,6 +221,7 @@ export default function ClientWorkspace({ embeddedClientId, onClose }: {
   const timeZone = business?.timezone || undefined
   const [showForm, setShowForm] = useState(false)
   const [showReport, setShowReport] = useState(false)
+  const historyId = useId()
 
   useEffect(() => { if (!canEdit) setShowForm(false) }, [canEdit])
   const back = () => { if (embedded && onClose) onClose(); else navigate(backTo) }
@@ -355,9 +372,17 @@ export default function ClientWorkspace({ embeddedClientId, onClose }: {
             </Card>
 
             <Card className="p-5">
-              <h2 className="mb-1 text-base font-semibold text-[var(--workspace-ink)]">
-                {t('clientWorkspace.history')}
-              </h2>
+              <section aria-labelledby={historyId}>
+              <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3">
+                <h2 id={historyId} className="text-base font-semibold text-[var(--workspace-ink)]">
+                  {t('clientWorkspace.history')}
+                </h2>
+                {overview.data.recent_visits.length >= RECENT_VISIT_LIMIT && (
+                  <p className="text-xs text-[var(--workspace-muted)]">
+                    {t('clientWorkspace.historyLimited').replace('{count}', String(overview.data.recent_visits.length))}
+                  </p>
+                )}
+              </div>
               {overview.data.recent_visits.length === 0 ? (
                 <p className="py-3 text-sm text-[var(--workspace-muted)]">{t('clientWorkspace.noVisits')}</p>
               ) : (
@@ -374,6 +399,7 @@ export default function ClientWorkspace({ embeddedClientId, onClose }: {
                   ))}
                 </ul>
               )}
+              </section>
             </Card>
 
             <Card className="p-5">
@@ -390,6 +416,8 @@ export default function ClientWorkspace({ embeddedClientId, onClose }: {
                 <Stat label={t('clientWorkspace.totalVisits')} value={overview.data.stats.total_visits} />
                 <Stat label={t('clientWorkspace.completedVisits')} value={overview.data.stats.completed_visits} />
                 <Stat label={t('clientWorkspace.cancelledVisits')} value={overview.data.stats.cancelled_visits} />
+                <Stat label={t('clientWorkspace.lastVisit')}
+                  value={overview.data.stats.last_visit_at ? formatDay(overview.data.stats.last_visit_at, timeZone) : '—'} />
                 {payments && (
                   <Stat
                     label={t('clientWorkspace.paidTotal')}

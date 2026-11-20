@@ -13,12 +13,13 @@ import ClientForm from '../components/ClientForm'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
 import TablePagination from '../components/TablePagination'
-import ExportButton from '../components/ExportButton'
+import ExportModal from '../components/ExportModal'
+import ActionMenu, { type ActionMenuItem } from '../ui/ActionMenu'
 import ClientWorkspace from '../components/clients/ClientWorkspace'
 import SidePanel from '../ui/SidePanel'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import ImportClientsModal from '../components/ImportClientsModal'
-import { LuChevronRight, LuUpload, LuUserPlus, LuUsers, LuWallet } from 'react-icons/lu'
+import { LuChevronRight, LuDownload, LuUpload, LuUserPlus, LuUsers, LuWallet } from 'react-icons/lu'
 import StatTile from '../ui/StatTile'
 import Avatar from '../ui/Avatar'
 import { useTranslation } from '../hooks/useTranslation'
@@ -31,6 +32,22 @@ import { allPages } from '../api/allPages'
 import { useAuthStore } from '../store/authStore'
 
 type Client = ClientOut
+
+// the columns the directory can sort by; anything else in the URL falls back to the default order
+const SORT_KEYS = ['full_name', 'contact_phone', 'contact_email'] as const
+type SortKey = typeof SORT_KEYS[number]
+
+function sortFromUrl(params: URLSearchParams): SortConfig<Client> {
+  const key = params.get('sort')
+  const order = params.get('order')
+  if (!SORT_KEYS.includes(key as SortKey) || (order !== 'asc' && order !== 'desc')) return { key: null, direction: null }
+  return { key: key as SortKey, direction: order }
+}
+
+function clientFromUrl(params: URLSearchParams): number | null {
+  const id = Number(params.get('client'))
+  return Number.isInteger(id) && id > 0 ? id : null
+}
 
 // headline numbers above the directory; hidden when the person may not see them
 function ClientStats() {
@@ -69,27 +86,27 @@ function ClientLoyaltyBalance({ clientId }: { clientId: number }) {
   })
 
   if (isLoading) {
-    return <span className="text-gray-400">...</span>
+    return <span className="text-[var(--workspace-muted)]">…</span>
   }
 
   if (!balance || (balance.points === 0 && balance.cashback === 0)) {
-    return <span className="text-gray-400">-</span>
+    return <span className="text-[var(--workspace-muted)]">—</span>
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
       {balance.points > 0 && (
-        <span className="text-sm font-medium text-blue-600">
+        <span className="text-sm font-medium tabular-nums text-[var(--workspace-accent)]">
           {balance.points.toFixed(0)} {t('loyalty.points')}
         </span>
       )}
       {balance.cashback > 0 && (
-        <span className="text-sm font-medium text-green-600">
+        <span className="text-sm font-medium tabular-nums text-[var(--tint-green-ink)]">
           {formatCurrency(balance.cashback, currency)} {t('loyalty.cashback')}
         </span>
       )}
       {balance.level && (
-        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">
+        <span className="rounded-full bg-[var(--workspace-accent-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--workspace-accent)]">
           {balance.level.name}
         </span>
       )}
@@ -108,7 +125,7 @@ export default function Clients() {
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [genderFilter, setGenderFilter] = useState<string | null>(() => searchParams.get('gender'))
-  const [sortConfig, setSortConfig] = useState<SortConfig<Client>>({ key: null, direction: null })
+  const [sortConfig, setSortConfig] = useState<SortConfig<Client>>(() => sortFromUrl(searchParams))
   const [currentPage, setCurrentPage] = useState(() => {
     const page = Number(searchParams.get('page'))
     return Number.isInteger(page) && page > 0 ? page : 1
@@ -117,8 +134,9 @@ export default function Clients() {
     const value = Number(searchParams.get('per_page'))
     return perPageOptions.includes(value) ? value : 20
   })
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [selectedId, setSelectedId] = useState<number | null>(() => clientFromUrl(searchParams))
   const [showImportModal, setShowImportModal] = useState(false)
+  const [showExport, setShowExport] = useState(false)
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -127,15 +145,22 @@ export default function Clients() {
     if (genderFilter) next.set('gender', genderFilter)
     if (currentPage > 1) next.set('page', String(currentPage))
     if (perPage !== 20) next.set('per_page', String(perPage))
+    if (sortConfig.key && sortConfig.direction) {
+      next.set('sort', String(sortConfig.key))
+      next.set('order', sortConfig.direction)
+    }
+    // the open record lives in the URL too, so the full page's "back" lands on the same list with it open
+    if (selectedId !== null) next.set('client', String(selectedId))
     if (next.toString() !== searchParams.toString()) {
       setSearchParams(next, { replace: true })
     }
-  }, [searchQuery, genderFilter, currentPage, perPage, searchParams, setSearchParams])
+  }, [searchQuery, genderFilter, currentPage, perPage, sortConfig, selectedId, searchParams, setSearchParams])
 
   const openWorkspace = (id: number) => setSelectedId(id)
   useEffect(() => {
     if (!canEdit) { setShowForm(false); setShowImportModal(false) }
   }, [canEdit])
+  const canExport = access === undefined || !!access?.can_export
 
   const identity = useAuthStore(state => state.sessionRevision)
   const user = useAuthStore(state => state.user)
@@ -185,6 +210,11 @@ export default function Clients() {
     queryClient.invalidateQueries({ queryKey: ['clients-statistics'] })
   }
 
+  const moreActions: ActionMenuItem[] = [
+    ...(canEdit ? [{ key: 'import', label: t('import.title'), icon: LuUpload, onSelect: () => setShowImportModal(true) }] : []),
+    ...(canExport && totalItems > 0 ? [{ key: 'export', label: t('common.export'), icon: LuDownload, onSelect: () => setShowExport(true) }] : []),
+  ]
+
   const handleEdit = (id: number) => {
     setEditingId(id)
     setShowForm(true)
@@ -198,16 +228,10 @@ export default function Clients() {
           <h1 className="page-title">{t('clients.title')}</h1>
           <span className="rounded-full bg-[var(--workspace-accent-soft)] px-3 py-1 text-sm font-medium tabular-nums text-[var(--workspace-accent)]">{totalItems}</span>
         </div>
-        {!showForm && canEdit && (
+        {!showForm && (canEdit || moreActions.length > 0) && (
           <div className="page-actions">
-            <Button
-              onClick={() => setShowImportModal(true)}
-              variant="secondary"
-            >
-              <LuUpload className="w-4 h-4" />
-              {t('import.title')}
-            </Button>
-            <Button
+            <ActionMenu label={t('common.moreActions')} items={moreActions} />
+            {canEdit && <Button
               onClick={() => {
                 setEditingId(undefined)
                 setShowForm(true)
@@ -215,7 +239,7 @@ export default function Clients() {
               variant="primary"
             >
               {t('clients.addClient')}
-            </Button>
+            </Button>}
           </div>
         )}
       </div>
@@ -236,6 +260,28 @@ export default function Clients() {
       {selectedId !== null && <SidePanel title={t('clientWorkspace.record')} onClose={() => setSelectedId(null)} fallbackFocusId="client-directory-search">
         <ClientWorkspace key={selectedId} embeddedClientId={selectedId} onClose={() => setSelectedId(null)} />
       </SidePanel>}
+
+      <ExportModal
+        isOpen={showExport && canExport}
+        onClose={() => setShowExport(false)}
+        data={clients}
+        totalItems={totalItems}
+        loadData={loadExport}
+        columns={[
+          { key: 'full_name', label: t('clients.name') },
+          { key: 'contact_phone', label: t('clients.phone') },
+          { key: 'contact_email', label: t('clients.email') },
+          { key: 'gender', label: t('clientForm.gender') },
+          { key: 'birth_date', label: t('clientForm.birthDate'), format: (val) => showDay(val) },
+        ]}
+        filename={`clients-${today()}`}
+        title={t('export.clientReport')}
+        reportTypes={[
+          t('export.clientProfile'),
+          t('export.clientContacts'),
+          t('export.clientVisits'),
+        ]}
+      />
 
       {showImportModal && canEdit && (
         <ImportClientsModal
@@ -295,28 +341,6 @@ export default function Clients() {
                   <option value="female">{t('clients.female')}</option>
                   <option value="other">{t('clients.other')}</option>
                 </Select>
-                {totalItems > 0 && (
-                  <ExportButton
-                    data={clients}
-                    totalItems={totalItems}
-                    loadData={loadExport}
-                    columns={[
-                      { key: 'full_name', label: t('clients.name') },
-                      { key: 'contact_phone', label: t('clients.phone') },
-                      { key: 'contact_email', label: t('clients.email') },
-                      { key: 'gender', label: t('clientForm.gender') },
-                      { key: 'birth_date', label: t('clientForm.birthDate'), format: (val) => showDay(val) },
-                    ]}
-                    filename={`clients-${today()}`}
-                    title={t('export.clientReport')}
-                    reportTypes={[
-                      t('export.clientProfile'),
-                      t('export.clientContacts'),
-                      t('export.clientVisits'),
-                    ]}
-                    dataType={searchQuery || genderFilter ? 'filtered' : 'all'}
-                  />
-                )}
                 {(searchQuery || genderFilter) && (
                   <Button
                     onClick={() => {
@@ -357,7 +381,7 @@ export default function Clients() {
                   onSort={handleSort}
                   className="px-4 sm:px-5 hidden md:table-cell"
                 />
-                <th className="px-4 sm:px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell lg:w-[12%] dark:text-gray-400">
+                <th className="px-4 sm:px-5 py-3 text-left text-xs font-medium uppercase text-[var(--workspace-muted)] hidden lg:table-cell lg:w-[12%]">
                   {t('loyalty.points')}
                 </th>
 
@@ -367,23 +391,23 @@ export default function Clients() {
               {!isError && !isLoading && (
                 paginatedData.map((client) => (
                 <tr key={client.id} className="hover:bg-[var(--workspace-bg)]">
-                  <td className="px-4 py-3 text-sm font-semibold sm:px-5">
+                  <td className="px-4 py-2 text-sm font-semibold sm:px-5">
                     <button type="button" onClick={() => openWorkspace(client.id)} aria-label={`${t('clients.open')}: ${client.full_name}`}
                       className="group flex w-full min-w-0 items-center gap-3 text-left hover:text-[var(--workspace-accent)]">
-                      <Avatar name={client.full_name} seed={client.id} size={36} />
+                      <Avatar name={client.full_name} seed={client.id} size={32} />
                       <span className="min-w-0 flex-1 [overflow-wrap:anywhere]"><span>{client.full_name}</span>
                         <span className="mt-0.5 block text-xs font-normal text-[var(--workspace-muted)] sm:hidden">{client.contact_phone || client.contact_email || '—'}</span>
                       </span>
                       <LuChevronRight className="h-4 w-4 shrink-0 text-[var(--workspace-muted)]" />
                     </button>
                   </td>
-                  <td className="px-4 sm:px-5 py-3 truncate text-sm text-gray-500 hidden sm:table-cell dark:text-gray-400">
+                  <td className="px-4 sm:px-5 py-2 truncate text-sm tabular-nums text-[var(--workspace-muted)] hidden sm:table-cell">
                     {client.contact_phone || '-'}
                   </td>
-                  <td className="px-4 sm:px-5 py-3 truncate text-sm text-gray-500 hidden md:table-cell dark:text-gray-400">
+                  <td className="px-4 sm:px-5 py-2 truncate text-sm text-[var(--workspace-muted)] hidden md:table-cell">
                     {client.contact_email || '-'}
                   </td>
-                  <td className="px-4 sm:px-5 py-3 text-sm text-gray-500 hidden lg:table-cell dark:text-gray-400">
+                  <td className="px-4 sm:px-5 py-2 text-sm text-[var(--workspace-muted)] hidden lg:table-cell">
                     <ClientLoyaltyBalance clientId={client.id} />
                   </td>
 

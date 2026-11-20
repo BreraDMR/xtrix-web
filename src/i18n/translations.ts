@@ -796,6 +796,8 @@ export type TranslationKey =
   | 'clientWorkspace.nextVisit'
   | 'clientWorkspace.noUpcoming'
   | 'clientWorkspace.history'
+  | 'clientWorkspace.historyLimited'
+  | 'clientWorkspace.lastVisit'
   | 'clientWorkspace.noVisits'
   | 'clientWorkspace.details'
   | 'clientWorkspace.hideDetails'
@@ -1398,6 +1400,7 @@ export type TranslationKey =
   | 'common.close'
   | 'common.days'
   | 'common.actions'
+  | 'common.moreActions'
   | 'common.required_field'
   | 'common.error_saving'
   | 'landing.preview.sampleNotice'
@@ -3299,6 +3302,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'clientWorkspace.nextVisit': { en: 'Next visit', ru: 'Ближайший визит', cz: 'Nejbližší návštěva' },
   'clientWorkspace.noUpcoming': { en: 'No upcoming visits', ru: 'Ближайших визитов нет', cz: 'Žádná nadcházející návštěva' },
   'clientWorkspace.history': { en: 'Visit history', ru: 'История визитов', cz: 'Historie návštěv' },
+  'clientWorkspace.historyLimited': { en: 'Showing the latest {count} past visits', ru: 'Показаны последние {count} прошедших визитов', cz: 'Zobrazeno posledních {count} proběhlých návštěv' },
+  'clientWorkspace.lastVisit': { en: 'Last visit', ru: 'Последний визит', cz: 'Poslední návštěva' },
   'clientWorkspace.noVisits': { en: 'No visits yet', ru: 'Визитов пока нет', cz: 'Zatím žádné návštěvy' },
   'clientWorkspace.details': { en: 'Details', ru: 'Подробнее', cz: 'Podrobnosti' },
   'clientWorkspace.hideDetails': { en: 'Hide', ru: 'Скрыть', cz: 'Skrýt' },
@@ -3910,6 +3915,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'common.close': { en: 'Close', ru: 'Закрыть', cz: 'Zavřít' },
   'common.days': { en: 'days', ru: 'дней', cz: 'dny' },
   'common.actions': { en: 'Actions', ru: 'Действия', cz: 'Akce' },
+  'common.moreActions': { en: 'More actions', ru: 'Другие действия', cz: 'Další akce' },
   'common.required_field': { en: 'is a required field', ru: 'обязательное поле', cz: 'je povinné pole' },
   'common.error_saving': { en: 'Error saving', ru: 'Ошибка при сохранении', cz: 'Chyba při ukládání' },
   'common.loadError': { en: 'Unable to load data', ru: 'Не удалось загрузить данные', cz: 'Data se nepodařilo načíst' },
