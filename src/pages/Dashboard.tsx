@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { LuArrowRight, LuCalendar, LuCalendarCheck, LuPlus, LuUsers, LuWallet } from 'react-icons/lu'
+import { LuArrowRight, LuCalendar, LuCalendarCheck, LuUsers, LuWallet } from 'react-icons/lu'
 import api from '../api/client'
 import { apiErrorStatus } from '../api/errors'
 import type { Schema } from '../api/types'
 import Card from '../ui/Card'
-import Button from '../ui/Button'
 import SidePanel from '../ui/SidePanel'
 import QueryError from '../components/QueryError'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -118,7 +117,7 @@ export default function Dashboard() {
   const access = useWorkspaceAccessContext()
   const canEdit = !access || access.crm_mode === 'full'
   const queryClient = useQueryClient()
-  const [form, setForm] = useState<{ visitId?: number } | null>(null)
+  const [editingVisit, setEditingVisit] = useState<number | null>(null)
   if (!token) return null
   if (business.isPending) return <LoadingSpinner size="lg" />
   if (business.isError) return <QueryError retry={business.refetch} />
@@ -132,7 +131,7 @@ export default function Dashboard() {
   const firstName = user?.full_name?.trim().split(/\s+/)[0]
   const today = new Intl.DateTimeFormat(locale === 'cz' ? 'cs-CZ' : locale === 'ru' ? 'ru-RU' : 'en-GB', { timeZone, weekday: 'long', day: 'numeric', month: 'long' }).format(now)
   const savedVisit = () => {
-    setForm(null)
+    setEditingVisit(null)
     for (const key of ['visits', 'visits-statistics', 'profit-current-month', 'clients-statistics']) {
       void queryClient.invalidateQueries({ queryKey: [key] })
     }
@@ -145,18 +144,17 @@ export default function Dashboard() {
       </div>
       <div className="page-actions">
         <Link to="/app/calendar" aria-label={t('dashboard.openCalendar')} className="ui-button ui-button-secondary"><LuCalendar />{t('nav.calendar')}</Link>
-        {canEdit && <Button onClick={() => setForm({})}><LuPlus />{t('visits.newVisit')}</Button>}
       </div>
     </div>
     <Welcome />
     <Checklist />
-    <TodayAgenda timeZone={timeZone} onEdit={visitId => setForm({ visitId })} />
+    <TodayAgenda timeZone={timeZone} onEdit={setEditingVisit} />
     <div className="mt-5"><ServiceStep /><StaffStep /></div>
     <WeekOverview timeZone={timeZone} />
     <BusinessOverview />
     <ProductTour />
-    {form && canEdit && <SidePanel title={t(form.visitId ? 'visits.editVisit' : 'visits.newVisit')} onClose={() => setForm(null)}>
-      <VisitForm visitId={form.visitId} onSuccess={savedVisit} onCancel={() => setForm(null)} />
+    {editingVisit !== null && canEdit && <SidePanel title={t('visits.editVisit')} onClose={() => setEditingVisit(null)}>
+      <VisitForm visitId={editingVisit} onSuccess={savedVisit} onCancel={() => setEditingVisit(null)} />
     </SidePanel>}
   </div>
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ComponentType } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '../store/authStore'
 import { signOut } from '../api/client'
 import { useTranslation } from '../hooks/useTranslation'
@@ -12,8 +13,12 @@ import AccessNotice from './subscription/AccessNotice'
 import PilotSubscription from './subscription/PilotSubscription'
 import LoadingSpinner from './LoadingSpinner'
 import QueryError from './QueryError'
+import VisitForm from './VisitForm'
+import Button from '../ui/Button'
+import SidePanel from '../ui/SidePanel'
+import { useLabels } from '../i18n/labels'
 import {
-  LuBell, LuBriefcase, LuCalendar, LuChartLine, LuChevronLeft, LuChevronRight, LuCircleDollarSign, LuCircleUser, LuClipboardList, LuClock, LuDoorOpen, LuHandshake, LuHeart, LuIdCard, LuLayoutGrid, LuLogOut, LuMegaphone, LuMenu, LuReceiptText, LuSettings, LuShieldCheck, LuShoppingCart, LuUpload, LuUserPen, LuUserPlus, LuWallet, LuX,
+  LuBell, LuBriefcase, LuCalendar, LuChartLine, LuChevronLeft, LuChevronRight, LuCircleDollarSign, LuCircleUser, LuClipboardList, LuClock, LuDoorOpen, LuHandshake, LuHeart, LuIdCard, LuLayoutGrid, LuLogOut, LuMegaphone, LuMenu, LuPlus, LuReceiptText, LuSettings, LuShieldCheck, LuShoppingCart, LuUpload, LuUserPen, LuUserPlus, LuWallet, LuX,
 } from 'react-icons/lu'
 
 const icons: Record<string, ComponentType<{ className?: string }>> = {
@@ -37,6 +42,9 @@ export default function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { role: roleLabel } = useLabels()
+  const queryClient = useQueryClient()
+  const [isCreatingVisit, setIsCreatingVisit] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCompact, setIsCompact] = useSidebarPreference()
   const [offline, setOffline] = useState(!navigator.onLine)
@@ -100,24 +108,29 @@ export default function Layout() {
     ...(managesBusiness ? [
       { path: '/app/employees', label: t('nav.employees') },
       { path: '/app/inventory', label: t('nav.inventory') },
-      { path: '/app/finance', label: t('nav.finance') },
-      { path: '/app/analytics', label: t('nav.analytics') },
       { path: '/app/loyalty', label: t('nav.loyalty') },
     ] : []),
     ...(managesBusiness && !access?.pilot_mode ? [{ path: '/app/campaigns', label: t('nav.campaigns') }] : []),
+  ]
+  // money and history pages people open now and then, not every day
+  const reportItems = [
+    ...(managesBusiness ? [
+      { path: '/app/finance', label: t('nav.finance') },
+      { path: '/app/analytics', label: t('nav.analytics') },
+    ] : []),
     ...(canReadAudit ? [{ path: '/app/audit', label: t('nav.audit') }] : []),
-    ...(canImport ? [{ path: '/app/import', label: t('nav.import') }] : []),
   ]
   const systemItems = [
     ...(managesBusiness ? [{ path: '/app/business', label: t('nav.business') }] : []),
     ...(managesBusiness || (user?.role === 'specialist' && !user.employer_id) ? [{ path: '/app/subscription', label: t('nav.subscription') }] : []),
     ...(!access?.pilot_mode && (managesBusiness || (user?.role === 'specialist' && !user.employer_id)) ? [{ path: '/app/notifications', label: t('nav.notifications') }] : []),
+    ...(canImport ? [{ path: '/app/import', label: t('nav.import') }] : []),
     // only people someone pays have a salary - a solo specialist works for themselves
     ...(user?.role === 'employee' || (user?.role === 'specialist' && user.employer_id) ? [{ path: '/app/my-salary', label: t('nav.my_salary') }] : []),
     ...(user?.role === 'specialist' ? [{ path: '/app/profile', label: t('nav.profile') }] : []),
     { path: '/app/settings', label: t('nav.settings') },
   ]
-  const active = [...primaryItems, ...manageItems, ...systemItems].find(({ path }) =>
+  const active = [...primaryItems, ...manageItems, ...reportItems, ...systemItems].find(({ path }) =>
     path === '/app' ? (location.pathname === '/app' || location.pathname === '/app/') : (location.pathname === path || location.pathname.startsWith(path + '/')))
   const workspaceName = business?.name || t('nav.business')
   const initials = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
@@ -130,7 +143,22 @@ export default function Layout() {
     </Link>
   })
 
+  const groups = [
+    { id: 'primary', label: t('nav.primary'), items: primaryItems },
+    { id: 'manage', label: t('nav.manage'), items: manageItems },
+    { id: 'reports', label: t('nav.reports'), items: reportItems },
+    { id: 'system', label: t('nav.system'), items: systemItems },
+  ].filter(group => group.items.length > 0)
+
   const isBilling = location.pathname === '/app/subscription'
+  // the one place a new visit starts from; calendar slots still prefill their own form
+  const canCreateVisit = access?.crm_mode === 'full'
+  const savedVisit = () => {
+    setIsCreatingVisit(false)
+    for (const key of ['visits', 'visits-statistics', 'profit-current-month', 'clients-statistics', 'client-visits', 'client-overview']) {
+      void queryClient.invalidateQueries({ queryKey: [key] })
+    }
+  }
   const isUnavailable = access?.pilot_mode && ['/app/campaigns', '/app/questionnaires', '/app/notifications'].some(path => location.pathname === path || location.pathname.startsWith(path + '/'))
 
   return (
@@ -150,12 +178,12 @@ export default function Layout() {
         </div>
         <div title={workspaceName} className="crm-business mb-2 flex shrink-0 items-center gap-2.5 rounded-xl border border-[var(--workspace-hairline)] bg-[var(--workspace-panel)] shadow-sm">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-gradient-diag text-[11px] font-semibold text-white">{initials(workspaceName)}</span>
-          <div className="crm-navtext min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 text-[10px] text-gray-500 dark:text-gray-400">{t('nav.business')}</p></div>
+          <div className="crm-navtext min-w-0"><p className="truncate text-xs font-semibold">{workspaceName}</p><p className="mt-0.5 truncate text-[10px] text-[var(--workspace-muted)]">{user?.role ? roleLabel(user.role) : t('nav.business')}</p></div>
         </div>
         <nav aria-label={t('nav.primary')} className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-5">
-          <div className="crm-navlabel">{t('nav.primary')}</div>{links(primaryItems)}
-          {manageItems.length > 0 && <><div className="crm-navlabel">{t('nav.manage')}</div>{links(manageItems)}</>}
-          <div className="crm-navlabel">{t('nav.system')}</div>{links(systemItems)}
+          {groups.map(group => <div key={group.id} role="group" aria-labelledby={`nav-group-${group.id}`}>
+            <div id={`nav-group-${group.id}`} className="crm-navlabel">{group.label}</div>{links(group.items)}
+          </div>)}
         </nav>
       </aside>
       <div className="crm-workspace flex min-h-screen min-w-0 flex-col">
@@ -174,6 +202,8 @@ export default function Layout() {
             <div className="min-w-0 items-center gap-2 text-xs text-gray-500 flex"><span className="max-w-28 truncate sm:max-w-40">{workspaceName}</span>{active && <><LuChevronRight className="hidden h-3 w-3 sm:block" /><span className="hidden truncate text-gray-800 sm:block dark:text-gray-200">{active.label}</span></>}</div>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+            {canCreateVisit && <Button aria-label={t('visits.newVisit')} title={t('visits.newVisit')} className="max-sm:!px-2.5"
+              onClick={() => setIsCreatingVisit(true)}><LuPlus aria-hidden="true" /><span className="hidden sm:inline">{t('visits.newVisit')}</span></Button>}
             {access && access.crm_mode !== 'blocked' && <AssistantLauncher />}
             <div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-brand-gradient-diag text-[11px] font-semibold text-white">{initials(user?.full_name || 'U')}</span><span className="hidden max-w-40 truncate text-[13px] font-medium sm:inline">{user?.full_name}</span></div>
             <button className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] text-[var(--workspace-muted)] transition-colors hover:bg-[var(--workspace-hover)] hover:text-[var(--workspace-ink)]" onClick={() => { signOut(); navigate('/login', { replace: true }) }}><LuLogOut aria-hidden="true" className="h-4 w-4" />{t('nav.logout')}</button>
@@ -191,6 +221,9 @@ export default function Layout() {
                 </>}
         </main>
       </div>
+      {isCreatingVisit && canCreateVisit && <SidePanel title={t('visits.newVisit')} onClose={() => setIsCreatingVisit(false)}>
+        <VisitForm onSuccess={savedVisit} onCancel={() => setIsCreatingVisit(false)} />
+      </SidePanel>}
       <nav className="crm-mobile-nav" aria-label={t('nav.quick')}>
         {links(primaryItems.filter(item => ['/app', '/app/calendar', '/app/clients'].includes(item.path)))}
         <button type="button" aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}

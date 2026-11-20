@@ -1,4 +1,4 @@
-import { beforeEach, expect, it, vi } from 'vitest'
+import { afterAll, afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -10,6 +10,21 @@ vi.mock('../api/client', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../api/client')>()),
   default: { get: vi.fn(), post: vi.fn() },
 }))
+vi.mock('../components/VisitForm', () => ({ default: ({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) =>
+  <div><p>Creating a visit</p><button onClick={onSuccess}>Save fixture</button><button onClick={onCancel}>Cancel fixture</button></div> }))
+
+// jsdom has no modal dialogs, the side panel only needs open/close
+const originalShow = Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'showModal')
+const originalClose = Object.getOwnPropertyDescriptor(HTMLDialogElement.prototype, 'close')
+Object.defineProperty(HTMLDialogElement.prototype, 'showModal', { configurable: true, value: function(this: HTMLDialogElement) { this.open = true } })
+Object.defineProperty(HTMLDialogElement.prototype, 'close', { configurable: true, value: function(this: HTMLDialogElement) { this.open = false } })
+afterAll(() => {
+  if (originalShow) Object.defineProperty(HTMLDialogElement.prototype, 'showModal', originalShow)
+  else Reflect.deleteProperty(HTMLDialogElement.prototype, 'showModal')
+  if (originalClose) Object.defineProperty(HTMLDialogElement.prototype, 'close', originalClose)
+  else Reflect.deleteProperty(HTMLDialogElement.prototype, 'close')
+})
+afterEach(() => { document.body.style.overflow = '' })
 
 function renderLayout() {
   return renderWithProviders(
@@ -129,4 +144,67 @@ it('links the specialist profile only for specialists', async () => {
   renderLayout()
   expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
   expect(nav().queryByRole('link', { name: 'Profile' })).not.toBeInTheDocument()
+})
+
+const groupLinks = (name: string) => within(within(screen.getByRole('navigation', { name: 'PRIMARY' })).getByRole('group', { name }))
+  .getAllByRole('link').map(link => link.getAttribute('aria-label'))
+
+it('splits daily work from management, reports and system pages for an owner', async () => {
+  renderLayout()
+  expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
+  expect(groupLinks('PRIMARY')).toEqual(['Today', 'Calendar', 'Clients', 'Visits', 'Waitlist'])
+  expect(groupLinks('MANAGE')).toEqual(['Services', 'Schedule', 'Questionnaires', 'Employees', 'Products', 'Loyalty', 'Campaigns'])
+  expect(groupLinks('REPORTS')).toEqual(['Payments', 'Analytics', 'Action log'])
+  expect(groupLinks('SYSTEM')).toEqual(['Business', 'Billing', 'Notifications', 'Import', 'Settings'])
+})
+
+it('keeps staff on daily pages without empty report or manage groups', async () => {
+  signIn({ id: 5, role: 'employee', employer_id: 9 })
+  renderLayout()
+  expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
+  expect(groupLinks('PRIMARY')).toEqual(['Today', 'Calendar', 'Clients', 'Visits'])
+  expect(groupLinks('MANAGE')).toEqual(['Services'])
+  expect(screen.queryByRole('group', { name: 'REPORTS' })).not.toBeInTheDocument()
+  expect(groupLinks('SYSTEM')).toEqual(['My Salary', 'Settings'])
+})
+
+it('says which role the signed-in person works in', async () => {
+  const { unmount } = renderLayout()
+  const sidebar = () => within(screen.getByRole('complementary', { name: 'PRIMARY' }))
+  expect(await sidebar().findByText('Business owner')).toBeInTheDocument()
+  unmount()
+  signIn({ id: 5, role: 'employee', employer_id: 9 })
+  renderLayout()
+  expect(await sidebar().findByText('Employee')).toBeInTheDocument()
+  expect(sidebar().queryByText('Business owner')).not.toBeInTheDocument()
+})
+
+it('creates a visit from one header button on any page and returns focus to it', async () => {
+  const view = renderLayout()
+  expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
+  const invalidate = vi.spyOn(view.queryClient, 'invalidateQueries')
+  const create = await within(screen.getByRole('banner')).findByRole('button', { name: 'New Visit' })
+  expect(screen.getAllByRole('button', { name: 'New Visit' })).toHaveLength(1)
+  await userEvent.click(create)
+  const panel = screen.getByRole('dialog', { name: 'New Visit' })
+  expect(within(panel).getByText('Creating a visit')).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
+  await userEvent.click(within(panel).getByRole('button', { name: 'Cancel fixture' }))
+  expect(screen.queryByRole('dialog', { name: 'New Visit' })).not.toBeInTheDocument()
+  expect(create).toHaveFocus()
+
+  await userEvent.click(create)
+  await userEvent.click(within(screen.getByRole('dialog', { name: 'New Visit' })).getByRole('button', { name: 'Save fixture' }))
+  expect(screen.queryByRole('dialog', { name: 'New Visit' })).not.toBeInTheDocument()
+  expect(invalidate).toHaveBeenCalledWith({ queryKey: ['visits'] })
+  expect(invalidate).toHaveBeenCalledWith({ queryKey: ['visits-statistics'] })
+})
+
+it('offers no visit creation while the workspace is read-only', async () => {
+  vi.mocked(api.get).mockImplementation(routes({ '/businesses/me': null,
+    '/subscriptions/access': { crm_mode: 'read_only', trial_end: null, read_only_until: null, can_export: false, can_use_ai: false,
+      can_manage_billing: true, checkout_available: true, pilot_mode: false, reason: null } }))
+  renderLayout()
+  expect(await screen.findByRole('heading', { name: 'Clients screen' })).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'New Visit' })).not.toBeInTheDocument()
 })
