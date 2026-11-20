@@ -145,7 +145,7 @@ for (const { language, theme, width } of CASES) {
     // keyboard path: focus a card, Enter opens the move dialog, Escape leaves it alone
     await first.focus()
     await page.keyboard.press('Enter')
-    const dialog = page.getByRole('dialog', { name: t('calendar.moveTitle') })
+    const dialog = page.getByRole('dialog', { name: t('calendar.detailsTitle') })
     await expect(dialog).toBeVisible()
     await expect(dialog.locator('input[type="time"]')).toHaveValue('09:00')
     await page.keyboard.press('Escape')
@@ -155,6 +155,9 @@ for (const { language, theme, width } of CASES) {
     const view = page.getByRole('combobox', { name: t('calendar.view') })
     await view.selectOption('week')
     await expect(page.locator('[data-calendar-grid]')).toHaveCount(7)
+    // the night colour is clipped at Monday 00:00, so this week opens at the very top to show it
+    const weekScroll = page.locator('[data-calendar-scroll]')
+    await expect.poll(() => weekScroll.evaluate(element => element.scrollTop)).toBeLessThanOrEqual(64)
     await expect(page.locator(`[data-calendar-grid="${DAY}"] [data-visit-id]`)).toHaveCount(all.length)
     expect(await pageOverflow(page)).toBeLessThanOrEqual(1)
     await page.screenshot({ path: test.info().outputPath(`calendar-week-${language}-${theme}-${width}.png`), fullPage: true })
@@ -162,6 +165,8 @@ for (const { language, theme, width } of CASES) {
     await page.getByRole('button', { name: t('calendar.next'), exact: true }).click()
     await expect(page.locator('[data-calendar-grid="2030-05-13"]')).toHaveCount(1)
     await expect(page.locator('[data-visit-id]')).toHaveCount(0)
+    // an empty week opens at the working morning, not at midnight
+    await expect.poll(() => weekScroll.evaluate(element => element.scrollTop)).toBeGreaterThan(400)
     await view.selectOption('day')
     await expect(page.locator('[data-calendar-grid="2030-05-13"]')).toHaveCount(2)
     await page.getByRole('button', { name: t('calendar.previous'), exact: true }).click()

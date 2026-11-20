@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useQueries, useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '../api/client'
 import { allPages } from '../api/allPages'
 import Calendar from '../components/Calendar'
@@ -8,7 +8,10 @@ import { zonedDayKey } from '../utils/dates'
 import type { CalendarVisit, MovePreview } from '../components/calendar/DayGrid'
 import StaffColumns, { type StaffColumn } from '../components/calendar/StaffColumns'
 import WeekGrid from '../components/calendar/WeekGrid'
-import MoveVisitDialog from '../components/calendar/MoveVisitDialog'
+import VisitDetailsDialog from '../components/calendar/VisitDetailsDialog'
+import VisitForm from '../components/VisitForm'
+import SidePanel from '../ui/SidePanel'
+import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import FormError from '../components/FormError'
 import { apiErrorMessage, apiErrorStatus } from '../api/errors'
 import type { StaffScheduleData } from '../components/calendar/schedule'
@@ -67,6 +70,11 @@ export default function CalendarPage() {
   const [dragPreview, setDragPreview] = useState<DragPreview | null>(null)
   const [moveError, setMoveError] = useState('')
   const [moveSaving, setMoveSaving] = useState(false)
+  const [editingVisit, setEditingVisit] = useState<number | null>(null)
+  const queryClient = useQueryClient()
+  // read-only/blocked workspaces still see the details, but nothing that would be refused
+  const access = useWorkspaceAccessContext()
+  const canManage = !access || access.crm_mode === 'full'
   const { data: business } = useMyBusiness()
   const timeZone = business?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
   const today = zonedDayKey(new Date(), timeZone)
@@ -322,7 +330,7 @@ export default function CalendarPage() {
               clientNames={clientNames}
               onSelectVisit={setSelectedVisit}
               preview={movePreview}
-              onDropVisit={handleDropVisit}
+              onDropVisit={canManage ? handleDropVisit : undefined}
             />
           ) : (
             <WeekGrid
@@ -332,7 +340,7 @@ export default function CalendarPage() {
               clientNames={clientNames}
               onSelectVisit={setSelectedVisit}
               preview={movePreview}
-              onDropVisit={handleDropVisit}
+              onDropVisit={canManage ? handleDropVisit : undefined}
             />
           )
         )}
@@ -372,16 +380,35 @@ export default function CalendarPage() {
       )}
 
       {selectedVisit && (
-        <MoveVisitDialog
+        <VisitDetailsDialog
           visit={selectedVisit}
           name={selectedVisitName}
+          staffName={staff.find((member) => member.id === selectedVisit.specialist_id)?.name}
           timeZone={timeZone}
+          canManage={canManage}
           onClose={() => setSelectedVisit(null)}
           onMoved={() => {
             setSelectedVisit(null)
             rangeQuery.refetch()
           }}
+          onEdit={(visitId) => {
+            setSelectedVisit(null)
+            setEditingVisit(visitId)
+          }}
         />
+      )}
+
+      {editingVisit !== null && canManage && (
+        <SidePanel title={t('visits.editVisit')} onClose={() => setEditingVisit(null)}>
+          <VisitForm
+            visitId={editingVisit}
+            onSuccess={() => {
+              setEditingVisit(null)
+              queryClient.invalidateQueries({ queryKey: ['visits'] })
+            }}
+            onCancel={() => setEditingVisit(null)}
+          />
+        </SidePanel>
       )}
     </div>
   )

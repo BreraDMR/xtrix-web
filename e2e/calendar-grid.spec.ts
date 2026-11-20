@@ -120,6 +120,17 @@ test('day and week grids keep long names, Prague time and dark theme intact', as
   // Early appointments choose the initial scroll anchor; midnight is still rendered.
   await expect(page.locator(`[data-visit-id="${fixture.dragVisitId}"]`)).toBeInViewport()
   await expect.poll(() => page.locator('[data-calendar-scroll]').evaluate(element => element.scrollTop)).toBeLessThanOrEqual(64)
+  // the 10:00 visits sit below the opened hours: a chip says so and brings them into view
+  const later = page.getByRole('button', { name: /^Later: \d+$/ })
+  await expect(later).toBeVisible()
+  await later.click()
+  await expect(ownerCard).toBeInViewport()
+  const earlier = page.getByRole('button', { name: /^Earlier: \d+$/ })
+  await expect(earlier).toBeVisible()
+  await earlier.click()
+  await expect(page.locator(`[data-visit-id="${fixture.dragVisitId}"]`)).toBeInViewport()
+  // the clock says 10:00 Prague on DAY, so both staff columns draw the now line
+  await expect(page.locator('[data-now-line]')).toHaveCount(2)
   await page.screenshot({ path: '.local-checks/redesign-calendar-dark-1280.png', fullPage: true })
 
   // a long staff name truncates inside its own header instead of widening the page
@@ -141,14 +152,19 @@ test('day and week grids keep long names, Prague time and dark theme intact', as
   await page.getByRole('combobox', { name: 'Calendar view' }).selectOption('week')
   await expect(page.locator('[data-calendar-grid]')).toHaveCount(7)
   await expect(page.locator(`[data-calendar-grid="${DAY}"] [data-visit-id="${fixture.ownerVisitId}"]`)).toBeVisible()
+  await expect(page.locator('[data-now-line]')).toHaveCount(1)
   expect(await pageOverflow(page)).toBeLessThanOrEqual(1)
   await page.getByRole('combobox', { name: 'Calendar view' }).selectOption('day')
   await expect(page.locator('[data-calendar-grid]')).toHaveCount(2)
 
   // an accessible dialog moves the visit and keeps its duration
   await ownerCard.click()
-  const dialog = page.getByRole('dialog', { name: 'Move visit' })
+  const dialog = page.getByRole('dialog', { name: 'Visit details' })
   await expect(dialog).toBeVisible()
+  // details first: who and when, in the salon zone; nothing to move until the time changes
+  await expect(dialog.getByText(CLIENT_NAME)).toBeVisible()
+  await expect(dialog.getByText('Europe/Prague')).toBeVisible()
+  await expect(dialog.getByRole('button', { name: 'Move', exact: true })).toBeDisabled()
   await expect(dialog.locator('input[type="date"]')).toHaveValue(DAY)
   await expect(dialog.locator('input[type="time"]')).toHaveValue('10:00')
   await dialog.locator('input[type="time"]').fill('16:00')
@@ -167,6 +183,15 @@ test('day and week grids keep long names, Prague time and dark theme intact', as
   await expect(dragCard).toHaveAttribute('aria-label', /01:00–02:00/)
   await dialog.getByRole('button', { name: 'Cancel' }).click()
   await expect(dialog).toBeHidden()
+
+  // the full edit form is one press away from the details
+  await ownerCard.click()
+  await dialog.getByRole('button', { name: 'Edit visit' }).click()
+  await expect(dialog).toBeHidden()
+  const editPanel = page.getByRole('dialog', { name: 'Edit visit' })
+  await expect(editPanel).toBeVisible()
+  await editPanel.getByRole('button', { name: 'Close' }).click()
+  await expect(editPanel).toBeHidden()
 
   // dragging only previews; nothing is saved until the confirmation bar says so
   let putRequests = 0
@@ -222,7 +247,7 @@ test('the day and week grids and the move dialog fit a 375px screen', async ({ p
   expect(scrollBox!.scrollWidth).toBeGreaterThan(scrollBox!.clientWidth)
 
   await ownerCard.click()
-  const dialog = page.getByRole('dialog', { name: 'Move visit' })
+  const dialog = page.getByRole('dialog', { name: 'Visit details' })
   await expect(dialog).toBeVisible()
   const box = await dialog.boundingBox()
   expect(box).not.toBeNull()

@@ -9,6 +9,8 @@ import DayGrid, {
 import { chainOverview } from './chain'
 import { addCalendarDays, calendarDate, dayTimeline } from './timeline'
 import { zonedDayKey } from '../../utils/dates'
+import { useGridViewport } from './viewport'
+import OffscreenHint from './OffscreenHint'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
 
@@ -53,6 +55,19 @@ export default function WeekGrid({
   )}`
   const gridHeight = Math.max(...days.map(date => dayTimeline(zonedDayKey(date, zone), zone).minutes)) / 60 * hourHeight
   const variedDays = days.some(date => dayTimeline(zonedDayKey(date, zone), zone).minutes !== 1440)
+  // every visit as minutes from its own day's midnight, so the week opens near work like the day does
+  const visitRanges = useMemo(() => days.flatMap(date => {
+    const timeline = dayTimeline(zonedDayKey(date, zone), zone)
+    return events.flatMap(event => {
+      const start = Date.parse(event.date_start)
+      const rawEnd = event.date_end ? Date.parse(event.date_end) : NaN
+      const end = Number.isFinite(rawEnd) && rawEnd > start ? rawEnd : start + 3_600_000
+      const from = Math.max(start, timeline.start)
+      const to = Math.min(end, timeline.end)
+      return to > from ? [{ start: (from - timeline.start) / 60_000, end: (to - timeline.start) / 60_000 }] : []
+    })
+  }), [days, events, zone])
+  const viewport = useGridViewport(zonedDayKey(weekStart, zone), visitRanges, hourHeight)
 
   return (
     <section aria-label={`${t('calendar.weekView')} ${title}`}>
@@ -63,7 +78,10 @@ export default function WeekGrid({
         </span>
       </div>
 
-      <div className="max-h-[70vh] overflow-auto rounded-[22px] border border-[var(--workspace-card-border)] shadow-[var(--workspace-card-shadow)] bg-[var(--workspace-panel)]">
+      <OffscreenHint earlier={viewport.earlier} later={viewport.later}
+        onEarlier={viewport.showEarlier} onLater={viewport.showLater} />
+      <div ref={viewport.box} onScroll={viewport.onScroll} data-calendar-scroll tabIndex={0} role="region"
+        aria-label={t('calendar.timeGrid')} className="max-h-[70vh] overflow-auto rounded-[22px] border border-[var(--workspace-card-border)] shadow-[var(--workspace-card-shadow)] bg-[var(--workspace-panel)]">
         <div
           className="grid"
           style={{ gridTemplateColumns: `3.5rem repeat(${DAYS_IN_WEEK}, minmax(8rem, 1fr))` }}

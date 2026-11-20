@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 import { format, parseISO } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
 import DayGrid, {
@@ -10,6 +10,8 @@ import { expandVisit, type CalendarEvent } from './chain'
 import { zonedDayKey } from '../../utils/dates'
 import { dayTimeline } from './timeline'
 import { buildDayOverlay, type DayOverlay, type StaffScheduleData } from './schedule'
+import { useGridViewport } from './viewport'
+import OffscreenHint from './OffscreenHint'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useLocaleStore } from '../../store/localeStore'
 
@@ -94,22 +96,21 @@ export default function StaffColumns({
   }, [columns, dayKey, schedules, visitsByStaff, zone])
   const hasSchedule = overlays.size > 0
 
-  const scroll = useRef<HTMLDivElement>(null)
-  const scrolledDay = useRef('')
-  const firstMinute = useMemo(() => {
-    const starts = events.map(event => {
-      const timeline = dayTimeline(dayKey, zone)
-      return Math.max(0, Math.min(timeline.minutes, (Date.parse(event.date_start) - timeline.start) / 60_000))
-    })
-    for (const overlay of overlays.values()) starts.push(...overlay.working.map(window => window.start))
-    return Math.max(0, Math.min(8 * 60, ...starts) - 30)
-  }, [events, overlays, dayKey, zone])
-  useEffect(() => {
-    if (!scroll.current || scrolledDay.current === dayKey) return
-    // Keep all 24 hours reachable, but open near work instead of an empty midnight.
-    scroll.current.scrollTop = firstMinute / 60 * hourHeight
-    scrolledDay.current = dayKey
-  }, [dayKey, firstMinute, hourHeight, columns.length])
+  // visit spans on the elapsed-time axis of this day; work windows only help choose where to open
+  const visitRanges = useMemo(() => {
+    const timeline = dayTimeline(dayKey, zone)
+    const clamp = (ms: number) => Math.max(0, Math.min(timeline.minutes, (ms - timeline.start) / 60_000))
+    return events.map(event => {
+      const start = Date.parse(event.date_start)
+      const end = event.date_end ? Date.parse(event.date_end) : NaN
+      return { start: clamp(start), end: clamp(Number.isFinite(end) && end > start ? end : start + 3_600_000) }
+    }).filter(range => range.end > range.start)
+  }, [events, dayKey, zone])
+  const workStarts = useMemo(
+    () => [...overlays.values()].flatMap(overlay => overlay.working.map(window => window.start)),
+    [overlays],
+  )
+  const viewport = useGridViewport(dayKey, visitRanges, hourHeight, workStarts, columns.length > 0)
 
   const gridHeight = dayTimeline(dayKey, zone).minutes / 60 * hourHeight
   const template = `3.5rem repeat(${columns.length}, minmax(12rem, 1fr))`
@@ -145,7 +146,9 @@ export default function StaffColumns({
               </span>
             </div>
           )}
-          <div ref={scroll} data-calendar-scroll tabIndex={0} role="region" aria-label={t('calendar.timeGrid')} className="max-h-[65vh] overflow-auto rounded-[22px] border border-[var(--workspace-card-border)] shadow-[var(--workspace-card-shadow)] bg-[var(--workspace-panel)]">
+          <OffscreenHint earlier={viewport.earlier} later={viewport.later}
+            onEarlier={viewport.showEarlier} onLater={viewport.showLater} />
+          <div ref={viewport.box} onScroll={viewport.onScroll} data-calendar-scroll tabIndex={0} role="region" aria-label={t('calendar.timeGrid')} className="max-h-[65vh] overflow-auto rounded-[22px] border border-[var(--workspace-card-border)] shadow-[var(--workspace-card-shadow)] bg-[var(--workspace-panel)]">
             <div className="grid" style={{ gridTemplateColumns: template }}>
               <div className="sticky left-0 top-0 z-30 border-b border-[var(--workspace-line)] bg-[var(--workspace-panel)]" />
               {columns.map((column, index) => (
