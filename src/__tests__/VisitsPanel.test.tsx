@@ -82,18 +82,13 @@ it('keeps the filtered second page mounted while opening, cancelling and saving 
   expect(screen.getByLabelText('To date')).toHaveValue('2026-10-31')
 })
 
-it('keeps the list behind a new visit and restores its opener after cancelling', async () => {
+it('leaves new visits to the workspace header instead of a second page button', async () => {
   serve()
   renderWithProviders(<Visits />)
   await screen.findByRole('cell', { name: 'Guest 001' })
-  const create = screen.getByRole('button', { name: 'New Visit' })
-  await userEvent.click(create)
-  const panel = screen.getByRole('dialog', { name: 'New Visit' })
-  expect(within(panel).getByText('Creating a visit')).toBeInTheDocument()
-  expect(screen.getByRole('table')).toBeInTheDocument()
-  await userEvent.click(within(panel).getByRole('button', { name: 'Cancel fixture' }))
-  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  expect(create).toHaveFocus()
+  // the shell owns the only "New Visit" button, see LayoutNavigation.test
+  expect(screen.queryByRole('button', { name: 'New Visit' })).not.toBeInTheDocument()
+  expect(screen.getAllByRole('button', { name: 'Edit' }).length).toBeGreaterThan(0)
 })
 
 it('keeps viewing, filters and pagination in read-only mode, without mutation or export controls', async () => {

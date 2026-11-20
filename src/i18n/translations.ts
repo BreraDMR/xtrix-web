@@ -1081,6 +1081,7 @@ export type TranslationKey =
   | 'nav.primary'
   | 'nav.manage'
   | 'nav.system'
+  | 'nav.reports'
   | 'settings.title'
   | 'settings.subtitle'
   | 'settings.language'
@@ -3573,6 +3574,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.primary': { en: 'PRIMARY', ru: 'ОСНОВНОЕ', cz: 'ZÁKLADNÍ' },
   'nav.manage': { en: 'MANAGE', ru: 'УПРАВЛЕНИЕ', cz: 'SPRÁVA' },
   'nav.system': { en: 'SYSTEM', ru: 'СИСТЕМА', cz: 'SYSTÉM' },
+  'nav.reports': { en: 'REPORTS', ru: 'ОТЧЁТЫ', cz: 'REPORTY' },
   
   'settings.title': { en: 'Settings', ru: 'Настройки', cz: 'Nastavení' },
   'settings.subtitle': { en: 'Manage your account preferences', ru: 'Управляйте настройками аккаунта', cz: 'Spravujte nastavení účtu' },

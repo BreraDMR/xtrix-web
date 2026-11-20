@@ -12,7 +12,7 @@ import Select from '../ui/Select'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
 import SidePanel from '../ui/SidePanel'
-import { LuPencil, LuPlus } from 'react-icons/lu'
+import { LuPencil } from 'react-icons/lu'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TableSortHeader from '../components/TableSortHeader'
@@ -151,12 +151,6 @@ export default function Visits() {
               dataType={hasFilters ? 'filtered' : 'all'}
             />
           )}
-          {canEdit && (
-            <Button onClick={() => { setEditingId(undefined); setShowForm(true) }}>
-              <LuPlus aria-hidden="true" />
-              {t('visits.newVisit')}
-            </Button>
-          )}
         </div>
       </div>
 
@@ -267,7 +261,7 @@ export default function Visits() {
       </Card>
 
       {canEdit && showForm && (
-        <SidePanel fallbackFocusId="visit-directory-search" title={editingId === undefined ? t('visits.newVisit') : t('visits.editVisit')} onClose={closeForm}>
+        <SidePanel fallbackFocusId="visit-directory-search" title={t('visits.editVisit')} onClose={closeForm}>
           <VisitForm key={editingId ?? 'new'} visitId={editingId} onSuccess={handleSuccess} onCancel={closeForm} />
         </SidePanel>
       )}
