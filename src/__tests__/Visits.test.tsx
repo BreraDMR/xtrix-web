@@ -67,4 +67,16 @@ describe('Visits client names', () => {
     expect(await screen.findByText('Guest 125')).toBeInTheDocument()
     expect(screen.queryByText('Guest 021')).not.toBeInTheDocument()
   })
+
+  it('goes back to the first page when the page size changes', async () => {
+    const rows = Array.from({ length: 125 }, (_, index) => ({ ...visits[0], id: index + 1,
+      client_name: `Guest ${String(index + 1).padStart(3, '0')}` }))
+    vi.mocked(api.get).mockImplementation(visitRoutes(rows))
+    renderWithProviders(<Visits />)
+    await userEvent.click(await screen.findByRole('button', { name: '3' }))
+    expect(await screen.findByText('Guest 041')).toBeInTheDocument()
+    await userEvent.selectOptions(screen.getByLabelText('Per page:'), '50')
+    expect(await screen.findByText('Guest 001')).toBeInTheDocument()
+    expect(screen.queryByText('Guest 101')).not.toBeInTheDocument()
+  })
 })
