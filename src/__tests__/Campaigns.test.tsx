@@ -256,6 +256,32 @@ describe('public unsubscribe page', () => {
     expect(screen.queryByRole('button', { name: 'Unsubscribe' })).not.toBeInTheDocument()
   })
 
+  it.each(['hash', 'query'])('follows a new %s link in the same tab', async (kind) => {
+    window.history.replaceState(null, '', '/unsubscribe#token=7.1.first')
+    vi.mocked(api.get).mockImplementation(((_url: string, config: { params: { token: string } }) => {
+      const second = config.params.token === '8.2.second'
+      return Promise.resolve({ data: {
+        business_name: second ? 'Beta Salon' : 'Alpha Salon',
+        email: second ? 'b***@example.com' : 'a***@example.com',
+        status: second ? 'subscribed' : 'unsubscribed', channel: 'email',
+      } })
+    }) as never)
+    vi.mocked(api.post).mockResolvedValue({ data: {
+      business_name: 'Beta Salon', email: 'b***@example.com',
+      status: 'unsubscribed', channel: 'email',
+    } } as never)
+    renderWithProviders(<Unsubscribe />)
+    expect(await screen.findByText('Alpha Salon')).toBeInTheDocument()
+    window.history.replaceState(null, '', `/unsubscribe${kind === 'hash' ? '#' : '?'}token=8.2.second`)
+    window.dispatchEvent(new Event(kind === 'hash' ? 'hashchange' : 'popstate'))
+    expect(await screen.findByText('Beta Salon')).toBeInTheDocument()
+    expect(screen.queryByText('Alpha Salon')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Unsubscribe' }))
+    await waitFor(() => expect(api.post).toHaveBeenCalledWith('/public/campaigns/unsubscribe', {
+      token: '8.2.second',
+    }))
+  })
+
   it('rejects an invalid unsubscribe link without offering the action', async () => {
     window.history.replaceState(null, '', '/unsubscribe#token=broken')
     vi.mocked(api.get).mockRejectedValue(apiError(400, 'This unsubscribe link is invalid'))
