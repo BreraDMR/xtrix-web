@@ -2157,6 +2157,23 @@ export type TranslationKey =
   | 'audit.field.answeredCount'
   | 'audit.field.photoUrl'
   | 'audit.field.note'
+  | 'audit.action.visitDeleted'
+  | 'audit.action.visitRestored'
+  | 'audit.action.visitRepriced'
+  | 'audit.action.visitPriceCorrected'
+  | 'audit.action.visitSettlementEntryRecorded'
+  | 'audit.action.legacyVisitCurrencyConfirmed'
+  | 'audit.entity.business'
+  | 'audit.field.correctionId'
+  | 'audit.field.priorPaymentAction'
+  | 'audit.field.entryId'
+  | 'audit.field.entryKind'
+  | 'audit.field.updatedVisits'
+  | 'audit.value.charge'
+  | 'audit.value.manualReceipt'
+  | 'audit.value.manualRefund'
+  | 'audit.value.refundDue'
+  | 'audit.value.retained'
   | 'nav.import'
   | 'importWizard.title'
   | 'importWizard.description'
@@ -5554,6 +5571,39 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'audit.field.answeredCount': { en: 'Answered count', ru: 'Количество ответов', cz: 'Počet odpovědí' },
   'audit.field.photoUrl': { en: 'Photo', ru: 'Фотография', cz: 'Fotografie' },
   'audit.field.note': { en: 'Note', ru: 'Заметка', cz: 'Poznámka' },
+  'audit.action.visitDeleted': { en: 'Visit deleted', ru: 'Визит удалён', cz: 'Návštěva smazána' },
+  'audit.action.visitRestored': { en: 'Visit restored', ru: 'Визит восстановлен', cz: 'Návštěva obnovena' },
+  'audit.action.visitRepriced': { en: 'Visit price changed', ru: 'Цена визита изменена', cz: 'Cena návštěvy změněna' },
+  'audit.action.visitPriceCorrected': {
+    en: 'Visit price corrected',
+    ru: 'Цена визита исправлена',
+    cz: 'Cena návštěvy opravena',
+  },
+  'audit.action.visitSettlementEntryRecorded': {
+    en: 'Visit payment entry recorded',
+    ru: 'Записана оплата по визиту',
+    cz: 'Zaznamenána platba k návštěvě',
+  },
+  'audit.action.legacyVisitCurrencyConfirmed': {
+    en: 'Old visit currency confirmed',
+    ru: 'Валюта старых визитов подтверждена',
+    cz: 'Měna starých návštěv potvrzena',
+  },
+  'audit.entity.business': { en: 'Business', ru: 'Бизнес', cz: 'Firma' },
+  'audit.field.correctionId': { en: 'Correction ID', ru: 'ID исправления', cz: 'ID opravy' },
+  'audit.field.priorPaymentAction': {
+    en: 'Earlier payment',
+    ru: 'Прежняя оплата',
+    cz: 'Dřívější platba',
+  },
+  'audit.field.entryId': { en: 'Entry ID', ru: 'ID записи', cz: 'ID záznamu' },
+  'audit.field.entryKind': { en: 'Entry type', ru: 'Тип записи', cz: 'Typ záznamu' },
+  'audit.field.updatedVisits': { en: 'Updated visits', ru: 'Обновлено визитов', cz: 'Upravené návštěvy' },
+  'audit.value.charge': { en: 'Charge', ru: 'Начисление', cz: 'Poplatek' },
+  'audit.value.manualReceipt': { en: 'Manual receipt', ru: 'Ручная оплата', cz: 'Ruční příjem' },
+  'audit.value.manualRefund': { en: 'Manual refund', ru: 'Ручной возврат', cz: 'Ruční vrácení' },
+  'audit.value.refundDue': { en: 'Refund due', ru: 'Нужен возврат', cz: 'Nutné vrácení' },
+  'audit.value.retained': { en: 'Kept', ru: 'Оставлена', cz: 'Ponechána' },
   'nav.import': { en: 'Import', ru: 'Импорт', cz: 'Import' },
   'importWizard.title': {
     en: 'Import clients and visit history',

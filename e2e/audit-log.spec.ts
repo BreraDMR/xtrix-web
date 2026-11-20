@@ -205,6 +205,41 @@ test('a visit change becomes an event, exports stay clean and the second salon s
   await expect(page.getByText('No entries match the selected filters.')).toBeVisible()
 })
 
+test('deleting and restoring a visit leaves one named event each', async ({ page, request }) => {
+  const fixture = await seedAuditSalon(request)
+  const remove = async () =>
+    request.delete(`${apiUrl}/visits/${fixture.visitId}`, {
+      headers: { ...fixture.owner.headers, 'X-Request-ID': 'e2e-visit-delete-1' },
+    })
+  const deleted = await remove()
+  expect(deleted.ok(), await deleted.text()).toBeTruthy()
+  // a replayed delete finds nothing and must not add a second row
+  expect((await remove()).status()).toBe(404)
+  for (let i = 0; i < 2; i += 1) {
+    const restored = await request.post(`${apiUrl}/visits/${fixture.visitId}/restore`, {
+      headers: fixture.owner.headers,
+    })
+    expect(restored.ok(), await restored.text()).toBeTruthy()
+  }
+
+  const journal = await auditPage(request, fixture.owner)
+  const actions = journal.items.map((item) => item.action)
+  expect(actions.filter((action) => action === 'visit.deleted')).toHaveLength(1)
+  expect(actions.filter((action) => action === 'visit.restored')).toHaveLength(1)
+  const deletedEvent = journal.items.find((item) => item.action === 'visit.deleted')
+  expect(deletedEvent?.request_id).toBe('e2e-visit-delete-1')
+  expect(deletedEvent?.actor_name).toBe('Audit Owner')
+  expect(JSON.stringify(journal)).not.toContain(fixture.visitNote)
+
+  await openAs(page, fixture.owner, '/app/audit')
+  const table = page.getByRole('table')
+  await expect(table.getByText('Visit deleted')).toBeVisible()
+  await expect(table.getByText('Visit restored')).toBeVisible()
+  await expect(table.getByText('e2e-visit-delete-1')).toBeVisible()
+  await expect(table).not.toContainText('visit.deleted')
+  await expect(table).not.toContainText('visit.restored')
+})
+
 test('staff cannot open the action log and has no navigation entry', async ({ page, request }) => {
   const employee = seedUser('employee_a_noperm')
   const session = await apiLogin(request, employee.email, employee.password)
