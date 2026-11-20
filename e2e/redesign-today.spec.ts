@@ -64,7 +64,8 @@ function visitRow(region: Locator, name: string) {
   return region.getByRole('listitem').filter({ hasText: name })
 }
 async function fits(page: Page) {
-  expect(await page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
+  // right after a resize React may still hold the old matchMedia layout for a frame or two
+  await expect.poll(() => page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
     - document.documentElement.clientWidth)).toBeLessThanOrEqual(1)
 }
 async function screenshot(page: Page, name: string) {
@@ -97,7 +98,8 @@ test('workday filters by Prague day, opens keyboard panels and refreshes after a
   await expect(visitRow(today, NAMES.early)).toContainText(OWNER)
   await expect(visitRow(today, NAMES.late)).toContainText(STAFF)
   const overview = page.getByRole('region', { name: 'Business overview', exact: true })
-  await expect(overview.locator('dd')).toHaveCount(11)
+  // month 2 + visit history 4 + clients 2 since the October redesign of the overview cards
+  await expect(overview.locator('dd')).toHaveCount(8)
   await expect(overview.locator('dl > div').filter({ has: page.locator('dt', { hasText: /^Total Visits$/ }) }).locator('dd')).toHaveText('4')
   const ordered = await page.evaluate(() => {
     const agenda = document.querySelector('section[aria-label="Today\'s appointments"]')
@@ -186,7 +188,7 @@ for (const locale of ['en', 'ru', 'cz'] as const) {
       else await expect(page.locator('html')).not.toHaveClass(/dark/)
       const today = agenda(page, copy.agenda)
       await expect(today.getByRole('listitem')).toHaveCount(2)
-      await expect(page.getByRole('region', { name: copy.overview, exact: true }).locator('dd')).toHaveCount(11)
+      await expect(page.getByRole('region', { name: copy.overview, exact: true }).locator('dd')).toHaveCount(8)
       for (const width of [1280, 375]) {
         await page.setViewportSize({ width, height: 900 })
         await page.evaluate(() => window.scrollTo(0, 0))
