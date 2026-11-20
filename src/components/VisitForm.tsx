@@ -15,6 +15,7 @@ import LoadingSpinner from './LoadingSpinner'
 import QuestionnaireAnswers from './clients/QuestionnaireAnswers'
 import { useTranslation } from '../hooks/useTranslation'
 import Button from '../ui/Button'
+import { LuChevronDown } from 'react-icons/lu'
 
 interface VisitFormProps {
   visitId?: number
@@ -776,9 +777,12 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
       'aria-describedby': ours ? errorId : server ? fid(`${name}-error`) : undefined,
     }
   }
-  const fieldError = (name: string) => fieldErrors[name]
-    ? <div id={fid(`${name}-error`)}><FormError message={fieldErrors[name]} /></div>
-    : null
+  // our own refusal is said right under the field it is about, so it's seen where the focus lands
+  const fieldError = (name: string) => invalidField === name && formError
+    ? <div role="alert" id={errorId}><FormError message={formError} /></div>
+    : fieldErrors[name]
+      ? <div id={fid(`${name}-error`)}><FormError message={fieldErrors[name]} /></div>
+      : null
   const labelClass = 'mb-1 block text-sm font-medium'
   const sectionClass = 'space-y-3 border-t border-[var(--workspace-line)] pt-4'
   const subheadClass = 'text-sm font-medium text-[var(--workspace-ink)]'
@@ -820,7 +824,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {formError && <div role="alert" id={errorId}><FormError message={formError} /></div>}
+      {formError && !invalidField && <div role="alert"><FormError message={formError} /></div>}
       {clientsFailed && <QueryError retry={loadClients} />}
       {servicesFailed && <QueryError retry={loadServices} />}
       <div>
@@ -857,6 +861,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                 className="ui-input"
                 disabled={searchingClient}
               />
+              {fieldError('client_search')}
 
               {searchingClient && (
                 <div className={`flex items-center gap-2 ${hintClass} text-sm`}>
@@ -1234,7 +1239,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
               <span className="block text-sm font-medium text-[var(--workspace-accent)]">{t('visits.moreOptions')}</span>
               <span className={`block ${hintClass}`}>{t('visits.moreOptionsHint')}</span>
             </span>
-            <span aria-hidden="true" className="text-[var(--workspace-muted)]">{showMore ? '▴' : '▾'}</span>
+            <LuChevronDown aria-hidden="true" className={`h-5 w-5 shrink-0 text-[var(--workspace-muted)] transition-transform ${showMore ? 'rotate-180' : ''}`} />
           </button>
         </div>
       )}
@@ -1267,6 +1272,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                       {t('gift.lookup')}
                     </Button>
                   </div>
+                  {fieldError('gift')}
                   {giftError && <div role="alert" className="mt-2"><FormError message={giftError} /></div>}
                 </>
               ) : (
@@ -1327,6 +1333,7 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
                   <p className="mt-2 text-sm font-medium text-emerald-900 dark:text-emerald-100">
                     {t('gift.amountDue')}: {formatCurrency(amountDue ?? 0, currency)}
                   </p>
+                  {fieldError('gift_amount')}
                   {giftScopeMismatch && (
                     <div role="alert" className="mt-2"><FormError message={t('gift.scopeMismatch')} /></div>
                   )}

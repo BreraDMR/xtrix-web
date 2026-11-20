@@ -138,7 +138,10 @@ test('workday filters by Prague day, opens keyboard panels and refreshes after a
   await waitForFormData(page)
   await field(panel, /^Client/).selectOption(String(data.newClientId))
   await field(panel, /^Service$/).selectOption(String(data.serviceId))
-  // Selecting the service is asynchronous; wait for its actual details before typing dates.
+  // Selecting the service is asynchronous; once its details are in, the own-name field folds
+  // under More options (DES-08) and already carries the service name.
+  await expect(panel.getByLabel(/^Service Name/)).toHaveCount(0)
+  await panel.getByRole('button', { name: /More options/ }).click()
   await expect(field(panel, /^Service Name/)).toHaveValue(SERVICE)
   await field(panel, /^Start Date & Time/).fill(`${DAY}T14:00`)
   await field(panel, /^End Date & Time/).fill(`${DAY}T14:30`)
