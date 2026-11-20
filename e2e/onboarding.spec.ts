@@ -138,10 +138,22 @@ test('solo specialist has no business step and can hide the checklist for good',
   await expect(page.getByRole('link', { name: 'Add service' })).toBeVisible()
   await expect(page.locator('ol').getByText('Add your first service', { exact: true })).toBeVisible()
 
+  // the checklist says where hidden steps come back, and that link lands right on the card
+  await page.getByText('Hide them any time').getByRole('link', { name: 'Settings', exact: true }).click()
+  await expect(page).toHaveURL(/\/app\/settings#settings-onboarding$/)
+  await expect(page.getByRole('heading', { name: 'Hints and tour' })).toBeInViewport()
+  await page.goBack()
+
   await page.getByRole('button', { name: 'Hide checklist' }).click()
   await expect(page.getByRole('heading', { name: 'Getting started' })).toHaveCount(0)
   await page.reload()
   await expect(page.getByRole('heading', { name: 'Getting started' })).toHaveCount(0)
+
+  await page.goto('/app/settings#settings-onboarding')
+  await page.getByRole('button', { name: 'Show checklist again' }).click()
+  await expect(page.getByText('Updated', { exact: true })).toBeVisible()
+  await page.goto('/app')
+  await expect(page.getByRole('heading', { name: 'Getting started' })).toBeVisible()
 })
 
 test('staff member sees only a pointer to the workspace and keeps it dismissed', async ({ page, request }) => {
