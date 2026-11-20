@@ -50,8 +50,9 @@ export default function ExportButton<T extends object>({
         className={`ui-button ui-button-secondary ${className}`}
         title={t('common.export')}
       >
-        <LuDownload className="w-4 h-4" />
-        <span className="hidden sm:inline">{t('common.export')}</span>
+        <LuDownload aria-hidden="true" className="w-4 h-4" />
+        {/* the word stays on phones too: an icon alone in a wide pill read as an empty field */}
+        <span>{t('common.export')}</span>
       </button>
 
       <ExportModal

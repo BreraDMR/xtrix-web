@@ -1097,6 +1097,7 @@ export type TranslationKey =
   | 'nav.quick'
   | 'nav.more'
   | 'nav.primary'
+  | 'nav.menu'
   | 'nav.manage'
   | 'nav.system'
   | 'nav.reports'
@@ -3610,6 +3611,7 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.quick': { en: 'Quick navigation', ru: 'Быстрая навигация', cz: 'Rychlá navigace' },
   'nav.more': { en: 'More', ru: 'Ещё', cz: 'Nabídka' },
   'nav.primary': { en: 'PRIMARY', ru: 'ОСНОВНОЕ', cz: 'ZÁKLADNÍ' },
+  'nav.menu': { en: 'Menu', ru: 'Меню', cz: 'Menu' },
   'nav.manage': { en: 'MANAGE', ru: 'УПРАВЛЕНИЕ', cz: 'SPRÁVA' },
   'nav.system': { en: 'SYSTEM', ru: 'СИСТЕМА', cz: 'SYSTÉM' },
   'nav.reports': { en: 'REPORTS', ru: 'ОТЧЁТЫ', cz: 'REPORTY' },

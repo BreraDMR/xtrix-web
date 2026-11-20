@@ -57,10 +57,12 @@ for (const width of [375, 768]) {
 
       // the row, not only the 20 px name, is the target - tap the service line
       const row = page.getByRole('listitem').filter({ hasText: 'Boris Kral' })
-      const edit = row.getByRole('button', { name: 'Edit: Boris Kral' })
-      const target = await edit.boundingBox()
-      expect(target!.height, 'agenda row target height').toBeGreaterThanOrEqual(44)
-      await row.getByText('Balayage with toner and blow-dry').click()
+      await expect(row.getByRole('button', { name: 'Edit: Boris Kral' })).toBeVisible()
+      expect((await row.boundingBox())!.height, 'agenda row height').toBeGreaterThanOrEqual(44)
+      // a tap on the service line, away from the name, still opens the visit (a raw mouse click:
+      // locator.click() would refuse, since the stretched button is what sits on top there)
+      const service = (await row.getByText('Balayage with toner and blow-dry').boundingBox())!
+      await page.mouse.click(service.x + service.width / 2, service.y + service.height / 2)
       const editor = page.getByRole('dialog', { name: 'Edit visit' })
       await expect(editor).toBeVisible()
       await page.keyboard.press('Escape')

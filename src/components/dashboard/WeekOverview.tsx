@@ -6,6 +6,7 @@ import api from '../../api/client'
 import { allPages } from '../../api/allPages'
 import type { Schema, VisitOut } from '../../api/types'
 import { useAuthStore } from '../../store/authStore'
+import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useBusinessCurrency } from '../../hooks/useBusinessCurrency'
 import { formatCurrency } from '../../utils/currency'
@@ -25,6 +26,8 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
   const currency = useBusinessCurrency()
   const { user, token, sessionRevision } = useAuthStore()
   const localeTag = locale === 'cz' ? 'cs-CZ' : locale === 'ru' ? 'ru-RU' : 'en-GB'
+  // on a phone a bar is ~35px wide, so "Wednesday" runs into its neighbours - use "Wed" there
+  const phone = useMediaQuery('(max-width: 639px)')
 
   const todayKey = zonedDayKey(new Date(), timeZone)
   const days = useMemo(() => {
@@ -69,7 +72,7 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
         const count = counts.get(day) ?? 0
         return {
           key: day,
-          day: new Intl.DateTimeFormat(localeTag, { weekday: 'long', timeZone: 'UTC' }).format(date),
+          day: new Intl.DateTimeFormat(localeTag, { weekday: phone ? 'short' : 'long', timeZone: 'UTC' }).format(date),
           date: new Intl.DateTimeFormat(localeTag, { day: '2-digit', month: '2-digit', timeZone: 'UTC' }).format(date),
           value: Math.round((count / max) * 100),
           count,
@@ -78,12 +81,13 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
       topServices: [...services.entries()].sort((a, b) => b[1].count - a[1].count).slice(0, 5)
         .map(([name, entry]) => ({ name, ...entry })),
     }
-  }, [visits.data, days, timeZone, localeTag])
+  }, [visits.data, days, timeZone, localeTag, phone])
 
   return <section aria-labelledby="week-overview-title" className="mt-12">
     <h2 id="week-overview-title" className="mb-4 text-[20px] font-semibold tracking-[-0.02em]">{t('dashboard.thisWeek')}</h2>
     <div className="grid gap-5 xl:grid-cols-[2.2fr_1fr]">
-      <Card className="p-7">
+      {/* min-w-0: the chart measures itself from the card, a grid item would grow to the chart instead */}
+      <Card className="min-w-0 p-7">
         <h3 className="x-stat-label"><span className="x-icon" aria-hidden="true"><LuChartColumn /></span>{t('dashboard.occupancy')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
           <div className="mt-4 h-[230px]">
@@ -118,7 +122,7 @@ export default function WeekOverview({ timeZone }: { timeZone: string }) {
             </ResponsiveContainer>
           </div>}
       </Card>
-      <Card className="p-7">
+      <Card className="min-w-0 p-7">
         <h3 className="x-stat-label"><span className="x-icon" aria-hidden="true"><LuTrophy /></span>{t('dashboard.topThisWeek')}</h3>
         {visits.isPending ? <LoadingSpinner size="sm" /> : visits.isError ? <QueryError retry={visits.refetch} /> :
           topServices.length === 0 ? <p className="mt-4 text-[13px] font-semibold text-[var(--workspace-muted)]">{t('dashboard.noVisitsThisWeek')}</p> :
