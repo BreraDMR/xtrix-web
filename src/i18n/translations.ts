@@ -875,6 +875,10 @@ export type TranslationKey =
   | 'visits.moveServiceUp'
   | 'visits.moveServiceDown'
   | 'visits.chainHint'
+  | 'visits.moreOptions'
+  | 'visits.moreOptionsHint'
+  | 'visits.created'
+  | 'visits.openVisit'
   | 'visits.itemsIncomplete'
   | 'visits.chainTotal'
   | 'visits.chainDuration'
@@ -3391,6 +3395,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visits.moveServiceUp': { en: 'Move up', ru: 'Выше', cz: 'Nahoru' },
   'visits.moveServiceDown': { en: 'Move down', ru: 'Ниже', cz: 'Dolů' },
   'visits.chainHint': { en: 'Services run one after another from the start time. The server calculates the end, duration and total.', ru: 'Услуги идут подряд от времени начала. Конец, длительность и сумму считает сервер.', cz: 'Služby jdou po sobě od času začátku. Konec, délku a celkovou cenu počítá server.' },
+  'visits.moreOptions': { en: 'More options', ru: 'Дополнительно', cz: 'Další možnosti' },
+  'visits.moreOptionsHint': { en: 'Own service name, gift certificate, loyalty points', ru: 'Своё название услуги, подарочный сертификат, баллы', cz: 'Vlastní název služby, dárkový poukaz, body' },
+  'visits.created': { en: 'Visit created', ru: 'Визит создан', cz: 'Návštěva vytvořena' },
+  'visits.openVisit': { en: 'Open visit', ru: 'Открыть визит', cz: 'Otevřít návštěvu' },
   'visits.itemsIncomplete': { en: 'Choose a service for every row', ru: 'Выберите услугу в каждой строке', cz: 'Vyberte službu v každém řádku' },
   'visits.chainTotal': { en: 'Total', ru: 'Итого', cz: 'Celkem' },
   'visits.chainDuration': { en: 'Total duration', ru: 'Общая длительность', cz: 'Celková délka' },

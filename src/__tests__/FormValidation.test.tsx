@@ -161,7 +161,8 @@ describe('form validation before API requests', () => {
     const { container } = renderWithProviders(<VisitForm onSuccess={onSuccess} onCancel={noop} />)
     await screen.findByRole('option', { name: 'Jana' })
     fireEvent.change(container.querySelector('select')!, { target: { value: '3' } })
-    const points = (await screen.findByText(/points to use/i)).parentElement!.querySelector('input')!
+    fireEvent.click(await screen.findByRole('button', { name: /More options/ }))
+    const points = await screen.findByLabelText(/points to use/i)
     fireEvent.change(points, { target: { value: '10' } })
     const form = container.querySelector('form')!
     fireEvent.submit(form)

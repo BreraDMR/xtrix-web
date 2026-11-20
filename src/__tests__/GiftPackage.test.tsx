@@ -386,6 +386,8 @@ describe('gift redemption in the visit form', () => {
       expect(priceField).toHaveValue(40)
     })
 
+    await userEvent.click(await screen.findByRole('button', { name: /More options/ }))
+
     await userEvent.type(screen.getByLabelText('Certificate code'), 'GIFT-ABCD-1234')
     await userEvent.click(screen.getByRole('button', { name: 'Find' }))
     expect(await screen.findByText(/Balance.*50/)).toBeInTheDocument()
@@ -422,6 +424,7 @@ describe('gift redemption in the visit form', () => {
     await userEvent.selectOptions(clientOption.closest('select')!, clientOption)
     const serviceOption = await screen.findByRole('option', { name: /Massage/ })
     await userEvent.selectOptions(serviceOption.closest('select')!, '7')
+    await userEvent.click(await screen.findByRole('button', { name: /More options/ }))
     await userEvent.type(screen.getByLabelText('Certificate code'), 'GIFT-ABCD-1234')
     await userEvent.click(screen.getByRole('button', { name: 'Find' }))
 
@@ -452,6 +455,7 @@ it.each([false, true])('requires the certificate to cover every procedure (full 
   await userEvent.click(screen.getByRole('button', { name: /add service/i }))
   await userEvent.selectOptions(screen.getByLabelText('Service 2'), '8')
   await waitFor(() => expect(screen.getByLabelText('Specialist 2')).toHaveValue('7'))
+  await userEvent.click(await screen.findByRole('button', { name: /More options/ }))
   await userEvent.type(screen.getByLabelText('Certificate code'), 'GIFT-ABCD-1234')
   await userEvent.click(screen.getByRole('button', { name: 'Find' }))
   await screen.findByText(/Balance.*50/)
