@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useSyncExternalStore } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { LuMailOpen } from 'react-icons/lu'
 
@@ -35,10 +35,25 @@ function Frame({ children }: { children: React.ReactNode }) {
   )
 }
 
+function subscribeToLink(onChange: () => void) {
+  window.addEventListener('hashchange', onChange)
+  window.addEventListener('popstate', onChange)
+  return () => {
+    window.removeEventListener('hashchange', onChange)
+    window.removeEventListener('popstate', onChange)
+  }
+}
+
 export default function Unsubscribe() {
+  // Router navigation and native fragment links both need to select the new contact.
+  useLocation()
+  const token = useSyncExternalStore(subscribeToLink, readToken)
+  return <UnsubscribePage key={token} token={token} />
+}
+
+function UnsubscribePage({ token }: { token: string }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const token = useMemo(readToken, [])
   const [actionError, setActionError] = useState<string | null>(null)
 
   const previewQuery = useQuery<PublicUnsubscribeOut>({
