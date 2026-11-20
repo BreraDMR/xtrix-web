@@ -34,7 +34,7 @@ interface StaffColumnsProps {
 
 
 // one colour per specialist column, from the Xtrix palette
-const STAFF_COLORS = ['#9f5aef', '#e04aa8', '#4f8df7', '#22a06b', '#f59e0b', '#14b8a6']
+const STAFF_COLORS = [1, 2, 3, 4, 5, 6].map(index => `var(--chart-${index})`)
 
 export default function StaffColumns({
   day,

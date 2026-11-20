@@ -1,9 +1,10 @@
-// visit status pills: soft tints - planned purple, in progress amber, completed green, cancelled red
+// visit status pills read the shared status tokens from theme.css (planned blue, in progress amber,
+// completed green, cancelled red), so lists and calendar blocks always agree in both themes
 export function visitStatusClass(status: string | null | undefined): string {
   switch (status) {
-    case 'planned': return 'bg-[#f4edfd] font-medium text-[#7633c2] dark:bg-primary-900/40 dark:text-primary-200'
-    case 'in_progress': return 'bg-[#fdf1df] font-medium text-[#a35a00] dark:bg-amber-950 dark:text-amber-200'
-    case 'completed': return 'bg-[#e3f5e8] font-medium text-[#1a7f37] dark:bg-green-950 dark:text-green-300'
-    default: return 'bg-[#fdebee] font-medium text-[#c4122f] dark:bg-red-950 dark:text-red-300'
+    case 'planned': return 'x-status x-status-planned'
+    case 'in_progress': return 'x-status x-status-in-progress'
+    case 'completed': return 'x-status x-status-completed'
+    default: return 'x-status x-status-cancelled'
   }
 }

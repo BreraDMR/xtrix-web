@@ -95,8 +95,8 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
   const dateLabel = new Intl.DateTimeFormat(localeTag, { timeZone, dateStyle: 'full' }).format(now)
   const statusClass = visitStatusClass
   const statusEdge: Record<string, string> = {
-    planned: 'var(--x-gradient-diag)', in_progress: 'var(--tint-amber-ink)',
-    completed: 'var(--tint-green-ink)', cancelled: 'var(--tint-red-ink)',
+    planned: 'var(--status-planned-ink)', in_progress: 'var(--status-in-progress-ink)',
+    completed: 'var(--status-completed-ink)', cancelled: 'var(--status-cancelled-ink)',
   }
 
   return (
