@@ -10594,7 +10594,7 @@ export interface components {
          * SpecialistType
          * @enum {string}
          */
-        SpecialistType: "massage" | "cosmetologist" | "barber" | "hairdresser" | "physiotherapist" | "nutritionist" | "therapist" | "dentist" | "dermatologist" | "doctor" | "esthetician" | "nail_technician" | "lash_technician" | "makeup_artist" | "aromatherapist" | "fitness_coach" | "yoga_instructor" | "psychologist" | "psychotherapist" | "cardiologist" | "neurologist" | "orthopedist" | "gynecologist" | "urologist" | "ophthalmologist" | "endocrinologist" | "pediatrician" | "surgeon" | "oncologist";
+        SpecialistType: "massage" | "cosmetologist" | "barber" | "hairdresser" | "physiotherapist" | "nutritionist" | "therapist" | "dentist" | "dermatologist" | "doctor" | "esthetician" | "nail_technician" | "lash_technician" | "makeup_artist" | "pmu_artist" | "depilation_specialist" | "aromatherapist" | "fitness_coach" | "yoga_instructor" | "psychologist" | "psychotherapist" | "cardiologist" | "neurologist" | "orthopedist" | "gynecologist" | "urologist" | "ophthalmologist" | "endocrinologist" | "pediatrician" | "surgeon" | "oncologist";
         /** SubscriptionAccessOut */
         SubscriptionAccessOut: {
             /** Ai Daily Limit */

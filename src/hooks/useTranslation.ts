@@ -26,6 +26,8 @@ const SPECIALIST_TYPE_MAP: Record<string, TranslationKey> = {
   'nail_technician': 'specialistType.nailTechnician',
   'lash_technician': 'specialistType.lashTechnician',
   'makeup_artist': 'specialistType.makeupArtist',
+  'pmu_artist': 'specialistType.pmuArtist',
+  'depilation_specialist': 'specialistType.depilationSpecialist',
   'physiotherapist': 'specialistType.physiotherapist',
   'nutritionist': 'specialistType.nutritionist',
   'aromatherapist': 'specialistType.aromatherapist',

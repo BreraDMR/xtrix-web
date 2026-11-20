@@ -634,6 +634,8 @@ export type TranslationKey =
   | 'specialistType.esthetician'
   | 'specialistType.nailTechnician'
   | 'specialistType.lashTechnician'
+  | 'specialistType.pmuArtist'
+  | 'specialistType.depilationSpecialist'
   | 'specialistType.makeupArtist'
   | 'specialistType.physiotherapist'
   | 'specialistType.nutritionist'
@@ -3050,6 +3052,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'specialistType.nailTechnician': { en: 'Nail Technician', ru: 'Мастер маникюра/педикюра', cz: 'Manikérka' },
   'specialistType.lashTechnician': { en: 'Lash & Brow Technician', ru: 'Мастер по ресницам и бровям', cz: 'Technička řas a obočí' },
   'specialistType.makeupArtist': { en: 'Makeup Artist', ru: 'Визажист', cz: 'Vizážistka' },
+  'specialistType.pmuArtist': { en: 'Permanent Makeup Artist', ru: 'Мастер перманентного макияжа', cz: 'Permanentní make-up' },
+  'specialistType.depilationSpecialist': { en: 'Hair Removal Specialist', ru: 'Мастер депиляции', cz: 'Depilace a epilace' },
   
   'specialistType.physiotherapist': { en: 'Physiotherapist', ru: 'Физиотерапевт', cz: 'Fyzioterapeut' },
   'specialistType.nutritionist': { en: 'Nutritionist', ru: 'Нутрициолог', cz: 'Výživový poradce' },
