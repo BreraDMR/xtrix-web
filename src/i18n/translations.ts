@@ -922,6 +922,12 @@ export type TranslationKey =
   | 'calendar.blocked'
   | 'calendar.nonWorking'
   | 'calendar.moveTitle'
+  | 'calendar.detailsTitle'
+  | 'calendar.detailsServices'
+  | 'calendar.editVisit'
+  | 'calendar.moveFromTo'
+  | 'calendar.earlierVisits'
+  | 'calendar.laterVisits'
   | 'calendar.moveDate'
   | 'calendar.moveTime'
   | 'calendar.moveSubmit'
@@ -3392,8 +3398,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.title': { en: 'Calendar', ru: 'Календарь', cz: 'Kalendář' },
   'calendar.simpleViewDescription': { en: 'Click on a date to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на дату, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na datum pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },
   'calendar.advancedViewDescription': { en: 'Click on a time slot to create a visit, or click on an existing visit to edit it.', ru: 'Нажмите на временной слот, чтобы создать визит, или нажмите на существующий визит, чтобы отредактировать его.', cz: 'Klikněte na časový slot pro vytvoření návštěvy nebo klikněte na existující návštěvu pro úpravu.' },
-  'calendar.simpleView': { en: 'Simple View', ru: 'Простой вид', cz: 'Jednoduché zobrazení' },
-  'calendar.advancedView': { en: 'Advanced View', ru: 'Расширенный вид', cz: 'Pokročilé zobrazení' },
+  'calendar.simpleView': { en: 'Month · day list', ru: 'Месяц · список дня', cz: 'Měsíc · seznam dne' },
+  'calendar.advancedView': { en: 'Month · grid', ru: 'Месяц · сетка', cz: 'Měsíc · mřížka' },
   'calendar.noVisits': { en: 'No visits on this date', ru: 'Нет визитов на эту дату', cz: 'Na tento den žádné návštěvy' },
   'calendar.visit': { en: 'visit', ru: 'визит', cz: 'návštěva' },
   'calendar.visits': { en: 'visits', ru: 'визитов', cz: 'návštěv' },
@@ -3407,13 +3413,13 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.insights': { en: 'Insights', ru: 'Аналитика', cz: 'Přehledy' },
   'calendar.insightsTitle': { en: 'This month breakdown', ru: 'Разбивка этого месяца', cz: 'Rozpis tohoto měsíce' },
   'calendar.searchEvents': { en: 'Search events...', ru: 'Поиск событий...', cz: 'Hledat události...' },
-  'calendar.dayView': { en: 'Day view', ru: 'День', cz: 'Denní zobrazení' },
+  'calendar.dayView': { en: 'Day', ru: 'День', cz: 'Den' },
   'calendar.dayViewDescription': { en: 'One day at a glance: time, client, price and status of every visit.', ru: 'Один день целиком: время, клиент, цена и статус каждого визита.', cz: 'Jeden den přehledně: čas, klient, cena a stav každé návštěvy.' },
   'calendar.daySchedule': { en: 'Daily schedule', ru: 'Расписание на день', cz: 'Denní rozvrh' },
   'calendar.today': { en: 'Today', ru: 'Сегодня', cz: 'Dnes' },
   'calendar.staffColumns': { en: 'By specialist', ru: 'По мастерам', cz: 'Podle specialistů' },
   'calendar.noStaff': { en: 'No specialists to show', ru: 'Нет мастеров для отображения', cz: 'Žádní specialisté k zobrazení' },
-  'calendar.weekView': { en: 'Week view', ru: 'Неделя', cz: 'Týdenní zobrazení' },
+  'calendar.weekView': { en: 'Week', ru: 'Неделя', cz: 'Týden' },
   'calendar.weekViewDescription': { en: 'Seven days side by side, every visit at its own time.', ru: 'Семь дней рядом, каждый визит на своём времени.', cz: 'Sedm dní vedle sebe, každá návštěva ve svém čase.' },
   'calendar.chain': { en: 'Chain of services', ru: 'Цепочка услуг', cz: 'Řetěz služeb' },
   'calendar.chainPosition': { en: '{position} of {total}', ru: '{position} из {total}', cz: '{position} z {total}' },
@@ -3421,6 +3427,12 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'calendar.free': { en: 'Free', ru: 'Свободно', cz: 'Volno' },
   'calendar.blocked': { en: 'Blocked', ru: 'Заблокировано', cz: 'Blokováno' },
   'calendar.nonWorking': { en: 'Non-working hours', ru: 'Нерабочие часы', cz: 'Nepracovní hodiny' },
+  'calendar.detailsTitle': { en: 'Visit details', ru: 'Детали визита', cz: 'Detail návštěvy' },
+  'calendar.detailsServices': { en: 'Services', ru: 'Услуги', cz: 'Služby' },
+  'calendar.editVisit': { en: 'Edit visit', ru: 'Изменить визит', cz: 'Upravit návštěvu' },
+  'calendar.moveFromTo': { en: 'Move: {from} → {to}', ru: 'Перенос: {from} → {to}', cz: 'Přesun: {from} → {to}' },
+  'calendar.earlierVisits': { en: 'Earlier: {count}', ru: 'Раньше: {count}', cz: 'Dříve: {count}' },
+  'calendar.laterVisits': { en: 'Later: {count}', ru: 'Позже: {count}', cz: 'Později: {count}' },
   'calendar.moveTitle': { en: 'Move visit', ru: 'Перенести визит', cz: 'Přesunout návštěvu' },
   'calendar.moveDate': { en: 'Date', ru: 'Дата', cz: 'Datum' },
   'calendar.moveTime': { en: 'Time', ru: 'Время', cz: 'Čas' },

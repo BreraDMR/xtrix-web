@@ -1,4 +1,4 @@
-import { useMemo, type DragEvent } from 'react'
+import { useEffect, useMemo, useState, type DragEvent } from 'react'
 import { format, parseISO } from 'date-fns'
 import { cs, enUS, ru } from 'date-fns/locale'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -121,6 +121,24 @@ const STATUS_CLASS: Record<string, string> = {
 
 const statusClass = (status?: string | null): string => STATUS_CLASS[status ?? ''] ?? STATUS_CLASS.planned
 
+// a shape next to the colour, so statuses stay apart for colour-blind eyes and in print
+const STATUS_MARK: Record<string, string> = {
+  planned: '○',
+  in_progress: '◐',
+  completed: '✓',
+  cancelled: '✕',
+}
+
+// ticks once a minute, enough for the "now" line
+function useNow(): number {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 60_000)
+    return () => window.clearInterval(timer)
+  }, [])
+  return now
+}
+
 const overlayStyle = (interval: MinuteInterval, hourHeight: number) => ({
   top: (interval.start / 60) * hourHeight,
   height: ((interval.end - interval.start) / 60) * hourHeight,
@@ -172,6 +190,10 @@ export default function DayGrid({
   const timeline = dayTimeline(dayKey, zone)
   const dateLocale = locale === 'ru' ? ru : locale === 'cz' ? cs : enUS
   const title = format(parseISO(dayKey), locale === 'cz' ? 'EEEE d. MMMM' : 'EEEE, d MMMM', { locale: dateLocale })
+  const now = useNow()
+  const nowTop = now >= timeline.start && now < timeline.end
+    ? ((now - timeline.start) / 3_600_000) * hourHeight
+    : null
   const events = useMemo(
     () => layoutDay(visits, dayKey, zone, (MIN_CARD_HEIGHT / hourHeight) * 60),
     [visits, dayKey, zone, hourHeight],
@@ -291,6 +313,17 @@ export default function DayGrid({
           </div>
         )}
 
+        {nowTop !== null && (
+          <div
+            data-now-line
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 z-[15] border-t-2 border-[var(--workspace-accent)]"
+            style={{ top: nowTop }}
+          >
+            <span className="absolute -left-1 -top-[5px] h-2 w-2 rounded-full bg-[var(--workspace-accent)]" />
+          </div>
+        )}
+
         {previewStyle && preview && (
           <div
             aria-hidden="true"
@@ -355,6 +388,9 @@ export default function DayGrid({
                   <span
                     className={`block truncate text-[11px] font-semibold leading-tight ${segment?.isChain ? 'pr-6' : ''}`}
                   >
+                    <span data-status-mark aria-hidden="true" className="mr-1">
+                      {STATUS_MARK[visit.status ?? ''] ?? STATUS_MARK.planned}
+                    </span>
                     {name}
                   </span>
                   <span className="block truncate text-[10px] leading-tight opacity-80">{detail}</span>
@@ -366,6 +402,7 @@ export default function DayGrid({
                   <div
                     key={segment?.key ?? visit.id}
                     data-visit-id={visit.id}
+                    data-status={visit.status ?? 'planned'}
                     draggable={Boolean(onDropVisit)}
                     onDragStart={handleDragStart(visit, event.startMin, event.endMin)}
                     className={blockClass}
@@ -382,6 +419,7 @@ export default function DayGrid({
                   key={segment?.key ?? visit.id}
                   type="button"
                   data-visit-id={visit.id}
+                  data-status={visit.status ?? 'planned'}
                   draggable={Boolean(onDropVisit)}
                   onDragStart={handleDragStart(visit, event.startMin, event.endMin)}
                   onClick={() => onSelectVisit(visit)}
