@@ -94,7 +94,7 @@ test('owner reads the card, edits notes and tags and keeps the filtered list', a
   await expect(nextVisit).toContainText('Consultation')
   await expect(nextVisit).not.toContainText('No upcoming visits')
 
-  const history = page.getByRole('heading', { name: 'Visit history' }).locator('..')
+  const history = page.getByRole('region', { name: 'Visit history' })
   const completed = history.locator(`[data-visit-id="${fixture.completedVisitId}"]`)
   await expect(completed).toContainText('Consultation')
   await expect(completed).toContainText('30.00 €')
@@ -192,7 +192,7 @@ test('limited staff sees history but no money and cannot change notes or tags', 
   await expect(stat(page, 'Paid')).toHaveCount(0)
   await expect(page.getByText('30.00 €')).toHaveCount(0)
 
-  const history = page.getByRole('heading', { name: 'Visit history' }).locator('..')
+  const history = page.getByRole('region', { name: 'Visit history' })
   await expect(history).toContainText('Haircut')
   await expect(history).not.toContainText('30.00 €')
 
@@ -232,7 +232,8 @@ test('client side panel keeps the filtered sorted page and updates it after edit
   await page.keyboard.press('Enter')
   const panel = page.getByRole('dialog', { name: 'Client record' })
   await expect(panel.getByRole('heading', { name: 'Panel Client 12', level: 3 })).toBeVisible()
-  await expect(page).toHaveURL(address)
+  // the open record is added to the address, the rest of the list context stays as it was
+  await expect(page).toHaveURL(url => url.href.startsWith(`${address}&client=`) && /&client=\d+$/.test(url.href))
   await page.keyboard.press('Escape')
   await expect(panel).toBeHidden()
   await expect(opener).toBeFocused()
