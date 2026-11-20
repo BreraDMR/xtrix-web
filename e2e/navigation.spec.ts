@@ -75,3 +75,42 @@ test('compact navigation keeps staff permissions', async ({ page, request }) => 
     await expect(sidebar.getByRole('link', { name, exact: true })).toHaveCount(0)
   }
 })
+
+test('menu groups keep deep links and the header starts a new visit from any page', async ({ page, request }) => {
+  const owner = await newOwner(request)
+  await openAs(page, owner, '/clients')
+  await page.goto('/app/audit')
+  const nav = page.getByRole('navigation', { name: 'PRIMARY', exact: true })
+  const reports = nav.getByRole('group', { name: 'REPORTS', exact: true })
+  for (const name of ['Payments', 'Analytics', 'Action log']) {
+    await expect(reports.getByRole('link', { name, exact: true })).toBeVisible()
+  }
+  await expect(reports.getByRole('link', { name: 'Action log', exact: true })).toHaveAttribute('aria-current', 'page')
+  await expect(nav.getByRole('group', { name: 'MANAGE', exact: true }).getByRole('link', { name: 'Payments', exact: true })).toHaveCount(0)
+  await expect(page.locator('#workspace-navigation')).toContainText('Business owner')
+
+  await page.goto('/app/clients')
+  const create = page.getByRole('banner').getByRole('button', { name: 'New Visit', exact: true })
+  await expect(page.getByRole('button', { name: 'New Visit', exact: true })).toHaveCount(1)
+  await create.focus()
+  await page.keyboard.press('Enter')
+  const panel = page.getByRole('dialog', { name: 'New Visit', exact: true })
+  await expect(panel).toBeVisible()
+  await expect(page).toHaveURL(/\/app\/clients$/)
+  await page.keyboard.press('Escape')
+  await expect(panel).toBeHidden()
+  await expect(create).toBeFocused()
+})
+
+test('staff see no report group and their own role', async ({ page, request }) => {
+  const employee = seedUser('employee_a')
+  const session = await apiLogin(request, employee.email, employee.password)
+  expect((await request.put(`${apiUrl}/user-preferences/me`, {
+    headers: session.headers, data: { language: 'en' },
+  })).ok()).toBeTruthy()
+  await openAs(page, employee, '/clients')
+  const nav = page.getByRole('navigation', { name: 'PRIMARY', exact: true })
+  await expect(nav.getByRole('group', { name: 'PRIMARY', exact: true })).toBeVisible()
+  await expect(nav.getByRole('group', { name: 'REPORTS', exact: true })).toHaveCount(0)
+  await expect(page.locator('#workspace-navigation')).toContainText('Specialist')
+})
