@@ -171,9 +171,14 @@ test('owner reads the card, edits notes and tags and keeps the filtered list', a
   await expect(page.getByRole('heading', { name: 'Workspace Client', level: 1 })).toBeVisible()
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375)
   await page.getByRole('button', { name: 'Back to clients' }).click()
+  // and comes back with the same record open in the side panel
+  await expect(page).toHaveURL(/\/clients\?q=Workspace&client=\d+$/)
+  await expect(page.getByRole('dialog', { name: 'Client record' })
+    .getByRole('heading', { name: 'Workspace Client' })).toBeVisible()
+  await page.getByRole('dialog', { name: 'Client record' }).getByRole('button', { name: 'Close', exact: true }).click()
   await expect(page).toHaveURL(/\/clients\?q=Workspace$/)
   await expect(page.getByRole('searchbox')).toHaveValue('Workspace')
-  await expect(page.getByTitle('Export')).toBeVisible()
+  await expect(page.getByTitle('More actions')).toBeVisible()
 })
 
 test('limited staff sees history but no money and cannot change notes or tags', async ({ page }) => {

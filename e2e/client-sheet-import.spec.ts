@@ -17,7 +17,8 @@ test('client sheet skips invalid rows and duplicates beyond the first directory 
   ]), 'Clients')
   const buffer = XLSX.write(book, { type: 'buffer', bookType: 'xlsx' }) as Buffer
   await openAs(page, owner, '/app/clients')
-  await page.getByRole('button', { name: 'Import Clients from Excel', exact: true }).click()
+  await page.getByRole('button', { name: 'More actions', exact: true }).click()
+  await page.getByRole('menuitem', { name: 'Import Clients from Excel', exact: true }).click()
   await page.locator('input[type=file]').setInputFiles({ name: 'clients.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer })
   const importButton = page.getByRole('button', { name: 'Import (2)', exact: true })
   await expect(importButton).toBeVisible()
@@ -49,7 +50,8 @@ test('an import stops before its next row when another account is stored', async
     if (writes.length === 1) { firstPost = route; return }
     return route.continue()
   })
-  await page.getByRole('button', { name: 'Import Clients from Excel', exact: true }).click()
+  await page.getByRole('button', { name: 'More actions', exact: true }).click()
+  await page.getByRole('menuitem', { name: 'Import Clients from Excel', exact: true }).click()
   await page.locator('input[type=file]').setInputFiles({ name: 'clients.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer })
   await page.getByRole('button', { name: 'Import (2)', exact: true }).click()
   await expect.poll(() => Boolean(firstPost)).toBe(true)

@@ -26,7 +26,7 @@ test('client pages, server search and CSV cover the complete salon', async ({ pa
   await page.getByRole('button', { name: 'Clear filters' }).click()
   await expect(search).toHaveValue('')
   await expect(page.getByText(/of 125/)).toBeVisible()
-  await page.getByRole('button', { name: 'Export', exact: true }).click()
+  await openClientExport(page)
   await expect(page.getByText('125 items')).toBeVisible()
   await page.getByRole('button', { name: /^CSV/ }).click()
   const pending = page.waitForEvent('download')
@@ -103,8 +103,15 @@ test('visit pages and export keep client names beyond the first hundred', async 
   expect(csv.match(/Visit guest \d{3}/g)).toHaveLength(125)
 })
 
-async function downloadedCsv(page: Page) {
-  await page.getByRole('button', { name: 'Export', exact: true }).click()
+// on Clients export sits in the "More actions" menu, other lists still have the button
+async function openClientExport(page: Page) {
+  await page.getByRole('button', { name: 'More actions', exact: true }).click()
+  await page.getByRole('menuitem', { name: 'Export', exact: true }).click()
+}
+
+async function downloadedCsv(page: Page, fromMenu = false) {
+  if (fromMenu) await openClientExport(page)
+  else await page.getByRole('button', { name: 'Export', exact: true }).click()
   await page.getByRole('button', { name: /^CSV/ }).click()
   const pending = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export', exact: true }).last().click()
@@ -178,7 +185,7 @@ test('a staff member limited to some clients pages, searches and exports exactly
   }
   await page.getByRole('button', { name: 'Clear filters' }).click()
   await expect(page.getByText('Showing 1–20 of 30 results')).toBeVisible()
-  const clientsCsv = await downloadedCsv(page)
+  const clientsCsv = await downloadedCsv(page, true)
   expect(clientsCsv.match(/Scoped \d{3}/g)?.sort()).toEqual(allowedNames)
   expect(clientsCsv).not.toContain('Scoped foreign')
 
