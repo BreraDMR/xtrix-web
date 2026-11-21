@@ -29,7 +29,7 @@ export default function Pricing() {
       </div>
       <div className="mt-10 [&_article]:!rounded-[28px] [&_article]:!border-[var(--workspace-card-border)] [&_article]:!bg-[var(--workspace-panel)] [&_article]:!p-8 [&_article]:shadow-[var(--workspace-card-shadow)] [&_article_h3]:!text-[var(--workspace-ink)] [&_article_p]:!text-[var(--workspace-ink)] [&_article_a]:!rounded-full [&_article_a]:![background:var(--x-gradient)] [&_article_a]:!text-white [&_article_a:hover]:brightness-105">
         {isLoading ? <p role="status" className="text-center text-sm text-[var(--workspace-muted)]">{t('landing.pricing.loading')}</p>
-          : error ? <p role="alert" className="text-center text-red-600 dark:text-red-400">{t('landing.pricing.error')}</p>
+          : error ? <p role="alert" className="text-center text-[var(--tint-red-ink)]">{t('landing.pricing.error')}</p>
             : <OfferCards key={product} offers={(data?.offers ?? []).filter(offer => offer.product === product)} registration />}
       </div>
       <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-relaxed text-[var(--workspace-muted)]">{t('pricing.trial')}</p>
