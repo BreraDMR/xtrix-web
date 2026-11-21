@@ -283,10 +283,10 @@ describe('CRM buttons', () => {
 const LIFTED_SHADE = /(?<![\w:/[-])(?:text-(?:blue|purple|primary|indigo)-(?:600|700|800|900)|bg-(?:blue|purple|primary)-(?:50|100)|border-(?:blue|purple|primary)-(?:200|300))(?![\w/-])/g
 
 // DES-11: the last hand-made solid buttons were green "do it" and red "delete" ones. Green is
-// the primary Button here, red is the danger one. The trial banner link and the voice
-// "stop recording" button keep their tone on purpose - they show a state, not a kind of button.
+// the primary Button here, red is the danger one. The voice
+// "stop recording" button keeps its tone on purpose - it shows a state, not a kind of button.
 const SOLID_TONE = /\bbg-(?:green|emerald|red|rose|amber|yellow)-600\b/
-const TONE_SKIP_FILES = ['src/components/TrialBanner.tsx', 'src/components/assistant/AssistantPanel.tsx', 'src/components/assistant/ConversationList.tsx']
+const TONE_SKIP_FILES = ['src/components/assistant/AssistantPanel.tsx', 'src/components/assistant/ConversationList.tsx']
 
 describe('CRM tone buttons', () => {
   it('use Button instead of a solid green or red one', () => {
@@ -299,6 +299,21 @@ describe('CRM tone buttons', () => {
           .filter(value => SOLID_TONE.test(value) && /\btext-white\b/.test(value))
         return hits.length ? [`${path}: ${hits.length}`] : []
       })
+    expect(offenders).toEqual([])
+  })
+})
+
+// DES-11: the subscription page and the trial banner drew status words and notices in raw
+// green/yellow/red Tailwind shades - 2.9-3.2:1 on white and a light green box in dark mode.
+// They take the tint tokens now. The other screens with raw tones are DES-02g.
+const TINTED_FILES = ['src/pages/Subscription.tsx', 'src/components/TrialBanner.tsx']
+
+describe('subscription tones', () => {
+  it('come from the tint tokens', () => {
+    const offenders = TINTED_FILES.flatMap(path => {
+      const hits = readFileSync(resolve(root, path), 'utf8').match(PALETTE) ?? []
+      return hits.length ? [`${path}: ${hits.length} (${[...new Set(hits)].slice(0, 4).join(' ')})`] : []
+    })
     expect(offenders).toEqual([])
   })
 })
