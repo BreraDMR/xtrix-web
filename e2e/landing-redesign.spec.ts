@@ -3,7 +3,7 @@ import translations, { type TranslationKey } from '../src/i18n/translations'
 
 type Locale = 'en' | 'ru' | 'cz'
 async function selectLanguage(page: Page, locale: Locale) {
-  await page.getByRole('button', { name: /^(EN|RU|CZ)(?:\s|$)/ }).first().click()
+  await page.getByRole('button', { name: /^(EN|RU|CZ)(?:[\s,]|$)/ }).first().click()
   await page.getByRole('button', { name: locale.toUpperCase(), exact: true }).last().click()
 }
 

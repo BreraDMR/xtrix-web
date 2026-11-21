@@ -1350,6 +1350,9 @@ export type TranslationKey =
   | 'loyalty.create_program'
   | 'loyalty.edit_program'
   | 'loyalty.delete_program'
+  | 'loyalty.confirm_delete_program'
+  | 'loyalty.confirm_delete_level'
+  | 'loyalty.confirm_delete_promotion'
   | 'loyalty.add_level'
   | 'loyalty.edit_level'
   | 'loyalty.level_name'
@@ -3869,6 +3872,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'loyalty.create_program': { en: 'Create Program', ru: 'Создать программу', cz: 'Vytvořit program' },
   'loyalty.edit_program': { en: 'Edit Program', ru: 'Редактировать программу', cz: 'Upravit program' },
   'loyalty.delete_program': { en: 'Delete Program', ru: 'Удалить программу', cz: 'Smazat program' },
+  'loyalty.confirm_delete_program': { en: 'Are you sure you want to delete the loyalty program?', ru: 'Вы уверены, что хотите удалить программу лояльности?', cz: 'Opravdu chcete smazat věrnostní program?' },
+  'loyalty.confirm_delete_level': { en: 'Are you sure you want to delete this level?', ru: 'Вы уверены, что хотите удалить этот уровень?', cz: 'Opravdu chcete smazat tuto úroveň?' },
+  'loyalty.confirm_delete_promotion': { en: 'Are you sure you want to delete this promotion?', ru: 'Вы уверены, что хотите удалить эту акцию?', cz: 'Opravdu chcete smazat tuto akci?' },
   'loyalty.add_level': { en: 'Add Level', ru: 'Добавить уровень', cz: 'Přidat úroveň' },
   'loyalty.edit_level': { en: 'Edit Level', ru: 'Редактировать уровень', cz: 'Upravit úroveň' },
   'loyalty.level_name': { en: 'Level Name', ru: 'Название уровня', cz: 'Název úrovně' },

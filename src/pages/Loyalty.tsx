@@ -446,33 +446,29 @@ export default function Loyalty() {
                 </div>
                 {isAdmin && (
                   <div className="flex gap-2">
-                    <button
+                    <Button
+                      variant={program.is_active ? 'secondary' : 'primary'}
                       onClick={async () => {
                         await programMutation.mutateAsync({ is_active: !program.is_active })
                       }}
-                      className={`px-4 py-2 rounded-lg font-medium ${
-                        program.is_active
-                          ? 'bg-yellow-600 text-white hover:bg-yellow-700'
-                          : 'bg-green-600 text-white hover:bg-green-700'
-                      }`}
                     >
                       {program.is_active ? t('loyalty.deactivate_program') : t('loyalty.activate_program')}
-                    </button>
+                    </Button>
                     <Button
                       onClick={() => setShowProgramForm(true)}
                     >
                       {t('loyalty.edit_program')}
                     </Button>
-                    <button
+                    <Button
+                      variant="danger"
                       onClick={async () => {
-                        if (confirm('Are you sure you want to delete the loyalty program?')) {
+                        if (window.confirm(t('loyalty.confirm_delete_program'))) {
                           await deleteProgramMutation.mutateAsync()
                         }
                       }}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
                     >
                       {t('loyalty.delete_program')}
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -709,16 +705,16 @@ export default function Loyalty() {
                             >
                               {t('common.edit')}
                             </Button>
-                            <button
+                            <Button
+                              variant="danger"
                               onClick={async () => {
-                                if (confirm('Are you sure you want to delete this level?')) {
+                                if (window.confirm(t('loyalty.confirm_delete_level'))) {
                                   await deleteLevelMutation.mutateAsync(level.id)
                                 }
                               }}
-                              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
                             >
                               {t('common.delete')}
-                            </button>
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -910,16 +906,16 @@ export default function Loyalty() {
                             >
                               {t('common.edit')}
                             </Button>
-                            <button
+                            <Button
+                              variant="danger"
                               onClick={async () => {
-                                if (confirm('Are you sure you want to delete this promotion?')) {
+                                if (window.confirm(t('loyalty.confirm_delete_promotion'))) {
                                   await deletePromotionMutation.mutateAsync(promotion.id)
                                 }
                               }}
-                              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
                             >
                               {t('common.delete')}
-                            </button>
+                            </Button>
                           </div>
                         )}
                       </div>

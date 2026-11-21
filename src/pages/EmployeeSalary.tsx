@@ -366,16 +366,16 @@ export default function EmployeeSalary() {
                         {t('salary.addAdjustment')}
                       </Button>
                       {remainingAmount > 0 && (
-                        <button
+                        <Button
+                          variant="primary"
                           onClick={() => {
                             setSelectedSalaryId(currentSalary.id)
                             setShowPaymentModal(true)
                           }}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                         >
                           <LuPlus className="w-4 h-4" />
                           {t('salary.recordPayment')}
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -611,16 +611,16 @@ export default function EmployeeSalary() {
               const remAmount = salaryToShow.total_with_adjustments - salaryToShow.paid_amount
               if (remAmount > 0) {
                 return (
-                  <button
+                  <Button
+                    variant="primary"
                     onClick={() => {
                       setSelectedSalaryId(salaryToShow.id)
                       setShowPaymentModal(true)
                     }}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                   >
                     <LuPlus className="w-4 h-4" />
                     {t('salary.recordPayment')}
-                  </button>
+                  </Button>
                 )
               }
               return null

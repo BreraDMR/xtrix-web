@@ -3,8 +3,8 @@
     --workspace-bg: #f6f6f8;
     --workspace-panel: #ffffff;
     --workspace-ink: #1d1d1f;
-    --workspace-muted: #6e6e73;
-    --workspace-subtle: #86868b;
+    --workspace-muted: #6a6a6f;
+    --workspace-subtle: #6e6e73;
     --workspace-line: #e8e8ed;
     --workspace-hairline: rgba(0, 0, 0, .06);
     --workspace-border: var(--workspace-line);
@@ -33,10 +33,10 @@
     --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Variable", "Inter", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
     --ease: cubic-bezier(.2, .8, .2, 1);
     --x-shadow-lift: 0 1px 2px rgba(17, 12, 34, .04), 0 12px 32px rgba(17, 12, 34, .06), 0 32px 64px -24px rgba(91, 33, 182, .14);
-    --tint-green: #e6f6ee; --tint-green-ink: #1f8a55;
-    --tint-amber: #fdf3e2; --tint-amber-ink: #a8670c;
+    --tint-green: #e6f6ee; --tint-green-ink: #1a7a4b;
+    --tint-amber: #fdf3e2; --tint-amber-ink: #9a5e0b;
     --tint-red: #fdecef; --tint-red-ink: #c4122f;
-    --tint-blue: #e8f1fe; --tint-blue-ink: #2f6bd8;
+    --tint-blue: #e8f1fe; --tint-blue-ink: #2b63c9;
     --tint-pink: #fdeef7; --tint-pink-ink: #b1307f;
 
     /* one scale for type, radii, spacing and control density - components read these, not raw px */

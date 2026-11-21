@@ -67,17 +67,17 @@ export default function TrialBanner() {
 
   if (isExpired) {
     return (
-      <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50/90 p-4 text-rose-900 shadow-sm dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-200">
+      <div className="mb-6 rounded-xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-4 text-[var(--tint-red-ink)] shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2">
-            <LuCircleAlert className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
+            <LuCircleAlert className="h-5 w-5 shrink-0" />
             <span className="text-sm font-medium">
               {t('trial.banner_expired')}
             </span>
           </div>
           <Link
             to="/app/subscription"
-            className="inline-flex shrink-0 items-center justify-center rounded-lg bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-rose-500"
+            className="ui-button ui-button-secondary shrink-0 !min-h-9 !text-xs"
           >
             {t('trial.banner_cta')}
           </Link>
@@ -92,15 +92,15 @@ export default function TrialBanner() {
     .replace('{date}', dateStr)
 
   return (
-    <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/90 p-4 text-amber-900 shadow-sm dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
+    <div className="mb-6 rounded-xl border border-[color-mix(in_srgb,var(--tint-amber-ink)_25%,transparent)] bg-[var(--tint-amber)] p-4 text-[var(--tint-amber-ink)] shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-2">
-          <LuClock className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <LuClock className="h-5 w-5 shrink-0" />
           <span className="text-sm font-medium">{activeMsg}</span>
         </div>
         <Link
           to="/app/subscription"
-          className="inline-flex shrink-0 items-center justify-center rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-500 dark:bg-amber-700 dark:hover:bg-amber-600"
+          className="ui-button ui-button-secondary shrink-0 !min-h-9 !text-xs"
         >
           {t('trial.banner_cta')}
         </Link>

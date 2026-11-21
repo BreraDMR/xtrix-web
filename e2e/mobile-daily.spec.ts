@@ -89,6 +89,22 @@ for (const width of [375, 768]) {
       await noPageScroll(page, 'Waitlist')
     })
 
+    test('a long owner name leaves the header room for the page name', async ({ page }) => {
+      await openAs(page, owner, '/app/clients')
+      await expect(page.getByRole('heading', { name: 'Clients', level: 1 })).toBeVisible()
+      const header = page.locator('header.crm-header')
+      // the name stays readable for screen readers, but on screen below 1280 px only the avatar shows
+      const name = header.getByText('Olga Owner-Longname Nováková', { exact: true })
+      await expect(name).toHaveCount(1)
+      expect(await name.evaluate(el => el.getBoundingClientRect().width)).toBeLessThanOrEqual(1)
+      if (width >= 640) {
+        // the breadcrumb is shown from sm up, and the page name in it is not cut
+        const crumb = header.getByText('Clients', { exact: true })
+        await expect(crumb).toBeVisible()
+        expect(await crumb.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
+      }
+    })
+
     test('search, the visit list and a new visit work without sideways scrolling', async ({ page }) => {
       await openAs(page, owner, '/app/clients')
       const search = page.getByRole('searchbox').first()
@@ -128,3 +144,12 @@ for (const width of [375, 768]) {
     })
   })
 }
+
+test('on a wide screen the long owner name stays on one line in the header', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await openAs(page, owner, '/app/clients')
+  const name = page.locator('header.crm-header').getByText('Olga Owner-Longname Nováková', { exact: true })
+  await expect(name).toHaveCount(1)
+  // one line of 13 px text, cut with an ellipsis rather than wrapped
+  expect((await name.boundingBox())!.height).toBeLessThanOrEqual(24)
+})

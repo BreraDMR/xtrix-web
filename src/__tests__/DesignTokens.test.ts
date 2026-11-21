@@ -99,6 +99,41 @@ const toneRule = (tone: string) => {
   return theme.slice(start, theme.indexOf('}', start))
 }
 
+// DES-11: the audit measured text on screens; these pairs came out under WCAG AA 4.5 in the
+// light theme (planned 4.38, completed 3.89, table heads and menu groups 3.36). Small text
+// sits on all of them, so each pair needs 4.5 in both themes.
+function luminance(hex: string) {
+  const channels = hex.replace('#', '').match(/../g)!.map(part => parseInt(part, 16) / 255)
+  const [r, g, b] = channels.map(c => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+function contrast(a: string, b: string) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+  return (hi + 0.05) / (lo + 0.05)
+}
+const TEXT_PAIRS: [string, string][] = [
+  ...['green', 'amber', 'red', 'blue', 'pink'].map(tone => [`--tint-${tone}-ink`, `--tint-${tone}`] as [string, string]),
+  ...['--workspace-bg', '--workspace-panel', '--workspace-fill', '--workspace-accent-soft'].map(bg => ['--workspace-muted', bg] as [string, string]),
+  // subtle is for eyebrows, table heads and menu groups - never on the lavender selection
+  ...['--workspace-bg', '--workspace-panel', '--workspace-fill'].map(bg => ['--workspace-subtle', bg] as [string, string]),
+]
+
+describe('text contrast', () => {
+  for (const [name, themeTokens] of [['light', light], ['dark', dark]] as const) {
+    it(`small text reads at 4.5:1 in the ${name} theme`, () => {
+      const low = TEXT_PAIRS.flatMap(([ink, bg]) => {
+        const fg = tokenValue(ink, themeTokens)!
+        const back = tokenValue(bg, themeTokens)!
+        expect(fg, ink).toMatch(/^#[0-9a-f]{6}$/i)
+        expect(back, bg).toMatch(/^#[0-9a-f]{6}$/i)
+        const ratio = contrast(fg, back)
+        return ratio < 4.5 ? [`${ink} on ${bg}: ${ratio.toFixed(2)}`] : []
+      })
+      expect(low).toEqual([])
+    })
+  }
+})
+
 describe('status badge', () => {
   it.each(Object.entries(TONE_TOKENS))('%s tone comes from %s', (tone, token) => {
     expect(toneRule(tone)).toContain(`var(${token}-bg)`)
@@ -247,6 +282,54 @@ describe('CRM buttons', () => {
 // rule is gone, so a shade left over would come out dark purple on the dark panel.
 const LIFTED_SHADE = /(?<![\w:/[-])(?:text-(?:blue|purple|primary|indigo)-(?:600|700|800|900)|bg-(?:blue|purple|primary)-(?:50|100)|border-(?:blue|purple|primary)-(?:200|300))(?![\w/-])/g
 
+// DES-11: the last hand-made solid buttons were green "do it" and red "delete" ones. Green is
+// the primary Button here, red is the danger one. The voice
+// "stop recording" button keeps its tone on purpose - it shows a state, not a kind of button.
+const SOLID_TONE = /\bbg-(?:green|emerald|red|rose|amber|yellow)-600\b/
+const TONE_SKIP_FILES = ['src/components/assistant/AssistantPanel.tsx', 'src/components/assistant/ConversationList.tsx']
+
+describe('CRM tone buttons', () => {
+  it('use Button instead of a solid green or red one', () => {
+    const offenders = sources(resolve(root, 'src'))
+      .map(path => relative(root, path))
+      .filter(path => path.endsWith('.tsx') && !TONE_SKIP_FILES.includes(path) && !BUTTON_SKIP_DIRS.some(dir => path.startsWith(dir)))
+      .flatMap(path => {
+        const text = readFileSync(resolve(root, path), 'utf8')
+        const hits = CLASS_STRINGS.flatMap(pattern => text.match(pattern) ?? [])
+          .filter(value => SOLID_TONE.test(value) && /\btext-white\b/.test(value))
+        return hits.length ? [`${path}: ${hits.length}`] : []
+      })
+    expect(offenders).toEqual([])
+  })
+})
+
+// DES-11: the subscription page, the trial banner and the load error box drew status words and notices in raw
+// green/yellow/red Tailwind shades - 2.9-3.2:1 on white and a light green box in dark mode.
+// They take the tint tokens now. The other screens with raw tones are DES-02g.
+const TINTED_FILES = ['src/pages/Subscription.tsx', 'src/components/TrialBanner.tsx', 'src/components/QueryError.tsx']
+
+describe('subscription tones', () => {
+  it('come from the tint tokens', () => {
+    const offenders = TINTED_FILES.flatMap(path => {
+      const hits = readFileSync(resolve(root, path), 'utf8').match(PALETTE) ?? []
+      return hits.length ? [`${path}: ${hits.length} (${[...new Set(hits)].slice(0, 4).join(' ')})`] : []
+    })
+    expect(offenders).toEqual([])
+  })
+})
+
+// DES-11: text-gray-500 is on 250+ CRM labels (the salon name in the header, "/ month",
+// hints). As a fixed #86868b it read 3.4:1 on the light page; it follows the subtle token now,
+// so it is darker in light and stays light in dark, where many of them have no dark: variant.
+describe('gray-500 text', () => {
+  it('follows the subtle token in both themes', () => {
+    const config = readFileSync(resolve(root, 'tailwind.config.js'), 'utf8')
+    const fives = [...config.matchAll(/\b500: '([^']+)'/g)].map(match => match[1])
+    // gray and slate come first in the config, the accent ramps after them
+    expect(fives.slice(0, 2)).toEqual(['var(--workspace-subtle)', 'var(--workspace-subtle)'])
+  })
+})
+
 describe('CRM accent shades', () => {
   it('come from the accent tokens', () => {
     const offenders = sources(resolve(root, 'src'))
@@ -341,6 +424,12 @@ const exportSource = readFileSync(resolve(root, 'src/utils/export.ts'), 'utf8')
 describe('legacy global styles', () => {
   it('index.css has no colours of its own', () => {
     expect(indexCss.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []).toEqual([])
+  })
+
+  // DES-11: the default border and bare field background came from the Tailwind palette,
+  // so in the dark theme every plain `border` was a light gray line on a dark panel
+  it('index.css takes border and field colours from the theme', () => {
+    expect(indexCss.match(/var\(--color-[\w-]+\)|\bwhite\b/g) ?? []).toEqual([])
   })
 
   it('the calendar is styled in one place', () => {

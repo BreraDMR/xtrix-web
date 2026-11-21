@@ -1,18 +1,20 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
-/* Keep the existing form and separator defaults when upgrading Tailwind. */
+/* Form and separator defaults from before Tailwind 4, now on the theme tokens -
+   the old gray-200 border was a light line on the dark panels. */
 @layer base {
   *, ::before, ::after {
-    border-color: var(--color-gray-200);
+    border-color: var(--workspace-line);
   }
   input:where(:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file'])),
   select, textarea {
-    background-color: white;
+    background-color: var(--workspace-panel);
   }
+  /* same fill as .ui-input, so a bare field and a styled one sit the same in dark */
   .dark input:where(:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file'])),
   .dark select, .dark textarea {
-    background-color: var(--color-gray-700);
+    background-color: var(--workspace-fill);
   }
 }
 

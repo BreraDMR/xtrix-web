@@ -220,12 +220,12 @@ function LegacySubscription() {
     return (
       <div>
         <h1 className="page-title mb-6">{t('subscription.title')}</h1>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-green-800">{t('subscription.paidByOwner')}</p>
+        <div className="bg-[var(--tint-green)] border border-[color-mix(in_srgb,var(--tint-green-ink)_25%,transparent)] rounded-lg p-4">
+          <p className="text-[var(--tint-green-ink)]">{t('subscription.paidByOwner')}</p>
         </div>
         {trialStatus && trialStatus.has_access === false && (
-          <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-yellow-800">{t('subscription.ownerPlanInactive')}</p>
+          <div className="mt-4 bg-[var(--tint-amber)] border border-[color-mix(in_srgb,var(--tint-amber-ink)_25%,transparent)] rounded-lg p-4">
+            <p className="text-[var(--tint-amber-ink)]">{t('subscription.ownerPlanInactive')}</p>
           </div>
         )}
       </div>
@@ -278,16 +278,16 @@ function LegacySubscription() {
             <h2 className="text-xl font-semibold">
               {t('subscription.usage_title')}
             </h2>
-            <span className="shrink-0 whitespace-nowrap text-xs font-mono bg-slate-100 dark:bg-slate-700 px-2.5 py-1 rounded text-slate-600 dark:text-slate-300">
+            <span className="shrink-0 whitespace-nowrap text-xs font-mono bg-[var(--workspace-fill)] px-2.5 py-1 rounded text-[var(--workspace-muted)]">
               {usageData.period}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* CRM active clients */}
-            <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/50">
+            <div className="border border-[var(--workspace-line)] rounded-lg p-4 bg-[var(--workspace-fill)]">
               <div className="flex justify-between items-center mb-2">
-                <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
+                <span className="font-medium text-sm text-[var(--workspace-muted)]">
                   {t('subscription.crm_usage')}
                 </span>
                 <StatusBadge tone={usageData.crm.is_within_limit ? 'success' : 'warning'} className="px-2 font-semibold">
@@ -296,23 +296,23 @@ function LegacySubscription() {
                     : t('subscription.limit_exceeded')}
                 </StatusBadge>
               </div>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">
+              <div className="text-2xl font-bold text-[var(--workspace-ink)]">
                 {usageData.crm.active_clients}
-                <span className="text-sm font-normal text-slate-500 ml-1">
+                <span className="text-sm font-normal text-[var(--workspace-muted)] ml-1">
                   / {usageData.crm.limit ?? '∞'}
                 </span>
               </div>
               {usageData.crm.offer_code && (
-                <div className="text-xs text-slate-500 mt-1">
+                <div className="text-xs text-[var(--workspace-muted)] mt-1">
                   Тариф: {usageData.crm.offer_code}
                 </div>
               )}
             </div>
 
             {/* AI Sasha daily requests */}
-            <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/50">
+            <div className="border border-[var(--workspace-line)] rounded-lg p-4 bg-[var(--workspace-fill)]">
               <div className="flex justify-between items-center mb-2">
-                <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
+                <span className="font-medium text-sm text-[var(--workspace-muted)]">
                   {t('subscription.ai_usage')}
                 </span>
                 <StatusBadge tone={usageData.ai.is_within_limit ? 'accent' : 'warning'} className="px-2 font-semibold">
@@ -321,14 +321,14 @@ function LegacySubscription() {
                     : t('subscription.limit_exceeded')}
                 </StatusBadge>
               </div>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">
+              <div className="text-2xl font-bold text-[var(--workspace-ink)]">
                 {usageData.ai.daily_requests_used}
-                <span className="text-sm font-normal text-slate-500 ml-1">
+                <span className="text-sm font-normal text-[var(--workspace-muted)] ml-1">
                   / {usageData.ai.daily_requests_limit ?? 20}
                 </span>
               </div>
               {usageData.ai.offer_code && (
-                <div className="text-xs text-slate-500 mt-1">
+                <div className="text-xs text-[var(--workspace-muted)] mt-1">
                   Продукт: {usageData.ai.offer_code}
                 </div>
               )}
@@ -347,37 +347,37 @@ function LegacySubscription() {
             </h2>
             <div className="flex gap-2">
               {subscription.status === 'pending_cancellation' && (
-                <button
+                <Button
+                  variant="primary"
                   onClick={handleReactivate}
                   disabled={loading}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
                 >
                   {t('subscription.reactivate')}
-                </button>
+                </Button>
               )}
               {(subscription.status === 'active' || subscription.status === 'pending_cancellation') && !subscription.is_trial && (
-                <button
+                <Button
+                  variant="danger"
                   onClick={() => handleCancel(true)}
                   disabled={loading || subscription.cancel_at_period_end}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm"
                 >
                   {subscription.cancel_at_period_end
                     ? t('subscription.cancelled')
                     : t('subscription.cancel')}
-                </button>
+                </Button>
               )}
             </div>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">{t('subscription.status_label')}:</span>
+              <span className="text-[var(--workspace-muted)]">{t('subscription.status_label')}:</span>
               <span
                 className={`font-medium ${
                   subscription.status === 'active' || subscription.status === 'pending_cancellation'
-                    ? 'text-green-600'
+                    ? 'text-[var(--tint-green-ink)]'
                     : subscription.status === 'cancelled' || subscription.status === 'expired'
-                    ? 'text-red-600'
-                    : 'text-yellow-600'
+                    ? 'text-[var(--tint-red-ink)]'
+                    : 'text-[var(--tint-amber-ink)]'
                 }`}
               >
                 {labels.subscriptionStatus(subscription.status)}
@@ -385,8 +385,8 @@ function LegacySubscription() {
             </div>
             {subscription.cancel_at_period_end && subscription.current_period_end && (
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">{t('subscription.cancellation_date')}:</span>
-                <span className="font-medium text-orange-600">
+                <span className="text-[var(--workspace-muted)]">{t('subscription.cancellation_date')}:</span>
+                <span className="font-medium text-[var(--tint-amber-ink)]">
                   {formatDate(subscription.current_period_end)} ({t('subscription.days_remaining').replace('{days}', formatDays(getDaysRemaining(subscription.current_period_end) ?? 0, locale))})
                 </span>
               </div>
@@ -394,12 +394,12 @@ function LegacySubscription() {
             {subscription.is_trial && (
               <>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">{t('subscription.trial_period')}:</span>
-                  <span className="font-medium text-yellow-600">{t('subscription.trial_period_active')}</span>
+                  <span className="text-[var(--workspace-muted)]">{t('subscription.trial_period')}:</span>
+                  <span className="font-medium text-[var(--tint-amber-ink)]">{t('subscription.trial_period_active')}</span>
                 </div>
                 {subscription.trial_end && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('subscription.trialEnds')}:</span>
+                    <span className="text-[var(--workspace-muted)]">{t('subscription.trialEnds')}:</span>
                     <span className="font-medium">
                       {formatDate(subscription.trial_end)} ({t('subscription.days_remaining').replace('{days}', formatDays(getDaysRemaining(subscription.trial_end) ?? 0, locale))})
                     </span>
@@ -409,7 +409,7 @@ function LegacySubscription() {
             )}
             {subscription.current_period_end && !subscription.cancel_at_period_end && (
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">{t('subscription.period_ends')}:</span>
+                <span className="text-[var(--workspace-muted)]">{t('subscription.period_ends')}:</span>
                 <span className="font-medium">{formatDate(subscription.current_period_end)}</span>
               </div>
             )}
@@ -417,16 +417,16 @@ function LegacySubscription() {
 
           {}
           {transactions && transactions.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-6 pt-6 border-t border-[var(--workspace-line)]">
               <h3 className="text-lg font-semibold mb-3">
                 {t('subscription.transactionHistory')}
               </h3>
               <div className="space-y-2">
                 {transactions.map((transaction) => (
-                  <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded dark:bg-gray-900">
+                  <div key={transaction.id} className="flex justify-between items-center p-2 bg-[var(--workspace-fill)] rounded">
                     <div>
                       <div className="font-medium">{transaction.payment_method}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-[var(--workspace-muted)]">
                         {transaction.transaction_date
                           ? formatDate(transaction.transaction_date)
                           : formatDate(transaction.created_at)}
@@ -439,10 +439,10 @@ function LegacySubscription() {
                       <div
                         className={`text-sm ${
                           transaction.status === 'succeeded'
-                            ? 'text-green-600'
+                            ? 'text-[var(--tint-green-ink)]'
                             : transaction.status === 'failed'
-                            ? 'text-red-600'
-                            : 'text-gray-600'
+                            ? 'text-[var(--tint-red-ink)]'
+                            : 'text-[var(--workspace-muted)]'
                         }`}
                       >
                         {labels.transactionStatus(transaction.status)}
@@ -473,13 +473,13 @@ function LegacySubscription() {
               >
                 <h3 className="text-lg font-semibold mb-2">{labels.planName(plan)}</h3>
                 {labels.planFeatures(plan) && (
-                  <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">{labels.planFeatures(plan)}</p>
+                  <p className="mb-3 text-sm text-[var(--workspace-muted)]">{labels.planFeatures(plan)}</p>
                 )}
                 <div className="mb-4">
                   <span className="text-3xl font-bold">{plan.price}€</span>
-                  <span className="text-gray-600 dark:text-gray-400">{t(plan.period_days >= 365 ? 'subscription.per_year' : 'subscription.per_month')}</span>
+                  <span className="text-[var(--workspace-muted)]">{t(plan.period_days >= 365 ? 'subscription.per_year' : 'subscription.per_month')}</span>
                 </div>
-                <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                <div className="mb-4 text-sm text-[var(--workspace-muted)]">
                   <p>{t('subscription.period_days')}: {formatDays(plan.period_days, locale)}</p>
                 </div>
                 <Button
@@ -494,11 +494,11 @@ function LegacySubscription() {
             ))}
           </div>
         ) : (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <p className="text-yellow-800 mb-2">
+          <div className="bg-[var(--tint-amber)] border border-[color-mix(in_srgb,var(--tint-amber-ink)_25%,transparent)] rounded-lg p-6 text-center">
+            <p className="text-[var(--tint-amber-ink)] mb-2">
               {t('subscription.noPlansAvailable')}
             </p>
-            <p className="text-sm text-yellow-700">
+            <p className="text-sm text-[var(--tint-amber-ink)]">
               {t('subscription.contactAdmin')}
             </p>
           </div>
@@ -506,18 +506,18 @@ function LegacySubscription() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+        <div className="mb-4 p-3 bg-[var(--tint-red)] border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] text-[var(--tint-red-ink)] rounded-lg">
           {error}
         </div>
       )}
 
       {!subscription && !trialStatus?.is_trial && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center dark:bg-gray-900 dark:border-gray-700">
-          <p className="text-gray-600 mb-4 dark:text-gray-400">
+        <div className="bg-[var(--workspace-fill)] border border-[var(--workspace-line)] rounded-lg p-6 text-center">
+          <p className="text-[var(--workspace-muted)] mb-4">
             {t('subscription.noSubscription')}
           </p>
           {availablePlans && availablePlans.length > 0 && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-[var(--workspace-muted)]">
               {t('subscription.selectPlan')}
             </p>
           )}
@@ -531,29 +531,29 @@ function LegacySubscription() {
             {t('subscription.history')}
           </h2>
           <div className="ui-card rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+            <table className="min-w-full divide-y divide-[var(--workspace-line)]">
+              <thead className="bg-[var(--workspace-fill)]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--workspace-muted)] uppercase">
                     {t('subscription.plan_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--workspace-muted)] uppercase">
                     {t('subscription.status_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--workspace-muted)] uppercase">
                     {t('subscription.created_label')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--workspace-muted)] uppercase">
                     {t('subscription.period_end_label')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+              <tbody className="bg-[var(--workspace-panel)] divide-y divide-[var(--workspace-line)]">
                 {subscriptionHistory
                   .filter((sub: Subscription) => sub.id !== subscription?.id)
                   .map((sub: Subscription) => (
                     <tr key={sub.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--workspace-ink)]">
                         {planById(sub.plan_id) ? labels.planName(planById(sub.plan_id)) : `${t('subscription.plan_number')} #${sub.plan_id}`}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -561,10 +561,10 @@ function LegacySubscription() {
                           {labels.subscriptionStatus(sub.status)}
                         </StatusBadge>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--workspace-muted)]">
                         {formatDate(sub.created_at)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--workspace-muted)]">
                         {formatDate(sub.current_period_end)}
                       </td>
                     </tr>

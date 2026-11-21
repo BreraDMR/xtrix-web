@@ -5,6 +5,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import api from '../api/client'
 import FormError from './FormError'
 import { apiErrorMessage } from '../api/errors'
+import Button from '../ui/Button'
 
 // the API takes any string here, these are the ones the screen offers
 type AdjustmentType = 'bonus' | 'penalty' | 'overtime' | 'allowance' | 'deduction'
@@ -154,27 +155,23 @@ export default function SalaryAdjustmentModal({
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
-            <button
+            <Button
+              variant="secondary"
               type="button"
               onClick={handleClose}
               disabled={createMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-900"
             >
               {t('common.cancel')}
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant={type === 'penalty' || type === 'deduction' ? 'danger' : 'primary'}
               disabled={createMutation.isPending}
-              className={`px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-50 ${
-                type === 'penalty' || type === 'deduction'
-                  ? 'bg-red-600 hover:bg-red-700'
-                  : 'bg-green-600 hover:bg-green-700'
-              }`}
             >
               {createMutation.isPending
                 ? (t('common.saving'))
                 : t('common.save')}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

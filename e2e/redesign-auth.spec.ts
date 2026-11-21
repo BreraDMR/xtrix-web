@@ -1,11 +1,14 @@
 import { expect, test } from '@playwright/test'
 
+// the toggle shows a globe and a chevron since f0c5994; its name is "EN, Language" and so on
+const LANGUAGE_TOGGLE = /^(EN|RU|CZ), /
+
 for (const locale of ['en', 'ru', 'cz'] as const) {
   for (const theme of ['light', 'dark'] as const) {
     test(`${locale} ${theme}: authentication pages keep accessible forms and a usable language menu`, async ({ page }) => {
       await page.addInitScript(value => localStorage.setItem('theme', value), theme)
       await page.goto('/login')
-      await page.getByRole('button', { name: /▼/ }).click()
+      await page.getByRole('button', { name: LANGUAGE_TOGGLE }).click()
       await page.getByRole('button', { name: locale.toUpperCase(), exact: true }).click()
       for (const width of [1280, 375]) {
         await page.setViewportSize({ width, height: 900 })
@@ -23,7 +26,7 @@ for (const locale of ['en', 'ru', 'cz'] as const) {
           if (route === '/login') {
             await expect(page.locator('#email')).toBeEditable()
             await expect(page.locator('#password')).toBeEditable()
-            const toggle = page.getByRole('button', { name: /▼/ })
+            const toggle = page.getByRole('button', { name: LANGUAGE_TOGGLE })
             await toggle.click()
             await expect(toggle).toHaveAttribute('aria-expanded', 'true')
             await page.getByRole('button', { name: 'RU', exact: true }).focus()

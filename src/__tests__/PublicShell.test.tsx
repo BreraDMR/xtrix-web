@@ -23,7 +23,7 @@ describe('public shell', () => {
     expect(within(header).getByText('Xtrix')).toBeInTheDocument()
     expect(within(header).getByText('Book a visit')).toBeInTheDocument()
     expect(within(header).getByRole('link', { name: 'My account' })).toHaveAttribute('href', '/visitor/visits')
-    expect(within(header).getByRole('button', { name: 'EN' })).toBeInTheDocument()
+    expect(within(header).getByRole('button', { name: 'EN, Language' })).toBeInTheDocument()
     expect(screen.getByRole('main')).toHaveTextContent('body')
     expect(container.firstElementChild).toHaveClass('crm-workspace')
   })

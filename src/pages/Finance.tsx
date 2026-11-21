@@ -6,7 +6,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import { useTranslation } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
-import { apiFormErrors } from '../api/errors'
+import { apiErrorStatus, apiFormErrors } from '../api/errors'
 import LoadingSpinner from '../components/LoadingSpinner'
 import FormError from '../components/FormError'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
@@ -59,7 +59,7 @@ export default function Finance() {
   const [showAddExpense, setShowAddExpense] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
 
-  const { data: profitReport, isLoading: isLoadingProfit, isError: queryError0, refetch: retryQuery0 } = useQuery({
+  const { data: profitReport, isLoading: isLoadingProfit, isError: queryError0, error: loadError0, refetch: retryQuery0 } = useQuery({
     queryKey: ['profit-report', dateFrom, dateTo],
     queryFn: async () => {
       const { data } = await api.get('/expenses/reports/profit', {
@@ -72,7 +72,7 @@ export default function Finance() {
     },
   })
 
-  const { data: expenses, isLoading: isLoadingExpenses, isError: queryError1, refetch: retryQuery1 } = useQuery({
+  const { data: expenses, isLoading: isLoadingExpenses, isError: queryError1, error: loadError1, refetch: retryQuery1 } = useQuery({
     queryKey: ['expenses', dateFrom, dateTo, selectedCategory],
     queryFn: ({ signal }) => allPages<Expense>(async page => {
       const params = new URLSearchParams()
@@ -86,7 +86,7 @@ export default function Finance() {
     }),
   })
 
-  const { data: categories, isError: queryError2, refetch: retryQuery2 } = useQuery({
+  const { data: categories, isError: queryError2, error: loadError2, refetch: retryQuery2 } = useQuery({
     queryKey: ['expense-categories'],
     queryFn: async () => {
       const { data } = await api.get('/expenses/categories')
@@ -94,7 +94,7 @@ export default function Finance() {
     },
   })
 
-  const { data: paymentStats, isLoading: isLoadingPayments, isError: queryError3, refetch: retryQuery3 } = useQuery({
+  const { data: paymentStats, isLoading: isLoadingPayments, isError: queryError3, error: loadError3, refetch: retryQuery3 } = useQuery({
     queryKey: ['payment-statistics', dateFrom, dateTo],
     queryFn: async () => {
       const { data } = await api.get('/analytics/payments/statistics', {
@@ -120,6 +120,11 @@ export default function Finance() {
   })
 
   const retryQueries = () => { void retryQuery0(); void retryQuery1(); void retryQuery2(); void retryQuery3() }
+  // the API says 403 when the role has no finance access - a retry can't fix that, so say so
+  // (the menu hides Finance from such staff, but a saved link still lands here)
+  const denied = [loadError0, loadError1, loadError2, loadError3].some(error => apiErrorStatus(error) === 403)
+
+  if (denied) return <Card className="p-5"><p>{t('employees.access_denied')}</p></Card>
 
   return (
     <div className="space-y-5">

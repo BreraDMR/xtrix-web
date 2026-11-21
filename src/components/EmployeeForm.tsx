@@ -196,7 +196,8 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
             className="flex-1 bg-white p-3 rounded border border-green-300 font-mono text-lg font-bold text-center select-all cursor-text dark:bg-gray-800"
             onClick={(e) => (e.target as HTMLInputElement).select()}
           />
-          <button
+          <Button
+            variant="secondary"
             type="button"
             onClick={async () => {
               try {
@@ -214,21 +215,22 @@ export default function EmployeeForm({ employeeId, onSuccess, onCancel }: Employ
                 setTimeout(() => setPasswordCopied(false), 2000)
               }
             }}
-            className="px-4 py-3 bg-green-600 text-white rounded hover:bg-green-700 font-medium whitespace-nowrap"
+            className="whitespace-nowrap"
           >
             {passwordCopied ? t('employeeForm.copied') : t('employeeForm.copy')}
-          </button>
+          </Button>
         </div>
         <p className="text-xs text-green-600 mt-2">
           {t('employeeForm.passwordHint')}
         </p>
-        <button
+        <Button
+          variant="primary"
           type="button"
           onClick={onSuccess}
-          className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium"
+          className="mt-3"
         >
           {t('common.close')}
-        </button>
+        </Button>
       </div>
     )
   }

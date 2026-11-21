@@ -226,7 +226,7 @@ export default function Layout() {
             {canCreateVisit && <Button aria-label={t('visits.newVisit')} title={t('visits.newVisit')} className="max-sm:!px-2.5"
               onClick={() => setIsCreatingVisit(true)}><LuPlus aria-hidden="true" /><span className="hidden sm:inline">{t('visits.newVisit')}</span></Button>}
             {access && access.crm_mode !== 'blocked' && <AssistantLauncher />}
-            <div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-full bg-brand-gradient-diag text-[11px] font-semibold text-white">{initials(user?.full_name || 'U')}</span><span className="hidden max-w-40 truncate text-[13px] font-medium sm:inline">{user?.full_name}</span></div>
+            <div className="flex items-center gap-2" title={user?.full_name}><span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-full bg-brand-gradient-diag text-[11px] font-semibold text-white">{initials(user?.full_name || 'U')}</span><span className="max-w-40 truncate text-[13px] font-medium max-xl:sr-only">{user?.full_name}</span></div>
             <button className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] text-[var(--workspace-muted)] transition-colors hover:bg-[var(--workspace-hover)] hover:text-[var(--workspace-ink)]" onClick={() => { signOut(); navigate('/login', { replace: true }) }}><LuLogOut aria-hidden="true" className="h-4 w-4" />{t('nav.logout')}</button>
           </div>
         </header>
