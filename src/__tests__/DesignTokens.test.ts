@@ -247,6 +247,27 @@ describe('CRM buttons', () => {
 // rule is gone, so a shade left over would come out dark purple on the dark panel.
 const LIFTED_SHADE = /(?<![\w:/[-])(?:text-(?:blue|purple|primary|indigo)-(?:600|700|800|900)|bg-(?:blue|purple|primary)-(?:50|100)|border-(?:blue|purple|primary)-(?:200|300))(?![\w/-])/g
 
+// DES-11: the last hand-made solid buttons were green "do it" and red "delete" ones. Green is
+// the primary Button here, red is the danger one. The trial banner link and the voice
+// "stop recording" button keep their tone on purpose - they show a state, not a kind of button.
+const SOLID_TONE = /\bbg-(?:green|emerald|red|rose|amber|yellow)-600\b/
+const TONE_SKIP_FILES = ['src/components/TrialBanner.tsx', 'src/components/assistant/AssistantPanel.tsx', 'src/components/assistant/ConversationList.tsx']
+
+describe('CRM tone buttons', () => {
+  it('use Button instead of a solid green or red one', () => {
+    const offenders = sources(resolve(root, 'src'))
+      .map(path => relative(root, path))
+      .filter(path => path.endsWith('.tsx') && !TONE_SKIP_FILES.includes(path) && !BUTTON_SKIP_DIRS.some(dir => path.startsWith(dir)))
+      .flatMap(path => {
+        const text = readFileSync(resolve(root, path), 'utf8')
+        const hits = CLASS_STRINGS.flatMap(pattern => text.match(pattern) ?? [])
+          .filter(value => SOLID_TONE.test(value) && /\btext-white\b/.test(value))
+        return hits.length ? [`${path}: ${hits.length}`] : []
+      })
+    expect(offenders).toEqual([])
+  })
+})
+
 describe('CRM accent shades', () => {
   it('come from the accent tokens', () => {
     const offenders = sources(resolve(root, 'src'))
