@@ -323,7 +323,6 @@ export type TranslationKey =
   | 'booking.contactHint'
   | 'booking.nameRequired'
   | 'booking.contactRequired'
-  | 'booking.contactOnlyOne'
   | 'booking.invalidEmail'
   | 'booking.invalidPhone'
   | 'booking.phoneHint'
@@ -2721,10 +2720,9 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "booking.timezone": {"en": "Salon time zone", "ru": "Часовой пояс салона", "cz": "Časové pásmo salonu"},
   "booking.back": {"en": "Back", "ru": "Назад", "cz": "Zpět"},
   "booking.yourDetails": {"en": "Your details", "ru": "Ваши данные", "cz": "Vaše údaje"},
-  "booking.contactHint": {"en": "Leave a phone or an email — one contact is enough.", "ru": "Оставьте телефон или email — достаточно одного контакта.", "cz": "Zanechte telefon nebo e-mail — stačí jeden kontakt."},
+  "booking.contactHint": {"en": "Leave a phone, an email or both — one contact is enough.", "ru": "Оставьте телефон, email или оба — достаточно одного контакта.", "cz": "Zanechte telefon, e-mail nebo obojí — stačí jeden kontakt."},
   "booking.nameRequired": {"en": "Enter your name", "ru": "Укажите имя", "cz": "Zadejte své jméno"},
   "booking.contactRequired": {"en": "Enter a phone number or an email", "ru": "Укажите телефон или email", "cz": "Zadejte telefon nebo e-mail"},
-  "booking.contactOnlyOne": {"en": "Leave only one contact: a phone number or an email", "ru": "Оставьте только один контакт: телефон или email", "cz": "Zanechte pouze jeden kontakt: telefon nebo e-mail"},
   "booking.invalidEmail": {"en": "Check the email address", "ru": "Проверьте адрес email", "cz": "Zkontrolujte e-mailovou adresu"},
   "booking.invalidPhone": {"en": "Check the phone number", "ru": "Проверьте номер телефона", "cz": "Zkontrolujte telefonní číslo"},
   "booking.phoneHint": {"en": "International format, e.g. +420777123456", "ru": "Международный формат, например +420777123456", "cz": "Mezinárodní formát, např. +420777123456"},

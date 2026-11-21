@@ -47,12 +47,10 @@ export default function ContactStep({ value, onChange, onSubmit, onBack }: Conta
     const next: ContactErrors = {}
 
     if (!fullName) next.name = t('booking.nameRequired')
+    // a phone, an email or both - at least one is needed to reach the guest
     if (!phone && !email) next.contact = t('booking.contactRequired')
-    else if (phone && email) next.contact = t('booking.contactOnlyOne')
-    else if (email && !EMAIL_PATTERN.test(email)) next.email = t('booking.invalidEmail')
-    else if (phone && !isPhoneValid(phone)) {
-      next.phone = t('booking.invalidPhone')
-    }
+    if (email && !EMAIL_PATTERN.test(email)) next.email = t('booking.invalidEmail')
+    if (phone && !isPhoneValid(phone)) next.phone = t('booking.invalidPhone')
     if (!value.processingConsent) next.processing = t('booking.processingConsentRequired')
 
     if (Object.keys(next).length > 0) {
