@@ -364,6 +364,12 @@ describe('legacy global styles', () => {
     expect(indexCss.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []).toEqual([])
   })
 
+  // DES-11: the default border and bare field background came from the Tailwind palette,
+  // so in the dark theme every plain `border` was a light gray line on a dark panel
+  it('index.css takes border and field colours from the theme', () => {
+    expect(indexCss.match(/var\(--color-[\w-]+\)|\bwhite\b/g) ?? []).toEqual([])
+  })
+
   it('the calendar is styled in one place', () => {
     expect(indexCss).not.toContain('react-calendar')
   })
