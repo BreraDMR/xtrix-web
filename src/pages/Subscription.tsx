@@ -13,6 +13,7 @@ import TrialBanner from '../components/TrialBanner'
 import { useLabels } from '../i18n/labels'
 import { formatDays } from '../utils/plural'
 import type { Schema, EntitlementsUsageOut } from '../api/types'
+import Button from '../ui/Button'
 
 type Subscription = Schema<'SubscriptionOut'>
 type SubscriptionPlan = Schema<'SubscriptionPlanOut'>
@@ -492,17 +493,14 @@ function LegacySubscription() {
                 <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
                   <p>{t('subscription.period_days')}: {formatDays(plan.period_days, locale)}</p>
                 </div>
-                <button
+                <Button
                   onClick={() => handleSubscribe(plan.id)}
                   disabled={loading || isCurrentPlan(plan)}
-                  className={`w-full py-2 px-4 rounded-lg font-medium transition-all ${
-                    isCurrentPlan(plan)
-                      ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                      : 'bg-primary-600 text-white hover:bg-primary-700'
-                  }`}
+                  variant={isCurrentPlan(plan) ? 'secondary' : 'primary'}
+                  className="w-full"
                 >
                   {isCurrentPlan(plan) ? t('subscription.currentPlan') : t('subscription.subscribe')}
-                </button>
+                </Button>
               </div>
             ))}
           </div>

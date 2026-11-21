@@ -367,16 +367,15 @@ export default function EmployeeSalary() {
                       </span>
                     </div>
                     <div className="flex gap-2">
-                      <button
+                      <Button
                         onClick={() => {
                           setSelectedSalaryId(currentSalary.id)
                           setShowAdjustmentModal(true)
                         }}
-                        className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
                       >
                         <LuPlus className="w-4 h-4" />
                         {t('salary.addAdjustment')}
-                      </button>
+                      </Button>
                       {remainingAmount > 0 && (
                         <button
                           onClick={() => {
@@ -408,12 +407,11 @@ export default function EmployeeSalary() {
               <div className="text-center py-8">
                 <p className="text-gray-600 mb-4 dark:text-gray-400">{t('salary.noUnpaidSalary')}</p>
                 {!showCalculateForm ? (
-                  <button
+                  <Button
                     onClick={() => setShowCalculateForm(true)}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
                   >
                     {t('salary.calculate_salary')}
-                  </button>
+                  </Button>
                 ) : (
                   <div className="max-w-md mx-auto mt-4 space-y-4">
                     {calculateError && <div role="alert"><FormError message={calculateError} /></div>}
@@ -464,7 +462,7 @@ export default function EmployeeSalary() {
                       >
                         {t('common.cancel')}
                       </button>
-                      <button
+                      <Button
                         onClick={() => {
                           setCalculateError('')
                           if (!periodStart || !periodEnd) {
@@ -478,12 +476,11 @@ export default function EmployeeSalary() {
                           })
                         }}
                         disabled={calculateSalaryMutation.isPending}
-                        className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
                       >
                         {calculateSalaryMutation.isPending
                           ? t('common.loading')
                           : t('salary.calculate_salary')}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -520,7 +517,7 @@ export default function EmployeeSalary() {
               </div>
             )}
             {(currentSalary || selectedSalary) && (
-              <button
+              <Button
                 onClick={() => {
                   const salaryId = currentSalary?.id || selectedSalary?.id
                   if (salaryId) {
@@ -528,11 +525,10 @@ export default function EmployeeSalary() {
                     setShowAdjustmentModal(true)
                   }
                 }}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
               >
                 <LuPlus className="w-4 h-4" />
                 {t('salary.addAdjustment')}
-              </button>
+              </Button>
             )}
           </div>
 

@@ -12,6 +12,7 @@ import { useLabels } from '../i18n/labels'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import type { BusinessOut, PublicBookingSettingsOut } from '../api/types'
 import { effectiveAssistant } from '../i18n/assistant'
+import Button from '../ui/Button'
 
 export default function Business() {
   const { user } = useAuthStore()
@@ -65,26 +66,24 @@ export default function Business() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="page-title">{t('business.title')}</h1>
         {!showForm && !business && (user?.role === 'admin' || user?.role === 'business_owner') && (
-          <button
+          <Button
             onClick={() => {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
           >
             {t('business.create')}
-          </button>
+          </Button>
         )}
         {!showForm && business && (
-          <button
+          <Button
             onClick={() => {
               setEditingId(business.id)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
           >
             {t('business.edit')}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -145,15 +144,14 @@ export default function Business() {
       ) : (
         <div className="ui-card rounded-lg p-6 text-center">
           <p className="text-gray-500 mb-4 dark:text-gray-400">{t('business.empty')}</p>
-          <button
+          <Button
             onClick={() => {
               setEditingId(undefined)
               setShowForm(true)
             }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
           >
             {t('business.create')}
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -274,24 +272,20 @@ function PublicBookingCard() {
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t('business.publicBooking.description')}</p>
         </div>
         {settings && (
-          <button
-            type="button"
+          <Button
             role="switch"
             aria-checked={settings.is_enabled}
             disabled={toggle.isPending}
             onClick={() => toggle.mutate(!settings.is_enabled)}
-            className={`shrink-0 rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60 ${
-              settings.is_enabled
-                ? 'border border-red-300 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950'
-                : 'bg-primary-600 text-white hover:bg-primary-700'
-            }`}
+            variant={settings.is_enabled ? 'danger' : 'primary'}
+            className="shrink-0"
           >
             {toggle.isPending
               ? t('business.publicBooking.saving')
               : settings.is_enabled
                 ? t('business.publicBooking.disable')
                 : t('business.publicBooking.enable')}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -488,16 +482,15 @@ function PublicBookingCard() {
             </div>
 
             <div className="mt-3 flex flex-wrap items-center gap-3">
-              <button
+              <Button
                 type="button"
                 disabled={depositMutation.isPending || !depositValid || !holdValid}
                 onClick={() => depositMutation.mutate()}
-                className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
               >
                 {depositMutation.isPending
                   ? t('business.publicBooking.depositSaving')
                   : t('business.publicBooking.depositSave')}
-              </button>
+              </Button>
               {depositSaved && (
                 <span role="status" className="text-sm text-emerald-700 dark:text-emerald-400">
                   {t('business.publicBooking.depositSaved')}

@@ -15,6 +15,7 @@ import type {
 } from '../../api/types'
 import FormError from '../FormError'
 import LoadingSpinner from '../LoadingSpinner'
+import Button from '../../ui/Button'
 
 interface TemplateEditorProps {
   template?: QuestionnaireTemplateOut
@@ -457,14 +458,13 @@ export default function TemplateEditor({ template, services, onChanged, onClose 
             <h3 className="text-lg font-semibold">{t('questionnaireEditor.fields')}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">{t('questionnaireEditor.fieldsHint')}</p>
           </div>
-          <button
+          <Button
             type="button"
             disabled={fields.length >= MAX_FIELDS}
             onClick={() => setFields((current) => [...current, newEditable('text')])}
-            className="rounded-md bg-primary-600 px-4 py-2 text-sm text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('questionnaireEditor.add')}
-          </button>
+          </Button>
         </div>
 
         {fields.map((field, index) => {
@@ -681,15 +681,14 @@ export default function TemplateEditor({ template, services, onChanged, onClose 
           {busy === 'save' && <LoadingSpinner size="sm" />}
           {t('questionnaireEditor.saveDraft')}
         </button>
-        <button
+        <Button
           type="button"
           disabled={busy !== null}
           onClick={() => void submit('publish')}
-          className="flex items-center gap-2 rounded-md bg-primary-600 px-5 py-2.5 font-medium text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {busy === 'publish' && <LoadingSpinner size="sm" />}
           {busy === 'publish' ? t('questionnaireEditor.publishing') : t('questionnaireEditor.publish')}
-        </button>
+        </Button>
       </div>
     </form>
   )
