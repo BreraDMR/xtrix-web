@@ -107,7 +107,7 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
   return (
     <div>
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
+        <div className="ui-card p-6 rounded-lg">
           <button
             onClick={handleFormCancel}
             className="mb-4 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"

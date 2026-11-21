@@ -170,7 +170,7 @@ export default function MySalary() {
           {currentSalary ? (
             <div className="space-y-6">
               {}
-              <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+              <div className="ui-card rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-4">{t('salary.currentSalary')}</h2>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -278,7 +278,7 @@ export default function MySalary() {
       {activeTab === 'details' && currentSalary && (
         <div className="space-y-6">
           {}
-          <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+          <div className="ui-card rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">{t('salary.adjustments')}</h2>
             {currentSalary.adjustments && currentSalary.adjustments.length > 0 ? (
               <div className="space-y-3">
@@ -315,7 +315,7 @@ export default function MySalary() {
           </div>
 
           {}
-          <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+          <div className="ui-card rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold dark:text-white">{t('salary.payments')}</h2>
               <div className="flex gap-2">
@@ -395,7 +395,7 @@ export default function MySalary() {
 
       {}
       {activeTab === 'history' && (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-800">
+        <div className="ui-card rounded-lg overflow-hidden">
           {isLoadingHistory ? (
             <div className="p-8 text-center">
               <LoadingSpinner />
@@ -454,7 +454,7 @@ export default function MySalary() {
 
       {}
       {activeTab === 'export' && currentSalary && (
-        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+        <div className="ui-card rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">{t('salary.export')}</h2>
           <p className="text-gray-600 mb-4 dark:text-gray-400">
             {t('salary.exportDescription')}

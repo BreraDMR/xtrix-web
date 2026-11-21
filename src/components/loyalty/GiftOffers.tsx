@@ -127,7 +127,7 @@ function Modal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="gift-modal-title"
-        className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800"
+        className="ui-card w-full max-w-2xl rounded-lg p-6 shadow-xl"
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <h2 id="gift-modal-title" className="text-xl font-bold text-gray-900 dark:text-gray-100">
@@ -405,7 +405,7 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
 
   return (
     <div className="space-y-6">
-      <section className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+      <section className="ui-card rounded-lg p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('gift.offersTitle')}</h2>
@@ -526,7 +526,7 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
         </div>
       </section>
 
-      <section className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+      <section className="ui-card rounded-lg p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('gift.certificatesTitle')}</h2>

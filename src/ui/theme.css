@@ -246,11 +246,6 @@
   .dark .crm-workspace::before { opacity: .6; }
   .crm-app main > div > :is(h1, div > h1) { letter-spacing: -.028em; font-weight: 600; }
   .crm-app main :where(h2) { letter-spacing: -.018em; }
-  .crm-app main :where(div, article, section)[class~='bg-white']:is([class~='rounded-lg'], [class~='rounded-xl']) {
-    border: 1px solid var(--workspace-card-border);
-    border-radius: var(--radius-card);
-    box-shadow: var(--workspace-card-shadow);
-  }
   .crm-app main :where(table) { font-size: 13.5px; }
   .crm-app main :where(thead) { border-bottom: 1px solid var(--workspace-line); }
   .crm-app main :where(td) { border-color: var(--workspace-line); font-weight: 400; }

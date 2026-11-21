@@ -91,7 +91,7 @@ export default function DeliveryLog() {
   return (
     <section
       aria-labelledby="delivery-log-title"
-      className="rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+      className="ui-card rounded-lg p-6"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>

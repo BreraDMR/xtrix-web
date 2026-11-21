@@ -176,7 +176,7 @@ export default function Employees() {
       </Card>
       {canEdit && showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+          <div className="ui-card rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4">{editingId ? t('employees.edit_employee') : t('employees.add_employee')}</h2>
             <EmployeeForm employeeId={editingId} onSuccess={() => { setShowForm(false); setEditingId(undefined); queryClient.invalidateQueries({ queryKey: ['employees'] }) }}
               onCancel={() => { setShowForm(false); setEditingId(undefined) }} />

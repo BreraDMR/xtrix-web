@@ -420,7 +420,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'program' && (
-        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+        <div className="ui-card rounded-lg p-6">
           {isLoadingProgram ? (
             <LoadingSpinner />
           ) : !program ? (
@@ -522,7 +522,7 @@ export default function Loyalty() {
           {}
           {showProgramForm && isAdmin && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowProgramForm(false)}>
-              <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800" onClick={(e) => e.stopPropagation()}>
+              <div className="ui-card rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">{program ? t('loyalty.edit_program') : t('loyalty.create_program')}</h3>
                 <form onSubmit={program ? handleUpdateProgram : handleCreateProgram}>
                   {programError && <div role="alert" className="mb-4"><FormError message={programError} /></div>}
@@ -661,7 +661,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'levels' && (
-        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+        <div className="ui-card rounded-lg p-6">
           {!program ? (
             <p className="text-gray-600 dark:text-gray-400">{t('loyalty.no_program')}</p>
           ) : isLoadingLevels ? (
@@ -736,7 +736,7 @@ export default function Loyalty() {
           {}
           {showLevelForm && isAdmin && program && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowLevelForm(false)}>
-              <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800" onClick={(e) => e.stopPropagation()}>
+              <div className="ui-card rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">{editingLevel ? t('loyalty.edit_level') : t('loyalty.add_level')}</h3>
                 <form
                   onSubmit={async (e) => {
@@ -867,7 +867,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'promotions' && (
-        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+        <div className="ui-card rounded-lg p-6">
           {!program ? (
             <p className="text-gray-600 dark:text-gray-400">{t('loyalty.no_program')}</p>
           ) : isLoadingPromotions ? (
@@ -940,7 +940,7 @@ export default function Loyalty() {
           {}
           {showPromotionForm && isAdmin && program && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowPromotionForm(false)}>
-              <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800" onClick={(e) => e.stopPropagation()}>
+              <div className="ui-card rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">{editingPromotion ? t('loyalty.edit_promotion') : t('loyalty.add_promotion')}</h3>
                 <form
                   onSubmit={async (e) => {
@@ -1165,7 +1165,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'transactions' && (
-        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+        <div className="ui-card rounded-lg p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 dark:text-gray-100">{t('loyalty.transactions')}</h2>
           
           {!program ? (
@@ -1213,7 +1213,7 @@ export default function Loyalty() {
 
       {}
       {activeTab === 'analytics' && (
-        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+        <div className="ui-card rounded-lg p-6">
           <LoyaltyAnalytics />
         </div>
       )}

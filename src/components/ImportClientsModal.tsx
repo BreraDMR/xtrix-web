@@ -270,7 +270,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800">
+      <div className="ui-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">

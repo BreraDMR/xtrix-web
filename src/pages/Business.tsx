@@ -89,7 +89,7 @@ export default function Business() {
       </div>
 
       {showForm ? (
-        <div className="bg-white p-6 rounded-lg shadow dark:bg-gray-800">
+        <div className="ui-card p-6 rounded-lg">
           <BusinessForm
             businessId={editingId}
             onSuccess={handleSuccess}
@@ -101,7 +101,7 @@ export default function Business() {
         </div>
       ) : business ? (
         <div className="space-y-6">
-          <div className="bg-white shadow rounded-lg p-6 dark:bg-gray-800">
+          <div className="ui-card rounded-lg p-6">
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('business.name')}</label>
@@ -143,7 +143,7 @@ export default function Business() {
           <PublicBookingCard />
         </div>
       ) : (
-        <div className="bg-white shadow rounded-lg p-6 text-center dark:bg-gray-800">
+        <div className="ui-card rounded-lg p-6 text-center">
           <p className="text-gray-500 mb-4 dark:text-gray-400">{t('business.empty')}</p>
           <button
             onClick={() => {
@@ -265,7 +265,7 @@ function PublicBookingCard() {
   }
 
   return (
-    <section aria-labelledby="public-booking-title" className="bg-white shadow rounded-lg p-6 dark:bg-gray-800">
+    <section aria-labelledby="public-booking-title" className="ui-card rounded-lg p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 id="public-booking-title" className="text-lg font-semibold">
