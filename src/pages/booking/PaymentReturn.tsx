@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 import api from '../../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
-import LanguageSwitcher from '../../components/LanguageSwitcher'
+import PublicShell from '../../components/public/PublicShell'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { INTL_LOCALE } from '../../components/booking/intl'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -38,17 +38,7 @@ function returnHash(params: PaymentParams): string {
 }
 
 function PublicFrame({ children, title }: { children: ReactNode; title: string }) {
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-gray-900 dark:text-gray-100">
-      <header className="border-b border-slate-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
-          <span className="text-sm font-medium text-slate-500 dark:text-gray-400">{title}</span>
-          <LanguageSwitcher />
-        </div>
-      </header>
-      <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">{children}</main>
-    </div>
-  )
+  return <PublicShell title={title}>{children}</PublicShell>
 }
 
 const STATUS_KEYS: Record<string, TranslationKey> = {
@@ -72,10 +62,10 @@ function statusKey(status: string): TranslationKey {
 function StatusChip({ status }: { status: string }) {
   const { t } = useTranslation()
   const tone = PAID_STATUSES.has(status)
-    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+    ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]'
     : FAILED_STATUSES.has(status)
-      ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-      : 'bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200'
+      ? 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
+      : 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]'
   return (
     <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${tone}`}>
       {t(statusKey(status))}
@@ -91,26 +81,26 @@ function PaymentDetails({ payment }: { payment: PublicPaymentStatusOut }) {
     timeZone: payment.timezone,
   }).format(new Date(payment.visit_start))
   return (
-    <dl className="mt-5 divide-y divide-slate-100 text-sm dark:divide-gray-700">
+    <dl className="mt-5 divide-y divide-[var(--workspace-line)] text-sm">
       <div className="flex justify-between gap-4 py-3">
-        <dt className="text-slate-500 dark:text-gray-400">{t('booking.service')}</dt>
+        <dt className="text-[var(--workspace-muted)]">{t('booking.service')}</dt>
         <dd className="text-right font-medium">{payment.service_name}</dd>
       </div>
       <div className="flex justify-between gap-4 py-3">
-        <dt className="text-slate-500 dark:text-gray-400">{t('booking.dateTime')}</dt>
+        <dt className="text-[var(--workspace-muted)]">{t('booking.dateTime')}</dt>
         <dd className="text-right font-medium">
           {when}
-          <span className="mt-1 block text-xs font-normal text-slate-500 dark:text-gray-400">{payment.timezone}</span>
+          <span className="mt-1 block text-xs font-normal text-[var(--workspace-muted)]">{payment.timezone}</span>
         </dd>
       </div>
       <div className="flex justify-between gap-4 py-3">
-        <dt className="text-slate-500 dark:text-gray-400">{t('payment.deposit')}</dt>
+        <dt className="text-[var(--workspace-muted)]">{t('payment.deposit')}</dt>
         <dd className="text-right font-medium">
           {formatCurrency(payment.amount, payment.currency as Currency)}
         </dd>
       </div>
       <div className="flex justify-between gap-4 py-3">
-        <dt className="text-slate-500 dark:text-gray-400">{t('payment.remaining')}</dt>
+        <dt className="text-[var(--workspace-muted)]">{t('payment.remaining')}</dt>
         <dd className="text-right font-medium">
           {formatCurrency(payment.remaining_amount, payment.currency as Currency)}
         </dd>
@@ -123,9 +113,9 @@ function InvalidLink() {
   const { t } = useTranslation()
   return (
     <PublicFrame title={t('payment.returnTitle')}>
-      <section className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+      <section className="ui-card p-8 text-center">
         <h1 className="text-xl font-semibold">{t('payment.invalidLink')}</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm text-slate-500 dark:text-gray-400">
+        <p className="mx-auto mt-3 max-w-md text-sm text-[var(--workspace-muted)]">
           {t('payment.invalidLinkText')}
         </p>
       </section>
@@ -174,7 +164,7 @@ export default function PaymentReturn() {
     if (status === 404) return <InvalidLink />
     return (
       <PublicFrame title={t('payment.returnTitle')}>
-        <section role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+        <section role="alert" className="rounded-2xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-6 text-[var(--tint-red-ink)]">
           <p>{apiErrorMessage(paymentQuery.error, t('payment.loadError'))}</p>
           <button
             type="button"
@@ -182,7 +172,7 @@ export default function PaymentReturn() {
               attempts.current = 0
               void paymentQuery.refetch()
             }}
-            className="mt-3 rounded-md border border-red-300 px-4 py-2 text-sm font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+            className="mt-3 rounded-md border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] px-4 py-2 text-sm font-medium hover:bg-[color-mix(in_srgb,var(--tint-red-ink)_12%,var(--tint-red))]"
           >
             {t('payment.checkAgain')}
           </button>
@@ -226,18 +216,18 @@ export default function PaymentReturn() {
 
   return (
     <PublicFrame title={t('payment.returnTitle')}>
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <section className="ui-card p-6 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-2xl font-bold">{title}</h1>
           <StatusChip status={payment.status} />
         </div>
-        <p className="mt-2 text-sm text-slate-500 dark:text-gray-400" role="status">{text}</p>
+        <p className="mt-2 text-sm text-[var(--workspace-muted)]" role="status">{text}</p>
 
         <PaymentDetails payment={payment} />
 
         {pending && (
           <>
-            <p className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+            <p className="mt-4 rounded-lg bg-[var(--tint-amber)] p-3 text-sm text-[var(--tint-amber-ink)]">
               {t('payment.waitingHint')}
             </p>
             <button
@@ -247,7 +237,7 @@ export default function PaymentReturn() {
                 attempts.current = 0
                 void paymentQuery.refetch()
               }}
-              className="mt-4 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
+              className="mt-4 ui-button ui-button-primary disabled:opacity-60"
             >
               {t('payment.checkAgain')}
             </button>
@@ -307,7 +297,7 @@ export function SandboxCheckout() {
     if (status === 404) return <InvalidLink />
     return (
       <PublicFrame title={t('payment.sandboxTitle')}>
-        <section role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+        <section role="alert" className="rounded-2xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-6 text-[var(--tint-red-ink)]">
           <p>{apiErrorMessage(paymentQuery.error, t('payment.loadError'))}</p>
         </section>
       </PublicFrame>
@@ -320,14 +310,14 @@ export function SandboxCheckout() {
 
   return (
     <PublicFrame title={t('payment.sandboxTitle')}>
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <section className="ui-card p-6 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-2xl font-bold">{t('payment.sandboxTitle')}</h1>
-          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+          <span className="rounded-full bg-[var(--tint-blue)] px-3 py-1 text-xs font-medium text-[var(--tint-blue-ink)]">
             {t('payment.sandboxBadge')}
           </span>
         </div>
-        <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">{t('payment.sandboxText')}</p>
+        <p className="mt-2 text-sm text-[var(--workspace-muted)]">{t('payment.sandboxText')}</p>
 
         <PaymentDetails payment={payment} />
         <div className="mt-3">
@@ -335,11 +325,11 @@ export function SandboxCheckout() {
         </div>
 
         {settled ? (
-          <div className="mt-5 rounded-lg bg-slate-50 p-4 text-sm dark:bg-gray-700">
+          <div className="mt-5 rounded-lg bg-[var(--workspace-fill)] p-4 text-sm">
             <p>{t('payment.alreadySettled')}</p>
             <a
               href={`/payment/return${returnHash(params)}`}
-              className="mt-3 inline-block rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+              className="mt-3 inline-block ui-button ui-button-primary"
             >
               {t('payment.checkStatus')}
             </a>
@@ -350,7 +340,7 @@ export function SandboxCheckout() {
               type="button"
               disabled={finish.isPending}
               onClick={() => finish.mutate('paid')}
-              className="rounded-md bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
+              className="ui-button ui-button-primary disabled:opacity-60"
             >
               {finish.isPending
                 ? t('payment.sandboxSending')
@@ -360,7 +350,7 @@ export function SandboxCheckout() {
               type="button"
               disabled={finish.isPending}
               onClick={() => finish.mutate('failed')}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-60 dark:border-gray-600 dark:hover:bg-gray-700"
+              className="ui-button ui-button-secondary disabled:opacity-60"
             >
               {t('payment.sandboxFail')}
             </button>
@@ -368,7 +358,7 @@ export function SandboxCheckout() {
         )}
 
         {finish.isError && (
-          <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+          <p role="alert" className="mt-4 rounded-lg border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-3 text-sm text-[var(--tint-red-ink)]">
             {apiErrorMessage(finish.error, t('payment.loadError'))}
           </p>
         )}

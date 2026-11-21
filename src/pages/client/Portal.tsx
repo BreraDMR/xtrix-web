@@ -52,10 +52,10 @@ function StatusBadge({ status }: { status: string }) {
   const key = STATUS_KEYS[status]
   const tone =
     status === 'planned'
-      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+      ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]'
       : status === 'in_progress'
-        ? 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
-        : 'bg-slate-100 text-slate-600 dark:bg-gray-700 dark:text-gray-300'
+        ? 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]'
+        : 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
   return (
     <span className={`rounded-full px-3 py-1 text-xs font-medium ${tone}`}>
       {key ? t(key) : status}
@@ -69,7 +69,7 @@ function SectionState({ query, children }: {
 }) {
   const { t } = useTranslation()
   if (query.isPending) return <div className="flex justify-center py-8"><LoadingSpinner /></div>
-  if (query.isError) return <div role="alert" className="mt-3 rounded-xl bg-red-50 p-4 text-sm text-red-800 dark:bg-red-950 dark:text-red-200">
+  if (query.isError) return <div role="alert" className="mt-3 rounded-xl bg-[var(--tint-red)] p-4 text-sm text-[var(--tint-red-ink)]">
     <p>{t('portal.loadError')}</p>
     <button type="button" onClick={() => void query.refetch()}
       className="mt-3 rounded-md border border-current px-4 py-2 font-medium">{t('common.retry')}</button>
@@ -81,14 +81,14 @@ function SignedOut() {
   const { t } = useTranslation()
   return (
     <ClientShell title={t('portal.title')}>
-      <section className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+      <section className="ui-card p-8 text-center">
         <h1 className="text-xl font-semibold">{t('portal.sessionExpiredTitle')}</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm text-slate-500 dark:text-gray-400">
+        <p className="mx-auto mt-3 max-w-md text-sm text-[var(--workspace-muted)]">
           {t('portal.sessionExpiredText')}
         </p>
         <Link
           to="/client/portal"
-          className="mt-5 inline-block rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          className="mt-5 inline-block ui-button ui-button-primary"
         >
           {t('portal.goToLogin')}
         </Link>
@@ -118,15 +118,15 @@ function VisitCard({
   const canBookAgain = bookingEnabled && Boolean(bookingSlug) && visit.service_id !== null
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <article className="ui-card p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h3 className="font-semibold">{visit.service_name || t('portal.visitNumber') + ` #${visit.id}`}</h3>
-          <p className="mt-1 text-sm text-slate-600 dark:text-gray-300">
+          <p className="mt-1 text-sm text-[var(--workspace-muted)]">
             {formatDateTime(visit.date_start, timezone, locale)}
           </p>
           {visit.staff_name && (
-            <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{visit.staff_name}</p>
+            <p className="mt-1 text-sm text-[var(--workspace-muted)]">{visit.staff_name}</p>
           )}
         </div>
         <StatusBadge status={visit.status} />
@@ -143,7 +143,7 @@ function VisitCard({
               type="button"
               disabled={managing}
               onClick={() => onManage(visit)}
-              className="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="ui-button ui-button-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
               {managing ? t('portal.openingManage') : t('portal.manage')}
             </button>
@@ -151,7 +151,7 @@ function VisitCard({
           {canBookAgain && (
             <Link
               to={`/booking/${encodeURIComponent(bookingSlug ?? '')}?service=${visit.service_id}`}
-              className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
+              className="ui-button ui-button-secondary"
             >
               {t('portal.bookAgain')}
             </Link>
@@ -281,7 +281,7 @@ export default function Portal() {
   if (!token || expired || unauthorized) return <SignedOut />
 
   const logoutButton = <button type="button" onClick={() => void handleLogout()} disabled={loggingOut}
-    className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-50 disabled:opacity-50 dark:border-gray-600 dark:hover:bg-gray-700">
+    className="ui-button ui-button-secondary disabled:opacity-50">
     {t('portal.logout')}
   </button>
 
@@ -317,12 +317,12 @@ export default function Portal() {
       title={t('portal.title')}
       actions={logoutButton}
     >
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800">
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{t('portal.signedInAs')}</p>
+      <section className="ui-card p-6">
+        <p className="text-xs font-medium uppercase tracking-wide text-[var(--workspace-subtle)]">{t('portal.signedInAs')}</p>
         <h1 className="mt-1 text-2xl font-bold">{session.client_name}</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{session.business_name}</p>
+        <p className="mt-1 text-sm text-[var(--workspace-muted)]">{session.business_name}</p>
         {visits && !visits.booking_enabled && (
-          <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+          <p className="mt-3 rounded-lg bg-[var(--tint-amber)] p-3 text-sm text-[var(--tint-amber-ink)]">
             {t('portal.bookingDisabled')}
           </p>
         )}
@@ -331,7 +331,7 @@ export default function Portal() {
       {manageError && (
         <div
           role="alert"
-          className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200"
+          className="mt-4 rounded-xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] px-4 py-3 text-sm text-[var(--tint-red-ink)]"
         >
           {manageError}
         </div>
@@ -343,21 +343,21 @@ export default function Portal() {
           <h2 className="text-lg font-semibold">{t('portal.upcoming')}</h2>
           <div className="mt-3 space-y-3">
             {visits.upcoming.length === 0 ? (
-              <p className="rounded-xl bg-white p-4 text-sm text-slate-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
+              <p className="rounded-xl bg-[var(--workspace-panel)] p-4 text-sm text-[var(--workspace-muted)] shadow-sm">
                 {t('portal.noUpcoming')}
               </p>
             ) : (
               visits.upcoming.map(renderVisit)
             )}
           </div>
-          <p className="mt-3 text-xs text-slate-500 dark:text-gray-400">{t('portal.manageHint')}</p>
+          <p className="mt-3 text-xs text-[var(--workspace-muted)]">{t('portal.manageHint')}</p>
         </section>
 
         <section className="mt-6">
           <h2 className="text-lg font-semibold">{t('portal.past')}</h2>
           <div className="mt-3 space-y-3">
             {visits.past.length === 0 ? (
-              <p className="rounded-xl bg-white p-4 text-sm text-slate-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
+              <p className="rounded-xl bg-[var(--workspace-panel)] p-4 text-sm text-[var(--workspace-muted)] shadow-sm">
                 {t('portal.noPast')}
               </p>
             ) : (
@@ -370,30 +370,30 @@ export default function Portal() {
       </SectionState>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <section className="rounded-2xl bg-white p-5 shadow-sm dark:bg-gray-800">
+        <section className="ui-card p-5">
           <h2 className="text-lg font-semibold">{t('portal.loyalty.title')}</h2>
           <SectionState query={loyaltyQuery}>
             {loyalty && (!hasLoyalty ? (
-              <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('portal.loyalty.empty')}</p>
+              <p className="mt-3 text-sm text-[var(--workspace-muted)]">{t('portal.loyalty.empty')}</p>
             ) : (
-              <dl className="mt-3 divide-y divide-slate-100 text-sm dark:divide-gray-700">
+              <dl className="mt-3 divide-y divide-[var(--workspace-line)] text-sm">
                 <div className="flex justify-between gap-3 py-2">
-                  <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.points')}</dt>
+                  <dt className="text-[var(--workspace-muted)]">{t('portal.loyalty.points')}</dt>
                   <dd className="font-semibold">{points}</dd>
                 </div>
                 <div className="flex justify-between gap-3 py-2">
-                  <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.cashback')}</dt>
+                  <dt className="text-[var(--workspace-muted)]">{t('portal.loyalty.cashback')}</dt>
                   <dd className="font-semibold">{currency ? formatCurrency(loyalty.cashback, currency) : '—'}</dd>
                 </div>
                 {loyalty.level_name && (
                   <div className="flex justify-between gap-3 py-2">
-                    <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.level')}</dt>
+                    <dt className="text-[var(--workspace-muted)]">{t('portal.loyalty.level')}</dt>
                     <dd className="text-right font-medium">{loyalty.level_name}</dd>
                   </div>
                 )}
                 {loyalty.level_benefits && (
                   <div className="py-2">
-                    <dt className="text-slate-500 dark:text-gray-400">{t('portal.loyalty.benefits')}</dt>
+                    <dt className="text-[var(--workspace-muted)]">{t('portal.loyalty.benefits')}</dt>
                     <dd className="mt-1 whitespace-pre-line">{loyalty.level_benefits}</dd>
                   </div>
                 )}
@@ -402,25 +402,25 @@ export default function Portal() {
           </SectionState>
         </section>
 
-        <section className="rounded-2xl bg-white p-5 shadow-sm dark:bg-gray-800">
+        <section className="ui-card p-5">
           <h2 className="text-lg font-semibold">{t('portal.forms.title')}</h2>
           <SectionState query={formsQuery}>
             {forms && (forms.items.length === 0 ? (
-              <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('portal.forms.empty')}</p>
+              <p className="mt-3 text-sm text-[var(--workspace-muted)]">{t('portal.forms.empty')}</p>
             ) : (
               <div className="mt-3 space-y-2">
                 {forms.items.map((form: ClientPortalQuestionnaireOut) => (
                   <details
                     key={form.id}
-                    className="rounded-lg border border-slate-200 p-3 dark:border-gray-700"
+                    className="rounded-lg border border-[var(--workspace-line)] p-3"
                   >
                     <summary className="cursor-pointer text-sm font-medium">
                       {form.name}
-                      <span className="ml-2 text-xs font-normal text-slate-500 dark:text-gray-400">
+                      <span className="ml-2 text-xs font-normal text-[var(--workspace-muted)]">
                         {formatDate(form.submitted_at, locale)}
                       </span>
                     </summary>
-                    <p className="mt-2 text-xs text-slate-500 dark:text-gray-400">
+                    <p className="mt-2 text-xs text-[var(--workspace-muted)]">
                       {t('portal.forms.version')} {form.version}
                     </p>
                     <dl className="mt-2 space-y-1 text-sm">
@@ -433,14 +433,14 @@ export default function Portal() {
                         const value = answerText(key ? form.answers[key] : '')
                         return (
                           <div key={`${form.id}-${key || index}`} className="flex justify-between gap-3">
-                            <dt className="text-slate-500 dark:text-gray-400">{label}</dt>
+                            <dt className="text-[var(--workspace-muted)]">{label}</dt>
                             <dd className="text-right font-medium">{value || '—'}</dd>
                           </div>
                         )
                       })}
                     </dl>
                     {form.fields.length === 0 && (
-                      <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
+                      <p className="mt-2 text-sm text-[var(--workspace-muted)]">
                         {t('portal.forms.noAnswers')}
                       </p>
                     )}

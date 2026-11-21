@@ -20,30 +20,30 @@ export default function DepositStep({ payment, timezone, currency }: DepositStep
   const canPay = payment.status === 'pending' && Boolean(payment.checkout_url)
 
   return (
-    <div role="status" className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
-      <h3 className="text-base font-semibold text-amber-900 dark:text-amber-100">{t('booking.depositTermsTitle')}</h3>
+    <div role="status" className="mt-5 rounded-xl border border-[color-mix(in_srgb,var(--tint-amber-ink)_25%,transparent)] bg-[var(--tint-amber)] p-4">
+      <h3 className="text-base font-semibold text-[var(--tint-amber-ink)]">{t('booking.depositTermsTitle')}</h3>
 
-      <dl className="mt-3 divide-y divide-amber-200 text-sm dark:divide-amber-800">
+      <dl className="mt-3 divide-y divide-[color-mix(in_srgb,var(--tint-amber-ink)_25%,transparent)] text-sm">
         <div className="flex justify-between gap-4 py-2">
-          <dt className="text-amber-800 dark:text-amber-200">{t('payment.deposit')}</dt>
-          <dd className="font-semibold text-amber-950 dark:text-amber-50">{money(payment.amount)}</dd>
+          <dt className="text-[var(--tint-amber-ink)]">{t('payment.deposit')}</dt>
+          <dd className="font-semibold text-[var(--tint-amber-ink)]">{money(payment.amount)}</dd>
         </div>
         <div className="flex justify-between gap-4 py-2">
-          <dt className="text-amber-800 dark:text-amber-200">{t('booking.remainingAmount')}</dt>
-          <dd className="font-medium text-amber-950 dark:text-amber-50">{money(payment.remaining_amount)}</dd>
+          <dt className="text-[var(--tint-amber-ink)]">{t('booking.remainingAmount')}</dt>
+          <dd className="font-medium text-[var(--tint-amber-ink)]">{money(payment.remaining_amount)}</dd>
         </div>
         <div className="flex justify-between gap-4 py-2">
-          <dt className="text-amber-800 dark:text-amber-200">{t('booking.payBefore')}</dt>
-          <dd className="font-medium text-amber-950 dark:text-amber-50">{holdUntil}</dd>
+          <dt className="text-[var(--tint-amber-ink)]">{t('booking.payBefore')}</dt>
+          <dd className="font-medium text-[var(--tint-amber-ink)]">{holdUntil}</dd>
         </div>
       </dl>
 
-      <p className="mt-2 text-xs text-amber-800 dark:text-amber-200">{t('booking.holdNote')}</p>
+      <p className="mt-2 text-xs text-[var(--tint-amber-ink)]">{t('booking.holdNote')}</p>
 
       {canPay && (
         <a
           href={payment.checkout_url ?? '#'}
-          className="mt-3 inline-block rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          className="mt-3 inline-block ui-button ui-button-primary"
         >
           {t('booking.payDeposit')}
         </a>

@@ -116,13 +116,13 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
 
   if (left) {
     return (
-      <section className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-5 dark:border-gray-600 dark:bg-gray-700">
+      <section className="mt-4 rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-fill)] p-5">
         <h2 className="text-lg font-semibold">{t('booking.waitlist.leftTitle')}</h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-gray-300">{t('booking.waitlist.leftText')}</p>
+        <p className="mt-2 text-sm text-[var(--workspace-muted)]">{t('booking.waitlist.leftText')}</p>
         <button
           type="button"
           onClick={onBack}
-          className="mt-4 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-white dark:border-gray-500 dark:hover:bg-gray-600"
+          className="mt-4 ui-button ui-button-secondary"
         >
           {t('booking.back')}
         </button>
@@ -132,12 +132,12 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
 
   if (result) {
     return (
-      <section className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-800 dark:bg-emerald-950">
-        <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">
+      <section className="mt-4 rounded-xl border border-[color-mix(in_srgb,var(--tint-green-ink)_25%,transparent)] bg-[var(--tint-green)] p-5">
+        <h2 className="text-lg font-semibold text-[var(--tint-green-ink)]">
           {t('booking.waitlist.joinedTitle')}
         </h2>
-        <p className="mt-2 text-sm text-emerald-800 dark:text-emerald-200">{t('booking.waitlist.joinedText')}</p>
-        <p className="mt-2 text-sm font-medium text-emerald-900 dark:text-emerald-100">
+        <p className="mt-2 text-sm text-[var(--tint-green-ink)]">{t('booking.waitlist.joinedText')}</p>
+        <p className="mt-2 text-sm font-medium text-[var(--tint-green-ink)]">
           {t('booking.waitlist.notBooking')}
         </p>
         <FormError message={error ? apiErrorMessage(error, t('common.error')) : ''} />
@@ -147,7 +147,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
               type="button"
               onClick={() => void leave()}
               disabled={isSubmitting}
-              className="rounded-md border border-emerald-300 px-4 py-2 text-sm font-medium text-emerald-900 hover:bg-emerald-100 disabled:opacity-50 dark:border-emerald-700 dark:text-emerald-100 dark:hover:bg-emerald-900"
+              className="rounded-md border border-[color-mix(in_srgb,var(--tint-green-ink)_25%,transparent)] px-4 py-2 text-sm font-medium text-[var(--tint-green-ink)] hover:bg-[color-mix(in_srgb,var(--tint-green-ink)_12%,var(--tint-green))] disabled:opacity-50"
             >
               {t('booking.waitlist.leave')}
             </button>
@@ -155,7 +155,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
           <button
             type="button"
             onClick={onBack}
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-white dark:border-gray-600 dark:hover:bg-gray-700"
+            className="ui-button ui-button-secondary"
           >
             {t('booking.back')}
           </button>
@@ -167,16 +167,16 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
   return (
     <form onSubmit={(event) => void submit(event)} className="mt-4">
       <h2 className="text-lg font-semibold">{t('booking.waitlist.title')}</h2>
-      <p className="mt-2 text-sm text-slate-600 dark:text-gray-300">{t('booking.waitlist.notBooking')}</p>
-      <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('booking.waitlist.explanation')}</p>
+      <p className="mt-2 text-sm text-[var(--workspace-muted)]">{t('booking.waitlist.notBooking')}</p>
+      <p className="mt-1 text-sm text-[var(--workspace-muted)]">{t('booking.waitlist.explanation')}</p>
 
-      <dl className="mt-4 grid gap-2 rounded-lg bg-slate-50 px-4 py-3 text-sm dark:bg-gray-700 sm:grid-cols-2">
+      <dl className="mt-4 grid gap-2 rounded-lg bg-[var(--workspace-fill)] px-4 py-3 text-sm sm:grid-cols-2">
         <div>
-          <dt className="text-slate-500 dark:text-gray-400">{t('booking.service')}</dt>
+          <dt className="text-[var(--workspace-muted)]">{t('booking.service')}</dt>
           <dd className="font-medium">{service.name}</dd>
         </div>
         <div>
-          <dt className="text-slate-500 dark:text-gray-400">{t('booking.master')}</dt>
+          <dt className="text-[var(--workspace-muted)]">{t('booking.master')}</dt>
           <dd className="font-medium">{staffName || t('booking.anyMaster')}</dd>
         </div>
       </dl>
@@ -190,7 +190,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
             onChange={(event) => setFullName(event.target.value)}
             maxLength={200}
             autoComplete="name"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+            className="ui-input mt-1"
           />
         </label>
         <label className="block text-sm">
@@ -202,7 +202,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
             onChange={(event) => setEmail(event.target.value)}
             maxLength={320}
             autoComplete="email"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+            className="ui-input mt-1"
           />
         </label>
         <label className="block text-sm">
@@ -214,7 +214,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
             maxLength={32}
             autoComplete="tel"
             placeholder="+420777123456"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+            className="ui-input mt-1"
           />
         </label>
         <label className="block text-sm">
@@ -222,7 +222,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
           <select
             value={timePreference}
             onChange={(event) => setTimePreference(event.target.value as TimePreference)}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+            className="ui-input mt-1"
           >
             <option value="any">{t('booking.waitlist.timeAny')}</option>
             <option value="morning">{t('booking.waitlist.timeMorning')}</option>
@@ -242,7 +242,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
               setDateFrom(event.target.value)
               if (dateTo && event.target.value > dateTo) setDateTo(event.target.value)
             }}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+            className="ui-input mt-1"
           />
         </label>
         <label className="block text-sm">
@@ -254,7 +254,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
             min={dateFrom || today}
             max={lastDay}
             onChange={(event) => setDateTo(event.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+            className="ui-input mt-1"
           />
         </label>
       </div>
@@ -279,7 +279,7 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
       </label>
 
       {localError && (
-        <p role="alert" className="mt-3 text-sm text-red-700 dark:text-red-300">
+        <p role="alert" className="mt-3 text-sm text-[var(--tint-red-ink)]">
           {localError}
         </p>
       )}
@@ -289,14 +289,14 @@ export default function WaitlistForm({ slug, service, staffId, staffName, timezo
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+          className="ui-button ui-button-primary disabled:opacity-50"
         >
           {isSubmitting ? t('booking.submitting') : t('booking.waitlist.join')}
         </button>
         <button
           type="button"
           onClick={onBack}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
+          className="ui-button ui-button-secondary"
         >
           {t('booking.waitlist.decline')}
         </button>

@@ -9,7 +9,7 @@ export default function FormError({ message, className = '' }: FormErrorProps) {
   if (!message) return null
   
   return (
-    <div className={`flex items-center gap-2 text-red-600 text-sm mt-1 ${className}`}>
+    <div className={`flex items-center gap-2 text-[var(--tint-red-ink)] text-sm mt-1 ${className}`}>
       <LuCircleX className="w-4 h-4 flex-shrink-0" />
       <span>{message}</span>
     </div>

@@ -85,7 +85,7 @@ export default function PortalLogin() {
   if (status === 'verifying') {
     return (
       <ClientShell title={t('portal.title')}>
-        <div className="flex flex-col items-center gap-4 py-24 text-sm text-slate-500 dark:text-gray-400">
+        <div className="flex flex-col items-center gap-4 py-24 text-sm text-[var(--workspace-muted)]">
           <LoadingSpinner size="lg" />
           <p role="status">{t('portal.login.verifying')}</p>
         </div>
@@ -98,13 +98,13 @@ export default function PortalLogin() {
       <section className="ui-card space-y-6 p-6 sm:p-8">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{t('portal.login.title')}</h1>
-          <p className="mt-2 text-sm text-slate-600 dark:text-gray-300">{t('portal.login.subtitle')}</p>
+          <p className="mt-2 text-sm text-[var(--workspace-muted)]">{t('portal.login.subtitle')}</p>
         </div>
 
         {status === 'invalid' && (
           <div
             role="alert"
-            className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300"
+            className="rounded-lg border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-3 text-sm text-[var(--tint-red-ink)]"
           >
             {t('portal.login.invalidLink')}
           </div>
@@ -114,7 +114,7 @@ export default function PortalLogin() {
           <div className="space-y-5">
             <div>
               <h2 className="text-lg font-semibold">{t('portal.login.sentTitle')}</h2>
-              <p role="status" className="mt-2 text-sm text-slate-600 dark:text-gray-300">
+              <p role="status" className="mt-2 text-sm text-[var(--workspace-muted)]">
                 {t('portal.login.sent')}
               </p>
             </div>
@@ -124,14 +124,14 @@ export default function PortalLogin() {
                 setSent(false)
                 setEmail('')
               }}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
+              className="ui-button ui-button-secondary"
             >
               {t('portal.login.another')}
             </button>
           </div>
         ) : (
           <>
-            <p className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600 dark:bg-gray-900 dark:text-gray-300">
+            <p className="rounded-lg bg-[var(--workspace-fill)] p-3 text-sm text-[var(--workspace-muted)]">
               {t('portal.login.needSalon')}
             </p>
             <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
@@ -146,9 +146,9 @@ export default function PortalLogin() {
                   onChange={(event) => setSalon(event.target.value)}
                   required
                   autoComplete="off"
-                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="w-full rounded-lg border border-[var(--workspace-control)] bg-[var(--workspace-panel)] px-4 py-3 text-[var(--workspace-ink)] focus:border-transparent focus:ring-2 focus:ring-[var(--workspace-focus)]"
                 />
-                <p className="mt-1 text-xs text-slate-500 dark:text-gray-400">{t('portal.login.salonHint')}</p>
+                <p className="mt-1 text-xs text-[var(--workspace-muted)]">{t('portal.login.salonHint')}</p>
               </div>
               <div>
                 <label htmlFor="portal-email" className="mb-2 block text-sm font-medium">
@@ -162,7 +162,7 @@ export default function PortalLogin() {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   required
-                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="w-full rounded-lg border border-[var(--workspace-control)] bg-[var(--workspace-panel)] px-4 py-3 text-[var(--workspace-ink)] focus:border-transparent focus:ring-2 focus:ring-[var(--workspace-focus)]"
                   placeholder="your@email.com"
                 />
               </div>
@@ -170,7 +170,7 @@ export default function PortalLogin() {
               <button
                 type="submit"
                 disabled={sending || !salon.trim() || !email.trim()}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-3 font-medium text-white shadow-md transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2 ui-button ui-button-primary disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {sending ? (
                   <>

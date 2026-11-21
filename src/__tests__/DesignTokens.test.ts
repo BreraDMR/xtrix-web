@@ -143,3 +143,27 @@ describe('CRM screens', () => {
     expect(offenders).toEqual([])
   })
 })
+
+// DES-10: everything a guest opens from a link (booking, manage, waitlist offer, forms,
+// payments, gifts, unsubscribe, the cabinet) should look like the same Xtrix, so it reads the
+// theme tokens too. Raw Tailwind palette classes here were the old gray-and-blue booking look.
+const PUBLIC_DIRS = [
+  'src/pages/booking/', 'src/components/booking/', 'src/pages/client/',
+  'src/pages/visitor/', 'src/components/visitor/', 'src/components/public/', 'src/components/client/',
+]
+const PUBLIC_FILES = ['src/pages/Unsubscribe.tsx', 'src/components/subscription/PublicFeatureGate.tsx', 'src/components/FormError.tsx']
+const PALETTE = /\b(?:bg|text|border|ring|divide|from|to|placeholder|outline|accent)-(?:gray|slate|zinc|neutral|stone|blue|indigo|purple|violet|green|emerald|red|rose|amber|yellow|orange|pink|sky|teal|primary)-\d{2,3}\b/g
+
+describe('public screens', () => {
+  it('take colours from the theme, not the raw Tailwind palette', () => {
+    const files = sources(resolve(root, 'src'))
+      .map(path => relative(root, path))
+      .filter(path => PUBLIC_FILES.includes(path) || PUBLIC_DIRS.some(dir => path.startsWith(dir)))
+    expect(files.length).toBeGreaterThan(20)
+    const offenders = files.flatMap(path => {
+      const hits = readFileSync(resolve(root, path), 'utf8').match(PALETTE) ?? []
+      return hits.length ? [`${path}: ${hits.length} (${[...new Set(hits)].slice(0, 3).join(' ')})`] : []
+    })
+    expect(offenders).toEqual([])
+  })
+})
