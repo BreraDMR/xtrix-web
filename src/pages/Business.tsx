@@ -13,6 +13,7 @@ import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import type { BusinessOut, PublicBookingSettingsOut } from '../api/types'
 import { effectiveAssistant } from '../i18n/assistant'
 import Button from '../ui/Button'
+import StatusBadge from '../ui/StatusBadge'
 
 export default function Business() {
   const { user } = useAuthStore()
@@ -334,15 +335,9 @@ function PublicBookingCard() {
             </p>
           )}
 
-          <p
-            className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-              settings.is_enabled
-                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-                : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-            }`}
-          >
+          <p className="mt-4"><StatusBadge tone={settings.is_enabled ? 'success' : 'neutral'} className="px-3 py-1">
             {settings.is_enabled ? t('business.publicBooking.enabled') : t('business.publicBooking.disabled')}
-          </p>
+          </StatusBadge></p>
           {!settings.is_enabled && (
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('business.publicBooking.disabledHint')}</p>
           )}

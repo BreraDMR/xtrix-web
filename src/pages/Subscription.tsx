@@ -14,6 +14,7 @@ import { useLabels } from '../i18n/labels'
 import { formatDays } from '../utils/plural'
 import type { Schema, EntitlementsUsageOut } from '../api/types'
 import Button from '../ui/Button'
+import StatusBadge from '../ui/StatusBadge'
 
 type Subscription = Schema<'SubscriptionOut'>
 type SubscriptionPlan = Schema<'SubscriptionPlanOut'>
@@ -289,17 +290,11 @@ function LegacySubscription() {
                 <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
                   {t('subscription.crm_usage')}
                 </span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-                    usageData.crm.is_within_limit
-                      ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300'
-                      : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                  }`}
-                >
+                <StatusBadge tone={usageData.crm.is_within_limit ? 'success' : 'warning'} className="px-2 font-semibold">
                   {usageData.crm.is_within_limit
                     ? t('subscription.within_limit')
                     : t('subscription.limit_exceeded')}
-                </span>
+                </StatusBadge>
               </div>
               <div className="text-2xl font-bold text-slate-900 dark:text-white">
                 {usageData.crm.active_clients}
@@ -320,17 +315,11 @@ function LegacySubscription() {
                 <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
                   {t('subscription.ai_usage')}
                 </span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-                    usageData.ai.is_within_limit
-                      ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]'
-                      : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                  }`}
-                >
+                <StatusBadge tone={usageData.ai.is_within_limit ? 'accent' : 'warning'} className="px-2 font-semibold">
                   {usageData.ai.is_within_limit
                     ? t('subscription.within_limit')
                     : t('subscription.limit_exceeded')}
-                </span>
+                </StatusBadge>
               </div>
               <div className="text-2xl font-bold text-slate-900 dark:text-white">
                 {usageData.ai.daily_requests_used}
@@ -568,17 +557,9 @@ function LegacySubscription() {
                         {planById(sub.plan_id) ? labels.planName(planById(sub.plan_id)) : `${t('subscription.plan_number')} #${sub.plan_id}`}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            sub.status === 'active'
-                              ? 'bg-green-100 text-green-800'
-                              : sub.status === 'cancelled' || sub.status === 'expired'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}
-                        >
+                        <StatusBadge tone={sub.status === 'active' ? 'success' : sub.status === 'cancelled' || sub.status === 'expired' ? 'danger' : 'neutral'} className="px-2 font-semibold">
                           {labels.subscriptionStatus(sub.status)}
-                        </span>
+                        </StatusBadge>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(sub.created_at)}

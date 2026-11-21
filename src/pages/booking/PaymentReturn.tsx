@@ -11,6 +11,7 @@ import { useTranslation } from '../../hooks/useTranslation'
 import type { TranslationKey } from '../../i18n/translations'
 import type { PublicPaymentStatusOut } from '../../api/types'
 import { formatCurrency, type Currency } from '../../utils/currency'
+import StatusBadge from '../../ui/StatusBadge'
 
 type PaymentParams = { ref: string; token: string }
 
@@ -59,17 +60,13 @@ function statusKey(status: string): TranslationKey {
   return STATUS_KEYS[status] ?? 'payment.status.pending'
 }
 
-function StatusChip({ status }: { status: string }) {
+function PaymentStatus({ status }: { status: string }) {
   const { t } = useTranslation()
-  const tone = PAID_STATUSES.has(status)
-    ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]'
-    : FAILED_STATUSES.has(status)
-      ? 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
-      : 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]'
+  const tone = PAID_STATUSES.has(status) ? 'success' : FAILED_STATUSES.has(status) ? 'neutral' : 'warning'
   return (
-    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${tone}`}>
+    <StatusBadge tone={tone} className="px-3 py-1">
       {t(statusKey(status))}
-    </span>
+    </StatusBadge>
   )
 }
 
@@ -219,7 +216,7 @@ export default function PaymentReturn() {
       <section className="ui-card p-6 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-2xl font-bold">{title}</h1>
-          <StatusChip status={payment.status} />
+          <PaymentStatus status={payment.status} />
         </div>
         <p className="mt-2 text-sm text-[var(--workspace-muted)]" role="status">{text}</p>
 
@@ -313,15 +310,15 @@ export function SandboxCheckout() {
       <section className="ui-card p-6 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-2xl font-bold">{t('payment.sandboxTitle')}</h1>
-          <span className="rounded-full bg-[var(--tint-blue)] px-3 py-1 text-xs font-medium text-[var(--tint-blue-ink)]">
+          <StatusBadge tone="info" className="px-3 py-1">
             {t('payment.sandboxBadge')}
-          </span>
+          </StatusBadge>
         </div>
         <p className="mt-2 text-sm text-[var(--workspace-muted)]">{t('payment.sandboxText')}</p>
 
         <PaymentDetails payment={payment} />
         <div className="mt-3">
-          <StatusChip status={payment.status} />
+          <PaymentStatus status={payment.status} />
         </div>
 
         {settled ? (

@@ -11,6 +11,7 @@ import TemplateEditor from '../components/questionnaires/TemplateEditor'
 import { useTranslation } from '../hooks/useTranslation'
 import type { QuestionnaireTemplateOut, ServiceOut } from '../api/types'
 import Button from '../ui/Button'
+import StatusBadge from '../ui/StatusBadge'
 
 type EditorState = QuestionnaireTemplateOut | 'new' | null
 
@@ -150,13 +151,13 @@ export default function Questionnaires() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {template.published_version !== null && template.published_version !== undefined ? (
-                        <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                        <StatusBadge tone="success" className="px-2 py-1 font-semibold">
                           {t('questionnaires.publishedVersion')} {template.published_version}
-                        </span>
+                        </StatusBadge>
                       ) : (
-                        <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                        <StatusBadge tone="warning" className="px-2 py-1 font-semibold">
                           {t('questionnaires.draftOnly')}
-                        </span>
+                        </StatusBadge>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">

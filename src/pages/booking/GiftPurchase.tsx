@@ -17,6 +17,7 @@ import type {
   GiftShopOut,
 } from '../../api/types'
 import { formatCurrency, type Currency } from '../../utils/currency'
+import StatusBadge from '../../ui/StatusBadge'
 
 type GiftParams = { ref: string; token: string }
 
@@ -407,9 +408,9 @@ export function GiftCheckout() {
       <section className="ui-card p-6 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-2xl font-bold">{t('gift.checkoutTitle')}</h1>
-          <span className="rounded-full bg-[var(--tint-blue)] px-3 py-1 text-xs font-medium text-[var(--tint-blue-ink)]">
+          <StatusBadge tone="info" className="px-3 py-1">
             {t('gift.sandboxBadge')}
-          </span>
+          </StatusBadge>
         </div>
         <p className="mt-2 text-sm text-[var(--workspace-muted)]">{t('gift.checkoutText')}</p>
 

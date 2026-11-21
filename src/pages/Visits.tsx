@@ -12,6 +12,7 @@ import Select from '../ui/Select'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
 import SidePanel from '../ui/SidePanel'
+import StatusBadge from '../ui/StatusBadge'
 import { LuPencil } from 'react-icons/lu'
 import { useWorkspaceAccessContext } from '../hooks/useWorkspaceAccess'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -29,7 +30,7 @@ import { today } from '../utils/dates'
 import { allPages } from '../api/allPages'
 import { useAuthStore } from '../store/authStore'
 import { useMediaQuery } from '../hooks/useMediaQuery'
-import { visitStatusClass, visitStatusMark } from '../utils/statusPill'
+import { visitStatusTone, visitStatusMark } from '../utils/statusPill'
 
 type Visit = VisitOut
 
@@ -122,7 +123,6 @@ export default function Visits() {
     setShowForm(true)
   }
 
-  const statusClass = visitStatusClass
   const statusMark = (status: string | null | undefined) => {
     const mark = visitStatusMark(status)
     return mark ? <span aria-hidden="true">{mark}</span> : null
@@ -231,7 +231,7 @@ export default function Visits() {
                       <span>{format(new Date(visit.date_start), 'PP', { locale: dateLocale })}</span>
                       <span className="text-xs tabular-nums text-[var(--workspace-muted)]">{format(new Date(visit.date_start), 'p', { locale: dateLocale })}</span>
                     </time>
-                    {phone && <span className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] ${statusClass(visit.status)}`}>{statusMark(visit.status)}{getStatusTranslation(visit.status)}</span>}
+                    {phone && <StatusBadge tone={visitStatusTone(visit.status)} className="mt-1.5 gap-1 text-[11px]">{statusMark(visit.status)}{getStatusTranslation(visit.status)}</StatusBadge>}
                   </td>
                   <td role="cell" className={`break-words ${phone ? 'px-3' : 'px-4'} py-3 align-top font-medium [overflow-wrap:anywhere]`}>
                     {visit.client_name || '-'}
@@ -240,7 +240,7 @@ export default function Visits() {
                   {!phone && <td role="cell" className="break-words px-4 py-3 align-top text-[var(--workspace-muted)] [overflow-wrap:anywhere]">{visit.service_name || '-'}</td>}
                   {!phone && (
                     <td role="cell" className="px-4 py-3 align-top">
-                      <span className={`inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-[11px] ${statusClass(visit.status)}`}>{statusMark(visit.status)}{getStatusTranslation(visit.status)}</span>
+                      <StatusBadge tone={visitStatusTone(visit.status)} className="gap-1 text-[11px]">{statusMark(visit.status)}{getStatusTranslation(visit.status)}</StatusBadge>
                     </td>
                   )}
                   <td role="cell" className={`${phone ? 'whitespace-nowrap px-2' : 'break-words px-4 [overflow-wrap:anywhere]'} py-3 align-top tabular-nums`}>

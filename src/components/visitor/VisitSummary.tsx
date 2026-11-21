@@ -4,26 +4,28 @@ import type { Schema } from '../../api/types'
 import type { TranslationKey } from '../../i18n/translations'
 import { useTranslation } from '../../hooks/useTranslation'
 import { avatarBackground } from '../../utils/avatar'
+import StatusBadge from '../../ui/StatusBadge'
+import { VISIT_STATUS_TONE } from '../../utils/statusPill'
 import { browserTimeZone, formatClock, formatMoney, formatVisitTime, safeTimeZone, visitServices } from './format'
 
 export type VisitorVisit = Schema<'VisitorHistoryVisit'>
 type Money = Schema<'VisitorHistoryMoney'> | null
 
-const STATUS: Record<string, { key: TranslationKey; tone: string }> = {
-  planned: { key: 'bookingManage.status.planned', tone: 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]' },
-  scheduled: { key: 'bookingManage.status.planned', tone: 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]' },
-  in_progress: { key: 'bookingManage.status.in_progress', tone: 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]' },
-  completed: { key: 'bookingManage.status.completed', tone: 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]' },
-  cancelled: { key: 'bookingManage.status.cancelled', tone: 'bg-[var(--tint-red)] text-[var(--tint-red-ink)]' },
+// "scheduled" reads as planned, as it did before; the colours are the CRM visit tones
+const STATUS_KEYS: Record<string, TranslationKey> = {
+  planned: 'bookingManage.status.planned',
+  scheduled: 'bookingManage.status.planned',
+  in_progress: 'bookingManage.status.in_progress',
+  completed: 'bookingManage.status.completed',
+  cancelled: 'bookingManage.status.cancelled',
 }
 
-export function StatusPill({ status }: { status: string | null }) {
+export function VisitStatus({ status }: { status: string | null }) {
   const { t } = useTranslation()
   if (!status) return null
-  const known = STATUS[status]
-  return <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${known?.tone ?? 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'}`}>
-    <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-current" />{known ? t(known.key) : status}
-  </span>
+  const key = STATUS_KEYS[status]
+  const tone = VISIT_STATUS_TONE[status === 'scheduled' ? 'planned' : status] ?? 'neutral'
+  return <StatusBadge tone={tone} dot className="gap-1.5 px-2.5 py-1">{key ? t(key) : status}</StatusBadge>
 }
 
 // price: null means the salon has no price with a known currency - never show 0 for it
@@ -58,7 +60,7 @@ export default function VisitSummary({ visit }: { visit: VisitorVisit }) {
     <div className="min-w-0 flex-1">
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1.5">
         <p className={`min-w-0 text-[15px] font-semibold leading-snug [overflow-wrap:anywhere] ${cancelled ? 'line-through decoration-[var(--workspace-muted)]' : ''}`}>{visitServices(visit) || t('visitor.visit.noService')}</p>
-        <StatusPill status={visit.status} />
+        <VisitStatus status={visit.status} />
       </div>
       <p className="mt-1.5 flex flex-wrap items-center gap-x-1.5 text-[13px] text-[var(--workspace-muted)]">
         <LuClock className="h-3.5 w-3.5" aria-hidden="true" />

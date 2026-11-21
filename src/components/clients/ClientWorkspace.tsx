@@ -12,13 +12,14 @@ import { formatCurrency, type Currency } from '../../utils/currency'
 import { isoToZonedWallTime, showDay, showZonedDateTime } from '../../utils/dates'
 import Button from '../../ui/Button'
 import Card from '../../ui/Card'
+import StatusBadge from '../../ui/StatusBadge'
 import LoadingSpinner from '../LoadingSpinner'
 import QueryError from '../QueryError'
 import ClientForm from '../ClientForm'
 import ClientPersonalReportModal from '../ClientPersonalReportModal'
 import ClientNotes from './ClientNotes'
 import ClientTags from './ClientTags'
-import { VISIT_STATUS_MARK } from '../../utils/statusPill'
+import { VISIT_STATUS_MARK, VISIT_STATUS_TONE } from '../../utils/statusPill'
 import type {
   ClientOut,
   ClientOverviewOut,
@@ -37,11 +38,6 @@ function formatDay(iso: string, timeZone?: string) {
 
 // the overview endpoint returns at most this many past visits (RECENT_VISIT_LIMIT in the API)
 const RECENT_VISIT_LIMIT = 20
-
-const STATUS_CLASS: Record<string, string> = {
-  planned: 'x-status-planned', in_progress: 'x-status-in-progress',
-  completed: 'x-status-completed', cancelled: 'x-status-cancelled',
-}
 
 function formatAnswer(value: unknown) {
   if (value === null || value === undefined || value === '') return '—'
@@ -172,11 +168,10 @@ function VisitRow({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span data-status={visit.status}
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[visit.status] ?? 'border border-[var(--workspace-line)] text-[var(--workspace-muted)]'}`}>
+          <StatusBadge data-status={visit.status} tone={VISIT_STATUS_TONE[visit.status] ?? 'neutral'} className="gap-1 px-2">
             {VISIT_STATUS_MARK[visit.status] && <span aria-hidden="true">{VISIT_STATUS_MARK[visit.status]}</span>}
             <span>{statusLabel}</span>
-          </span>
+          </StatusBadge>
           {visit.price !== null && visit.price !== undefined && (
             <span className="text-sm tabular-nums text-[var(--workspace-ink)]">
               {formatCurrency(visit.price, (currency as Currency) || 'EUR')}

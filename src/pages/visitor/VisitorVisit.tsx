@@ -9,9 +9,10 @@ import type { TranslationKey } from '../../i18n/translations'
 import Button from '../../ui/Button'
 import Input from '../../ui/Input'
 import Modal from '../../ui/Modal'
+import StatusBadge from '../../ui/StatusBadge'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { Isolated, Notice, VisitorShell } from '../../components/visitor/VisitorUi'
-import { Price, StatusPill } from '../../components/visitor/VisitSummary'
+import { Price, VisitStatus } from '../../components/visitor/VisitSummary'
 import { browserTimeZone, formatClock, formatVisitTime, safeTimeZone, upperFirst, visitServices } from '../../components/visitor/format'
 import { useTranslation } from '../../hooks/useTranslation'
 import { isoToZonedWallTime, zonedWallTimeToIso } from '../../utils/dates'
@@ -87,11 +88,11 @@ function VisitDetails({ visit }: { visit: Visit }) {
           <p className="mt-1 text-xs text-[var(--workspace-muted)]">{t(salonZone ? 'visitor.time.salonZone' : 'visitor.time.yourZone').replace('{zone}', displayedZone)}{salonZone && salonZone !== browserTimeZone() ? ` · ${t('visitor.time.yourZone').replace('{zone}', browserTimeZone())}` : ''}</p>
           <p className="mt-3 text-[17px] font-semibold [overflow-wrap:anywhere]">{visitServices(visit) || t('visitor.visit.noService')}</p>
         </div>
-        <StatusPill status={visit.status} />
+        <VisitStatus status={visit.status} />
       </div>
-      {visit.confirmed_at && <p className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[var(--tint-green)] px-3 py-1 text-xs font-medium text-[var(--tint-green-ink)]">
+      {visit.confirmed_at && <p className="mt-4"><StatusBadge tone="success" className="gap-1.5 px-3 py-1">
         <LuCircleCheck className="h-3.5 w-3.5" aria-hidden="true" />{t('visitor.visit.confirmedAt').replace('{when}', formatVisitTime(visit.confirmed_at, zone, locale, { dateStyle: 'medium', timeStyle: 'short' }))}
-      </p>}
+      </StatusBadge></p>}
       <dl className="mt-5 grid divide-y divide-[var(--workspace-line)] border-t border-[var(--workspace-line)] sm:grid-cols-2 sm:divide-y-0">
         {staff && <Row icon={<LuUser />} label={t('booking.master')}>{staff}</Row>}
         {business.address && <Row icon={<LuMapPin />} label={t('visitor.visit.address')}>{business.address}</Row>}

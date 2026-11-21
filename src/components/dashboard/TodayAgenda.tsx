@@ -11,7 +11,8 @@ import { useLabels } from '../../i18n/labels'
 import { zonedDayKey, zonedWallTimeToIso } from '../../utils/dates'
 import Button from '../../ui/Button'
 import Card from '../../ui/Card'
-import { visitStatusClass } from '../../utils/statusPill'
+import StatusBadge from '../../ui/StatusBadge'
+import { visitStatusTone } from '../../utils/statusPill'
 
 // The edit button stretches over its whole row (the <li> is relative), so a thumb can hit
 // the time or the service line too, not just a 20px client name.
@@ -144,7 +145,6 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
   }
   const clientLabel = (visit: VisitOut) => visit.client_name || `#${visit.client_id}`
   const dateLabel = new Intl.DateTimeFormat(localeTag, { timeZone, dateStyle: 'full' }).format(now)
-  const statusClass = visitStatusClass
   const statusEdge: Record<string, string> = {
     planned: 'var(--status-planned-ink)', in_progress: 'var(--status-in-progress-ink)',
     completed: 'var(--status-completed-ink)', cancelled: 'var(--status-cancelled-ink)',
@@ -213,7 +213,7 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
                 </div>
                 <div className="col-start-2 flex flex-wrap items-center gap-2 text-xs sm:col-start-auto sm:flex-col sm:items-start">
                   <span className="text-[var(--workspace-muted)]"><span className="sr-only">{t('visits.specialist')}: </span>{staffNames.get(visit.specialist_id) || `#${visit.specialist_id}`}</span>
-                  <span className={`rounded-full px-3 py-0.5 text-[11px] ${statusClass(visit.status)}`}><span className="sr-only">{t('visits.status')}: </span>{labels.visitStatus(visit.status) || '—'}</span>
+                  <StatusBadge tone={visitStatusTone(visit.status)} className="text-[11px]"><span className="sr-only">{t('visits.status')}: </span>{labels.visitStatus(visit.status) || '—'}</StatusBadge>
                   {marks.has(visit.id) && <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${markClass[marks.get(visit.id)!]}`}>{markLabel[marks.get(visit.id)!]}</span>}
                 </div>
 

@@ -2,7 +2,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { visitStatusClass } from '../utils/statusPill'
+import { visitStatusTone } from '../utils/statusPill'
 import { avatarBackground } from '../utils/avatar'
 
 // DES-02: one set of tokens in theme.css that both themes fill in, and the CRM screens
@@ -88,15 +88,35 @@ describe('design tokens', () => {
   })
 })
 
-describe('visit status pill', () => {
-  it.each(['planned', 'in_progress', 'completed', 'cancelled'])('%s comes from the status tokens', status => {
-    const classes = visitStatusClass(status)
-    expect(classes).toContain(`x-status-${status.replace('_', '-')}`)
-    expect(classes).not.toMatch(/#[0-9a-f]{3,6}/i)
+// DES-02d: every status pill is the shared StatusBadge, and its tones are the status tokens,
+// so "paid", "sent" or "active" are the same green as a completed visit in both themes
+const TONE_TOKENS: Record<string, string> = {
+  info: '--status-planned', warning: '--status-in-progress', success: '--status-completed', danger: '--status-cancelled',
+}
+const toneRule = (tone: string) => {
+  const start = theme.indexOf(`.x-status-${tone} {`)
+  expect(start, tone).toBeGreaterThanOrEqual(0)
+  return theme.slice(start, theme.indexOf('}', start))
+}
+
+describe('status badge', () => {
+  it.each(Object.entries(TONE_TOKENS))('%s tone comes from %s', (tone, token) => {
+    expect(toneRule(tone)).toContain(`var(${token}-bg)`)
+    expect(toneRule(tone)).toContain(`var(${token}-ink)`)
   })
 
-  it('an unknown status falls back to cancelled, as before', () => {
-    expect(visitStatusClass(undefined)).toContain('x-status-cancelled')
+  it('neutral and accent tones read the workspace tokens', () => {
+    expect(toneRule('neutral')).toContain('var(--workspace-fill)')
+    expect(toneRule('accent')).toContain('var(--workspace-accent-soft)')
+  })
+
+  it.each([['planned', 'info'], ['in_progress', 'warning'], ['completed', 'success'], ['cancelled', 'danger']])(
+    'a %s visit is the %s tone', (status, tone) => {
+      expect(visitStatusTone(status)).toBe(tone)
+    })
+
+  it('an unknown visit status falls back to cancelled, as before', () => {
+    expect(visitStatusTone(undefined)).toBe('danger')
   })
 
   it('calendar blocks use the same status colours', () => {
@@ -249,5 +269,42 @@ describe('CRM accent shades', () => {
   it('theme.css has no dark patch for old accent shades', () => {
     expect(theme).not.toMatch(/:root\.dark :is\(\.text-blue-600/)
     expect(theme).not.toMatch(/\.(?:text|bg|border)-(?:blue|purple|primary)-\d/)
+  })
+})
+
+// DES-02d: a tinted rounded-full pill or a `bg-green-100 text-green-800` tone string is a
+// hand-made status badge. theme.css used to repaint some of them with a global rule; that rule
+// is gone, so one left over would keep the raw Tailwind tint with no dark value of ours.
+// The import wizard's step dots are a stepper, not a status.
+const PILL_SKIP_FILES = ['src/components/import/ImportWizard.tsx']
+const PILL_PALETTE = 'green|amber|yellow|orange|red|emerald|slate|gray|sky|blue|purple|indigo|rose|teal'
+const TINT_PAIR = new RegExp(`(?<![\\w:/-])bg-(${PILL_PALETTE})-(?:50|100)\\s+text-\\1-(?:600|700|800)\\b`)
+const TINT = new RegExp(`(?<![\\w:/-])(?:bg-(?:${PILL_PALETTE})-(?:50|100)(?![\\w/-])|bg-\\[var\\(--(?:tint|status)-)`)
+
+describe('CRM status pills', () => {
+  it('use StatusBadge instead of a hand-made tinted pill', () => {
+    const offenders = sources(resolve(root, 'src'))
+      .map(path => relative(root, path))
+      .filter(path => path.endsWith('.tsx') && !PILL_SKIP_FILES.includes(path) && !BUTTON_SKIP_DIRS.some(dir => path.startsWith(dir)))
+      .flatMap(path => {
+        const text = readFileSync(resolve(root, path), 'utf8')
+        const hits = CLASS_STRINGS.flatMap(pattern => text.match(pattern) ?? [])
+          .filter(value => !/\brounded-(?:md|lg|xl)\b/.test(value))
+          .filter(value => TINT_PAIR.test(value) || (/\brounded-full\b/.test(value) && TINT.test(value)))
+        return hits.length ? [`${path}: ${hits.length}`] : []
+      })
+    expect(offenders).toEqual([])
+  })
+
+  it('no screen keeps its own status pill component', () => {
+    const offenders = sources(resolve(root, 'src'))
+      .map(path => relative(root, path))
+      .filter(path => path.endsWith('.tsx') && !path.startsWith('src/ui/'))
+      .filter(path => /function Status(?:Badge|Chip|Pill)\b/.test(readFileSync(resolve(root, path), 'utf8')))
+    expect(offenders).toEqual([])
+  })
+
+  it('theme.css has no global patch for old tinted pills', () => {
+    expect(theme).not.toMatch(/\.rounded-full(?::is\()?\.bg-/)
   })
 })

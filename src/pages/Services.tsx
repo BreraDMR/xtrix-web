@@ -8,6 +8,7 @@ import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Card from '../ui/Card'
 import Button from '../ui/Button'
+import StatusBadge from '../ui/StatusBadge'
 import SidePanel from '../ui/SidePanel'
 import { LuChevronRight, LuCircleCheck, LuClock, LuLayers, LuPlus, LuTag } from 'react-icons/lu'
 import StatTile from '../ui/StatTile'
@@ -199,7 +200,7 @@ export default function Services() {
                       </td>
                       <td className="hidden px-4 py-3 sm:table-cell sm:px-5"><span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--workspace-fill)] px-2.5 py-1 text-xs tabular-nums text-[var(--workspace-muted)]"><LuClock className="h-3.5 w-3.5" aria-hidden="true" />{service.duration_minutes} {t('services.min')}</span></td>
                       <td className="hidden px-4 py-3 text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-[var(--workspace-ink)] sm:table-cell sm:px-5">{formatCurrency(service.price, currency)}</td>
-                      <td className="px-4 py-3 sm:px-5"><span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${service.is_active ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]' : 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'}`}><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-current" />{service.is_active ? t('services.active') : t('services.inactive')}</span></td>
+                      <td className="px-4 py-3 sm:px-5"><StatusBadge tone={service.is_active ? 'success' : 'neutral'} dot className="gap-1.5 px-2.5 py-1">{service.is_active ? t('services.active') : t('services.inactive')}</StatusBadge></td>
                     </tr>)}
             </tbody>
           </table>
