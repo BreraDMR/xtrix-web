@@ -9,6 +9,7 @@ import { validateEmail, validatePhone, validateRequired } from '../utils/validat
 import { withoutBlanks } from '../utils/payload'
 import type { ClientLanguage } from '../api/types'
 import type { TranslationKey } from '../i18n/translations'
+import Button from '../ui/Button'
 
 // native names on purpose - this is the client's language, not ours
 const CLIENT_LANGUAGES: { code: ClientLanguage; label: string }[] = [
@@ -295,10 +296,9 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
         >
           {t('common.cancel')}
         </button>
-        <button
+        <Button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg transition-all flex items-center gap-2"
         >
           {loading ? (
             <>
@@ -308,7 +308,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
           ) : (
             clientId ? t('clientForm.update') : t('clientForm.create')
           )}
-        </button>
+        </Button>
       </div>
     </form>
   )

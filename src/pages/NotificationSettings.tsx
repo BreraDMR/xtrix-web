@@ -15,6 +15,7 @@ import type {
   NotificationSettingsUpdate,
   NotificationTestOut,
 } from '../api/types'
+import Button from '../ui/Button'
 
 const SETTINGS_KEY = ['notification-settings']
 
@@ -186,8 +187,7 @@ export default function NotificationSettings() {
                 </p>
               )}
             </div>
-            <button
-              type="button"
+            <Button
               role="switch"
               aria-checked={enabled}
               aria-label={t('notifications.enabled')}
@@ -196,14 +196,11 @@ export default function NotificationSettings() {
                 save.reset()
                 setEnabled((value) => !value)
               }}
-              className={`shrink-0 rounded-md px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 ${
-                enabled
-                  ? 'border border-red-300 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950'
-                  : 'bg-primary-600 text-white hover:bg-primary-700'
-              }`}
+              variant={enabled ? 'danger' : 'primary'}
+              className="shrink-0"
             >
               {enabled ? t('notifications.disable') : t('notifications.enable')}
-            </button>
+            </Button>
           </div>
 
           <div>
@@ -228,13 +225,12 @@ export default function NotificationSettings() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <button
+            <Button
               type="submit"
               disabled={save.isPending || !reminderTime || (enabled && !providerReady)}
-              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
             >
               {save.isPending ? t('common.saving') : t('common.save')}
-            </button>
+            </Button>
             <span role="status" aria-live="polite" className="text-sm text-emerald-700 dark:text-emerald-400">
               {save.isSuccess ? t('notifications.saved') : ''}
             </span>

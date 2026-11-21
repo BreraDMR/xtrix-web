@@ -5,6 +5,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import { LuX } from 'react-icons/lu'
 import FormError from './FormError'
 import { apiErrorMessage } from '../api/errors'
+import Button from '../ui/Button'
 
 interface EditEmployeeSalaryModalProps {
   isOpen: boolean
@@ -130,13 +131,13 @@ export default function EditEmployeeSalaryModal({
             >
               {t('common.cancel')}
             </button>
-            <button
+            <Button
               type="submit"
               disabled={updateMutation.isPending}
-              className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+              className="flex-1"
             >
               {updateMutation.isPending ? (t('common.saving')) : (t('common.save'))}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

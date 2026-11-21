@@ -12,6 +12,7 @@ import GiftOffers from '../components/loyalty/GiftOffers'
 import { showDay } from '../utils/dates'
 import FormError from '../components/FormError'
 import { apiErrorMessage } from '../api/errors'
+import Button from '../ui/Button'
 
 type TabType = 'program' | 'levels' | 'promotions' | 'transactions' | 'analytics' | 'gifts'
 
@@ -427,12 +428,11 @@ export default function Loyalty() {
             <div>
               <p className="text-gray-600 mb-4 dark:text-gray-400">{t('loyalty.no_program')}</p>
               {isAdmin && (
-                <button
+                <Button
                   onClick={() => setShowProgramForm(true)}
-                  className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                 >
                   {t('loyalty.create_program')}
-                </button>
+                </Button>
               )}
             </div>
           ) : (
@@ -458,12 +458,11 @@ export default function Loyalty() {
                     >
                       {program.is_active ? t('loyalty.deactivate_program') : t('loyalty.activate_program')}
                     </button>
-                    <button
+                    <Button
                       onClick={() => setShowProgramForm(true)}
-                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                     >
                       {t('loyalty.edit_program')}
-                    </button>
+                    </Button>
                     <button
                       onClick={async () => {
                         if (confirm('Are you sure you want to delete the loyalty program?')) {
@@ -638,12 +637,11 @@ export default function Loyalty() {
                     </div>
                   </div>
                   <div className="flex gap-2 mt-6">
-                    <button
+                    <Button
                       type="submit"
-                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                     >
                       {t('common.save')}
-                    </button>
+                    </Button>
                     <button
                       type="button"
                       onClick={() => setShowProgramForm(false)}
@@ -671,15 +669,14 @@ export default function Loyalty() {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('loyalty.levels')}</h2>
                 {isAdmin && (
-                  <button
+                  <Button
                     onClick={() => {
                       setEditingLevel(null)
                       setShowLevelForm(true)
                     }}
-                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                   >
                     {t('loyalty.add_level')}
-                  </button>
+                  </Button>
                 )}
               </div>
               {levels.length === 0 ? (
@@ -704,15 +701,14 @@ export default function Loyalty() {
                         </div>
                         {isAdmin && (
                           <div className="flex gap-2">
-                            <button
+                            <Button
                               onClick={() => {
                                 setEditingLevel(level)
                                 setShowLevelForm(true)
                               }}
-                              className="px-3 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
                             >
                               {t('common.edit')}
-                            </button>
+                            </Button>
                             <button
                               onClick={async () => {
                                 if (confirm('Are you sure you want to delete this level?')) {
@@ -841,12 +837,11 @@ export default function Loyalty() {
                     </div>
                   </div>
                   <div className="flex gap-2 mt-6">
-                    <button
+                    <Button
                       type="submit"
-                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                     >
                       {t('common.save')}
-                    </button>
+                    </Button>
                     <button
                       type="button"
                       onClick={() => {
@@ -877,16 +872,15 @@ export default function Loyalty() {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('loyalty.promotions')}</h2>
                 {isAdmin && (
-                  <button
+                  <Button
                     onClick={() => {
                       setEditingPromotion(null)
                       setPromotionType('double_points')
                       setShowPromotionForm(true)
                     }}
-                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                   >
                     {t('loyalty.add_promotion')}
-                  </button>
+                  </Button>
                 )}
               </div>
               {promotions.length === 0 ? (
@@ -907,16 +901,15 @@ export default function Loyalty() {
                         </div>
                         {isAdmin && (
                           <div className="flex gap-2">
-                            <button
+                            <Button
                               onClick={() => {
                                 setEditingPromotion(promotion)
                                 setPromotionType(promotion.promotion_type)
                                 setShowPromotionForm(true)
                               }}
-                              className="px-3 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
                             >
                               {t('common.edit')}
-                            </button>
+                            </Button>
                             <button
                               onClick={async () => {
                                 if (confirm('Are you sure you want to delete this promotion?')) {
@@ -1138,12 +1131,11 @@ export default function Loyalty() {
                     </div>
                   </div>
                   <div className="flex gap-2 mt-6">
-                    <button
+                    <Button
                       type="submit"
-                      className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium"
                     >
                       {t('common.save')}
-                    </button>
+                    </Button>
                     <button
                       type="button"
                       onClick={() => {

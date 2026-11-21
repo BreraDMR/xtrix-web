@@ -10,6 +10,7 @@ import QueryError from '../components/QueryError'
 import TemplateEditor from '../components/questionnaires/TemplateEditor'
 import { useTranslation } from '../hooks/useTranslation'
 import type { QuestionnaireTemplateOut, ServiceOut } from '../api/types'
+import Button from '../ui/Button'
 
 type EditorState = QuestionnaireTemplateOut | 'new' | null
 
@@ -64,12 +65,11 @@ export default function Questionnaires() {
       <div className="mb-6 flex items-center justify-between gap-3">
         <h1 className="page-title">{t('questionnaires.title')}</h1>
         {editor === null && (
-          <button
+          <Button
             onClick={() => setEditor('new')}
-            className="rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700"
           >
             {t('questionnaires.new')}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -94,12 +94,11 @@ export default function Questionnaires() {
             title={t('questionnaires.emptyTitle')}
             description={t('questionnaires.emptyDescription')}
             action={
-              <button
+              <Button
                 onClick={() => setEditor('new')}
-                className="rounded-md bg-primary-600 px-4 py-2 text-white hover:bg-primary-700"
               >
                 {t('questionnaires.new')}
-              </button>
+              </Button>
             }
           />
         </div>

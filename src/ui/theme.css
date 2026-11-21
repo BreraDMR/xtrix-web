@@ -364,13 +364,6 @@
 .dark .crm-app .rounded-full.bg-red-100 { background: rgba(255, 69, 58, .14); color: #ff8a80; }
 .dark .crm-app .rounded-full:is(.bg-purple-100, .bg-blue-100, .bg-primary-100, .bg-indigo-100) { background: var(--x-lavender); color: #d4b8fa; }
 
-/* solid accent buttons written as utilities follow the primary button */
-.crm-app :is(button, a):is(.bg-blue-600, .bg-purple-600, .bg-primary-600, .bg-indigo-600).text-white {
-  background-image: var(--x-gradient); font-weight: 500;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 4px 12px rgba(159, 90, 239, .18);
-}
-.crm-app :is(button, a):is(.bg-blue-600, .bg-purple-600, .bg-primary-600, .bg-indigo-600).text-white:hover:not(:disabled) { filter: brightness(1.05); }
-
 /* month calendar: airy tiles, hairlines, the day number does the talking */
 .crm-app .react-calendar { width: 100%; border: none; background: transparent; font-family: inherit; }
 .crm-app .react-calendar__navigation { margin-bottom: .75rem; height: 40px; }

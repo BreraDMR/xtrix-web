@@ -20,6 +20,7 @@ import { formatCurrency, type Currency } from '../../utils/currency'
 import { showDay } from '../../utils/dates'
 import LoadingSpinner from '../LoadingSpinner'
 import QueryError from '../QueryError'
+import Button from '../../ui/Button'
 
 type OfferKind = 'money' | 'package'
 
@@ -411,13 +412,12 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('gift.offersTitle')}</h2>
             <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('gift.offersSubtitle')}</p>
           </div>
-          <button
+          <Button
             type="button"
             onClick={openCreate}
-            className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
           >
             {t('gift.addOffer')}
-          </button>
+          </Button>
         </div>
 
         <div className="mt-4 rounded-lg border border-gray-200 p-4 dark:border-gray-700">
@@ -773,13 +773,12 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
               >
                 {t('gift.close')}
               </button>
-              <button
+              <Button
                 type="submit"
                 disabled={saveOffer.isPending || servicesQuery.isLoading || servicesQuery.isError}
-                className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
               >
                 {t('gift.save')}
-              </button>
+              </Button>
             </div>
           </form>
         </Modal>

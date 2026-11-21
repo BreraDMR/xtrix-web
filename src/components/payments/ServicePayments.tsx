@@ -9,6 +9,7 @@ import { useTranslation } from '../../hooks/useTranslation'
 import type { TranslationKey } from '../../i18n/translations'
 import type { ServicePaymentOut } from '../../api/types'
 import { formatCurrency, type Currency } from '../../utils/currency'
+import Button from '../../ui/Button'
 
 const STATUSES = [
   'pending',
@@ -291,14 +292,13 @@ export default function ServicePayments() {
               >
                 {t('finance.servicePayments.cancel')}
               </button>
-              <button
+              <Button
                 type="button"
                 onClick={() => refund.mutate(refundTarget)}
                 disabled={refund.isPending}
-                className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
               >
                 {refund.isPending ? t('finance.servicePayments.submitting') : t('finance.servicePayments.submit')}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import FormError from './FormError'
 import Modal from '../ui/Modal'
 import { exportData, exportChartToImage, ExportFormat, ExportOptions, type ExportColumn } from '../utils/export'
 import { getExportPreferences, saveExportPreferences } from '../utils/export'
+import Button from '../ui/Button'
 
 interface ExportModalProps<T extends object> {
   isOpen: boolean
@@ -212,10 +213,9 @@ export default function ExportModal<T extends object>({
           >
             {t('common.cancel')}
           </button>
-          <button
+          <Button
             onClick={handleExport}
             disabled={isExporting || data.length === 0}
-            className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
           >
             {isExporting ? (
               <>
@@ -228,7 +228,7 @@ export default function ExportModal<T extends object>({
                 {selectedFormat === 'print' ? t('export.print') : t('export.export')}
               </>
             )}
-          </button>
+          </Button>
         </div>
     </Modal>
   )

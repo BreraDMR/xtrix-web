@@ -8,6 +8,7 @@ import { useTranslation } from '../../hooks/useTranslation'
 import { useAuthStore } from '../../store/authStore'
 import { loadGoogleIdentity } from '../../utils/googleIdentity'
 import LoadingSpinner from '../LoadingSpinner'
+import Button from '../../ui/Button'
 
 export default function GoogleSignIn({ role = 'business_owner', returnTo = '/app', registration = false }: { role?: 'business_owner' | 'specialist'; returnTo?: string; registration?: boolean }) {
   const { t, locale } = useTranslation()
@@ -114,7 +115,7 @@ export default function GoogleSignIn({ role = 'business_owner', returnTo = '/app
       {link.linking && <label className="block text-sm font-medium">{t('google.password')}<input type="password" value={password} onChange={event => setPassword(event.target.value)} autoComplete="current-password" required className="mt-2 block w-full rounded-lg border border-gray-300 bg-white p-3 dark:border-gray-600 dark:bg-gray-800" /></label>}
       {needsCode && <label className="block text-sm font-medium">{t('login.twoFactorCode')}<input value={code} onChange={event => setCode(event.target.value.replace(/\D/g, ''))} inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" required className="mt-2 block w-full rounded-lg border border-gray-300 bg-white p-3 dark:border-gray-600 dark:bg-gray-800" /></label>}
       {link.linking && <label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} required className="mt-1" />{t('google.linkConsent')}</label>}
-      <button type="submit" disabled={busy || (link.linking && (!consent || !password)) || (needsCode && code.length !== 6)} className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">{t(link.linking ? 'google.link' : 'login.signIn')}</button>
+      <Button type="submit" disabled={busy || (link.linking && (!consent || !password)) || (needsCode && code.length !== 6)} className="w-full">{t(link.linking ? 'google.link' : 'login.signIn')}</Button>
       <button type="button" onClick={() => { setLink(null); setPassword(''); setCode(''); setNeedsCode(false); setConsent(false); setError(''); setAttempt(value => value + 1) }} className="text-sm underline">{t('common.cancel')}</button>
     </form> : error && <button type="button" onClick={() => { setError(''); setAttempt(value => value + 1) }} className="text-sm underline">{t('common.retry')}</button>}
   </section>

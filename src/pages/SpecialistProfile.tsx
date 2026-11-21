@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { useTranslation, getTranslatedSpecialistType } from '../hooks/useTranslation'
 import { useAuthStore } from '../store/authStore'
 import { useLabels } from '../i18n/labels'
+import Button from '../ui/Button'
 
 interface SpecialistProfileData {
   id: number
@@ -104,12 +105,11 @@ export default function SpecialistProfile() {
       <div className="mb-6 flex justify-between items-center">
         <h1 className="page-title">{t('specialistProfile.title')}</h1>
         {!isEditing && (
-          <button
+          <Button
             onClick={() => setIsEditing(true)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
           >
             {t('common.edit')}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -351,13 +351,12 @@ export default function SpecialistProfile() {
 
         {isEditing && (
           <div className="flex gap-4 pt-4 border-t">
-            <button
+            <Button
               onClick={handleSave}
               disabled={loading}
-              className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
             >
               {loading ? t('common.loading') : t('common.save')}
-            </button>
+            </Button>
             <button
               onClick={handleCancel}
               disabled={loading}
