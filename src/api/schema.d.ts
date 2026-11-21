@@ -5339,11 +5339,9 @@ export interface components {
             gender?: string | null;
             /**
              * Language
-             * @description Language of messages sent to the client: en, ru, cz
-             * @default ru
-             * @enum {string}
+             * @description Language of messages sent to the client: en, ru, cz; empty = the salon's language
              */
-            language: "en" | "ru" | "cz";
+            language?: ("en" | "ru" | "cz") | null;
             /** Location Lat */
             location_lat?: number | null;
             /** Location Lon */
@@ -7961,23 +7959,44 @@ export interface components {
         NotificationSettingsOut: {
             /** Available Channels */
             available_channels: string[];
+            /**
+             * Birthday Greetings Enabled
+             * @default false
+             */
+            birthday_greetings_enabled: boolean;
             /** Channel */
             channel: string;
+            /**
+             * Crm Visit Messages Enabled
+             * @default true
+             */
+            crm_visit_messages_enabled: boolean;
             /** Is Enabled */
             is_enabled: boolean;
             /** Provider Ready */
             provider_ready: boolean;
             /** Reminder Time */
             reminder_time: string;
+            /**
+             * Visit Followups Enabled
+             * @default false
+             */
+            visit_followups_enabled: boolean;
         };
         /** NotificationSettingsUpdate */
         NotificationSettingsUpdate: {
+            /** Birthday Greetings Enabled */
+            birthday_greetings_enabled?: boolean | null;
             /** Channel */
             channel?: string | null;
+            /** Crm Visit Messages Enabled */
+            crm_visit_messages_enabled?: boolean | null;
             /** Is Enabled */
             is_enabled?: boolean | null;
             /** Reminder Time */
             reminder_time?: string | null;
+            /** Visit Followups Enabled */
+            visit_followups_enabled?: boolean | null;
         };
         /** NotificationTestOut */
         NotificationTestOut: {
