@@ -5,6 +5,7 @@ import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type 
 import { useQueryClient, type UseQueryResult } from '@tanstack/react-query'
 import { LuMic, LuSend, LuSparkles, LuSquare, LuTrash2, LuX } from 'react-icons/lu'
 import api from '../../api/client'
+import Button from '../../ui/Button'
 import {
   apiErrorCode, apiErrorMessage, apiErrorStatus, apiIsNetworkError, apiRetryAfter, apiValidationCodes,
 } from '../../api/errors'
@@ -416,7 +417,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
           aria-orientation="vertical"
           aria-label={say('resize')}
           onPointerDown={resize.startDrag}
-          className="absolute inset-y-0 left-0 z-10 w-1.5 -translate-x-1/2 cursor-col-resize hover:bg-purple-300/60"
+          className="absolute inset-y-0 left-0 z-10 w-1.5 -translate-x-1/2 cursor-col-resize hover:bg-[var(--workspace-focus)]"
         />
       )}
       <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
@@ -432,7 +433,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
           type="button"
           onClick={onClose}
           aria-label={say('close')}
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-[var(--workspace-focus)] dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200"
         >
           <LuX className="h-5 w-5" aria-hidden="true" />
         </button>
@@ -452,7 +453,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
         </div>
       ) : !data ? (
         <div className="flex flex-1 items-center justify-center" aria-busy="true">
-          <span className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--workspace-accent-line)] border-t-purple-600" />
+          <span className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--workspace-accent-line)] border-t-[var(--workspace-accent)]" />
         </div>
       ) : off ? (
         <p className="m-4 rounded-lg bg-gray-50 p-4 text-sm text-gray-700 dark:bg-gray-900/40 dark:text-gray-300">{say('notConfigured')}</p>
@@ -569,27 +570,27 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
                 placeholder={say('inputPlaceholder')}
                 maxLength={MAX_REQUEST_LENGTH}
                 rows={2}
-                className="min-h-[44px] min-w-0 flex-1 resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+                className="min-h-[44px] min-w-0 flex-1 resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--workspace-focus)] focus:outline-none focus:ring-2 focus:ring-[var(--workspace-focus)] dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
               />
               {data.voice_enabled && !voice.recording && (
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
                   onClick={() => void voice.start()}
                   disabled={micDisabled}
                   aria-label={say('voiceStart')}
-                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                  className="h-11 w-11 flex-shrink-0 p-0"
                 >
                   <LuMic className="h-5 w-5" aria-hidden="true" />
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="submit"
                 disabled={!canSend}
                 aria-label={say('send')}
-                className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-purple-600 text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="h-11 w-11 flex-shrink-0 p-0"
               >
                 <LuSend className="h-5 w-5 rotate-90" aria-hidden="true" />
-              </button>
+              </Button>
             </div>
             <p id={hintId} className="mt-1 hidden text-xs text-gray-500 dark:text-gray-400 sm:block">{say('keyboardHint')}</p>
           </form>

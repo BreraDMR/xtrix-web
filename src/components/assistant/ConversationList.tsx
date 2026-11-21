@@ -123,7 +123,7 @@ export default function ConversationList({
                     onChange={(e) => setEditingTitle(e.target.value)}
                     autoFocus
                     maxLength={160}
-                    className="min-w-0 flex-1 rounded px-1.5 py-0.5 text-xs text-gray-900 border border-blue-400 focus:outline-hidden dark:text-white"
+                    className="min-w-0 flex-1 rounded px-1.5 py-0.5 text-xs text-gray-900 border border-[var(--workspace-focus)] focus:outline-hidden dark:text-white"
                   />
                   <button
                     type="submit"
@@ -177,7 +177,7 @@ export default function ConversationList({
                 onClick={() => onSelect(conv.id)}
                 className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                   isSelected
-                    ? 'bg-blue-100/70 font-semibold text-[var(--workspace-accent-ink)] dark:bg-blue-900/40'
+                    ? 'bg-[var(--workspace-accent-soft)] font-semibold text-[var(--workspace-accent-ink)]'
                     : 'text-gray-700 hover:bg-gray-200/50 dark:text-gray-300 dark:hover:bg-gray-700/50'
                 }`}
               >

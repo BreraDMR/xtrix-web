@@ -17,7 +17,7 @@ export function AssistantBubble({ name, children, tone = 'plain' }: { name: stri
         <p className="mb-1 text-xs font-medium text-[var(--workspace-accent-ink)]">{name}</p>
         <div
           className={`rounded-2xl rounded-tl-sm px-3 py-2 text-sm shadow-sm ${tone === 'muted'
-            ? 'bg-gray-100 text-gray-600 dark:bg-gray-800/60 dark:text-gray-300'
+            ? 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
             : 'bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100'}`}
         >
           {children}
@@ -32,7 +32,7 @@ export function UserBubble({ label, children }: { label: string; children: React
     <div className="flex justify-end">
       <div className="min-w-0 max-w-[75%] text-right">
         <p className="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400">{label}</p>
-        <p className="inline-block whitespace-pre-wrap break-words rounded-2xl rounded-tr-sm bg-purple-600 px-3 py-2 text-left text-sm text-white">
+        <p className="inline-block whitespace-pre-wrap break-words rounded-2xl rounded-tr-sm bg-[var(--workspace-accent-fill)] px-3 py-2 text-left text-sm text-white">
           <span className="sr-only">{label}: </span>
           {children}
         </p>
