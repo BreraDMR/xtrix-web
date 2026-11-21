@@ -1116,6 +1116,8 @@ export type TranslationKey =
   | 'settings.password.saving'
   | 'settings.password.changed'
   | 'settings.password.failed'
+  | 'booking.otherCategory'
+  | 'booking.categorySelected'
   | 'settings.subtitle'
   | 'settings.language'
   | 'settings.language_description'
@@ -3648,6 +3650,8 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   "settings.password.saving": {"en": "Saving…", "ru": "Сохраняем…", "cz": "Ukládáme…"},
   "settings.password.changed": {"en": "Password changed.", "ru": "Пароль изменён.", "cz": "Heslo bylo změněno."},
   "settings.password.failed": {"en": "Could not change the password.", "ru": "Не удалось сменить пароль.", "cz": "Heslo se nepodařilo změnit."},
+  "booking.otherCategory": {"en": "Other", "ru": "Другое", "cz": "Ostatní"},
+  "booking.categorySelected": {"en": "{n} selected", "ru": "выбрано: {n}", "cz": "vybráno: {n}"},
   'settings.subtitle': { en: 'Manage your account preferences', ru: 'Управляйте настройками аккаунта', cz: 'Spravujte nastavení účtu' },
   'settings.language': { en: 'Language', ru: 'Язык', cz: 'Jazyk' },
   'settings.language_description': { en: 'Select your preferred language for the interface', ru: 'Выберите предпочитаемый язык интерфейса', cz: 'Vyberte preferovaný jazyk rozhraní' },
