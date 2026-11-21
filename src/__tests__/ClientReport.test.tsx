@@ -13,6 +13,7 @@ vi.mock('../api/client', () => ({ default: { get: vi.fn() } }))
 const client: ClientOut = {
   id: 5,
   full_name: 'Jane Doe',
+  contacts: [],
   contact_phone: '+420777000111',
   contact_email: 'jane@example.com',
   birth_date: '1990-04-15',

@@ -5322,14 +5322,74 @@ export interface components {
             /** Spent */
             spent: string | null;
         };
+        /** ClientContactIn */
+        ClientContactIn: {
+            /**
+             * Is Primary
+             * @default false
+             */
+            is_primary: boolean;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "phone" | "email";
+            /**
+             * Label
+             * @description Free text like 'work' or 'mum'
+             */
+            label?: string | null;
+            /**
+             * Notify
+             * @description Reminders and other messages may go to this contact
+             * @default true
+             */
+            notify: boolean;
+            /** Value */
+            value: string;
+        };
+        /** ClientContactOut */
+        ClientContactOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Id */
+            id: number;
+            /** Is Primary */
+            is_primary: boolean;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "phone" | "email";
+            /** Label */
+            label?: string | null;
+            /** Notify */
+            notify: boolean;
+            /** Value */
+            value: string;
+        };
         /** ClientCreate */
         ClientCreate: {
+            /**
+             * Allow Shared Contact
+             * @description Create the card even though another client already has one of these phones or emails (a family sharing a number). Name + birth date duplicates are still refused
+             * @default false
+             */
+            allow_shared_contact: boolean;
             /** Birth Date */
             birth_date?: string | null;
             /** Contact Email */
             contact_email?: string | null;
             /** Contact Phone */
             contact_phone?: string | null;
+            /**
+             * Contacts
+             * @description Every phone (up to 5) and email (up to 3). When sent, it is the whole list and contact_phone / contact_email follow its primary entries
+             */
+            contacts?: components["schemas"]["ClientContactIn"][] | null;
             /** Full Name */
             full_name: string;
             /**
@@ -5461,6 +5521,11 @@ export interface components {
             contact_email?: string | null;
             /** Contact Phone */
             contact_phone?: string | null;
+            /**
+             * Contacts
+             * @default []
+             */
+            contacts: components["schemas"]["ClientContactOut"][];
             /**
              * Created At
              * Format: date-time
@@ -5730,6 +5795,11 @@ export interface components {
             /** Contact Phone */
             contact_phone?: string | null;
             /**
+             * Contacts
+             * @default []
+             */
+            contacts: components["schemas"]["ClientContactOut"][];
+            /**
              * Created At
              * Format: date-time
              */
@@ -5816,6 +5886,11 @@ export interface components {
             contact_email?: string | null;
             /** Contact Phone */
             contact_phone?: string | null;
+            /**
+             * Contacts
+             * @description Replaces every phone and email of the card. Leave it out to keep them
+             */
+            contacts?: components["schemas"]["ClientContactIn"][] | null;
             /** Full Name */
             full_name?: string | null;
             /**
@@ -7185,6 +7260,11 @@ export interface components {
             birth_date?: string | null;
             /** Email */
             email?: string | null;
+            /**
+             * Extra Phones
+             * @default []
+             */
+            extra_phones: string[];
             /** Full Name */
             full_name: string;
             /** Gender */
