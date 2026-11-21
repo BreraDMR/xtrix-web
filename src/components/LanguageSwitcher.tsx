@@ -1,9 +1,11 @@
 import { useId, useRef, useState } from 'react'
 import { useLocaleStore } from '../store/localeStore'
 import { LuChevronDown, LuGlobe } from 'react-icons/lu'
+import { useTranslation } from '../hooks/useTranslation'
 
 export default function LanguageSwitcher() {
   const { locale, setLocale } = useLocaleStore()
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const menuId = useId()
   const toggle = useRef<HTMLButtonElement>(null)
@@ -30,6 +32,8 @@ export default function LanguageSwitcher() {
         ref={toggle}
         aria-expanded={isOpen}
         aria-controls={menuId}
+        // starts with the code that is on the button, so voice control still finds it by "EN"
+        aria-label={`${currentLanguage.label}, ${t('settings.language')}`}
         onClick={() => setIsOpen(!isOpen)}
         className="ui-button ui-button-secondary !min-h-9 !gap-1.5 !px-3 !py-1.5 !text-xs"
       >
