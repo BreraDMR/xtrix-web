@@ -24,15 +24,16 @@ export default {
         'brand-gradient-diag': 'linear-gradient(135deg, #e04aa8 0%, #9f5aef 100%)',
       },
       colors: {
-        // Xtrix neutrals: cool, slightly lavender greys from the design
+        // Xtrix neutrals: cool, slightly lavender greys from the design. 500 is the label grey
+        // on hundreds of screens, so it follows the theme token (DES-11 contrast)
         gray: {
           50: '#f6f6f8', 100: '#f2f2f5', 200: '#e8e8ed', 300: '#d2d2d7',
-          400: '#aeaeb2', 500: '#86868b', 600: '#6e6e73', 700: '#48484a',
+          400: '#aeaeb2', 500: 'var(--workspace-subtle)', 600: '#6e6e73', 700: '#48484a',
           800: '#1d1d1f', 900: '#111113', 950: '#0b0b0c',
         },
         slate: {
           50: '#f6f6f8', 100: '#f2f2f5', 200: '#e8e8ed', 300: '#d2d2d7',
-          400: '#aeaeb2', 500: '#86868b', 600: '#6e6e73', 700: '#48484a',
+          400: '#aeaeb2', 500: 'var(--workspace-subtle)', 600: '#6e6e73', 700: '#48484a',
           800: '#1d1d1f', 900: '#111113', 950: '#0b0b0c',
         },
         // the accent is the Xtrix purple; old blue/purple/indigo utilities follow it
