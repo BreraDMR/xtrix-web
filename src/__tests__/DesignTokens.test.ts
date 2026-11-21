@@ -318,6 +318,18 @@ describe('subscription tones', () => {
   })
 })
 
+// DES-11: text-gray-500 is on 250+ CRM labels (the salon name in the header, "/ month",
+// hints). As a fixed #86868b it read 3.4:1 on the light page; it follows the subtle token now,
+// so it is darker in light and stays light in dark, where many of them have no dark: variant.
+describe('gray-500 text', () => {
+  it('follows the subtle token in both themes', () => {
+    const config = readFileSync(resolve(root, 'tailwind.config.js'), 'utf8')
+    const fives = [...config.matchAll(/\b500: '([^']+)'/g)].map(match => match[1])
+    // gray and slate come first in the config, the accent ramps after them
+    expect(fives.slice(0, 2)).toEqual(['var(--workspace-subtle)', 'var(--workspace-subtle)'])
+  })
+})
+
 describe('CRM accent shades', () => {
   it('come from the accent tokens', () => {
     const offenders = sources(resolve(root, 'src'))
