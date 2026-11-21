@@ -4,6 +4,8 @@ import type { StatusTone } from '../ui/StatusBadge'
 // cancelled red), so lists, the client card, the public pages and calendar blocks always agree
 export const VISIT_STATUS_TONE: Record<string, StatusTone> = {
   planned: 'info', in_progress: 'warning', completed: 'success', cancelled: 'danger',
+  // a no-show stays muted: the slot was taken, nobody came
+  no_show: 'neutral',
 }
 // an unknown status shows as cancelled in the CRM lists, as it always did
 export function visitStatusTone(status: string | null | undefined): StatusTone {
@@ -11,7 +13,7 @@ export function visitStatusTone(status: string | null | undefined): StatusTone {
 }
 
 // a sign next to the colour, so a status reads without colour too (calendar, client card, visit list)
-export const VISIT_STATUS_MARK: Record<string, string> = { planned: '○', in_progress: '◐', completed: '✓', cancelled: '✕' }
+export const VISIT_STATUS_MARK: Record<string, string> = { planned: '○', in_progress: '◐', completed: '✓', cancelled: '✕', no_show: '⊘' }
 export function visitStatusMark(status: string | null | undefined): string {
   return VISIT_STATUS_MARK[status ?? ''] ?? ''
 }

@@ -2476,6 +2476,67 @@ export type TranslationKey =
   | 'visitor.sessions.everywhereTitle'
   | 'visitor.sessions.everywhereText'
   | 'landing.nav.clientCabinet'
+  | 'visits.noShow'
+  | 'visits.lateCancel'
+  | 'calendar.attendanceTitle'
+  | 'calendar.markNoShow'
+  | 'calendar.undoNoShow'
+  | 'calendar.markLateCancel'
+  | 'calendar.clearLateCancel'
+  | 'calendar.noShowHint'
+  | 'calendar.attendanceError'
+  | 'clientWorkspace.noShows'
+  | 'clientWorkspace.lateCancels'
+  | 'clientWorkspace.onlineBlocked'
+  | 'clientWorkspace.onlineAllowed'
+  | 'clientWorkspace.blockOnline'
+  | 'clientWorkspace.unblockOnline'
+  | 'clientWorkspace.ruleReached'
+  | 'clientWorkspace.attendance'
+  | 'clientWorkspace.blockError'
+  | 'clients.attendanceFilter'
+  | 'clients.attendanceAll'
+  | 'clients.attendanceNoShow'
+  | 'clients.attendanceLateCancel'
+  | 'clients.attendanceBlocked'
+  | 'clients.noShowBadge'
+  | 'noShowRule.title'
+  | 'noShowRule.hint'
+  | 'noShowRule.window'
+  | 'noShowRule.windowHint'
+  | 'noShowRule.enabled'
+  | 'noShowRule.off'
+  | 'noShowRule.on'
+  | 'noShowRule.threshold'
+  | 'noShowRule.period'
+  | 'noShowRule.tag'
+  | 'noShowRule.block'
+  | 'noShowRule.blockNo'
+  | 'noShowRule.blockYes'
+  | 'noShowRule.summary'
+  | 'noShowRule.save'
+  | 'noShowRule.saved'
+  | 'noShowRule.rangeError'
+  | 'visitForm.noShowWarning'
+  | 'visitForm.onlineBlockedWarning'
+  | 'analytics.attendanceTitle'
+  | 'analytics.noShowCount'
+  | 'analytics.lateCancelCount'
+  | 'analytics.noShowRate'
+  | 'analytics.noShowRateHint'
+  | 'analytics.attendanceBySpecialist'
+  | 'analytics.attendanceEmpty'
+  | 'analytics.specialist'
+  | 'audit.action.visitNoShow'
+  | 'audit.action.visitNoShowReverted'
+  | 'audit.action.clientNoShowRule'
+  | 'audit.action.clientBookingBlocked'
+  | 'audit.action.clientBookingUnblocked'
+  | 'bookingManage.status.no_show'
+  | 'audit.field.lateCancel'
+  | 'audit.field.noShowCount'
+  | 'audit.field.tagAdded'
+  | 'audit.field.onlineBookingBlocked'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
@@ -6088,6 +6149,67 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visitor.sessions.everywhereTitle': {"en":"Sign out on all devices?","ru":"Выйти на всех устройствах?","cz":"Odhlásit na všech zařízeních?"},
   'visitor.sessions.everywhereText': {"en":"Every device signed in to this account will be signed out, this one included.","ru":"Аккаунт выйдет на всех устройствах, включая это.","cz":"Účet se odhlásí na všech zařízeních, včetně tohoto."},
   'landing.nav.clientCabinet': {"en":"Client account","ru":"Кабинет клиента","cz":"Účet klienta"},
+  'visits.noShow': {"en": "No-show", "ru": "Неявка", "cz": "Nedostavení"},
+  'visits.lateCancel': {"en": "Late cancellation", "ru": "Поздняя отмена", "cz": "Pozdní zrušení"},
+  'calendar.attendanceTitle': {"en": "Attendance", "ru": "Явка", "cz": "Docházka"},
+  'calendar.markNoShow': {"en": "Client didn't come", "ru": "Клиент не пришёл", "cz": "Klient nepřišel"},
+  'calendar.undoNoShow': {"en": "Undo no-show", "ru": "Снять неявку", "cz": "Zrušit nedostavení"},
+  'calendar.markLateCancel': {"en": "Count as late cancellation", "ru": "Считать поздней отменой", "cz": "Počítat jako pozdní zrušení"},
+  'calendar.clearLateCancel': {"en": "Not a late cancellation", "ru": "Не считать поздней отменой", "cz": "Nepočítat jako pozdní zrušení"},
+  'calendar.noShowHint': {"en": "You can mark a no-show once the visit has started.", "ru": "Неявку можно отметить после начала визита.", "cz": "Nedostavení lze označit po začátku návštěvy."},
+  'calendar.attendanceError': {"en": "Couldn't save the attendance mark", "ru": "Не удалось сохранить отметку", "cz": "Značku docházky se nepodařilo uložit"},
+  'clientWorkspace.noShows': {"en": "No-shows", "ru": "Неявки", "cz": "Nedostavení"},
+  'clientWorkspace.lateCancels': {"en": "Late cancellations", "ru": "Поздние отмены", "cz": "Pozdní zrušení"},
+  'clientWorkspace.onlineBlocked': {"en": "Online booking is blocked for this client", "ru": "Онлайн-запись для клиента закрыта", "cz": "Online rezervace je pro klienta zablokovaná"},
+  'clientWorkspace.onlineAllowed': {"en": "Online booking is allowed", "ru": "Онлайн-запись разрешена", "cz": "Online rezervace je povolená"},
+  'clientWorkspace.blockOnline': {"en": "Block online booking", "ru": "Закрыть онлайн-запись", "cz": "Zablokovat online rezervaci"},
+  'clientWorkspace.unblockOnline': {"en": "Allow online booking", "ru": "Открыть онлайн-запись", "cz": "Povolit online rezervaci"},
+  'clientWorkspace.ruleReached': {"en": "The salon's no-show limit is reached", "ru": "Достигнут лимит неявок салона", "cz": "Je dosažen limit nedostavení salonu"},
+  'clientWorkspace.attendance': {"en": "Attendance", "ru": "Явка", "cz": "Docházka"},
+  'clientWorkspace.blockError': {"en": "Couldn't change online booking for this client", "ru": "Не удалось изменить онлайн-запись клиента", "cz": "Online rezervaci klienta se nepodařilo změnit"},
+  'clients.attendanceFilter': {"en": "Attendance", "ru": "Явка", "cz": "Docházka"},
+  'clients.attendanceAll': {"en": "All clients", "ru": "Все клиенты", "cz": "Všichni klienti"},
+  'clients.attendanceNoShow': {"en": "With no-shows", "ru": "С неявками", "cz": "S nedostavením"},
+  'clients.attendanceLateCancel': {"en": "With late cancellations", "ru": "С поздними отменами", "cz": "S pozdním zrušením"},
+  'clients.attendanceBlocked': {"en": "Online booking blocked", "ru": "Онлайн-запись закрыта", "cz": "Online rezervace zablokovaná"},
+  'clients.noShowBadge': {"en": "No-shows: {count}", "ru": "Неявки: {count}", "cz": "Nedostavení: {count}"},
+  'noShowRule.title': {"en": "No-shows and late cancellations", "ru": "Неявки и поздние отмены", "cz": "Nedostavení a pozdní zrušení"},
+  'noShowRule.hint': {"en": "Staff mark no-shows on the visit. Here you choose what counts as a late cancellation and what happens after repeated no-shows.", "ru": "Неявку отмечают в визите. Здесь можно указать, какая отмена считается поздней и что делать при повторных неявках.", "cz": "Nedostavení se označuje u návštěvy. Zde nastavíte, co je pozdní zrušení a co se stane při opakovaném nedostavení."},
+  'noShowRule.window': {"en": "Late cancellation, hours before", "ru": "Поздняя отмена, часов до визита", "cz": "Pozdní zrušení, hodin předem"},
+  'noShowRule.windowHint': {"en": "A cancellation closer to the start counts as late. 0 turns it off.", "ru": "Отмена ближе к началу считается поздней. 0 — не учитывать.", "cz": "Zrušení blíže začátku je pozdní. 0 = nesledovat."},
+  'noShowRule.enabled': {"en": "Repeated no-shows", "ru": "Повторные неявки", "cz": "Opakované nedostavení"},
+  'noShowRule.off': {"en": "Do nothing", "ru": "Ничего не делать", "cz": "Nic nedělat"},
+  'noShowRule.on': {"en": "Apply the rule", "ru": "Применять правило", "cz": "Použít pravidlo"},
+  'noShowRule.threshold': {"en": "No-shows", "ru": "Неявок", "cz": "Počet nedostavení"},
+  'noShowRule.period': {"en": "Within months", "ru": "За месяцев", "cz": "Během měsíců"},
+  'noShowRule.tag': {"en": "Tag for the client", "ru": "Метка клиенту", "cz": "Štítek pro klienta"},
+  'noShowRule.block': {"en": "Online booking", "ru": "Онлайн-запись", "cz": "Online rezervace"},
+  'noShowRule.blockNo': {"en": "Keep allowed", "ru": "Оставить открытой", "cz": "Ponechat povolenou"},
+  'noShowRule.blockYes': {"en": "Block for this client", "ru": "Закрыть для клиента", "cz": "Zablokovat pro klienta"},
+  'noShowRule.summary': {"en": "After {n} no-shows within {m} months the client gets the tag «{tag}».", "ru": "После {n} неявок за {m} мес. клиент получает метку «{tag}».", "cz": "Po {n} nedostaveních během {m} měsíců dostane klient štítek „{tag}“."},
+  'noShowRule.save': {"en": "Save", "ru": "Сохранить", "cz": "Uložit"},
+  'noShowRule.saved': {"en": "Saved", "ru": "Сохранено", "cz": "Uloženo"},
+  'noShowRule.rangeError': {"en": "Check the numbers: hours 0-336, no-shows 1-50, months 1-36, and a tag up to 40 characters.", "ru": "Проверьте числа: часы 0–336, неявки 1–50, месяцы 1–36 и метка до 40 символов.", "cz": "Zkontrolujte čísla: hodiny 0–336, nedostavení 1–50, měsíce 1–36 a štítek do 40 znaků."},
+  'visitForm.noShowWarning': {"en": "This client has {count} no-shows. Check the client card before booking.", "ru": "У клиента неявок: {count}. Проверьте карточку перед записью.", "cz": "Klient má nedostavení: {count}. Před objednáním zkontrolujte kartu."},
+  'visitForm.onlineBlockedWarning': {"en": "Online booking is blocked for this client because of no-shows.", "ru": "Онлайн-запись для клиента закрыта из-за неявок.", "cz": "Online rezervace je pro klienta kvůli nedostavení zablokovaná."},
+  'analytics.attendanceTitle': {"en": "No-shows", "ru": "Неявки", "cz": "Nedostavení"},
+  'analytics.noShowCount': {"en": "No-shows", "ru": "Неявки", "cz": "Nedostavení"},
+  'analytics.lateCancelCount': {"en": "Late cancellations", "ru": "Поздние отмены", "cz": "Pozdní zrušení"},
+  'analytics.noShowRate': {"en": "No-show rate", "ru": "Доля неявок", "cz": "Podíl nedostavení"},
+  'analytics.noShowRateHint': {"en": "Out of completed visits plus no-shows", "ru": "От проведённых визитов и неявок", "cz": "Z dokončených návštěv a nedostavení"},
+  'analytics.attendanceBySpecialist': {"en": "By specialist", "ru": "По специалистам", "cz": "Podle specialisty"},
+  'analytics.attendanceEmpty': {"en": "No no-shows or late cancellations yet", "ru": "Неявок и поздних отмен пока нет", "cz": "Zatím žádná nedostavení ani pozdní zrušení"},
+  'analytics.specialist': {"en": "Specialist", "ru": "Специалист", "cz": "Specialista"},
+  'audit.action.visitNoShow': {"en": "Visit marked as no-show", "ru": "Отмечена неявка", "cz": "Označeno nedostavení"},
+  'audit.action.visitNoShowReverted': {"en": "No-show undone", "ru": "Неявка снята", "cz": "Nedostavení zrušeno"},
+  'audit.action.clientNoShowRule': {"en": "No-show rule applied", "ru": "Сработало правило неявок", "cz": "Uplatněno pravidlo nedostavení"},
+  'audit.action.clientBookingBlocked': {"en": "Online booking blocked", "ru": "Онлайн-запись закрыта", "cz": "Online rezervace zablokována"},
+  'audit.action.clientBookingUnblocked': {"en": "Online booking allowed again", "ru": "Онлайн-запись снова открыта", "cz": "Online rezervace znovu povolena"},
+  'bookingManage.status.no_show': {"en": "Missed", "ru": "Пропущен", "cz": "Zmeškáno"},
+  'audit.field.lateCancel': {"en": "Late cancellation", "ru": "Поздняя отмена", "cz": "Pozdní zrušení"},
+  'audit.field.noShowCount': {"en": "No-shows", "ru": "Неявок", "cz": "Počet nedostavení"},
+  'audit.field.tagAdded': {"en": "Tag added", "ru": "Метка добавлена", "cz": "Štítek přidán"},
+  'audit.field.onlineBookingBlocked': {"en": "Online booking blocked", "ru": "Онлайн-запись закрыта", "cz": "Online rezervace zablokována"},
 }
 
 export default translations

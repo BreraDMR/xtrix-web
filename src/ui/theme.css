@@ -193,6 +193,7 @@
   .x-ev-in_progress { background: var(--status-in-progress-bg); color: var(--status-in-progress-ink); }
   .x-ev-completed { background: var(--status-completed-bg); color: var(--status-completed-ink); }
   .x-ev-cancelled { background: var(--status-cancelled-bg); color: var(--status-cancelled-ink); text-decoration: line-through; }
+  .x-ev-no_show { background: var(--workspace-fill); color: var(--workspace-muted); border-left-style: dashed !important; }
   /* the same colours as a small pill in lists - StatusBadge in src/ui picks the tone */
   .x-status {
     display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; white-space: nowrap;

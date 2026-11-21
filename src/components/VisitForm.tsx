@@ -153,6 +153,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
   const [cashbackToUse, setCashbackToUse] = useState<number>(0)
   
   const currentClientId = formData.client_id || selectedClient?.id
+  // the client list carries the no-show counters, so staff see them before booking
+  const clientAttendance = clients.find((client) => client.id === currentClientId)?.attendance
   const { data: clientBalance } = useQuery({
     queryKey: ['client-loyalty-balance', currentClientId],
     queryFn: async () => {
@@ -944,6 +946,14 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             </select>
           )}
           {fieldError('client_id')}
+          {clientAttendance && (clientAttendance.online_booking_blocked || clientAttendance.no_show_count > 0) && (
+            <div role="status" className="mt-2 rounded-lg border border-[var(--notice-line)] bg-[var(--notice-bg)] p-3 text-sm text-[var(--notice-ink)]">
+              {clientAttendance.no_show_count > 0 && (
+                <p>{t('visitForm.noShowWarning').replace('{count}', String(clientAttendance.no_show_count))}</p>
+              )}
+              {clientAttendance.online_booking_blocked && <p>{t('visitForm.onlineBlockedWarning')}</p>}
+            </div>
+          )}
         </div>
       </div>
 
@@ -1189,6 +1199,8 @@ export default function VisitForm({ visitId, onSuccess, onCancel, initialDateSta
             <option value="in_progress">{t('visits.inProgress')}</option>
             <option value="completed">{t('visits.completed')}</option>
             <option value="cancelled">{t('visits.cancelled')}</option>
+            {/* a no-show is marked on a visit that exists, never on a new booking */}
+            {visitId && <option value="no_show">{t('visits.noShow')}</option>}
           </select>
           {fieldError('status')}
         </div>

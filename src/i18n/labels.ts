@@ -33,6 +33,7 @@ const VISIT_STATUS: Record<string, TranslationKey> = {
   in_progress: 'visits.inProgress',
   completed: 'visits.completed',
   cancelled: 'visits.cancelled',
+  no_show: 'visits.noShow',
 }
 
 const SUBSCRIPTION_STATUS: Record<string, TranslationKey> = {

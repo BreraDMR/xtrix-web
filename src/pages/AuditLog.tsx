@@ -40,6 +40,11 @@ const ACTION_KEYS: Record<string, TranslationKey> = {
   'visit.cancelled': 'audit.action.visitCancelled',
   'visit.deleted': 'audit.action.visitDeleted',
   'visit.restored': 'audit.action.visitRestored',
+  'visit.no_show': 'audit.action.visitNoShow',
+  'visit.no_show_reverted': 'audit.action.visitNoShowReverted',
+  'client.no_show_rule_applied': 'audit.action.clientNoShowRule',
+  'client.online_booking_blocked': 'audit.action.clientBookingBlocked',
+  'client.online_booking_unblocked': 'audit.action.clientBookingUnblocked',
   'visit.repriced': 'audit.action.visitRepriced',
   'visit.price_corrected': 'audit.action.visitPriceCorrected',
   'visit.settlement_entry_recorded': 'audit.action.visitSettlementEntryRecorded',
@@ -103,6 +108,10 @@ const FIELD_KEYS: Record<string, TranslationKey> = {
   entry_id: 'audit.field.entryId',
   kind: 'audit.field.entryKind',
   updated_visits: 'audit.field.updatedVisits',
+  late_cancel: 'audit.field.lateCancel',
+  no_show_count: 'audit.field.noShowCount',
+  tag_added: 'audit.field.tagAdded',
+  online_booking_blocked: 'audit.field.onlineBookingBlocked',
 }
 
 // Enum values the API stores as codes; anything new still falls back to the raw code.
@@ -125,6 +134,8 @@ const ACTION_OPTIONS: { value: string; key: TranslationKey; family: string }[] =
   { value: 'visit.cancelled', key: 'audit.action.visitCancelled', family: 'visit' },
   { value: 'visit.deleted', key: 'audit.action.visitDeleted', family: 'visit' },
   { value: 'visit.restored', key: 'audit.action.visitRestored', family: 'visit' },
+  { value: 'visit.no_show', key: 'audit.action.visitNoShow', family: 'visit' },
+  { value: 'visit.no_show_reverted', key: 'audit.action.visitNoShowReverted', family: 'visit' },
   // price and settlement events carry amounts, so they follow the finance rights
   { value: 'visit.repriced', key: 'audit.action.visitRepriced', family: 'payment' },
   { value: 'visit.price_corrected', key: 'audit.action.visitPriceCorrected', family: 'payment' },
@@ -135,6 +146,9 @@ const ACTION_OPTIONS: { value: string; key: TranslationKey; family: string }[] =
     family: 'business',
   },
   { value: 'client.updated', key: 'audit.action.clientUpdated', family: 'client' },
+  { value: 'client.no_show_rule_applied', key: 'audit.action.clientNoShowRule', family: 'client' },
+  { value: 'client.online_booking_blocked', key: 'audit.action.clientBookingBlocked', family: 'client' },
+  { value: 'client.online_booking_unblocked', key: 'audit.action.clientBookingUnblocked', family: 'client' },
   { value: 'payment.paid', key: 'audit.action.paymentPaid', family: 'payment' },
   { value: 'payment.failed', key: 'audit.action.paymentFailed', family: 'payment' },
   { value: 'payment.refunded', key: 'audit.action.paymentRefunded', family: 'payment' },

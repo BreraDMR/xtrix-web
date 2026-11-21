@@ -118,6 +118,7 @@ const STATUS_CLASS: Record<string, string> = {
   in_progress: 'x-ev x-ev-in_progress',
   completed: 'x-ev x-ev-completed',
   cancelled: 'x-ev x-ev-cancelled',
+  no_show: 'x-ev x-ev-no_show',
 }
 
 const statusClass = (status?: string | null): string => STATUS_CLASS[status ?? ''] ?? STATUS_CLASS.planned

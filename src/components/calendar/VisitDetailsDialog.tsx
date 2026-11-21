@@ -72,6 +72,32 @@ export default function VisitDetailsDialog({
   const services = [...(visit.items ?? [])].sort((a, b) => a.position - b.position)
   const price = visit.price === null || visit.price === undefined ? '—' : formatCurrency(visit.price, currency)
 
+  // a no-show only makes sense once the visit should have begun; the API checks it too
+  const started = new Date(visit.date_start).getTime() <= Date.now()
+  const status = visit.status ?? 'planned'
+  const attendanceAction: { label: string; body: Record<string, unknown> } | null =
+    status === 'no_show' ? { label: t('calendar.undoNoShow'), body: { status: 'planned' } }
+      : status === 'cancelled' ? (visit.late_cancel
+        ? { label: t('calendar.clearLateCancel'), body: { late_cancel: false } }
+        : { label: t('calendar.markLateCancel'), body: { late_cancel: true } })
+        : (status === 'planned' || status === 'in_progress') && started
+          ? { label: t('calendar.markNoShow'), body: { status: 'no_show' } }
+          : null
+
+  const saveAttendance = async () => {
+    if (!attendanceAction || saving) return
+    setError('')
+    setSaving(true)
+    try {
+      await api.put(`/visits/${visit.id}`, attendanceAction.body)
+      onMoved()
+    } catch (err) {
+      setError(apiErrorMessage(err, t('calendar.attendanceError')))
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     if (saving || !changed) return
@@ -161,13 +187,33 @@ export default function VisitDetailsDialog({
           </div>
           <div className={row}>
             <dt className={term}>{t('visits.status')}</dt>
-            <dd className="min-w-0">{visitStatus(visit.status) || '—'}</dd>
+            <dd className="min-w-0">
+              {visitStatus(visit.status) || '—'}
+              {status === 'cancelled' && visit.late_cancel && (
+                <span className="text-[var(--workspace-muted)]"> · {t('visits.lateCancel')}</span>
+              )}
+            </dd>
           </div>
           <div className={row}>
             <dt className={term}>{t('visits.price')}</dt>
             <dd className="min-w-0 tabular-nums">{price}</dd>
           </div>
         </dl>
+
+        {canManage && (
+          <section aria-label={t('calendar.attendanceTitle')} className="mt-4 border-t border-[var(--workspace-line)] pt-4">
+            <h3 className="text-sm font-semibold text-[var(--workspace-ink)]">{t('calendar.attendanceTitle')}</h3>
+            {attendanceAction ? (
+              <Button variant="secondary" className="mt-2" onClick={saveAttendance} disabled={saving}>
+                {attendanceAction.label}
+              </Button>
+            ) : (
+              (status === 'planned' || status === 'in_progress') && (
+                <p className="mt-1 text-sm text-[var(--workspace-muted)]">{t('calendar.noShowHint')}</p>
+              )
+            )}
+          </section>
+        )}
 
         {canManage ? (
           <form onSubmit={handleSubmit} className="mt-4 space-y-3 border-t border-[var(--workspace-line)] pt-4">

@@ -18,6 +18,7 @@ const STATUS_KEYS: Record<string, TranslationKey> = {
   in_progress: 'bookingManage.status.in_progress',
   completed: 'bookingManage.status.completed',
   cancelled: 'bookingManage.status.cancelled',
+  no_show: 'bookingManage.status.no_show',
 }
 
 export function VisitStatus({ status }: { status: string | null }) {

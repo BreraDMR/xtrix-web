@@ -148,6 +148,7 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
   const statusEdge: Record<string, string> = {
     planned: 'var(--status-planned-ink)', in_progress: 'var(--status-in-progress-ink)',
     completed: 'var(--status-completed-ink)', cancelled: 'var(--status-cancelled-ink)',
+    no_show: 'var(--workspace-muted)',
   }
 
   return (

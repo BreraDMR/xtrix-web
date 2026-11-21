@@ -179,6 +179,7 @@ export default function Visits() {
                 <option value="in_progress">{t('visits.inProgress')}</option>
                 <option value="completed">{t('visits.completed')}</option>
                 <option value="cancelled">{t('visits.cancelled')}</option>
+                <option value="no_show">{t('visits.noShow')}</option>
               </Select>
             </div>
             <div className="min-w-0">
