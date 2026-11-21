@@ -7,6 +7,7 @@ import { formatTimeRange } from '../../hooks/useAssistant'
 import { minutesSeconds, useCountdown } from '../../hooks/useCountdown'
 import { confirmable, outcomeText, type PlanEntry, type Say } from './plan'
 import { AssistantBubble, LogCard } from './ChatBubbles'
+import Button from '../../ui/Button'
 
 // each step is said in the assistant's voice: "Sasha will book a visit", then "Sasha booked the visit"
 const STEP_LABELS: Record<AssistantPlannedAction['action'], { will: AssistantKey; did: AssistantKey }> = {
@@ -104,20 +105,8 @@ export default function PlanCard({ entry, name, locale, say, onConfirm, onCancel
     <>
       {counting && !expired && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => onConfirm(entry.id)}
-            className="rounded-lg bg-purple-600 px-4 py-2 font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-          >
-            {say('confirm')}
-          </button>
-          <button
-            type="button"
-            onClick={() => onCancel(entry.id)}
-            className="rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
-          >
-            {say('cancel')}
-          </button>
+          <Button onClick={() => onConfirm(entry.id)}>{say('confirm')}</Button>
+          <Button variant="secondary" onClick={() => onCancel(entry.id)}>{say('cancel')}</Button>
           <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
             {say('expiresIn', { time: minutesSeconds(secondsLeft) })}
           </span>

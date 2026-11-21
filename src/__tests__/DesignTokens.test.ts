@@ -215,8 +215,8 @@ describe('CRM cards', () => {
 // DES-02b: a solid accent button is the primary Button. theme.css used to repaint hand-made
 // `bg-purple-600 text-white` buttons with a global rule; that rule is gone, so one left over
 // would come out flat purple with its own corners and no focus ring of ours.
-// The assistant has its own pass (DES-02e), the landing keeps its own look.
-const BUTTON_SKIP_DIRS = ['src/components/assistant/', 'src/components/marketing/', 'src/__tests__/', 'src/test/']
+// The landing keeps its own look.
+const BUTTON_SKIP_DIRS = ['src/components/marketing/', 'src/__tests__/', 'src/test/']
 // OfferCards only draws its link on the landing (Pricing passes `registration`)
 const BUTTON_SKIP_FILES = ['src/components/subscription/OfferCards.tsx']
 // each quote kind on its own, so an apostrophe in a label does not pair up with a class string
@@ -260,7 +260,7 @@ describe('CRM accent shades', () => {
   })
 
   it('every accent token has a dark value', () => {
-    for (const token of ['--workspace-accent', '--workspace-accent-hover', '--workspace-accent-soft', '--workspace-accent-ink', '--workspace-accent-line']) {
+    for (const token of ['--workspace-accent', '--workspace-accent-hover', '--workspace-accent-soft', '--workspace-accent-ink', '--workspace-accent-line', '--workspace-accent-fill']) {
       expect(light.has(token), `light ${token}`).toBe(true)
       expect(followsTheme(token), `dark ${token}`).toBe(true)
     }
@@ -306,5 +306,27 @@ describe('CRM status pills', () => {
 
   it('theme.css has no global patch for old tinted pills', () => {
     expect(theme).not.toMatch(/\.rounded-full(?::is\()?\.bg-/)
+  })
+})
+
+// DES-02e: Sasha's panel painted its accent with raw purple/blue shades. They happen to match
+// the brand in tailwind.config, but they have no dark value of ours and drift as soon as the
+// tokens move, so the panel reads the same accent tokens as the rest of the CRM.
+const ACCENT_PALETTE = /(?<![\w-])(?:[a-z-]+:)*(?:bg|text|border|border-t|ring|ring-offset|outline|divide|from|to|via|placeholder|accent)-(?:blue|purple|indigo|violet|primary)-\d{2,3}\b/g
+
+describe('assistant', () => {
+  it('takes the accent from the theme tokens', () => {
+    const files = sources(resolve(root, 'src/components/assistant')).map(path => relative(root, path))
+    expect(files.length).toBeGreaterThan(3)
+    const offenders = files.flatMap(path => {
+      const hits = readFileSync(resolve(root, path), 'utf8').match(ACCENT_PALETTE) ?? []
+      return hits.length ? [`${path}: ${hits.length} (${[...new Set(hits)].slice(0, 3).join(' ')})`] : []
+    })
+    expect(offenders).toEqual([])
+  })
+
+  it('the solid accent under white text is the same purple in both themes', () => {
+    // the dark --workspace-accent is a light lilac for text; white on it would not read
+    expect(light.get('--workspace-accent-fill')).toBe('#8b45dd')
   })
 })
