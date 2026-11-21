@@ -22,7 +22,7 @@ export default function PilotSubscription({ access }: { access: WorkspaceAccess 
   return <div className="mx-auto max-w-4xl">
     <h1 className="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">{t('subscription.title')}</h1>
     <AccessNotice access={access} />
-    <p role="status" className="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950 dark:border-blue-800 dark:bg-blue-950/30 dark:text-blue-100">{t('pilot.paymentUnavailable')}</p>
+    <p role="status" className="mb-6 rounded-xl border border-[var(--workspace-accent-line)] bg-[var(--workspace-accent-soft)] p-4 text-sm text-blue-950 dark:text-blue-100">{t('pilot.paymentUnavailable')}</p>
     {!access.can_manage_billing && <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">{t('subscription.paidByOwner')}</p>}
     {usage.data && <dl className="mb-8 grid gap-4 sm:grid-cols-2">
       <div className="rounded-xl border border-gray-200 p-4 dark:border-gray-700"><dt className="text-sm text-gray-600 dark:text-gray-300">{t('subscription.crm_usage')}</dt><dd className="mt-2 text-xl font-semibold">{usage.data.crm.visits} / {usage.data.crm.limit ?? '—'}</dd></div>

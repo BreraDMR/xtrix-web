@@ -42,7 +42,7 @@ export default function CheckoutReturn() {
           : verification.data === 'unpaid' ? 'subscription.checkoutUnpaid' : 'subscription.checkoutChecking'
 
   return (
-    <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4" role="status">
+    <div className="mb-6 rounded-lg border border-[var(--workspace-accent-line)] bg-[var(--workspace-accent-soft)] p-4" role="status">
       <p>{t(message)}</p>
       {!cancelled && verification.data !== 'active' && (
         <button type="button" className="mt-2 underline" disabled={verification.isFetching} onClick={() => {

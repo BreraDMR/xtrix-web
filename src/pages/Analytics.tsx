@@ -473,7 +473,7 @@ export default function Analytics() {
                     ? 'bg-yellow-50 border-yellow-400'
                     : insight.type === 'success'
                     ? 'bg-green-50 border-green-400'
-                    : 'bg-blue-50 border-blue-400'
+                    : 'bg-[var(--workspace-accent-soft)] border-blue-400'
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -535,7 +535,7 @@ export default function Analytics() {
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-gray-500 mb-1 dark:text-gray-400">{t('analytics.avg_daily_load')}</h4>
-                    <p className="text-2xl font-bold text-indigo-600">{benchmarksData.average_daily_load?.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-[var(--workspace-accent)]">{benchmarksData.average_daily_load?.toFixed(2)}</p>
                   </div>
                 </div>
               </div>

@@ -103,7 +103,7 @@ function StatusChip({ status }: { status: string }) {
     status === 'active'
       ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
       : status === 'exhausted'
-        ? 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300'
+        ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]'
         : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
   return (
     <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${tone}`}>
@@ -430,7 +430,7 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
                   href={shopUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="break-all text-sm text-primary-600 underline dark:text-primary-400"
+                  className="break-all text-sm text-[var(--workspace-accent)] underline"
                 >
                   {shopUrl}
                 </a>

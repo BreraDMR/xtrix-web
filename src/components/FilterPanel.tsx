@@ -26,7 +26,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`ui-button ui-button-secondary ${hasActiveFilters ? 'border-brand-purple bg-[var(--x-lavender)] text-primary-700' : ''}`}
+        className={`ui-button ui-button-secondary ${hasActiveFilters ? 'border-brand-purple bg-[var(--x-lavender)] text-[var(--workspace-accent-ink)]' : ''}`}
       >
         <svg
           className="h-5 w-5"
@@ -61,7 +61,7 @@ export default function FilterPanel({ filters, onReset }: FilterPanelProps) {
               {hasActiveFilters && (
                 <button
                   onClick={onReset}
-                  className="text-sm text-blue-600 hover:text-blue-800"
+                  className="text-sm text-[var(--workspace-accent)] hover:text-[var(--workspace-accent-hover)]"
                 >
                   Reset
                 </button>

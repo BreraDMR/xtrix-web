@@ -225,7 +225,7 @@ describe('CRM buttons', () => {
 // DES-02c: older screens painted the accent with plain blue/purple/primary shades, and a
 // global rule at the end of theme.css lifted them to the tokens on the dark theme. That
 // rule is gone, so a shade left over would come out dark purple on the dark panel.
-const LIFTED_SHADE = /(?<![\w:/[-])(?:text-(?:blue|purple|primary)-(?:600|700|800|900)|bg-(?:blue|purple|primary)-(?:50|100)|border-(?:blue|purple|primary)-(?:200|300))(?![\w/-])/g
+const LIFTED_SHADE = /(?<![\w:/[-])(?:text-(?:blue|purple|primary|indigo)-(?:600|700|800|900)|bg-(?:blue|purple|primary)-(?:50|100)|border-(?:blue|purple|primary)-(?:200|300))(?![\w/-])/g
 
 describe('CRM accent shades', () => {
   it('come from the accent tokens', () => {

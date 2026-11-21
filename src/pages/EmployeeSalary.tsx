@@ -209,9 +209,9 @@ export default function EmployeeSalary() {
       case 'penalty':
         return 'text-red-600'
       case 'overtime':
-        return 'text-blue-600'
+        return 'text-[var(--workspace-accent)]'
       case 'allowance':
-        return 'text-purple-600'
+        return 'text-[var(--workspace-accent)]'
       case 'deduction':
         return 'text-orange-600'
       default:
@@ -675,8 +675,8 @@ export default function EmployeeSalary() {
                       </span>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         payment.payment_method === 'cash' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                        payment.payment_method === 'card' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                        payment.payment_method === 'transfer' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' :
+                        payment.payment_method === 'card' ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]' :
+                        payment.payment_method === 'transfer' ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]' :
                         'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
                         {t(`salary.paymentMethod.${payment.payment_method}`)}
@@ -765,7 +765,7 @@ export default function EmployeeSalary() {
                             setSelectedSalaryId(salary.id)
                             setActiveTab('current')
                           }}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="text-[var(--workspace-accent)] hover:text-[var(--workspace-accent-hover)]"
                         >
                           {t('common.view')}
                         </button>

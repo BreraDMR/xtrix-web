@@ -115,8 +115,8 @@ export default function SalaryPaymentModal({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && <div role="alert"><FormError message={error} /></div>}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-sm text-blue-700">
+          <div className="bg-[var(--workspace-accent-soft)] border border-[var(--workspace-accent-line)] rounded-lg p-3">
+            <p className="text-sm text-[var(--workspace-accent-ink)]">
               {t('salary.remainingAmount')}:{' '}
               <span className="font-semibold">{formatCurrency(remainingAmount, currency)}</span>
             </p>

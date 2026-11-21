@@ -49,7 +49,7 @@ const STATUS_KEYS: Record<string, TranslationKey> = {
 
 const STATUS_CLASS: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-700 dark:bg-gray-700 dark:text-gray-200',
-  confirmed: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+  confirmed: 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]',
   sending: 'bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
   sent: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
   cancelled: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
@@ -414,7 +414,7 @@ export default function Campaigns() {
                       aria-current={item.id === selectedId ? 'true' : undefined}
                       className={`w-full px-4 py-3 text-left transition-colors ${
                         item.id === selectedId
-                          ? 'bg-primary-50 dark:bg-primary-950/40'
+                          ? 'bg-[var(--workspace-accent-soft)]'
                           : 'hover:bg-slate-50 dark:hover:bg-gray-700/50'
                       }`}
                     >

@@ -329,9 +329,9 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
 
               {}
               <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <div className="text-sm text-blue-700">{t('import.totalRows')}</div>
-                  <div className="text-2xl font-bold text-blue-900">{parsedData.length}</div>
+                <div className="bg-[var(--workspace-accent-soft)] border border-[var(--workspace-accent-line)] rounded-lg p-3">
+                  <div className="text-sm text-[var(--workspace-accent-ink)]">{t('import.totalRows')}</div>
+                  <div className="text-2xl font-bold text-[var(--workspace-accent-ink)]">{parsedData.length}</div>
                 </div>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                   <div className="text-sm text-green-700">
@@ -439,8 +439,8 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
 
           {}
           {importResult && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-medium text-blue-900 mb-3">
+            <div className="bg-[var(--workspace-accent-soft)] border border-[var(--workspace-accent-line)] rounded-lg p-4">
+              <h3 className="font-medium text-[var(--workspace-accent-ink)] mb-3">
                 {t('import.result')}
               </h3>
               <div className="space-y-2">
@@ -469,7 +469,7 @@ export default function ImportClientsModal({ isOpen, onClose, onOpenClient }: Im
                             <button
                               type="button"
                               onClick={() => onOpenClient(item.clientId)}
-                              className="text-purple-700 hover:underline font-medium"
+                              className="text-[var(--workspace-accent-ink)] hover:underline font-medium"
                             >
                               {t('import.openClient')}
                             </button>

@@ -11,6 +11,9 @@
     --workspace-accent: #8b45dd;
     --workspace-accent-hover: #7633c2;
     --workspace-accent-soft: #f4edfd;
+    /* text on the soft tint and the outline around it */
+    --workspace-accent-ink: #7633c2;
+    --workspace-accent-line: #e2d2f9;
     --workspace-focus: #a46cf0;
     --workspace-sidebar: rgba(255, 255, 255, .78);
     --workspace-card-border: rgba(0, 0, 0, .06);
@@ -99,6 +102,8 @@
     --workspace-accent: #c9a6f7;
     --workspace-accent-hover: #dcc4fb;
     --workspace-accent-soft: #2a2235;
+    --workspace-accent-ink: var(--workspace-accent);
+    --workspace-accent-line: var(--workspace-line);
     --workspace-focus: #b48aee;
     --workspace-sidebar: rgba(24, 23, 28, .8);
     --workspace-card-border: rgba(255, 255, 255, .07);
@@ -338,31 +343,14 @@
   *, ::before, ::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
 
-/* Older screens paint the accent with blue/purple/primary utilities and often skip the dark:
-   variant, so on the dark theme they end up dark green on dark green. Lift them to the tokens. */
-:root.dark :is(.text-blue-600, .text-blue-700, .text-blue-800, .text-blue-900,
-  .text-purple-600, .text-purple-700, .text-purple-800, .text-purple-900,
-  .text-primary-600, .text-primary-700, .text-primary-800, .text-primary-900) {
-  color: var(--workspace-accent);
-}
-:root.dark :is(.bg-blue-50, .bg-blue-100, .bg-purple-50, .bg-purple-100, .bg-primary-50, .bg-primary-100) {
-  background-color: var(--workspace-accent-soft);
-}
-:root.dark :is(.border-blue-200, .border-blue-300, .border-purple-200, .border-purple-300,
-  .border-primary-200, .border-primary-300) {
-  border-color: var(--workspace-line);
-}
-
 /* status pills: soft tints, no outlines */
 .crm-app :is(span, div, p).rounded-full:is(.text-xs, .text-\[11px\], .text-\[10px\]) { font-weight: 500; letter-spacing: 0; }
 .crm-app .rounded-full.bg-green-100 { background: #e3f5e8; color: #1a7f37; box-shadow: none; }
 .crm-app .rounded-full:is(.bg-amber-100, .bg-yellow-100, .bg-orange-100) { background: #fdf1df; color: #a35a00; }
 .crm-app .rounded-full.bg-red-100 { background: #fdebee; color: #c4122f; }
-.crm-app .rounded-full:is(.bg-purple-100, .bg-blue-100, .bg-primary-100, .bg-indigo-100) { background: var(--x-lavender); color: #7633c2; box-shadow: none; }
 .dark .crm-app .rounded-full.bg-green-100 { background: rgba(48, 209, 88, .14); color: #6ee28c; }
 .dark .crm-app .rounded-full:is(.bg-amber-100, .bg-yellow-100, .bg-orange-100) { background: rgba(255, 159, 10, .14); color: #ffbf5e; }
 .dark .crm-app .rounded-full.bg-red-100 { background: rgba(255, 69, 58, .14); color: #ff8a80; }
-.dark .crm-app .rounded-full:is(.bg-purple-100, .bg-blue-100, .bg-primary-100, .bg-indigo-100) { background: var(--x-lavender); color: #d4b8fa; }
 
 /* month calendar: airy tiles, hairlines, the day number does the talking */
 .crm-app .react-calendar { width: 100%; border: none; background: transparent; font-family: inherit; }

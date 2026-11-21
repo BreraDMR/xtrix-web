@@ -163,7 +163,7 @@ export default function Questionnaires() {
                       {new Date(template.updated_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      <button onClick={() => setEditor(template)} className="text-blue-600 hover:text-blue-800">
+                      <button onClick={() => setEditor(template)} className="text-[var(--workspace-accent)] hover:text-[var(--workspace-accent-hover)]">
                         {t('common.edit')}
                       </button>
                     </td>

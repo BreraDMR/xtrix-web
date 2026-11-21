@@ -420,7 +420,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
         />
       )}
       <div className="flex items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700">
-        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">
+        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]">
           <LuSparkles className="h-5 w-5" aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
@@ -439,7 +439,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
       </div>
 
       {subscriptionRequired ? (
-        <div className="m-4 rounded-xl bg-blue-50 p-4 text-sm text-blue-900 dark:bg-blue-950/30 dark:text-blue-100">
+        <div className="m-4 rounded-xl bg-[var(--workspace-accent-soft)] p-4 text-sm text-[var(--workspace-accent-ink)]">
           <p>{t('pilot.aiSubscribe')}</p>
           <Link to="/app/subscription" onClick={onClose} className="mt-3 inline-block font-semibold underline">{t('subscription.title')}</Link>
         </div>
@@ -452,7 +452,7 @@ export default function AssistantPanel({ open, onClose, status, persona }: Assis
         </div>
       ) : !data ? (
         <div className="flex flex-1 items-center justify-center" aria-busy="true">
-          <span className="h-8 w-8 animate-spin rounded-full border-2 border-purple-200 border-t-purple-600" />
+          <span className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--workspace-accent-line)] border-t-purple-600" />
         </div>
       ) : off ? (
         <p className="m-4 rounded-lg bg-gray-50 p-4 text-sm text-gray-700 dark:bg-gray-900/40 dark:text-gray-300">{say('notConfigured')}</p>

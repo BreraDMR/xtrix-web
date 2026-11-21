@@ -125,7 +125,7 @@ function VisitDetails({ visitId }: { visitId: number }) {
                     href={file.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="shrink-0 text-blue-600 underline dark:text-blue-300"
+                    className="shrink-0 text-[var(--workspace-accent)] underline"
                   >
                     {t('common.view')}
                   </a>

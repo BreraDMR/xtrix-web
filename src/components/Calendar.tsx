@@ -169,16 +169,16 @@ export default function Calendar({ visits, onRefresh }: CalendarProps) {
                   onClick={() => handleDateClick(day)}
                   className={`p-2 min-h-[80px] border dark:border-gray-700 rounded cursor-pointer transition-colors ${
                     !isCurrentMonth ? 'text-gray-400' : ''
-                  } ${isSelected ? 'bg-purple-100 border-purple-300 dark:bg-purple-900/30 dark:border-purple-600' : isToday ? 'bg-gray-50 border-gray-300 dark:bg-gray-900 dark:border-gray-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                  } ${isSelected ? 'bg-[var(--workspace-accent-soft)] border-[var(--workspace-accent-line)]' : isToday ? 'bg-gray-50 border-gray-300 dark:bg-gray-900 dark:border-gray-600' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                 >
-                  <div className={`text-sm font-medium mb-1 ${isSelected ? 'text-purple-700 dark:text-purple-300' : ''}`}>
+                  <div className={`text-sm font-medium mb-1 ${isSelected ? 'text-[var(--workspace-accent-ink)]' : ''}`}>
                     {day.getDate()}
                   </div>
                   {dayVisits.length > 0 && (
                     <div className="flex items-center gap-1 mt-1">
                       <div className="w-1.5 h-1.5 rounded-full bg-purple-600"></div>
                       {dayVisits.length > 1 && (
-                        <span className="inline-flex items-center px-1 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
+                        <span className="inline-flex items-center px-1 py-0.5 rounded-full text-xs font-semibold bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]">
                           {dayVisits.length}
                         </span>
                       )}
