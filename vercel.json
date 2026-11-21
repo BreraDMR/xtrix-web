@@ -54,5 +54,37 @@
       "*": false,
       "staging": true
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/booking/demo-linia",
+      "destination": "/booking/linia",
+      "permanent": true
+    },
+    {
+      "source": "/booking/demo-balans",
+      "destination": "/booking/balans",
+      "permanent": true
+    },
+    {
+      "source": "/booking/studio-luna-demo",
+      "destination": "/booking/studio-luna",
+      "permanent": true
+    },
+    {
+      "source": "/gift/demo-linia",
+      "destination": "/gift/linia",
+      "permanent": true
+    },
+    {
+      "source": "/gift/demo-balans",
+      "destination": "/gift/balans",
+      "permanent": true
+    },
+    {
+      "source": "/gift/studio-luna-demo",
+      "destination": "/gift/studio-luna",
+      "permanent": true
+    }
+  ]
 }
