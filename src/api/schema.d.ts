@@ -3830,6 +3830,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users/me/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change Password */
+        post: operations["change_password_users_me_password_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/me/password/setup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request Password Setup */
+        post: operations["request_password_setup_users_me_password_setup_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/pending": {
         parameters: {
             query?: never;
@@ -8361,6 +8395,13 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** PasswordChange */
+        PasswordChange: {
+            /** Current Password */
+            current_password: string;
+            /** New Password */
+            new_password: string;
+        };
         /** PasswordResetConfirm */
         PasswordResetConfirm: {
             /** New Password */
@@ -8383,6 +8424,11 @@ export interface components {
         };
         /** PasswordResetRequestOut */
         PasswordResetRequestOut: {
+            /** Message */
+            message: string;
+        };
+        /** PasswordSetupOut */
+        PasswordSetupOut: {
             /** Message */
             message: string;
         };
@@ -8876,8 +8922,11 @@ export interface components {
              * @description Ordered services for a chain; use service_id for a single booking
              */
             service_ids?: number[] | null;
-            /** Staff Id */
-            staff_id: number;
+            /**
+             * Staff Id
+             * @description The chosen master. Leave it out with service_id to take any free master; chains need one
+             */
+            staff_id?: number | null;
             /**
              * Start
              * Format: date-time
@@ -9152,6 +9201,11 @@ export interface components {
         };
         /** PublicServiceOut */
         PublicServiceOut: {
+            /**
+             * Category
+             * @description Free-text group the salon put the service in; null when none
+             */
+            category?: string | null;
             /** Description */
             description?: string | null;
             /** Duration Minutes */
@@ -11065,6 +11119,65 @@ export interface components {
              * @description 6-digit TOTP code for 2FA
              */
             totp_token?: string | null;
+        };
+        /** UserMeOut */
+        UserMeOut: {
+            /**
+             * Business Id
+             * @description Business the user works in: their own, or the employer's for staff
+             */
+            business_id?: number | null;
+            /** Email */
+            email?: string | null;
+            /**
+             * Employer Id
+             * @description User id of the owner who employs this user; null for owners and solo specialists
+             */
+            employer_id?: number | null;
+            /** Full Name */
+            full_name: string;
+            /**
+             * Has Password
+             * @description False for accounts made through Google that never set a password
+             * @default false
+             */
+            has_password: boolean;
+            /** Id */
+            id: number;
+            /**
+             * Is 2Fa Enabled
+             * @default false
+             */
+            is_2fa_enabled: boolean;
+            /** Moderated At */
+            moderated_at?: string | null;
+            /** Moderated By Id */
+            moderated_by_id?: number | null;
+            /** Moderation Notes */
+            moderation_notes?: string | null;
+            /**
+             * Moderation Status
+             * @description Moderation status: pending, approved, rejected
+             * @default pending
+             */
+            moderation_status: string | null;
+            /** Phone */
+            phone?: string | null;
+            /**
+             * Role
+             * @description admin|business_owner|specialist|employee|client
+             */
+            role: string;
+            /**
+             * Specialist Category
+             * @description beauty|wellness|healthcare, from specialist_type; null when unknown
+             */
+            readonly specialist_category: string | null;
+            /**
+             * Specialist Type
+             * @description Type of specialist (only for role='specialist')
+             */
+            specialist_type?: string | null;
         };
         /** UserOut */
         UserOut: {
@@ -21639,7 +21752,73 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserOut"];
+                    "application/json": components["schemas"]["UserMeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_password_users_me_password_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PasswordChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    request_password_setup_users_me_password_setup_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Accept-Language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PasswordSetupOut"];
                 };
             };
             /** @description Validation Error */
