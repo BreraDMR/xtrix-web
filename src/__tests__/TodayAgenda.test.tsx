@@ -18,7 +18,7 @@ const access: WorkspaceAccess = {
   checkout_available: false, pilot_mode: false,
 }
 const makeRows = (count = 125): VisitOut[] => Array.from({ length: count }, (_, index) => ({
-  id: index + 1, client_id: index + 1, client_name: `Guest ${index + 1}`,
+  id: index + 1, client_id: index + 1, client_name: `Guest ${index + 1}`, late_cancel: false,
   service_id: 3, service_name: 'Consultation', specialist_id: 7,
   date_start: '2026-10-22T09:00:00Z', date_end: '2026-10-22T10:00:00Z',
   created_at: '2026-10-01T08:00:00Z', status: 'planned', items: [],

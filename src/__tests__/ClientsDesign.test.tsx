@@ -17,11 +17,11 @@ const rows = Array.from({ length: 3 }, (_, i) => ({ id: i + 1, full_name: `Clien
   contact_phone: `+420 600 00${i}`, contact_email: null, gender: null }))
 
 function visit(id: number, status: string, date: string): ClientOverviewVisit {
-  return { id, date_start: date, date_end: null, status, service_name: `Service ${id}`, specialist_name: 'Anna', price: null }
+  return { id, date_start: date, date_end: null, status, service_name: `Service ${id}`, specialist_name: 'Anna', price: null, late_cancel: false }
 }
 function overview(recent: ClientOverviewVisit[], total = recent.length): ClientOverviewOut {
   return { client_id: 2, stats: { total_visits: total, completed_visits: recent.filter(v => v.status === 'completed').length,
-    cancelled_visits: 0, last_visit_at: '2026-11-02T09:00:00Z', next_visit_at: null },
+    cancelled_visits: 0, no_show_visits: 0, late_cancel_visits: 0, last_visit_at: '2026-11-02T09:00:00Z', next_visit_at: null },
   next_visit: null, upcoming_visits: [], recent_visits: recent, payments: null }
 }
 

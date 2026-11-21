@@ -22,7 +22,7 @@ vi.mock('../components/ExportButton', () => ({ default: (props: NonNullable<type
 beforeEach(() => { vi.clearAllMocks(); resetStores(); signIn({ id: 7, role: 'specialist' }); capture.current = undefined })
 type Query = NonNullable<operations['visits_list_visits__get']['parameters']['query']>
 const rows: VisitOut[] = Array.from({ length: 125 }, (_, index) => ({
-  id: index + 1, client_id: index + 1, client_name: `Guest ${String(index + 1).padStart(3, '0')}`,
+  id: index + 1, client_id: index + 1, client_name: `Guest ${String(index + 1).padStart(3, '0')}`, late_cancel: false,
   specialist_id: 7, service_name: 'Consultation', date_start: '2026-10-18T10:00:00Z',
   created_at: '2026-10-01T09:00:00Z', status: 'completed', price: index === 0 ? 0 : 20,
 }))

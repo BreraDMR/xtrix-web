@@ -12,6 +12,7 @@ const DAY = new Date('2030-05-06T12:00:00+02:00')
 
 const visit = (id: number, start: string, end: string, status = 'planned'): CalendarVisit => ({
   id,
+  late_cancel: false,
   client_id: id,
   client_name: `Client ${id}`,
   specialist_id: 10,

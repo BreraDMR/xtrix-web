@@ -16,7 +16,7 @@ vi.mock('../utils/export', async importOriginal => ({
 
 const client: ClientOut = { id: 5, full_name: 'History Client', language: 'en', created_at: '2026-01-01T10:00:00Z' }
 const rows: VisitOut[] = Array.from({ length: 125 }, (_, index) => ({
-  id: index + 1, client_id: 5, specialist_id: 1, date_start: '2026-06-15T10:00:00Z',
+  id: index + 1, client_id: 5, specialist_id: 1, late_cancel: false, date_start: '2026-06-15T10:00:00Z',
   created_at: '2026-06-01T08:00:00Z', service_name: `Service ${index + 1}`,
   status: index === 124 ? 'planned' : 'completed', price: 10, payment_method: 'cash',
 }))

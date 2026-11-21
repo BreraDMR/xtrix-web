@@ -12,6 +12,7 @@ const DAY = new Date('2030-05-06T12:00:00+02:00')
 
 const chainVisit: CalendarVisit = {
   id: 41,
+  late_cancel: false,
   client_id: 7,
   client_name: 'Jana Nováková',
   specialist_id: 10,

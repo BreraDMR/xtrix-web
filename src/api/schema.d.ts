@@ -1929,23 +1929,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/files/presign": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Presign Upload */
-        get: operations["presign_upload_files_presign_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/loyalty/analytics/level-distribution": {
         parameters: {
             query?: never;
@@ -4791,6 +4774,49 @@ export interface components {
              */
             voice_enabled: boolean;
         };
+        /** AttendanceSpecialistStats */
+        AttendanceSpecialistStats: {
+            /** Due Visits */
+            due_visits: number;
+            /** Late Cancel */
+            late_cancel: number;
+            /** No Show */
+            no_show: number;
+            /** No Show Rate */
+            no_show_rate?: number | null;
+            /** Specialist Id */
+            specialist_id: number;
+            /** Specialist Name */
+            specialist_name?: string | null;
+        };
+        /**
+         * AttendanceStats
+         * @description No-shows against visits that were due to happen (completed + no-show).
+         */
+        AttendanceStats: {
+            /** By Specialist */
+            by_specialist?: components["schemas"]["AttendanceSpecialistStats"][];
+            /**
+             * Due Visits
+             * @default 0
+             */
+            due_visits: number;
+            /**
+             * Late Cancel
+             * @default 0
+             */
+            late_cancel: number;
+            /**
+             * No Show
+             * @default 0
+             */
+            no_show: number;
+            /**
+             * No Show Rate
+             * @description 0..1, null when nothing was due
+             */
+            no_show_rate?: number | null;
+        };
         /** AuditLogOut */
         AuditLogOut: {
             /** Action */
@@ -4958,8 +4984,44 @@ export interface components {
             description?: string | null;
             /** Email */
             email?: string | null;
+            /**
+             * Late Cancel Window Hours
+             * @description A cancel closer than this to the start is a late cancel; 0 = don't track
+             * @default 24
+             */
+            late_cancel_window_hours: number;
             /** Name */
             name: string;
+            /**
+             * Noshow Rule Block Online
+             * @description Also stop the client's online booking
+             * @default false
+             */
+            noshow_rule_block_online: boolean;
+            /**
+             * Noshow Rule Enabled
+             * @description Apply the 'N no-shows within M months' rule
+             * @default false
+             */
+            noshow_rule_enabled: boolean;
+            /**
+             * Noshow Rule Period Months
+             * @description M: months to look back
+             * @default 6
+             */
+            noshow_rule_period_months: number;
+            /**
+             * Noshow Rule Tag
+             * @description Tag added to the client
+             * @default no-show
+             */
+            noshow_rule_tag: string;
+            /**
+             * Noshow Rule Threshold
+             * @description N: no-shows that trigger the rule
+             * @default 3
+             */
+            noshow_rule_threshold: number;
             /** Phone */
             phone?: string | null;
             /** @description Main specialty, one of GET /specialist-profiles/types; the front can shape the UI by its category */
@@ -5012,8 +5074,44 @@ export interface components {
             email?: string | null;
             /** Id */
             id: number;
+            /**
+             * Late Cancel Window Hours
+             * @description A cancel closer than this to the start is a late cancel; 0 = don't track
+             * @default 24
+             */
+            late_cancel_window_hours: number;
             /** Name */
             name: string;
+            /**
+             * Noshow Rule Block Online
+             * @description Also stop the client's online booking
+             * @default false
+             */
+            noshow_rule_block_online: boolean;
+            /**
+             * Noshow Rule Enabled
+             * @description Apply the 'N no-shows within M months' rule
+             * @default false
+             */
+            noshow_rule_enabled: boolean;
+            /**
+             * Noshow Rule Period Months
+             * @description M: months to look back
+             * @default 6
+             */
+            noshow_rule_period_months: number;
+            /**
+             * Noshow Rule Tag
+             * @description Tag added to the client
+             * @default no-show
+             */
+            noshow_rule_tag: string;
+            /**
+             * Noshow Rule Threshold
+             * @description N: no-shows that trigger the rule
+             * @default 3
+             */
+            noshow_rule_threshold: number;
             /** Phone */
             phone?: string | null;
             /**
@@ -5056,8 +5154,20 @@ export interface components {
             description?: string | null;
             /** Email */
             email?: string | null;
+            /** Late Cancel Window Hours */
+            late_cancel_window_hours?: number | null;
             /** Name */
             name?: string | null;
+            /** Noshow Rule Block Online */
+            noshow_rule_block_online?: boolean | null;
+            /** Noshow Rule Enabled */
+            noshow_rule_enabled?: boolean | null;
+            /** Noshow Rule Period Months */
+            noshow_rule_period_months?: number | null;
+            /** Noshow Rule Tag */
+            noshow_rule_tag?: string | null;
+            /** Noshow Rule Threshold */
+            noshow_rule_threshold?: number | null;
             /** Phone */
             phone?: string | null;
             /** @description Main specialty, one of GET /specialist-profiles/types; the front can shape the UI by its category; null clears it */
@@ -5322,6 +5432,39 @@ export interface components {
             /** Spent */
             spent: string | null;
         };
+        /**
+         * ClientAttendanceOut
+         * @description No-show counters and what they mean for booking this client.
+         */
+        ClientAttendanceOut: {
+            /**
+             * Late Cancel Count
+             * @default 0
+             */
+            late_cancel_count: number;
+            /**
+             * No Show Count
+             * @default 0
+             */
+            no_show_count: number;
+            /**
+             * Online Booking Blocked
+             * @description The client can't book online in this salon
+             * @default false
+             */
+            online_booking_blocked: boolean;
+            /**
+             * Rule Reached
+             * @description The salon's no-show rule is reached right now
+             * @default false
+             */
+            rule_reached: boolean;
+            /**
+             * Warning
+             * @description Localized note for staff about to book this client
+             */
+            warning?: string | null;
+        };
         /** ClientCreate */
         ClientCreate: {
             /** Birth Date */
@@ -5455,6 +5598,7 @@ export interface components {
         };
         /** ClientOut */
         ClientOut: {
+            attendance?: components["schemas"]["ClientAttendanceOut"] | null;
             /** Birth Date */
             birth_date?: string | null;
             /** Contact Email */
@@ -5491,6 +5635,7 @@ export interface components {
         };
         /** ClientOverviewOut */
         ClientOverviewOut: {
+            attendance?: components["schemas"]["ClientAttendanceOut"];
             /** Client Id */
             client_id: number;
             next_visit?: components["schemas"]["ClientOverviewVisit"] | null;
@@ -5518,8 +5663,19 @@ export interface components {
             completed_visits: number;
             /** Last Visit At */
             last_visit_at?: string | null;
+            /**
+             * Late Cancel Visits
+             * @description Cancelled visits cancelled inside the salon's window
+             * @default 0
+             */
+            late_cancel_visits: number;
             /** Next Visit At */
             next_visit_at?: string | null;
+            /**
+             * No Show Visits
+             * @default 0
+             */
+            no_show_visits: number;
             /** Total Visits */
             total_visits: number;
         };
@@ -5534,6 +5690,11 @@ export interface components {
             date_start: string;
             /** Id */
             id: number;
+            /**
+             * Late Cancel
+             * @default false
+             */
+            late_cancel: boolean;
             /** Payment Method */
             payment_method?: string | null;
             /** Price */
@@ -5708,6 +5869,13 @@ export interface components {
         ClientProfileOut: {
             /** Client Id */
             client_id: number;
+            /**
+             * Online Booking Blocked
+             * @default false
+             */
+            online_booking_blocked: boolean;
+            /** Online Booking Blocked At */
+            online_booking_blocked_at?: string | null;
             /** Preferences */
             preferences?: string | null;
             /** Tags */
@@ -5715,6 +5883,11 @@ export interface components {
         };
         /** ClientProfileUpdate */
         ClientProfileUpdate: {
+            /**
+             * Online Booking Blocked
+             * @description Stop (true) or allow again (false) this client's online booking here
+             */
+            online_booking_blocked?: boolean | null;
             /** Preferences */
             preferences?: string | null;
             /** Tags */
@@ -11276,7 +11449,7 @@ export interface components {
             specialist_id: number;
             /**
              * Status
-             * @description planned|completed|cancelled|in_progress
+             * @description planned|completed|cancelled|in_progress|no_show
              * @default planned
              */
             status: string | null;
@@ -11375,6 +11548,12 @@ export interface components {
             /** Items */
             items?: components["schemas"]["VisitItemOut"][];
             /**
+             * Late Cancel
+             * @description Cancelled inside the salon's cancellation window
+             * @default false
+             */
+            late_cancel: boolean;
+            /**
              * Loyalty Warning
              * @description Localized result warning; check bonus history before retrying
              */
@@ -11398,7 +11577,7 @@ export interface components {
             specialist_id: number;
             /**
              * Status
-             * @description planned|completed|cancelled|in_progress
+             * @description planned|completed|cancelled|in_progress|no_show
              * @default planned
              */
             status: string | null;
@@ -11619,6 +11798,7 @@ export interface components {
         };
         /** VisitStatisticsResponse */
         VisitStatisticsResponse: {
+            attendance?: components["schemas"]["AttendanceStats"];
             /** Average Duration Minutes */
             average_duration_minutes?: number | null;
             /** Monthly Visits */
@@ -11640,6 +11820,11 @@ export interface components {
             date_start?: string | null;
             /** Items */
             items?: components["schemas"]["VisitItemIn"][] | null;
+            /**
+             * Late Cancel
+             * @description Only for cancelled visits; left out = decided by the salon's cancellation window when the visit gets cancelled
+             */
+            late_cancel?: boolean | null;
             /** Note */
             note?: string | null;
             /**
@@ -11655,7 +11840,10 @@ export interface components {
             service_id?: number | null;
             /** Service Name */
             service_name?: string | null;
-            /** Status */
+            /**
+             * Status
+             * @description planned|completed|cancelled|in_progress|no_show; no_show only once the visit has started
+             */
             status?: string | null;
         };
         /** VisitorAccountOut */
@@ -15290,6 +15478,8 @@ export interface operations {
                 name?: string | null;
                 q?: string | null;
                 gender?: ("male" | "female" | "other") | null;
+                /** @description Only clients with a no-show, a late cancel or a blocked online booking */
+                attendance?: ("no_show" | "late_cancel" | "online_booking_blocked") | null;
                 sort_by?: "id" | "full_name" | "contact_phone" | "contact_email" | "gender" | "birth_date" | "created_at";
                 sort_order?: "asc" | "desc";
                 page?: number;
@@ -17053,41 +17243,6 @@ export interface operations {
             path: {
                 expense_id: number;
             };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    presign_upload_files_presign_get: {
-        parameters: {
-            query: {
-                filename: string;
-                prefix?: string;
-                method?: string;
-            };
-            header?: {
-                "Accept-Language"?: string | null;
-            };
-            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -22664,7 +22819,7 @@ export interface operations {
                 date_from?: string | null;
                 date_to?: string | null;
                 q?: string | null;
-                status?: ("planned" | "completed" | "cancelled" | "in_progress") | null;
+                status?: ("planned" | "completed" | "cancelled" | "in_progress" | "no_show") | null;
                 sort_by?: "id" | "date_start" | "service_name" | "client_name" | "status" | "price";
                 sort_order?: "asc" | "desc";
                 page?: number;
@@ -22747,7 +22902,7 @@ export interface operations {
                 date_from?: string | null;
                 date_to?: string | null;
                 q?: string | null;
-                status?: ("planned" | "completed" | "cancelled" | "in_progress") | null;
+                status?: ("planned" | "completed" | "cancelled" | "in_progress" | "no_show") | null;
                 sort_by?: "id" | "date_start" | "service_name" | "client_name" | "status" | "price";
                 sort_order?: "asc" | "desc";
             };
@@ -22787,7 +22942,7 @@ export interface operations {
                 date_from?: string | null;
                 date_to?: string | null;
                 q?: string | null;
-                status?: ("planned" | "completed" | "cancelled" | "in_progress") | null;
+                status?: ("planned" | "completed" | "cancelled" | "in_progress" | "no_show") | null;
                 sort_by?: "id" | "date_start" | "service_name" | "client_name" | "status" | "price";
                 sort_order?: "asc" | "desc";
             };

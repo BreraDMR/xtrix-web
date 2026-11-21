@@ -11,7 +11,7 @@ const jana = { id: 3, full_name: 'Jana Nováková' }
 const massage = { id: 5, name: 'Massage', duration_minutes: 60, price: 900, is_active: true, specialist_id: 7 }
 const facial = { ...massage, id: 6, name: 'Facial', duration_minutes: 40, price: 500 }
 const hidden: VisitOut = {
-  id: 21, client_id: 3, specialist_id: 7, service_id: 5, service_name: 'Massage',
+  id: 21, client_id: 3, specialist_id: 7, late_cancel: false, service_id: 5, service_name: 'Massage',
   date_start: '2030-05-06T08:00:00Z', date_end: '2030-05-06T09:00:00Z',
   created_at: '2030-05-01T08:00:00Z', status: 'completed', note: 'Before', price: null, payment_method: null,
   items: [{ id: 101, position: 1, service_id: 5, service_name: 'Massage', specialist_id: 7,

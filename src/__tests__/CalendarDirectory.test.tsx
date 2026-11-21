@@ -16,7 +16,7 @@ vi.mock('../components/SimpleCalendar', () => ({ default: ({ visits }: { visits:
 vi.mock('../components/Calendar', () => ({ default: ({ visits }: { visits: VisitOut[] }) =>
   <div>{visits.length} advanced visits</div> }))
 
-const rows: VisitOut[] = Array.from({ length: 125 }, (_, index) => ({ id: index + 1, client_id: index + 1,
+const rows: VisitOut[] = Array.from({ length: 125 }, (_, index) => ({ id: index + 1, client_id: index + 1, late_cancel: false,
   client_name: `Guest ${index + 1}`, specialist_id: 7, date_start: new Date().toISOString(),
   created_at: new Date().toISOString(), status: 'planned', items: [],
 }))

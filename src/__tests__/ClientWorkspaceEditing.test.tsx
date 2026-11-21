@@ -12,7 +12,7 @@ import { apiError, renderWithProviders, resetStores, signIn } from '../test/rend
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() } }))
 const savedNote: ClientNoteOut = { id: 7, client_id: 5, business_id: 1, author_id: 1,
   author_name: 'Team Member', body: 'Saved team note', created_at: '2026-10-22T10:00:00Z', updated_at: '2026-10-22T10:00:00Z' }
-const savedProfile: ClientProfileOut = { client_id: 5, tags: ['VIP'], preferences: 'Saved preferences' }
+const savedProfile: ClientProfileOut = { client_id: 5, tags: ['VIP'], preferences: 'Saved preferences', online_booking_blocked: false }
 const access: WorkspaceAccess = { crm_mode: 'full', can_export: true, can_use_ai: true,
   can_manage_billing: true, checkout_available: false, pilot_mode: false }
 function Harness({ value }: { value?: WorkspaceAccess | null }) {
