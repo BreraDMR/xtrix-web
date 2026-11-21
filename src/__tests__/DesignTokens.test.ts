@@ -167,3 +167,27 @@ describe('public screens', () => {
     expect(offenders).toEqual([])
   })
 })
+
+// DES-02a: a white rounded box on a CRM screen is a card, so it wears ui-card (or <Card>).
+// theme.css used to dress these up with a global rule under main; that rule is gone now,
+// so a hand-made one would come out with no border in dark mode and the wrong corners.
+// Inputs, selects and buttons are not cards. The assistant lives in a portal - DES-02e.
+const CARD_SKIP_DIRS = ['src/components/assistant/', 'src/components/marketing/', 'src/__tests__/', 'src/test/']
+const HAND_MADE_CARD = /<(?:div|section|article)\b[^>]*?className=["'`{][^>]*?\bbg-white(?![\w/-])[^"'`]*?\brounded-(?:lg|xl)\b|<(?:div|section|article)\b[^>]*?className=["'`{][^>]*?\brounded-(?:lg|xl)\b[^"'`]*?\bbg-white(?![\w/-])/g
+
+describe('CRM cards', () => {
+  it('use ui-card instead of a white rounded box', () => {
+    const offenders = sources(resolve(root, 'src'))
+      .map(path => relative(root, path))
+      .filter(path => path.endsWith('.tsx') && !CARD_SKIP_DIRS.some(dir => path.startsWith(dir)))
+      .flatMap(path => {
+        const hits = readFileSync(resolve(root, path), 'utf8').match(HAND_MADE_CARD) ?? []
+        return hits.length ? [`${path}: ${hits.length}`] : []
+      })
+    expect(offenders).toEqual([])
+  })
+
+  it('theme.css has no global patch for old white cards', () => {
+    expect(theme.includes("[class~='bg-white']")).toBe(false)
+  })
+})
