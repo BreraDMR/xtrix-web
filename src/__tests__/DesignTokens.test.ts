@@ -191,3 +191,33 @@ describe('CRM cards', () => {
     expect(theme.includes("[class~='bg-white']")).toBe(false)
   })
 })
+
+// DES-02b: a solid accent button is the primary Button. theme.css used to repaint hand-made
+// `bg-purple-600 text-white` buttons with a global rule; that rule is gone, so one left over
+// would come out flat purple with its own corners and no focus ring of ours.
+// The assistant has its own pass (DES-02e), the landing keeps its own look.
+const BUTTON_SKIP_DIRS = ['src/components/assistant/', 'src/components/marketing/', 'src/__tests__/', 'src/test/']
+// OfferCards only draws its link on the landing (Pricing passes `registration`)
+const BUTTON_SKIP_FILES = ['src/components/subscription/OfferCards.tsx']
+// each quote kind on its own, so an apostrophe in a label does not pair up with a class string
+const CLASS_STRINGS = [/"[^"\n]*"/g, /'[^'\n]*'/g, /`[^`]*`/g]
+const SOLID_ACCENT = /\bbg-(?:blue|purple|primary|indigo)-600\b/
+
+describe('CRM buttons', () => {
+  it('use Button instead of a hand-made accent button', () => {
+    const offenders = sources(resolve(root, 'src'))
+      .map(path => relative(root, path))
+      .filter(path => path.endsWith('.tsx') && !BUTTON_SKIP_FILES.includes(path) && !BUTTON_SKIP_DIRS.some(dir => path.startsWith(dir)))
+      .flatMap(path => {
+        const text = readFileSync(resolve(root, path), 'utf8')
+        const hits = CLASS_STRINGS.flatMap(pattern => text.match(pattern) ?? [])
+          .filter(value => SOLID_ACCENT.test(value) && /\btext-white\b/.test(value))
+        return hits.length ? [`${path}: ${hits.length}`] : []
+      })
+    expect(offenders).toEqual([])
+  })
+
+  it('theme.css has no global patch for old accent buttons', () => {
+    expect(theme).not.toMatch(/\.bg-(?:blue|purple|primary|indigo)-600/)
+  })
+})
