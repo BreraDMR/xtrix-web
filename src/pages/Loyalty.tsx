@@ -462,7 +462,7 @@ export default function Loyalty() {
                     <Button
                       variant="danger"
                       onClick={async () => {
-                        if (confirm('Are you sure you want to delete the loyalty program?')) {
+                        if (window.confirm(t('loyalty.confirm_delete_program'))) {
                           await deleteProgramMutation.mutateAsync()
                         }
                       }}
@@ -708,7 +708,7 @@ export default function Loyalty() {
                             <Button
                               variant="danger"
                               onClick={async () => {
-                                if (confirm('Are you sure you want to delete this level?')) {
+                                if (window.confirm(t('loyalty.confirm_delete_level'))) {
                                   await deleteLevelMutation.mutateAsync(level.id)
                                 }
                               }}
@@ -909,7 +909,7 @@ export default function Loyalty() {
                             <Button
                               variant="danger"
                               onClick={async () => {
-                                if (confirm('Are you sure you want to delete this promotion?')) {
+                                if (window.confirm(t('loyalty.confirm_delete_promotion'))) {
                                   await deletePromotionMutation.mutateAsync(promotion.id)
                                 }
                               }}
