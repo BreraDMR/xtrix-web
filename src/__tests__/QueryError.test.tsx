@@ -50,3 +50,13 @@ it.each([
   renderWithProviders(<Layout />)
   expect(screen.queryAllByRole('link', { name: 'Billing' }).length > 0).toBe(shown)
 })
+
+// DES-11: staff without the finance permission who open /app/finance by a link got
+// "Unable to load data" and a Retry that can never work - say it is closed to them
+it('tells a specialist the finance page is closed instead of offering a retry', async () => {
+  vi.mocked(api.get).mockRejectedValue(apiError(403, 'Not enough permissions'))
+  renderWithProviders(<Finance />)
+  expect(await screen.findByText('You do not have permission to view this page')).toBeInTheDocument()
+  expect(screen.queryByText('Unable to load data')).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
+})
