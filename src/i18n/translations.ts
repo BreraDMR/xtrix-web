@@ -2236,6 +2236,10 @@ export type TranslationKey =
   | 'importWizard.target.fullName'
   | 'importWizard.target.phone'
   | 'importWizard.target.email'
+  | 'importWizard.target.phone2'
+  | 'importWizard.target.phone3'
+  | 'importWizard.target.phone4'
+  | 'importWizard.target.phone5'
   | 'importWizard.target.birthDate'
   | 'importWizard.target.gender'
   | 'importWizard.target.language'
@@ -5733,6 +5737,10 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'importWizard.target.fullName': { en: 'Name', ru: 'Имя', cz: 'Jméno' },
   'importWizard.target.phone': { en: 'Phone', ru: 'Телефон', cz: 'Telefon' },
   'importWizard.target.email': { en: 'Email', ru: 'Email', cz: 'E-mail' },
+  'importWizard.target.phone2': { en: 'Phone 2', ru: 'Телефон 2', cz: 'Telefon 2' },
+  'importWizard.target.phone3': { en: 'Phone 3', ru: 'Телефон 3', cz: 'Telefon 3' },
+  'importWizard.target.phone4': { en: 'Phone 4', ru: 'Телефон 4', cz: 'Telefon 4' },
+  'importWizard.target.phone5': { en: 'Phone 5', ru: 'Телефон 5', cz: 'Telefon 5' },
   'importWizard.target.birthDate': { en: 'Birth date', ru: 'Дата рождения', cz: 'Datum narození' },
   'importWizard.target.gender': { en: 'Gender', ru: 'Пол', cz: 'Pohlaví' },
   'importWizard.target.language': { en: 'Language', ru: 'Язык', cz: 'Jazyk' },

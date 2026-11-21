@@ -37,6 +37,11 @@ const TARGETS: {
   { key: 'full_name', label: 'importWizard.target.fullName', required: true },
   { key: 'phone', label: 'importWizard.target.phone' },
   { key: 'email', label: 'importWizard.target.email' },
+  // extra numbers of the same client, all optional
+  { key: 'phone2', label: 'importWizard.target.phone2' },
+  { key: 'phone3', label: 'importWizard.target.phone3' },
+  { key: 'phone4', label: 'importWizard.target.phone4' },
+  { key: 'phone5', label: 'importWizard.target.phone5' },
   { key: 'birth_date', label: 'importWizard.target.birthDate' },
   { key: 'gender', label: 'importWizard.target.gender' },
   { key: 'language', label: 'importWizard.target.language' },
