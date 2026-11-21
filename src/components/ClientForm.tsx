@@ -10,6 +10,8 @@ import { withoutBlanks } from '../utils/payload'
 import type { ClientLanguage } from '../api/types'
 import type { TranslationKey } from '../i18n/translations'
 import Button from '../ui/Button'
+import ContactsEditor from './clients/ContactsEditor'
+import { contactErrors, contactsFromClient, contactsPayload, type ContactRow } from './clients/contacts'
 
 // native names on purpose - this is the client's language, not ours
 const CLIENT_LANGUAGES: { code: ClientLanguage; label: string }[] = [
@@ -30,15 +32,13 @@ interface ClientData {
   full_name: string
   birth_date?: string
   gender?: string
-  contact_phone?: string
-  contact_email?: string
   location_lat?: number
   location_lon?: number
   owner_id?: number
   language: ClientLanguage
 }
 
-const CLIENT_FIELDS = ['full_name', 'birth_date', 'gender', 'contact_phone', 'contact_email', 'language']
+const CLIENT_FIELDS = ['full_name', 'birth_date', 'gender', 'language']
 
 const EXISTS_MESSAGE: Record<string, TranslationKey> = {
   contact_phone: 'clientForm.existsPhone',
@@ -51,7 +51,9 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [existing, setExisting] = useState<{ id: number; message: string } | null>(null)
+  const [existing, setExisting] = useState<{ id: number; message: string; shared: boolean } | null>(null)
+  const [contacts, setContacts] = useState<ContactRow[]>(() => contactsFromClient({}))
+  const [contactErrorsByRow, setContactErrorsByRow] = useState<Record<string, string>>({})
   const [formData, setFormData] = useState<ClientData>({
     full_name: '',
     // a new client most likely speaks what the salon's staff use
@@ -72,6 +74,7 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
         ...data,
         birth_date: data.birth_date?.split('T')[0] || '',
       })
+      setContacts(contactsFromClient(data))
     } catch (error) {
       console.error('Failed to load client:', error)
     }
@@ -85,25 +88,21 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
       newErrors.full_name = t('clientForm.nameRequired')
     }
     
-    if (formData.contact_email) {
-      const emailError = validateEmail(formData.contact_email)
-      if (emailError) {
-        newErrors.contact_email = t('clientForm.invalidEmail')
-      }
-    }
-    
-    if (formData.contact_phone) {
-      const phoneError = validatePhone(formData.contact_phone)
-      if (phoneError) {
-        newErrors.contact_phone = t('clientForm.invalidPhone')
-      }
-    }
-    
+    const byRow = contactErrors(
+      contacts,
+      (row) => {
+        if (row.kind === 'email') return validateEmail(row.value.trim()) ? t('clientForm.invalidEmail') : undefined
+        return validatePhone(row.value.trim()) ? t('clientForm.invalidPhone') : undefined
+      },
+      t('contacts.duplicate'),
+    )
+
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    setContactErrorsByRow(byRow)
+    return Object.keys(newErrors).length === 0 && Object.keys(byRow).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, allowShared = false) => {
     e.preventDefault()
     if (submitting.current) return
     
@@ -117,17 +116,20 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
     setExisting(null)
 
     try {
+      const contactList = contactsPayload(contacts)
       const clientData = withoutBlanks({
         full_name: formData.full_name,
         birth_date: formData.birth_date || undefined,
         gender: formData.gender || undefined,
-        contact_phone: formData.contact_phone || undefined,
-        contact_email: formData.contact_email || undefined,
         location_lat: formData.location_lat || undefined,
         location_lon: formData.location_lon || undefined,
         language: formData.language,
+        // the whole list; an edit with every field emptied clears them. The API fills
+        // contact_phone / contact_email from the primary ones
+        contacts: clientId || contactList.length ? contactList : undefined,
+        allow_shared_contact: allowShared || undefined,
       })
-      
+
       if (clientId) {
         await api.put(`/clients/${clientId}`, clientData)
       } else {
@@ -142,6 +144,8 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
         setExisting({
           id: duplicate.existingClientId,
           message: t(EXISTS_MESSAGE[duplicate.matchedBy ?? ''] ?? 'clientForm.exists'),
+          // a family can share a phone or an email; the same name + birthday is the same person
+          shared: !clientId && (duplicate.matchedBy === 'contact_phone' || duplicate.matchedBy === 'contact_email'),
         })
         return
       }
@@ -165,6 +169,15 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
               className="px-3 py-1.5 bg-white border border-yellow-300 rounded-md font-medium hover:bg-yellow-100 dark:bg-gray-800"
             >
               {t('clientForm.openExisting')}
+            </button>
+          )}
+          {existing.shared && (
+            <button
+              type="button"
+              onClick={(e) => handleSubmit(e, true)}
+              className="px-3 py-1.5 bg-white border border-yellow-300 rounded-md font-medium hover:bg-yellow-100 dark:bg-gray-800"
+            >
+              {t('clientForm.createShared')}
             </button>
           )}
         </div>
@@ -232,45 +245,14 @@ export default function ClientForm({ clientId, onSuccess, onCancel, onOpenExisti
         </FormField>
       </div>
 
-      <FormField
-        label={t('clients.phone')}
-        error={errors.contact_phone}
-        hint={t('clientForm.phoneHint')}
-      >
-        <input
-          type="tel"
-          value={formData.contact_phone || ''}
-          onChange={(e) => {
-            setFormData({ ...formData, contact_phone: e.target.value })
-            if (errors.contact_phone) {
-              setErrors({ ...errors, contact_phone: '' })
-            }
-          }}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-            errors.contact_phone ? 'border-red-500' : 'border-gray-300'
-          }`}
-        />
-      </FormField>
-
-      <FormField
-        label={t('clients.email')}
-        error={errors.contact_email}
-        hint={t('clientForm.emailHint')}
-      >
-        <input
-          type="email"
-          value={formData.contact_email || ''}
-          onChange={(e) => {
-            setFormData({ ...formData, contact_email: e.target.value })
-            if (errors.contact_email) {
-              setErrors({ ...errors, contact_email: '' })
-            }
-          }}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-            errors.contact_email ? 'border-red-500' : 'border-gray-300'
-          }`}
-        />
-      </FormField>
+      <ContactsEditor
+        rows={contacts}
+        onChange={(rows) => {
+          setContacts(rows)
+          setContactErrorsByRow({})
+        }}
+        errors={contactErrorsByRow}
+      />
 
       <FormField
         label={t('clientForm.messageLanguage')}

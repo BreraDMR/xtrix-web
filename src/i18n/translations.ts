@@ -2475,6 +2475,25 @@ export type TranslationKey =
   | 'visitor.sessions.everywhereTitle'
   | 'visitor.sessions.everywhereText'
   | 'landing.nav.clientCabinet'
+  | 'contacts.phones'
+  | 'contacts.emails'
+  | 'contacts.addPhone'
+  | 'contacts.addEmail'
+  | 'contacts.phoneN'
+  | 'contacts.emailN'
+  | 'contacts.label'
+  | 'contacts.primary'
+  | 'contacts.notify'
+  | 'contacts.remove'
+  | 'contacts.maxPhones'
+  | 'contacts.maxEmails'
+  | 'contacts.duplicate'
+  | 'clientForm.createShared'
+  | 'validation.code.too_many_phones'
+  | 'validation.code.too_many_emails'
+  | 'validation.code.duplicate_contact'
+  | 'validation.code.multiple_primary'
+  | 'validation.code.contacts_mismatch'
 
 const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> = {
   "today.title": {"en": "Today's appointments", "ru": "Записи на сегодня", "cz": "Dnešní návštěvy"},
@@ -6086,6 +6105,25 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'visitor.sessions.everywhereTitle': {"en":"Sign out on all devices?","ru":"Выйти на всех устройствах?","cz":"Odhlásit na všech zařízeních?"},
   'visitor.sessions.everywhereText': {"en":"Every device signed in to this account will be signed out, this one included.","ru":"Аккаунт выйдет на всех устройствах, включая это.","cz":"Účet se odhlásí na všech zařízeních, včetně tohoto."},
   'landing.nav.clientCabinet': {"en":"Client account","ru":"Кабинет клиента","cz":"Účet klienta"},
+  'contacts.phones': {"en":"Phones","ru":"Телефоны","cz":"Telefony"},
+  'contacts.emails': {"en":"Emails","ru":"Email-адреса","cz":"E-maily"},
+  'contacts.addPhone': {"en":"+ Another number","ru":"+ Ещё номер","cz":"+ Další číslo"},
+  'contacts.addEmail': {"en":"+ Another email","ru":"+ Ещё email","cz":"+ Další e-mail"},
+  'contacts.phoneN': {"en":"Phone {n}","ru":"Телефон {n}","cz":"Telefon {n}"},
+  'contacts.emailN': {"en":"Email {n}","ru":"Email {n}","cz":"E-mail {n}"},
+  'contacts.label': {"en":"Label, e.g. work or mum","ru":"Подпись, например «рабочий» или «мама»","cz":"Popisek, např. práce nebo máma"},
+  'contacts.primary': {"en":"Primary","ru":"Основной","cz":"Hlavní"},
+  'contacts.notify': {"en":"Send messages here","ru":"Отправлять сообщения сюда","cz":"Posílat sem zprávy"},
+  'contacts.remove': {"en":"Remove","ru":"Удалить","cz":"Odebrat"},
+  'contacts.maxPhones': {"en":"Up to 5 numbers per client","ru":"Не больше 5 номеров у клиента","cz":"Nejvýše 5 čísel na klienta"},
+  'contacts.maxEmails': {"en":"Up to 3 emails per client","ru":"Не больше 3 email у клиента","cz":"Nejvýše 3 e-maily na klienta"},
+  'contacts.duplicate': {"en":"This contact is already in the list","ru":"Этот контакт уже есть в списке","cz":"Tento kontakt už v seznamu je"},
+  'clientForm.createShared': {"en":"Create anyway: they share this contact","ru":"Всё равно создать: контакт общий","cz":"Přesto vytvořit: kontakt sdílejí"},
+  'validation.code.too_many_phones': {"en":"A client can have at most 5 phone numbers","ru":"У клиента может быть не больше 5 номеров","cz":"Klient může mít nejvýše 5 telefonních čísel"},
+  'validation.code.too_many_emails': {"en":"A client can have at most 3 emails","ru":"У клиента может быть не больше 3 email","cz":"Klient může mít nejvýše 3 e-maily"},
+  'validation.code.duplicate_contact': {"en":"The same contact is listed twice","ru":"Один и тот же контакт указан дважды","cz":"Stejný kontakt je uveden dvakrát"},
+  'validation.code.multiple_primary': {"en":"Only one phone and one email can be primary","ru":"Основным может быть только один телефон и один email","cz":"Hlavní může být jen jeden telefon a jeden e-mail"},
+  'validation.code.contacts_mismatch': {"en":"The main phone or email doesn't match the contacts list","ru":"Основной телефон или email не совпадает со списком контактов","cz":"Hlavní telefon nebo e-mail neodpovídá seznamu kontaktů"},
 }
 
 export default translations

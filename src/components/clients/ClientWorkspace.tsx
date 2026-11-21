@@ -304,6 +304,13 @@ export default function ClientWorkspace({ embeddedClientId, onClose }: {
             <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--workspace-muted)]">
               {data.contact_phone && <span>{data.contact_phone}</span>}
               {data.contact_email && <span className="break-all">{data.contact_email}</span>}
+              {/* the other numbers and emails, after the primary pair */}
+              {(data.contacts ?? []).filter((c) => !c.is_primary).map((c) => (
+                <span key={c.id} className={c.kind === 'email' ? 'break-all' : undefined}>
+                  {c.value}
+                  {c.label ? ` (${c.label})` : ''}
+                </span>
+              ))}
               {data.birth_date && <span>{showDay(data.birth_date)}</span>}
             </p>
           </div>
