@@ -58,7 +58,7 @@ export default function LoyaltyAnalytics() {
   return (
     <div className="space-y-6">
       {}
-      <div className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-800">
+      <div className="ui-card p-4 rounded-lg">
         <div className="flex flex-wrap gap-4 items-end">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('analytics.date_from')}</label>
@@ -86,19 +86,19 @@ export default function LoyaltyAnalytics() {
         <LoadingSpinner />
       ) : statistics ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+          <div className="ui-card p-6 rounded-xl">
             <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.participants')}</h3>
             <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{statistics.total_participants || 0}</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+          <div className="ui-card p-6 rounded-xl">
             <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.earned')}</h3>
             <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{statistics.total_points_earned?.toFixed(0) || '0'}</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+          <div className="ui-card p-6 rounded-xl">
             <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.spent')}</h3>
             <p className="font-bold text-[22px] text-[var(--tint-red-ink)]">{statistics.total_points_spent?.toFixed(0) || '0'}</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+          <div className="ui-card p-6 rounded-xl">
             <h3 className="text-sm font-medium text-gray-500 mb-2 dark:text-gray-400">{t('loyalty.stats.active')}</h3>
             <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{statistics.active_points_balance?.toFixed(0) || '0'}</p>
           </div>
@@ -109,7 +109,7 @@ export default function LoyaltyAnalytics() {
       {isLoadingLevelDist ? (
         <LoadingSpinner />
       ) : levelDistribution?.distribution && levelDistribution.distribution.length > 0 ? (
-        <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+        <div className="ui-card p-6 rounded-xl">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">{t('loyalty.levels')} Distribution</h2>
           <div className="space-y-3">
             {levelDistribution.distribution.map((item) => (
@@ -134,7 +134,7 @@ export default function LoyaltyAnalytics() {
       {isLoadingTopClients ? (
         <LoadingSpinner />
       ) : topClients?.clients && topClients.clients.length > 0 ? (
-        <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+        <div className="ui-card p-6 rounded-xl">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">Top Clients</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -169,7 +169,7 @@ export default function LoyaltyAnalytics() {
       {isLoadingPromotions ? (
         <LoadingSpinner />
       ) : promotions?.promotions && promotions.promotions.length > 0 ? (
-        <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+        <div className="ui-card p-6 rounded-xl">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 dark:text-gray-100">Promotion Effectiveness</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

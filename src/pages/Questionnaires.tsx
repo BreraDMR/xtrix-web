@@ -76,7 +76,7 @@ export default function Questionnaires() {
       {editor !== null && services.isError && <QueryError retry={services.refetch} />}
       {editor !== null && services.isLoading && <LoadingSpinner />}
       {editor !== null ? (!services.isError && !services.isLoading && (
-        <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+        <div className="ui-card rounded-lg p-6">
           <TemplateEditor
             key={editor === 'new' ? 'new' : editor.id}
             template={editor === 'new' ? undefined : editor}
@@ -88,7 +88,7 @@ export default function Questionnaires() {
           />
         </div>
       )) : items.length === 0 ? (
-        <div className="rounded-lg bg-white shadow dark:bg-gray-800">
+        <div className="ui-card rounded-lg">
           <EmptyState
             icon={<LuClipboardList className="h-10 w-10" />}
             title={t('questionnaires.emptyTitle')}
@@ -104,7 +104,7 @@ export default function Questionnaires() {
           />
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
+        <div className="ui-card overflow-hidden rounded-lg">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">

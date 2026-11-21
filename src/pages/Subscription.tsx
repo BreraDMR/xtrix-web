@@ -271,7 +271,7 @@ function LegacySubscription() {
 
       {/* Usage and Entitlements */}
       {usageData && (
-        <div className="mb-8 bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+        <div className="ui-card mb-8 rounded-lg p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">
               {t('subscription.usage_title')}
@@ -350,7 +350,7 @@ function LegacySubscription() {
 
       {}
       {subscription && (
-        <div className="mb-8 bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+        <div className="ui-card mb-8 rounded-lg p-6">
           <div className="flex justify-between items-start mb-4">
             <h2 className="text-xl font-semibold">
               {t('subscription.currentSubscription')}
@@ -479,7 +479,7 @@ function LegacySubscription() {
             {availablePlans.map((plan) => (
               <div
                 key={plan.id}
-                className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+                className="ui-card rounded-lg p-6"
               >
                 <h3 className="text-lg font-semibold mb-2">{labels.planName(plan)}</h3>
                 {labels.planFeatures(plan) && (
@@ -543,7 +543,7 @@ function LegacySubscription() {
           <h2 className="text-xl font-semibold mb-4">
             {t('subscription.history')}
           </h2>
-          <div className="bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-800">
+          <div className="ui-card rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>

@@ -112,7 +112,7 @@ export default function NotificationSettings() {
 
       <section
         aria-labelledby="notification-provider-title"
-        className="rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+        className="ui-card rounded-lg p-6"
       >
         <h2 id="notification-provider-title" className="text-lg font-semibold">
           {t('notifications.channel')}
@@ -249,7 +249,7 @@ export default function NotificationSettings() {
 
       <section
         aria-labelledby="notification-test-title"
-        className="rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+        className="ui-card rounded-lg p-6"
       >
         <h2 id="notification-test-title" className="text-lg font-semibold">
           {t('notifications.testTitle')}

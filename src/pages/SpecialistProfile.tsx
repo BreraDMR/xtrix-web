@@ -131,7 +131,7 @@ export default function SpecialistProfile() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-md p-6 space-y-6 dark:bg-gray-800">
+      <div className="ui-card rounded-lg p-6 space-y-6">
         {}
         <div>
           <h2 className="text-lg font-semibold mb-4">{t('specialistProfile.basicInfo')}</h2>

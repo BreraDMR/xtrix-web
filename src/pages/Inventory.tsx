@@ -342,7 +342,7 @@ function ProductForm({
       onClick={onCancel}
     >
       <div 
-        className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800"
+        className="ui-card rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-lg font-semibold mb-4">

@@ -237,7 +237,7 @@ export default function ServicePayments() {
 
       {refundTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div role="dialog" aria-modal="true" aria-labelledby="refund-title" className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800">
+          <div role="dialog" aria-modal="true" aria-labelledby="refund-title" className="ui-card w-full max-w-md rounded-xl p-6 shadow-xl">
             <h3 id="refund-title" className="text-lg font-semibold">{t('finance.servicePayments.refundTitle')}</h3>
             <p className="mt-1 text-sm text-[var(--workspace-muted)]">
               {refundTarget.client_name} · {money(refundTarget.refundable_amount, refundTarget)}

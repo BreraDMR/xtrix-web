@@ -137,7 +137,7 @@ export default function Analytics() {
 
       {}
       {(activeTab === 'retention' || activeTab === 'cohorts' || activeTab === 'services') && (
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6 dark:bg-gray-800">
+        <div className="ui-card p-4 rounded-lg mb-6">
           <div className="flex flex-wrap gap-4 items-end">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('analytics.date_from')}</label>
@@ -169,40 +169,40 @@ export default function Analytics() {
           ) : retentionData ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+                <div className="ui-card p-6 rounded-xl">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.retention_7_days')}</h3>
                   <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.retention_7_days?.toFixed(1) || 0}%</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+                <div className="ui-card p-6 rounded-xl">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.retention_30_days')}</h3>
                   <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.retention_30_days?.toFixed(1) || 0}%</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+                <div className="ui-card p-6 rounded-xl">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.retention_90_days')}</h3>
                   <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.retention_90_days?.toFixed(1) || 0}%</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+                <div className="ui-card p-6 rounded-xl">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.repeat_rate')}</h3>
                   <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.repeat_rate?.toFixed(1) || 0}%</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+                <div className="ui-card p-6 rounded-xl">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.total_clients')}</h3>
                   <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{retentionData.total_clients || 0}</p>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+                <div className="ui-card p-6 rounded-xl">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.repeat_clients')}</h3>
                   <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{retentionData.repeat_clients || 0}</p>
                 </div>
               </div>
               {retentionData.average_days_between_visits && (
-                <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+                <div className="ui-card p-6 rounded-xl">
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.avg_days_between_visits')}</h3>
                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{retentionData.average_days_between_visits.toFixed(1)} days</p>
                 </div>
               )}
             </>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">{t('analytics.no_data')}</div>
+            <div className="ui-card p-8 rounded-lg text-center text-gray-500 dark:text-gray-400">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -213,7 +213,7 @@ export default function Analytics() {
           {isLoadingCohorts ? (
             <LoadingSpinner />
           ) : cohortsData?.cohort_table && cohortsData.cohort_table.length > 0 ? (
-            <div className="bg-white rounded-lg shadow-md overflow-x-auto dark:bg-gray-800">
+            <div className="ui-card rounded-lg overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-900">
                   <tr>
@@ -242,7 +242,7 @@ export default function Analytics() {
               </table>
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">{t('analytics.no_data')}</div>
+            <div className="ui-card p-8 rounded-lg text-center text-gray-500 dark:text-gray-400">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -250,7 +250,7 @@ export default function Analytics() {
       {}
       {activeTab === 'trends' && (
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-800">
+          <div className="ui-card p-4 rounded-lg">
             <div className="flex flex-wrap gap-4 items-end">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('analytics.trend_metric')}</label>
@@ -284,7 +284,7 @@ export default function Analytics() {
           {isLoadingTrends ? (
             <LoadingSpinner />
           ) : trendsData ? (
-            <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+            <div className="ui-card p-6 rounded-xl">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.current_value')}</h3>
@@ -312,7 +312,7 @@ export default function Analytics() {
               </div>
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">{t('analytics.no_data')}</div>
+            <div className="ui-card p-8 rounded-lg text-center text-gray-500 dark:text-gray-400">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -320,7 +320,7 @@ export default function Analytics() {
       {}
       {activeTab === 'forecast' && (
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-800">
+          <div className="ui-card p-4 rounded-lg">
             <div className="flex flex-wrap gap-4 items-end">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">{t('analytics.forecast_type')}</label>
@@ -351,7 +351,7 @@ export default function Analytics() {
             <LoadingSpinner />
           ) : forecastData ? (
             <div className="space-y-4">
-              <div className="bg-white p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6 dark:bg-gray-800">
+              <div className="ui-card p-6 rounded-xl grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-700 mb-2 dark:text-gray-300">{t('analytics.historical_average')}</h3>
                   <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{forecastData.historical_average?.toFixed(2)}</p>
@@ -361,7 +361,7 @@ export default function Analytics() {
                   <p className="font-bold text-[22px] text-[var(--workspace-ink)]">{forecastData.last_value?.toFixed(2)}</p>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-md overflow-x-auto dark:bg-gray-800">
+              <div className="ui-card rounded-lg overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-900">
                     <tr>
@@ -381,7 +381,7 @@ export default function Analytics() {
               </div>
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">{t('analytics.no_data')}</div>
+            <div className="ui-card p-8 rounded-lg text-center text-gray-500 dark:text-gray-400">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -394,7 +394,7 @@ export default function Analytics() {
           ) : servicesData ? (
             <>
               {}
-              <div className="bg-white rounded-lg shadow-md overflow-x-auto dark:bg-gray-800">
+              <div className="ui-card rounded-lg overflow-x-auto">
                 <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200 dark:text-gray-100 dark:border-gray-700">{t('analytics.byService')}</h3>
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-900">
@@ -425,7 +425,7 @@ export default function Analytics() {
               </div>
 
               {}
-              <div className="bg-white rounded-lg shadow-md overflow-x-auto dark:bg-gray-800">
+              <div className="ui-card rounded-lg overflow-x-auto">
                 <h3 className="text-xl font-semibold text-gray-900 p-4 border-b border-gray-200 dark:text-gray-100 dark:border-gray-700">{t('analytics.bySpecialist')}</h3>
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-900">
@@ -454,7 +454,7 @@ export default function Analytics() {
               </div>
             </>
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">{t('analytics.no_data')}</div>
+            <div className="ui-card p-8 rounded-lg text-center text-gray-500 dark:text-gray-400">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -502,7 +502,7 @@ export default function Analytics() {
               </div>
             ))
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">{t('analytics.no_data')}</div>
+            <div className="ui-card p-8 rounded-lg text-center text-gray-500 dark:text-gray-400">{t('analytics.no_data')}</div>
           )}
         </div>
       )}
@@ -514,7 +514,7 @@ export default function Analytics() {
             <LoadingSpinner />
           ) : benchmarksData ? (
             benchmarksData.available ? (
-              <div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
+              <div className="ui-card p-6 rounded-xl">
                 <h3 className="text-xl font-semibold text-gray-900 mb-6 dark:text-gray-100">{t('analytics.benchmarks_available')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -540,10 +540,10 @@ export default function Analytics() {
                 </div>
               </div>
             ) : (
-              <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">{benchmarksData.reason || t('analytics.benchmarks_not_available')}</div>
+              <div className="ui-card p-8 rounded-lg text-center text-gray-500 dark:text-gray-400">{benchmarksData.reason || t('analytics.benchmarks_not_available')}</div>
             )
           ) : (
-            <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">{t('analytics.no_data')}</div>
+            <div className="ui-card p-8 rounded-lg text-center text-gray-500 dark:text-gray-400">{t('analytics.no_data')}</div>
           )}
         </div>
       )}

@@ -119,7 +119,7 @@ export default function Waitlist() {
         <p className="page-subtitle">{t('waitlist.subtitle')}</p>
       </header>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+      <section className="ui-card rounded-xl p-4">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <label className="text-sm">
             <span className="mb-1 block font-medium">{t('waitlist.filter.status')}</span>
@@ -212,11 +212,11 @@ export default function Waitlist() {
       ) : listQuery.isError ? (
         <QueryError retry={listQuery.refetch} />
       ) : items.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+        <div className="ui-card rounded-xl p-8 text-center text-sm text-slate-500 dark:text-gray-400">
           {t('waitlist.empty')}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div className="ui-card overflow-hidden rounded-xl">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-slate-200 text-sm dark:divide-gray-700">
               <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500 dark:bg-gray-900 dark:text-gray-400">
