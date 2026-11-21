@@ -7,6 +7,7 @@ import type { Schema } from '../api/types'
 // the contract says "list of dicts" for cohort_table; the rows are CohortData on the API side
 type CohortRow = { cohort_month: string; total_clients: number } & Partial<Record<`month_${number}`, number | null>>
 import LoadingSpinner from '../components/LoadingSpinner'
+import AttendanceStats from '../components/AttendanceStats'
 import Tabs from '../ui/Tabs'
 import StatusBadge from '../ui/StatusBadge'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
@@ -390,6 +391,7 @@ export default function Analytics() {
       {}
       {activeTab === 'services' && (
         <div className="space-y-6">
+          <AttendanceStats dateFrom={dateFrom} dateTo={dateTo} />
           {isLoadingServices ? (
             <LoadingSpinner />
           ) : servicesData ? (

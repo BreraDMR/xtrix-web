@@ -1,6 +1,7 @@
 import Button from '../ui/Button'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
+import StatusBadge from '../ui/StatusBadge'
 import Card from '../ui/Card'
 import QueryError from '../components/QueryError'
 import ContextHint from '../components/onboarding/ContextHint'
@@ -125,6 +126,7 @@ export default function Clients() {
   const [editingId, setEditingId] = useState<number | undefined>()
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [genderFilter, setGenderFilter] = useState<string | null>(() => searchParams.get('gender'))
+  const [attendanceFilter, setAttendanceFilter] = useState<string | null>(() => searchParams.get('attendance'))
   const [sortConfig, setSortConfig] = useState<SortConfig<Client>>(() => sortFromUrl(searchParams))
   const [currentPage, setCurrentPage] = useState(() => {
     const page = Number(searchParams.get('page'))
@@ -143,6 +145,7 @@ export default function Clients() {
     const next = new URLSearchParams()
     if (searchQuery) next.set('q', searchQuery)
     if (genderFilter) next.set('gender', genderFilter)
+    if (attendanceFilter) next.set('attendance', attendanceFilter)
     if (currentPage > 1) next.set('page', String(currentPage))
     if (perPage !== 20) next.set('per_page', String(perPage))
     if (sortConfig.key && sortConfig.direction) {
@@ -154,7 +157,7 @@ export default function Clients() {
     if (next.toString() !== searchParams.toString()) {
       setSearchParams(next, { replace: true })
     }
-  }, [searchQuery, genderFilter, currentPage, perPage, sortConfig, selectedId, searchParams, setSearchParams])
+  }, [searchQuery, genderFilter, attendanceFilter, currentPage, perPage, sortConfig, selectedId, searchParams, setSearchParams])
 
   const openWorkspace = (id: number) => setSelectedId(id)
   useEffect(() => {
@@ -167,6 +170,7 @@ export default function Clients() {
   const filters = {
     q: searchQuery || undefined,
     gender: genderFilter || undefined,
+    attendance: attendanceFilter || undefined,
     sort_by: sortConfig.key ?? 'id',
     sort_order: sortConfig.direction ?? 'asc',
   }
@@ -246,7 +250,7 @@ export default function Clients() {
 
       {!showForm && <ClientStats />}
 
-      {!showForm && canEdit && !isLoading && !isError && totalItems === 0 && !searchQuery && !genderFilter && (
+      {!showForm && canEdit && !isLoading && !isError && totalItems === 0 && !searchQuery && !genderFilter && !attendanceFilter && (
         <ContextHint
           hint="clients"
           onAction={() => {
@@ -341,11 +345,26 @@ export default function Clients() {
                   <option value="female">{t('clients.female')}</option>
                   <option value="other">{t('clients.other')}</option>
                 </Select>
-                {(searchQuery || genderFilter) && (
+                <Select
+                  aria-label={t('clients.attendanceFilter')}
+                  value={attendanceFilter || ''}
+                  onChange={(e) => {
+                    setAttendanceFilter(e.target.value || null)
+                    setCurrentPage(1)
+                  }}
+                  className="w-full sm:w-auto"
+                >
+                  <option value="">{t('clients.attendanceAll')}</option>
+                  <option value="no_show">{t('clients.attendanceNoShow')}</option>
+                  <option value="late_cancel">{t('clients.attendanceLateCancel')}</option>
+                  <option value="online_booking_blocked">{t('clients.attendanceBlocked')}</option>
+                </Select>
+                {(searchQuery || genderFilter || attendanceFilter) && (
                   <Button
                     onClick={() => {
                       setSearchQuery('')
                       setGenderFilter(null)
+                      setAttendanceFilter(null)
                       setCurrentPage(1)
                     }}
                     variant="quiet"
@@ -396,6 +415,11 @@ export default function Clients() {
                       className="group flex w-full min-w-0 items-center gap-3 text-left hover:text-[var(--workspace-accent)]">
                       <Avatar name={client.full_name} seed={client.id} size={32} />
                       <span className="min-w-0 flex-1 [overflow-wrap:anywhere]"><span>{client.full_name}</span>
+                        {!!client.attendance?.no_show_count && (
+                          <StatusBadge tone="neutral" className="ml-2 align-middle text-[11px] font-normal">
+                            {t('clients.noShowBadge').replace('{count}', String(client.attendance.no_show_count))}
+                          </StatusBadge>
+                        )}
                         <span className="mt-0.5 block text-xs font-normal text-[var(--workspace-muted)] sm:hidden">{client.contact_phone || client.contact_email || '—'}</span>
                       </span>
                       <LuChevronRight className="h-4 w-4 shrink-0 text-[var(--workspace-muted)]" />
@@ -421,7 +445,7 @@ export default function Clients() {
             : isLoading ? <div className="py-8"><LoadingSpinner /></div>
               : paginatedData.length === 0 && (
                 <p className="px-4 py-4 text-center text-[var(--workspace-muted)] sm:px-5">
-                  {searchQuery || genderFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
+                  {searchQuery || genderFilter || attendanceFilter ? t('clients.noClientsMatch') : t('clients.noClientsFound')}
                 </p>
               )}
         </div>

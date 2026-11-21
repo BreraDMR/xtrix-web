@@ -19,6 +19,7 @@ import ClientForm from '../ClientForm'
 import ClientPersonalReportModal from '../ClientPersonalReportModal'
 import ClientNotes from './ClientNotes'
 import ClientTags from './ClientTags'
+import ClientAttendance from './ClientAttendance'
 import { VISIT_STATUS_MARK, VISIT_STATUS_TONE } from '../../utils/statusPill'
 import type {
   ClientOut,
@@ -172,6 +173,9 @@ function VisitRow({
             {VISIT_STATUS_MARK[visit.status] && <span aria-hidden="true">{VISIT_STATUS_MARK[visit.status]}</span>}
             <span>{statusLabel}</span>
           </StatusBadge>
+          {visit.late_cancel && (
+            <span className="text-xs text-[var(--workspace-muted)]">{t('visits.lateCancel')}</span>
+          )}
           {visit.price !== null && visit.price !== undefined && (
             <span className="text-sm tabular-nums text-[var(--workspace-ink)]">
               {formatCurrency(visit.price, (currency as Currency) || 'EUR')}
@@ -410,6 +414,7 @@ export default function ClientWorkspace({ embeddedClientId, onClose }: {
                 <Stat label={t('clientWorkspace.totalVisits')} value={overview.data.stats.total_visits} />
                 <Stat label={t('clientWorkspace.completedVisits')} value={overview.data.stats.completed_visits} />
                 <Stat label={t('clientWorkspace.cancelledVisits')} value={overview.data.stats.cancelled_visits} />
+                <Stat label={t('clientWorkspace.noShows')} value={overview.data.stats.no_show_visits ?? 0} />
                 <Stat label={t('clientWorkspace.lastVisit')}
                   value={overview.data.stats.last_visit_at ? formatDay(overview.data.stats.last_visit_at, timeZone) : '—'} />
                 {payments && (
@@ -420,6 +425,12 @@ export default function ClientWorkspace({ embeddedClientId, onClose }: {
                 )}
               </dl>
             </Card>
+
+            {overview.data.attendance && (
+              <Card className="p-5">
+                <ClientAttendance clientId={clientId} attendance={overview.data.attendance} canEdit={canEdit} />
+              </Card>
+            )}
 
             <Card className="p-5">
               <h2 className="mb-3 text-base font-semibold text-[var(--workspace-ink)]">

@@ -9,6 +9,7 @@ import Button from '../../ui/Button'
 import Card from '../../ui/Card'
 import Input from '../../ui/Input'
 import LoadingSpinner from '../LoadingSpinner'
+import NoShowRules from './NoShowRules'
 import type { BusinessOut, ServiceOut } from '../../api/types'
 
 const TIMEZONES = [
@@ -230,6 +231,8 @@ export default function BookingRules({ business, canEdit }: Props) {
           </div>
         )}
       </Card>
+
+      {business && <NoShowRules key={business.id} business={business} canEdit={canEdit} />}
 
       <Card className="p-5">
         <h3 className="mb-1 font-semibold">{t('schedule.buffers.title')}</h3>
