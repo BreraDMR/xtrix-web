@@ -99,6 +99,41 @@ const toneRule = (tone: string) => {
   return theme.slice(start, theme.indexOf('}', start))
 }
 
+// DES-11: the audit measured text on screens; these pairs came out under WCAG AA 4.5 in the
+// light theme (planned 4.38, completed 3.89, table heads and menu groups 3.36). Small text
+// sits on all of them, so each pair needs 4.5 in both themes.
+function luminance(hex: string) {
+  const channels = hex.replace('#', '').match(/../g)!.map(part => parseInt(part, 16) / 255)
+  const [r, g, b] = channels.map(c => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+function contrast(a: string, b: string) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+  return (hi + 0.05) / (lo + 0.05)
+}
+const TEXT_PAIRS: [string, string][] = [
+  ...['green', 'amber', 'red', 'blue', 'pink'].map(tone => [`--tint-${tone}-ink`, `--tint-${tone}`] as [string, string]),
+  ...['--workspace-bg', '--workspace-panel', '--workspace-fill', '--workspace-accent-soft'].map(bg => ['--workspace-muted', bg] as [string, string]),
+  // subtle is for eyebrows, table heads and menu groups - never on the lavender selection
+  ...['--workspace-bg', '--workspace-panel', '--workspace-fill'].map(bg => ['--workspace-subtle', bg] as [string, string]),
+]
+
+describe('text contrast', () => {
+  for (const [name, themeTokens] of [['light', light], ['dark', dark]] as const) {
+    it(`small text reads at 4.5:1 in the ${name} theme`, () => {
+      const low = TEXT_PAIRS.flatMap(([ink, bg]) => {
+        const fg = tokenValue(ink, themeTokens)!
+        const back = tokenValue(bg, themeTokens)!
+        expect(fg, ink).toMatch(/^#[0-9a-f]{6}$/i)
+        expect(back, bg).toMatch(/^#[0-9a-f]{6}$/i)
+        const ratio = contrast(fg, back)
+        return ratio < 4.5 ? [`${ink} on ${bg}: ${ratio.toFixed(2)}`] : []
+      })
+      expect(low).toEqual([])
+    })
+  }
+})
+
 describe('status badge', () => {
   it.each(Object.entries(TONE_TOKENS))('%s tone comes from %s', (tone, token) => {
     expect(toneRule(tone)).toContain(`var(${token}-bg)`)
