@@ -5,6 +5,7 @@ import LanguageSwitcher from '../LanguageSwitcher'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useVisitorSession } from '../../store/visitorSession'
 import { loginPath } from './links'
+import { PublicBrand } from '../public/PublicShell'
 
 type Tone = 'info' | 'success' | 'warning' | 'error'
 const TONES: Record<Tone, string> = {
@@ -27,9 +28,8 @@ export function VisitorShell({ title, subtitle, actions, children }: { title: st
   return <div className="crm-workspace min-h-screen bg-[var(--workspace-bg)] text-[var(--workspace-ink)]">
     <header className="sticky top-0 z-20 border-b border-[var(--workspace-hairline)] bg-[color-mix(in_srgb,var(--workspace-bg)_80%,transparent)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link to="/visitor/visits" className="flex min-w-0 items-center gap-2.5">
-          <span aria-hidden="true" className="crm-logo h-8 w-8 shrink-0 text-[17px]">X</span>
-          <span className="truncate text-[15px] font-semibold tracking-tight">{t('visitor.cabinet')}</span>
+        <Link to="/visitor/visits" className="min-w-0">
+          <PublicBrand title={t('visitor.cabinet')} />
         </Link>
         <LanguageSwitcher />
       </div>
