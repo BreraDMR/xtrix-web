@@ -12,7 +12,7 @@ export default {
         display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Inter Variable"', 'Inter', '"Segoe UI Variable Display"', '"Segoe UI"', 'system-ui', 'sans-serif'],
         chart: ['-apple-system', 'BlinkMacSystemFont', '"Inter Variable"', 'Inter', 'system-ui', 'sans-serif'],
       },
-      borderRadius: { md: '8px', lg: '12px', xl: '16px', '2xl': '20px', card: '18px' },
+      borderRadius: { md: '8px', lg: '12px', xl: '16px', '2xl': '20px', card: 'var(--radius-card)' },
       boxShadow: {
         sm: '0 1px 2px rgba(0, 0, 0, 0.04)',
         md: '0 1px 2px rgba(0, 0, 0, 0.03), 0 6px 24px rgba(0, 0, 0, 0.035)',
