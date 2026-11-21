@@ -5,7 +5,7 @@ import api from '../../api/client'
 import { useLinkToken } from '../../hooks/useLinkToken'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
 import FormError from '../../components/FormError'
-import LanguageSwitcher from '../../components/LanguageSwitcher'
+import PublicShell from '../../components/public/PublicShell'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { INTL_LOCALE } from '../../components/booking/intl'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -88,26 +88,16 @@ function tokenHeaders(token: string) {
 
 function PublicFrame({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-gray-900 dark:text-gray-100">
-      <header className="border-b border-slate-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
-          <span className="text-sm font-medium text-slate-500 dark:text-gray-400">{t('bookingManage.title')}</span>
-          <LanguageSwitcher />
-        </div>
-      </header>
-      <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">{children}</main>
-    </div>
-  )
+  return <PublicShell title={t('bookingManage.title')}>{children}</PublicShell>
 }
 
 function Unavailable() {
   const { t } = useTranslation()
   return (
     <PublicFrame>
-      <section className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+      <section className="ui-card p-8 text-center">
         <h1 className="text-xl font-semibold">{t('bookingManage.unavailableTitle')}</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm text-slate-500 dark:text-gray-400">
+        <p className="mx-auto mt-3 max-w-md text-sm text-[var(--workspace-muted)]">
           {t('bookingManage.unavailableText')}
         </p>
       </section>
@@ -121,13 +111,13 @@ function LoadError({ error, retry }: { error: unknown; retry: () => unknown }) {
     <PublicFrame>
       <section
         role="alert"
-        className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200"
+        className="rounded-2xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-6 text-[var(--tint-red-ink)]"
       >
         <p>{apiErrorMessage(error, t('bookingManage.loadError'))}</p>
         <button
           type="button"
           onClick={() => void retry()}
-          className="mt-3 rounded-md border border-red-300 px-4 py-2 text-sm font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+          className="mt-3 rounded-md border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] px-4 py-2 text-sm font-medium hover:bg-[color-mix(in_srgb,var(--tint-red-ink)_12%,var(--tint-red))]"
         >
           {t('common.retry')}
         </button>
@@ -142,10 +132,10 @@ function StatusBadge({ status }: { status: string }) {
   const label = key ? t(key) : status
   const tone =
     status === 'planned'
-      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+      ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]'
       : status === 'in_progress'
-        ? 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
-        : 'bg-slate-100 text-slate-600 dark:bg-gray-700 dark:text-gray-300'
+        ? 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]'
+        : 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
   return <span className={`rounded-full px-3 py-1 text-xs font-medium ${tone}`}>{label}</span>
 }
 
@@ -339,22 +329,19 @@ function ManageBookingSession({ token }: { token: string | null }) {
     return formatDateTime(date.toISOString(), booking.timezone, locale)
   })()
 
-  const buttonClass =
-    'rounded-md px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50'
-
   return (
     <PublicFrame>
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <section className="ui-card p-6 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{t('bookingManage.title')}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-[var(--workspace-subtle)]">{t('bookingManage.title')}</p>
             <h1 className="mt-1 text-2xl font-bold">{booking.business_name}</h1>
             {booking.business_address && (
-              <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{booking.business_address}</p>
+              <p className="mt-1 text-sm text-[var(--workspace-muted)]">{booking.business_address}</p>
             )}
             {booking.business_phone && (
               <a
-                className="mt-1 inline-block text-sm text-primary-600 hover:underline dark:text-primary-400"
+                className="mt-1 inline-block text-sm text-[var(--workspace-accent)] hover:underline"
                 href={`tel:${booking.business_phone}`}
               >
                 {booking.business_phone}
@@ -364,32 +351,32 @@ function ManageBookingSession({ token }: { token: string | null }) {
           <StatusBadge status={booking.status} />
         </div>
 
-        <dl className="mt-6 divide-y divide-slate-100 text-sm dark:divide-gray-700">
+        <dl className="mt-6 divide-y divide-[var(--workspace-line)] text-sm">
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('booking.bookingNumber')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('booking.bookingNumber')}</dt>
             <dd className="text-right font-semibold">#{booking.booking_id}</dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('booking.service')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('booking.service')}</dt>
             <dd className="text-right font-medium">{booking.service_name}</dd>
           </div>
           {booking.staff_name && (
             <div className="flex justify-between gap-4 py-3">
-              <dt className="text-slate-500 dark:text-gray-400">{t('booking.master')}</dt>
+              <dt className="text-[var(--workspace-muted)]">{t('booking.master')}</dt>
               <dd className="text-right font-medium">{booking.staff_name}</dd>
             </div>
           )}
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('booking.dateTime')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('booking.dateTime')}</dt>
             <dd className="text-right font-medium">
               {formatDateTime(booking.start, booking.timezone, locale)}
-              <span className="mt-1 block text-xs font-normal text-slate-500 dark:text-gray-400">
+              <span className="mt-1 block text-xs font-normal text-[var(--workspace-muted)]">
                 {booking.timezone}
               </span>
             </dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('booking.price')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('booking.price')}</dt>
             <dd className="text-right font-medium">
               {booking.price === null || booking.price === undefined
                 ? t('booking.priceOnRequest')
@@ -398,13 +385,13 @@ function ManageBookingSession({ token }: { token: string | null }) {
           </div>
           {booking.confirmed_at && (
             <div className="flex justify-between gap-4 py-3">
-              <dt className="text-slate-500 dark:text-gray-400">{t('bookingManage.confirmedAt')}</dt>
+              <dt className="text-[var(--workspace-muted)]">{t('bookingManage.confirmedAt')}</dt>
               <dd className="text-right font-medium">{formatDateTime(booking.confirmed_at, booking.timezone, locale)}</dd>
             </div>
           )}
         </dl>
 
-        <p className="mt-4 text-xs text-slate-400">
+        <p className="mt-4 text-xs text-[var(--workspace-subtle)]">
           {t('bookingManage.linkValidUntil')} {formatDate(booking.token_expires_at, locale)}
         </p>
       </section>
@@ -414,7 +401,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
       {notice && (
         <div
           role="status"
-          className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+          className="mt-4 rounded-xl border border-[color-mix(in_srgb,var(--tint-green-ink)_25%,transparent)] bg-[var(--tint-green)] px-4 py-3 text-sm text-[var(--tint-green-ink)]"
         >
           {notice}
         </div>
@@ -423,22 +410,22 @@ function ManageBookingSession({ token }: { token: string | null }) {
       {actionError && (
         <div
           role="alert"
-          className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200"
+          className="mt-4 rounded-xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] px-4 py-3 text-sm text-[var(--tint-red-ink)]"
         >
           {actionError}
         </div>
       )}
 
       {booking.status === 'planned' && (
-        <section className="mt-4 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+        <section className="mt-4 ui-card p-6 sm:p-8">
           <h2 className="text-lg font-semibold">{t('bookingManage.actions')}</h2>
 
           {started ? (
-            <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">{t('bookingManage.started')}</p>
+            <p className="mt-3 text-sm text-[var(--workspace-muted)]">{t('bookingManage.started')}</p>
           ) : (
             <>
               {canManage && (
-                <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
+                <p className="mt-2 text-sm text-[var(--workspace-muted)]">
                   {cutoffReached ? t('bookingManage.cutoffReached') : t('bookingManage.cutoffNote')}
                 </p>
               )}
@@ -450,7 +437,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
                       type="button"
                       disabled={busy !== null}
                       onClick={() => void handleConfirm()}
-                      className={`${buttonClass} bg-primary-600 text-white hover:bg-primary-700`}
+                      className="ui-button ui-button-primary"
                     >
                       {busy === 'confirm' ? t('bookingManage.confirming') : t('bookingManage.confirm')}
                     </button>
@@ -460,7 +447,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
                       type="button"
                       disabled={busy !== null}
                       onClick={openReschedule}
-                      className={`${buttonClass} border border-slate-300 hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700`}
+                      className="ui-button ui-button-secondary"
                     >
                       {t('bookingManage.reschedule')}
                     </button>
@@ -470,7 +457,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
                       type="button"
                       disabled={busy !== null}
                       onClick={openCancel}
-                      className={`${buttonClass} border border-red-300 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950`}
+                      className="ui-button ui-button-danger"
                     >
                       {t('bookingManage.cancel')}
                     </button>
@@ -479,7 +466,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
               )}
 
               {showReschedule && (
-                <form onSubmit={(event) => void handleReschedule(event)} className="mt-4 rounded-xl border border-slate-200 p-4 dark:border-gray-700">
+                <form onSubmit={(event) => void handleReschedule(event)} className="mt-4 rounded-xl border border-[var(--workspace-line)] p-4">
                   <h3 className="text-sm font-semibold">{t('bookingManage.rescheduleTitle')}</h3>
                   <label htmlFor="manage-new-start" className="mt-3 block text-sm font-medium">
                     {t('bookingManage.newTime')}
@@ -493,11 +480,11 @@ function ManageBookingSession({ token }: { token: string | null }) {
                       setNewStart(event.target.value)
                       setRescheduleError('')
                     }}
-                    className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900 sm:max-w-xs"
+                    className="mt-1 w-full rounded-md border border-[var(--workspace-control)] bg-[var(--workspace-panel)] px-3 py-2 text-sm sm:max-w-xs"
                   />
-                  <p className="mt-2 text-xs text-slate-500 dark:text-gray-400">{t('bookingManage.newTimeHint')}</p>
+                  <p className="mt-2 text-xs text-[var(--workspace-muted)]">{t('bookingManage.newTimeHint')}</p>
                   {preview && (
-                    <p className="mt-2 text-xs text-slate-600 dark:text-gray-300">
+                    <p className="mt-2 text-xs text-[var(--workspace-muted)]">
                       {t('bookingManage.salonTime')}: <span className="font-medium">{preview}</span>
                     </p>
                   )}
@@ -506,7 +493,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
                     <button
                       type="submit"
                       disabled={busy !== null}
-                      className={`${buttonClass} bg-primary-600 text-white hover:bg-primary-700`}
+                      className="ui-button ui-button-primary"
                     >
                       {busy === 'reschedule' ? t('bookingManage.rescheduling') : t('bookingManage.submitReschedule')}
                     </button>
@@ -517,7 +504,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
                         setShowReschedule(false)
                         setRescheduleError('')
                       }}
-                      className={`${buttonClass} border border-slate-300 hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700`}
+                      className="ui-button ui-button-secondary"
                     >
                       {t('booking.back')}
                     </button>
@@ -528,7 +515,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
               {cancelOpen && (
                 <div
                   role="alert"
-                  className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200"
+                  className="mt-4 rounded-xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-4 text-[var(--tint-red-ink)]"
                 >
                   <p className="text-sm font-medium">{t('bookingManage.cancelQuestion')}</p>
                   <div className="mt-4 flex flex-wrap gap-3">
@@ -536,7 +523,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
                       type="button"
                       disabled={busy !== null}
                       onClick={() => void handleCancel()}
-                      className={`${buttonClass} bg-red-600 text-white hover:bg-red-700`}
+                      className="ui-button ui-button-danger"
                     >
                       {busy === 'cancel' ? t('bookingManage.cancelling') : t('bookingManage.cancelConfirm')}
                     </button>
@@ -544,7 +531,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
                       type="button"
                       disabled={busy !== null}
                       onClick={() => setCancelOpen(false)}
-                      className={`${buttonClass} border border-slate-300 bg-white hover:bg-slate-50 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700`}
+                      className="ui-button ui-button-secondary"
                     >
                       {t('bookingManage.cancelKeep')}
                     </button>

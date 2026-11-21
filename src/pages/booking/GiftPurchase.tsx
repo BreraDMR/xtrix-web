@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import api from '../../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
-import LanguageSwitcher from '../../components/LanguageSwitcher'
+import PublicShell from '../../components/public/PublicShell'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { INTL_LOCALE } from '../../components/booking/intl'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -59,24 +59,14 @@ function checkoutHash(checkoutUrl: string | null | undefined): string | null {
 }
 
 function GiftFrame({ children, title }: { children: ReactNode; title: string }) {
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-gray-900 dark:text-gray-100">
-      <header className="border-b border-slate-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
-          <span className="text-sm font-medium text-slate-500 dark:text-gray-400">{title}</span>
-          <LanguageSwitcher />
-        </div>
-      </header>
-      <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">{children}</main>
-    </div>
-  )
+  return <PublicShell title={title}>{children}</PublicShell>
 }
 
 function InvalidLink() {
   const { t } = useTranslation()
   return (
     <GiftFrame title={t('gift.returnTitle')}>
-      <section className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+      <section className="ui-card p-8 text-center">
         <h1 className="text-xl font-semibold">{t('gift.invalidLink')}</h1>
       </section>
     </GiftFrame>
@@ -165,11 +155,11 @@ export function GiftPurchase() {
     const missing = apiErrorStatus(shopQuery.error) === 404
     return (
       <GiftFrame title={t('gift.shopTitle')}>
-        <section className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+        <section className="ui-card p-8 text-center">
           <h1 className="text-xl font-semibold">
             {missing ? t('gift.shopTitle') : t('gift.loadError')}
           </h1>
-          <p className="mt-3 text-sm text-slate-500 dark:text-gray-400">
+          <p className="mt-3 text-sm text-[var(--workspace-muted)]">
             {missing ? t('gift.invalidLink') : apiErrorMessage(shopQuery.error, t('gift.loadError'))}
           </p>
         </section>
@@ -182,35 +172,35 @@ export function GiftPurchase() {
 
   return (
     <GiftFrame title={shop.business_name}>
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <section className="ui-card p-6 sm:p-8">
         <h1 className="text-2xl font-bold">{t('gift.shopTitle')}</h1>
-        <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">{t('gift.shopSubtitle')}</p>
+        <p className="mt-2 text-sm text-[var(--workspace-muted)]">{t('gift.shopSubtitle')}</p>
         {!shop.payments_available && (
-          <p className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+          <p className="mt-4 rounded-lg bg-[var(--tint-amber)] p-3 text-sm text-[var(--tint-amber-ink)]">
             {t('gift.paymentsUnavailable')}
           </p>
         )}
 
         {offers.length === 0 ? (
-          <p className="mt-6 text-sm text-slate-500 dark:text-gray-400">{t('gift.noOffersPublic')}</p>
+          <p className="mt-6 text-sm text-[var(--workspace-muted)]">{t('gift.noOffersPublic')}</p>
         ) : (
           <ul className="mt-6 grid gap-4 sm:grid-cols-2">
             {offers.map((offer) => (
-              <li key={offer.id} className="flex flex-col rounded-xl border border-slate-200 p-4 dark:border-gray-700">
+              <li key={offer.id} className="flex flex-col rounded-xl border border-[var(--workspace-line)] p-4">
                 <p className="font-semibold">{offer.name}</p>
-                <p className="mt-1 text-xs text-slate-500 dark:text-gray-400">
+                <p className="mt-1 text-xs text-[var(--workspace-muted)]">
                   {offer.kind === 'money' ? t('gift.kindMoney') : t('gift.kindPackage')}
                 </p>
                 {offer.description && (
-                  <p className="mt-2 text-sm text-slate-600 dark:text-gray-300">{offer.description}</p>
+                  <p className="mt-2 text-sm text-[var(--workspace-muted)]">{offer.description}</p>
                 )}
                 <dl className="mt-3 space-y-1 text-sm">
                   <div className="flex justify-between gap-3">
-                    <dt className="text-slate-500 dark:text-gray-400">{t('gift.price')}</dt>
+                    <dt className="text-[var(--workspace-muted)]">{t('gift.price')}</dt>
                     <dd className="font-medium">{formatCurrency(offer.price, shop.currency as Currency)}</dd>
                   </div>
                   <div className="flex justify-between gap-3">
-                    <dt className="text-slate-500 dark:text-gray-400">
+                    <dt className="text-[var(--workspace-muted)]">
                       {offer.kind === 'money' ? t('gift.faceValue') : t('gift.visitsCount')}
                     </dt>
                     <dd className="font-medium">
@@ -220,7 +210,7 @@ export function GiftPurchase() {
                     </dd>
                   </div>
                   <div className="flex justify-between gap-3">
-                    <dt className="text-slate-500 dark:text-gray-400">{t('gift.validityDays')}</dt>
+                    <dt className="text-[var(--workspace-muted)]">{t('gift.validityDays')}</dt>
                     <dd className="font-medium">{offer.validity_days}</dd>
                   </div>
                 </dl>
@@ -231,7 +221,7 @@ export function GiftPurchase() {
                     setSelected({ offer, key: newRequestKey() })
                     setError('')
                   }}
-                  className="mt-4 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="mt-4 ui-button ui-button-primary disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {t('gift.buy')}
                 </button>
@@ -247,21 +237,21 @@ export function GiftPurchase() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="gift-purchase-title"
-            className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800"
+            className="w-full max-w-lg rounded-2xl bg-[var(--workspace-panel)] p-6 shadow-xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 id="gift-purchase-title" className="text-lg font-bold">
                   {selected.offer.name}
                 </h2>
-                <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-[var(--workspace-muted)]">
                   {formatCurrency(selected.offer.price, shop.currency as Currency)}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="rounded-md px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                className="rounded-md px-2 py-1 text-sm text-[var(--workspace-muted)] hover:bg-[var(--workspace-hover)]"
               >
                 {t('gift.close')}
               </button>
@@ -273,7 +263,7 @@ export function GiftPurchase() {
                   required
                   value={buyerName}
                   onChange={(event) => setBuyerName(event.target.value)}
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+                  className="ui-input"
                 />
               </label>
               <label className="block text-sm">
@@ -283,7 +273,7 @@ export function GiftPurchase() {
                   type="email"
                   value={buyerEmail}
                   onChange={(event) => setBuyerEmail(event.target.value)}
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+                  className="ui-input"
                 />
               </label>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -292,7 +282,7 @@ export function GiftPurchase() {
                   <input
                     value={recipientName}
                     onChange={(event) => setRecipientName(event.target.value)}
-                    className="w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+                    className="ui-input"
                   />
                 </label>
                 <label className="block text-sm">
@@ -301,7 +291,7 @@ export function GiftPurchase() {
                     type="email"
                     value={recipientEmail}
                     onChange={(event) => setRecipientEmail(event.target.value)}
-                    className="w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+                    className="ui-input"
                   />
                 </label>
               </div>
@@ -312,7 +302,7 @@ export function GiftPurchase() {
                   maxLength={500}
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
-                  className="w-full rounded-md border border-slate-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700"
+                  className="ui-input"
                 />
               </label>
               <label className="flex items-start gap-2 text-sm">
@@ -326,14 +316,14 @@ export function GiftPurchase() {
                 <span>{t('gift.consent')}</span>
               </label>
               {error && (
-                <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950 dark:text-red-200">
+                <p role="alert" className="rounded-md bg-[var(--tint-red)] p-3 text-sm text-[var(--tint-red-ink)]">
                   {error}
                 </p>
               )}
               <button
                 type="submit"
                 disabled={purchase.isPending}
-                className="w-full rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
+                className="w-full ui-button ui-button-primary disabled:opacity-60"
               >
                 {t('gift.continue')}
               </button>
@@ -397,7 +387,7 @@ export function GiftCheckout() {
     if (apiErrorStatus(orderQuery.error) === 404) return <InvalidLink />
     return (
       <GiftFrame title={t('gift.checkoutTitle')}>
-        <section role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+        <section role="alert" className="rounded-2xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-6 text-[var(--tint-red-ink)]">
           {apiErrorMessage(orderQuery.error, t('gift.loadError'))}
         </section>
       </GiftFrame>
@@ -414,46 +404,46 @@ export function GiftCheckout() {
 
   return (
     <GiftFrame title={t('gift.checkoutTitle')}>
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <section className="ui-card p-6 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-2xl font-bold">{t('gift.checkoutTitle')}</h1>
-          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+          <span className="rounded-full bg-[var(--tint-blue)] px-3 py-1 text-xs font-medium text-[var(--tint-blue-ink)]">
             {t('gift.sandboxBadge')}
           </span>
         </div>
-        <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">{t('gift.checkoutText')}</p>
+        <p className="mt-2 text-sm text-[var(--workspace-muted)]">{t('gift.checkoutText')}</p>
 
-        <dl className="mt-5 divide-y divide-slate-100 text-sm dark:divide-gray-700">
+        <dl className="mt-5 divide-y divide-[var(--workspace-line)] text-sm">
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('gift.name')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('gift.name')}</dt>
             <dd className="text-right font-medium">{order.offer_name}</dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('gift.recipient')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('gift.recipient')}</dt>
             <dd className="text-right font-medium">{order.recipient_name}</dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('gift.price')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('gift.price')}</dt>
             <dd className="text-right font-medium">
               {formatCurrency(order.amount, order.currency as Currency)}
             </dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('gift.payBefore')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('gift.payBefore')}</dt>
             <dd className="text-right font-medium">{holdUntil}</dd>
           </div>
         </dl>
 
-        <p className="mt-3 text-sm text-slate-500 dark:text-gray-400" role="status">
+        <p className="mt-3 text-sm text-[var(--workspace-muted)]" role="status">
           {t(STATUS_KEYS[order.status] ?? 'gift.pendingTitle')}
         </p>
 
         {settled ? (
-          <div className="mt-5 rounded-lg bg-slate-50 p-4 text-sm dark:bg-gray-700">
+          <div className="mt-5 rounded-lg bg-[var(--workspace-fill)] p-4 text-sm">
             <p>{t('gift.alreadySettled')}</p>
             <a
               href={`/gift/return${returnHash(params)}`}
-              className="mt-3 inline-block rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+              className="mt-3 inline-block ui-button ui-button-primary"
             >
               {t('gift.checkAgain')}
             </a>
@@ -464,7 +454,7 @@ export function GiftCheckout() {
               type="button"
               disabled={finish.isPending}
               onClick={() => finish.mutate('paid')}
-              className="rounded-md bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
+              className="ui-button ui-button-primary disabled:opacity-60"
             >
               {t('gift.pay')}
             </button>
@@ -472,7 +462,7 @@ export function GiftCheckout() {
               type="button"
               disabled={finish.isPending}
               onClick={() => finish.mutate('failed')}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-60 dark:border-gray-600 dark:hover:bg-gray-700"
+              className="ui-button ui-button-secondary disabled:opacity-60"
             >
               {t('gift.fail')}
             </button>
@@ -480,7 +470,7 @@ export function GiftCheckout() {
         )}
 
         {error && (
-          <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+          <p role="alert" className="mt-4 rounded-lg border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-3 text-sm text-[var(--tint-red-ink)]">
             {error}
           </p>
         )}
@@ -492,13 +482,13 @@ export function GiftCheckout() {
 function CertificateCard({ certificate, onCopy }: { certificate: GiftCertificateOut; onCopy: () => void }) {
   const { t } = useTranslation()
   return (
-    <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
+    <div className="mt-5 rounded-xl border border-[color-mix(in_srgb,var(--tint-green-ink)_25%,transparent)] bg-[var(--tint-green)] p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--tint-green-ink)]">
             {t('gift.code')}
           </p>
-          <p className="mt-1 font-mono text-xl font-bold tracking-wider text-emerald-900 dark:text-emerald-100">
+          <p className="mt-1 font-mono text-xl font-bold tracking-wider text-[var(--tint-green-ink)]">
             {certificate.code ?? `•••• ${certificate.code_last4}`}
           </p>
         </div>
@@ -506,7 +496,7 @@ function CertificateCard({ certificate, onCopy }: { certificate: GiftCertificate
           <button
             type="button"
             onClick={onCopy}
-            className="rounded-md border border-emerald-300 px-3 py-1 text-xs font-medium text-emerald-800 hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-200 dark:hover:bg-emerald-900"
+            className="rounded-md border border-[color-mix(in_srgb,var(--tint-green-ink)_25%,transparent)] px-3 py-1 text-xs font-medium text-[var(--tint-green-ink)] hover:bg-[color-mix(in_srgb,var(--tint-green-ink)_12%,var(--tint-green))]"
           >
             {t('gift.copy')}
           </button>
@@ -514,32 +504,32 @@ function CertificateCard({ certificate, onCopy }: { certificate: GiftCertificate
       </div>
       <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
         <div>
-          <dt className="text-emerald-700 dark:text-emerald-300">
+          <dt className="text-[var(--tint-green-ink)]">
             {certificate.kind === 'money' ? t('gift.balance') : t('gift.visitsLeft')}
           </dt>
-          <dd className="font-semibold text-emerald-900 dark:text-emerald-100">
+          <dd className="font-semibold text-[var(--tint-green-ink)]">
             {certificate.kind === 'money'
               ? formatCurrency(certificate.money_balance, certificate.currency as Currency)
               : `${certificate.visits_remaining} / ${certificate.visits_total}`}
           </dd>
         </div>
         <div>
-          <dt className="text-emerald-700 dark:text-emerald-300">{t('gift.validUntil')}</dt>
-          <dd className="font-semibold text-emerald-900 dark:text-emerald-100">
+          <dt className="text-[var(--tint-green-ink)]">{t('gift.validUntil')}</dt>
+          <dd className="font-semibold text-[var(--tint-green-ink)]">
             {new Date(certificate.expires_at).toLocaleDateString()}
           </dd>
         </div>
         <div>
-          <dt className="text-emerald-700 dark:text-emerald-300">{t('gift.recipient')}</dt>
-          <dd className="font-semibold text-emerald-900 dark:text-emerald-100">{certificate.recipient_name}</dd>
+          <dt className="text-[var(--tint-green-ink)]">{t('gift.recipient')}</dt>
+          <dd className="font-semibold text-[var(--tint-green-ink)]">{certificate.recipient_name}</dd>
         </div>
         <div>
-          <dt className="text-emerald-700 dark:text-emerald-300">{t('gift.issuedBy')}</dt>
-          <dd className="font-semibold text-emerald-900 dark:text-emerald-100">{certificate.issuer_name}</dd>
+          <dt className="text-[var(--tint-green-ink)]">{t('gift.issuedBy')}</dt>
+          <dd className="font-semibold text-[var(--tint-green-ink)]">{certificate.issuer_name}</dd>
         </div>
       </dl>
       {certificate.message && (
-        <p className="mt-3 rounded-lg bg-white/60 p-3 text-sm text-emerald-900 dark:bg-emerald-900/40 dark:text-emerald-100">
+        <p className="mt-3 rounded-lg bg-[color-mix(in_srgb,var(--workspace-panel)_60%,transparent)] p-3 text-sm text-[var(--tint-green-ink)]">
           {certificate.message}
         </p>
       )}
@@ -587,7 +577,7 @@ export function GiftReturn() {
     if (apiErrorStatus(orderQuery.error) === 404) return <InvalidLink />
     return (
       <GiftFrame title={t('gift.returnTitle')}>
-        <section role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+        <section role="alert" className="rounded-2xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-6 text-[var(--tint-red-ink)]">
           <p>{apiErrorMessage(orderQuery.error, t('gift.loadError'))}</p>
           <button
             type="button"
@@ -595,7 +585,7 @@ export function GiftReturn() {
               attempts.current = 0
               void orderQuery.refetch()
             }}
-            className="mt-3 rounded-md border border-red-300 px-4 py-2 text-sm font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+            className="mt-3 rounded-md border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] px-4 py-2 text-sm font-medium hover:bg-[color-mix(in_srgb,var(--tint-red-ink)_12%,var(--tint-red))]"
           >
             {t('gift.checkAgain')}
           </button>
@@ -633,14 +623,14 @@ export function GiftReturn() {
 
   return (
     <GiftFrame title={t('gift.returnTitle')}>
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <section className="ui-card p-6 sm:p-8">
         <h1 className="text-2xl font-bold">{title}</h1>
-        <p className="mt-2 text-sm text-slate-500 dark:text-gray-400" role="status">{text}</p>
+        <p className="mt-2 text-sm text-[var(--workspace-muted)]" role="status">{text}</p>
 
         <p className="mt-4 text-sm">
-          <span className="text-slate-500 dark:text-gray-400">{t('gift.name')}: </span>
+          <span className="text-[var(--workspace-muted)]">{t('gift.name')}: </span>
           <span className="font-medium">{order.offer_name}</span>
-          <span className="ml-2 text-slate-500 dark:text-gray-400">
+          <span className="ml-2 text-[var(--workspace-muted)]">
             {formatCurrency(order.amount, order.currency as Currency)}
           </span>
         </p>
@@ -660,7 +650,7 @@ export function GiftReturn() {
             }}
           />
         )}
-        {paid && copied && <p className="mt-2 text-xs text-emerald-700 dark:text-emerald-300">{t('gift.copied')}</p>}
+        {paid && copied && <p className="mt-2 text-xs text-[var(--tint-green-ink)]">{t('gift.copied')}</p>}
 
         {(order.status === 'pending' || review) && (
           <button
@@ -670,7 +660,7 @@ export function GiftReturn() {
               attempts.current = 0
               void orderQuery.refetch()
             }}
-            className="mt-4 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
+            className="mt-4 ui-button ui-button-primary disabled:opacity-60"
           >
             {t('gift.checkAgain')}
           </button>

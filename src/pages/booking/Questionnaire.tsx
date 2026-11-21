@@ -5,7 +5,7 @@ import axios from 'axios'
 import api from '../../api/client'
 import { useLinkToken } from '../../hooks/useLinkToken'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
-import LanguageSwitcher from '../../components/LanguageSwitcher'
+import PublicShell from '../../components/public/PublicShell'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import FormError from '../../components/FormError'
 import { INTL_LOCALE } from '../../components/booking/intl'
@@ -219,26 +219,16 @@ function answerFieldCodes(err: unknown): Record<string, string> | null {
 
 function PublicFrame({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-gray-900 dark:text-gray-100">
-      <header className="border-b border-slate-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto flex max-w-2xl items-center justify-between gap-4 px-4 py-3">
-          <span className="text-sm font-medium text-slate-500 dark:text-gray-400">{t('questionnairePage.title')}</span>
-          <LanguageSwitcher />
-        </div>
-      </header>
-      <main className="mx-auto max-w-2xl px-4 py-6 sm:py-10">{children}</main>
-    </div>
-  )
+  return <PublicShell title={t('questionnairePage.title')} width="2xl">{children}</PublicShell>
 }
 
 function Unavailable() {
   const { t } = useTranslation()
   return (
     <PublicFrame>
-      <section className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+      <section className="ui-card p-8 text-center">
         <h1 className="text-xl font-semibold">{t('questionnairePage.linkUnavailableTitle')}</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm text-slate-500 dark:text-gray-400">
+        <p className="mx-auto mt-3 max-w-md text-sm text-[var(--workspace-muted)]">
           {t('questionnairePage.linkUnavailableText')}
         </p>
       </section>
@@ -358,13 +348,13 @@ function QuestionnaireSession({ token }: { token: string | null }) {
       <PublicFrame>
         <section
           role="alert"
-          className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200"
+          className="rounded-2xl border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-6 text-[var(--tint-red-ink)]"
         >
           <p>{apiErrorMessage(formQuery.error, t('common.loadError'))}</p>
           <button
             type="button"
             onClick={() => void formQuery.refetch()}
-            className="mt-3 rounded-md border border-red-300 px-4 py-2 text-sm font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+            className="mt-3 rounded-md border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] px-4 py-2 text-sm font-medium hover:bg-[color-mix(in_srgb,var(--tint-red-ink)_12%,var(--tint-red))]"
           >
             {t('common.retry')}
           </button>
@@ -380,20 +370,20 @@ function QuestionnaireSession({ token }: { token: string | null }) {
     const recent = justSubmitted !== null
     return (
       <PublicFrame>
-        <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+        <section className="ui-card p-6 sm:p-8">
           <h1 className="text-xl font-semibold">
             {recent ? t('questionnairePage.savedTitle') : t('questionnairePage.alreadySubmittedTitle')}
           </h1>
-          <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
+          <p className="mt-2 text-sm text-[var(--workspace-muted)]">
             {recent ? t('questionnairePage.savedText') : t('questionnairePage.alreadySubmittedText')}
           </p>
-          <dl className="mt-5 divide-y divide-slate-100 text-sm dark:divide-gray-700">
+          <dl className="mt-5 divide-y divide-[var(--workspace-line)] text-sm">
             <div className="flex justify-between gap-4 py-3">
-              <dt className="text-slate-500 dark:text-gray-400">{t('questionnairePage.version')}</dt>
+              <dt className="text-[var(--workspace-muted)]">{t('questionnairePage.version')}</dt>
               <dd className="text-right font-medium">{form.version}</dd>
             </div>
             <div className="flex justify-between gap-4 py-3">
-              <dt className="text-slate-500 dark:text-gray-400">{t('questionnairePage.sentAt')}</dt>
+              <dt className="text-[var(--workspace-muted)]">{t('questionnairePage.sentAt')}</dt>
               <dd className="text-right font-medium">
                 {new Date(submittedAt).toLocaleString(INTL_LOCALE[locale])}
               </dd>
@@ -407,7 +397,7 @@ function QuestionnaireSession({ token }: { token: string | null }) {
   const renderInput = (field: QuestionnaireField) => {
     const value = answers[field.key]
     const invalid = Boolean(errors[field.key])
-    const inputClass = 'w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900'
+    const inputClass = 'w-full rounded-md border border-[var(--workspace-control)] bg-[var(--workspace-panel)] px-3 py-2 text-sm'
 
     switch (field.type) {
       case 'text':
@@ -460,7 +450,7 @@ function QuestionnaireSession({ token }: { token: string | null }) {
         return (
           <div className="space-y-2">
             {field.max_selected !== null && field.max_selected !== undefined && (
-              <p className="text-xs text-slate-500 dark:text-gray-400">
+              <p className="text-xs text-[var(--workspace-muted)]">
                 {t('questionnairePage.maxSelected')} {field.max_selected}
               </p>
             )}
@@ -514,16 +504,16 @@ function QuestionnaireSession({ token }: { token: string | null }) {
 
   return (
     <PublicFrame>
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <section className="ui-card p-6 sm:p-8">
         <header>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <p className="text-xs font-medium uppercase tracking-wide text-[var(--workspace-subtle)]">
             {t('questionnairePage.title')}
           </p>
           <h1 className="mt-1 text-xl font-semibold">{form.name}</h1>
           {form.description && (
-            <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">{form.description}</p>
+            <p className="mt-2 text-sm text-[var(--workspace-muted)]">{form.description}</p>
           )}
-          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--workspace-subtle)]">
             <span>
               {t('questionnairePage.version')} {form.version}
             </span>
@@ -534,19 +524,19 @@ function QuestionnaireSession({ token }: { token: string | null }) {
           </div>
         </header>
 
-        <p className="mt-4 text-xs text-slate-400">{t('questionnairePage.draftHint')}</p>
+        <p className="mt-4 text-xs text-[var(--workspace-subtle)]">{t('questionnairePage.draftHint')}</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-5">
           {form.fields.map((field) => {
             const code = errors[field.key]
             return (
-              <div key={field.key} className="rounded-xl border border-slate-200 p-4 dark:border-gray-700">
+              <div key={field.key} className="rounded-xl border border-[var(--workspace-line)] p-4">
                 <p className="text-sm font-medium">
                   {field.label}
-                  {field.required && <span className="ml-1 text-red-500">*</span>}
+                  {field.required && <span className="ml-1 text-[var(--tint-red-ink)]">*</span>}
                 </p>
                 {field.description && (
-                  <p className="mt-1 text-xs text-slate-500 dark:text-gray-400">{field.description}</p>
+                  <p className="mt-1 text-xs text-[var(--workspace-muted)]">{field.description}</p>
                 )}
                 <div className="mt-3">{renderInput(field)}</div>
                 {code && <FormError message={answerErrorText(code, t)} />}
@@ -563,7 +553,7 @@ function QuestionnaireSession({ token }: { token: string | null }) {
           <button
             type="submit"
             disabled={submitting}
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-primary-600 px-5 py-2.5 font-medium text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 ui-button ui-button-primary disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {submitting && <LoadingSpinner size="sm" />}
             {submitting ? t('questionnairePage.submitting') : t('questionnairePage.submit')}

@@ -61,7 +61,7 @@ export default function TimeStep({
     <button
       type="button"
       onClick={onBack}
-      className="mt-5 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
+      className="mt-5 ui-button ui-button-secondary"
     >
       {t('booking.back')}
     </button>
@@ -70,7 +70,7 @@ export default function TimeStep({
   return (
     <div>
       <h2 className="text-lg font-semibold">{t('booking.chooseTime')}</h2>
-      <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
+      <p className="mt-1 text-sm text-[var(--workspace-muted)]">
         {t('booking.timezone')}: <span className="font-medium">{timezone}</span>
       </p>
 
@@ -79,26 +79,26 @@ export default function TimeStep({
           <LoadingSpinner />
         </div>
       ) : isError ? (
-        <div role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+        <div role="alert" className="mt-4 rounded-lg border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-4 text-sm text-[var(--tint-red-ink)]">
           <p>{t('common.loadError')}</p>
           <button
             type="button"
             onClick={() => void onRetry()}
-            className="mt-2 rounded-md border border-red-300 px-3 py-1.5 font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+            className="mt-2 rounded-md border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] px-3 py-1.5 font-medium hover:bg-[color-mix(in_srgb,var(--tint-red-ink)_12%,var(--tint-red))]"
           >
             {t('common.retry')}
           </button>
         </div>
       ) : !hasSlots ? (
-        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-gray-600 dark:bg-gray-700">
-          <p className="text-sm text-slate-600 dark:text-gray-300">{t('booking.noSlots')}</p>
+        <div className="mt-4 rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-fill)] p-4">
+          <p className="text-sm text-[var(--workspace-muted)]">{t('booking.noSlots')}</p>
           {onWaitlist && (
             <>
-              <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('booking.waitlist.noSlotsHint')}</p>
+              <p className="mt-1 text-sm text-[var(--workspace-muted)]">{t('booking.waitlist.noSlotsHint')}</p>
               <button
                 type="button"
                 onClick={onWaitlist}
-                className="mt-3 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+                className="mt-3 ui-button ui-button-primary"
               >
                 {t('booking.waitlist.cta')}
               </button>
@@ -120,11 +120,11 @@ export default function TimeStep({
                   onClick={() => setSelectedDay(day.date)}
                   className={`min-w-[5.5rem] shrink-0 rounded-xl border px-3 py-2 text-center transition disabled:cursor-not-allowed disabled:opacity-40 ${
                     active
-                      ? 'border-primary-500 bg-primary-50 text-primary-800 dark:bg-primary-950 dark:text-primary-200'
-                      : 'border-slate-200 hover:border-primary-300 dark:border-gray-600 dark:hover:border-primary-500'
+                      ? 'border-[var(--workspace-accent)] bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent)]'
+                      : 'border-[var(--workspace-line)] hover:border-[var(--workspace-focus)]'
                   }`}
                 >
-                  <span className="block text-xs uppercase text-slate-500 dark:text-gray-400">
+                  <span className="block text-xs uppercase text-[var(--workspace-muted)]">
                     {weekdayFormatter.format(dayAsUtc(day.date))}
                   </span>
                   <span className="block text-sm font-medium">{dateFormatter.format(dayAsUtc(day.date))}</span>
@@ -142,15 +142,15 @@ export default function TimeStep({
                 onClick={() => onSelect(slot)}
                 className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
                   slot.start === selectedStart
-                    ? 'border-primary-500 bg-primary-600 text-white'
-                    : 'border-slate-200 hover:border-primary-400 hover:bg-primary-50 dark:border-gray-600 dark:hover:border-primary-500 dark:hover:bg-gray-700'
+                    ? 'border-[var(--workspace-accent)] bg-[image:var(--x-gradient)] text-white'
+                    : 'border-[var(--workspace-line)] hover:border-[var(--workspace-focus)] hover:bg-[var(--workspace-accent-soft)]'
                 }`}
               >
                 {timeFormatter.format(new Date(slot.start))}
               </button>
             ))}
           </div>
-          <p className="mt-3 text-xs text-slate-500 dark:text-gray-400">{t('booking.onlyFreeTimes')}</p>
+          <p className="mt-3 text-xs text-[var(--workspace-muted)]">{t('booking.onlyFreeTimes')}</p>
         </>
       )}
 

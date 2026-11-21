@@ -149,9 +149,9 @@ describe('CRM screens', () => {
 // theme tokens too. Raw Tailwind palette classes here were the old gray-and-blue booking look.
 const PUBLIC_DIRS = [
   'src/pages/booking/', 'src/components/booking/', 'src/pages/client/',
-  'src/pages/visitor/', 'src/components/visitor/', 'src/components/public/',
+  'src/pages/visitor/', 'src/components/visitor/', 'src/components/public/', 'src/components/client/',
 ]
-const PUBLIC_FILES = ['src/pages/Unsubscribe.tsx', 'src/components/subscription/PublicFeatureGate.tsx']
+const PUBLIC_FILES = ['src/pages/Unsubscribe.tsx', 'src/components/subscription/PublicFeatureGate.tsx', 'src/components/FormError.tsx']
 const PALETTE = /\b(?:bg|text|border|ring|divide|from|to|placeholder|outline|accent)-(?:gray|slate|zinc|neutral|stone|blue|indigo|purple|violet|green|emerald|red|rose|amber|yellow|orange|pink|sky|teal|primary)-\d{2,3}\b/g
 
 describe('public screens', () => {

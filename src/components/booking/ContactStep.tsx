@@ -28,7 +28,7 @@ const isPhoneValid = (phone: string) => {
 }
 
 const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700'
+  'ui-input'
 
 export default function ContactStep({ value, onChange, onSubmit, onBack }: ContactStepProps) {
   const { t } = useTranslation()
@@ -67,7 +67,7 @@ export default function ContactStep({ value, onChange, onSubmit, onBack }: Conta
   return (
     <form onSubmit={handleSubmit} noValidate>
       <h2 className="text-lg font-semibold">{t('booking.yourDetails')}</h2>
-      <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('booking.contactHint')}</p>
+      <p className="mt-1 text-sm text-[var(--workspace-muted)]">{t('booking.contactHint')}</p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <FormField label={t('field.full_name')} required error={errors.name} className="sm:col-span-2">
@@ -134,13 +134,13 @@ export default function ContactStep({ value, onChange, onSubmit, onBack }: Conta
         <button
           type="button"
           onClick={onBack}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
+          className="ui-button ui-button-secondary"
         >
           {t('booking.back')}
         </button>
         <button
           type="submit"
-          className="rounded-md bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          className="ui-button ui-button-primary"
         >
           {t('booking.continue')}
         </button>

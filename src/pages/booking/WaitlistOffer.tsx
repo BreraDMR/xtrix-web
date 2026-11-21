@@ -3,7 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 import api from '../../api/client'
 import { apiErrorMessage, apiErrorStatus } from '../../api/errors'
-import LanguageSwitcher from '../../components/LanguageSwitcher'
+import PublicShell from '../../components/public/PublicShell'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import DepositStep from '../../components/booking/DepositStep'
 import { INTL_LOCALE } from '../../components/booking/intl'
@@ -61,17 +61,7 @@ const STATUS_KEYS: Record<string, TranslationKey> = {
 
 function PublicFrame({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-gray-900 dark:text-gray-100">
-      <header className="border-b border-slate-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
-          <span className="text-sm font-medium text-slate-500 dark:text-gray-400">{t('waitlistOffer.title')}</span>
-          <LanguageSwitcher />
-        </div>
-      </header>
-      <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">{children}</main>
-    </div>
-  )
+  return <PublicShell title={t('waitlistOffer.title')}>{children}</PublicShell>
 }
 
 export default function WaitlistOffer() {
@@ -136,9 +126,9 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
   if (!token) {
     return (
       <PublicFrame>
-        <section className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+        <section className="ui-card p-8 text-center">
           <h1 className="text-xl font-semibold">{t('waitlistOffer.unavailableTitle')}</h1>
-          <p className="mx-auto mt-3 max-w-md text-sm text-slate-500 dark:text-gray-400">{t('waitlistOffer.unavailableText')}</p>
+          <p className="mx-auto mt-3 max-w-md text-sm text-[var(--workspace-muted)]">{t('waitlistOffer.unavailableText')}</p>
         </section>
       </PublicFrame>
     )
@@ -158,11 +148,11 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
     const status = apiErrorStatus(offerQuery.error)
     return (
       <PublicFrame>
-        <section className="rounded-2xl bg-white p-8 text-center shadow-sm dark:bg-gray-800">
+        <section className="ui-card p-8 text-center">
           <h1 className="text-xl font-semibold">
             {status === 404 ? t('waitlistOffer.unavailableTitle') : t('waitlistOffer.loadError')}
           </h1>
-          <p className="mx-auto mt-3 max-w-md text-sm text-slate-500 dark:text-gray-400">
+          <p className="mx-auto mt-3 max-w-md text-sm text-[var(--workspace-muted)]">
             {status === 404 ? t('waitlistOffer.unavailableText') : apiErrorMessage(offerQuery.error, '')}
           </p>
         </section>
@@ -188,28 +178,28 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
 
   return (
     <PublicFrame>
-      <section className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800 sm:p-8">
+      <section className="ui-card p-6 sm:p-8">
         <h1 className="text-2xl font-bold">{offer.business_name}</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{t('waitlistOffer.subtitle')}</p>
+        <p className="mt-1 text-sm text-[var(--workspace-muted)]">{t('waitlistOffer.subtitle')}</p>
 
-        <dl className="mt-5 divide-y divide-slate-100 text-sm dark:divide-gray-700">
+        <dl className="mt-5 divide-y divide-[var(--workspace-line)] text-sm">
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('booking.service')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('booking.service')}</dt>
             <dd className="text-right font-medium">{offer.service_name}</dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('booking.master')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('booking.master')}</dt>
             <dd className="text-right font-medium">{offer.staff_name}</dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('booking.dateTime')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('booking.dateTime')}</dt>
             <dd className="text-right font-medium">
               {when}
-              <span className="mt-1 block text-xs font-normal text-slate-500 dark:text-gray-400">{offer.timezone}</span>
+              <span className="mt-1 block text-xs font-normal text-[var(--workspace-muted)]">{offer.timezone}</span>
             </dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
-            <dt className="text-slate-500 dark:text-gray-400">{t('booking.price')}</dt>
+            <dt className="text-[var(--workspace-muted)]">{t('booking.price')}</dt>
             <dd className="text-right font-medium">
               {offer.price === null || offer.price === undefined
                 ? t('booking.priceOnRequest')
@@ -219,19 +209,19 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
         </dl>
 
         {isPending && (
-          <p className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+          <p className="mt-4 rounded-lg bg-[var(--tint-amber)] p-3 text-sm text-[var(--tint-amber-ink)]">
             {t('waitlistOffer.notReserved')}
           </p>
         )}
 
         {isPending && (
-          <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
+          <p className="mt-2 text-sm text-[var(--workspace-muted)]">
             {t('waitlistOffer.expires')}: <span className="font-medium">{expires}</span>
           </p>
         )}
 
         {actionError != null && (
-          <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+          <p role="alert" className="mt-4 rounded-lg border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-3 text-sm text-[var(--tint-red-ink)]">
             {apiErrorMessage(actionError, t('waitlistOffer.actionError'))}
           </p>
         )}
@@ -239,27 +229,27 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
         {accepted ? (
           <div className={`mt-5 rounded-xl border p-4 ${
             accepted.payment
-              ? 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950'
-              : 'border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950'
+              ? 'border-[color-mix(in_srgb,var(--tint-amber-ink)_25%,transparent)] bg-[var(--tint-amber)]'
+              : 'border-[color-mix(in_srgb,var(--tint-green-ink)_25%,transparent)] bg-[var(--tint-green)]'
           }`}>
             <h2 className={`text-lg font-semibold ${
               accepted.payment
-                ? 'text-amber-900 dark:text-amber-100'
-                : 'text-emerald-900 dark:text-emerald-100'
+                ? 'text-[var(--tint-amber-ink)]'
+                : 'text-[var(--tint-green-ink)]'
             }`}>
               {accepted.payment ? t('booking.heldTitle') : t('waitlistOffer.acceptedTitle')}
             </h2>
             <p className={`mt-1 text-sm ${
               accepted.payment
-                ? 'text-amber-900 dark:text-amber-100'
-                : 'text-emerald-800 dark:text-emerald-200'
+                ? 'text-[var(--tint-amber-ink)]'
+                : 'text-[var(--tint-green-ink)]'
             }`}>
               {accepted.payment ? t('booking.heldText') : t('waitlistOffer.acceptedText')}
             </p>
             <p className={`mt-2 text-sm font-medium ${
               accepted.payment
-                ? 'text-amber-950 dark:text-amber-50'
-                : 'text-emerald-900 dark:text-emerald-100'
+                ? 'text-[var(--tint-amber-ink)]'
+                : 'text-[var(--tint-green-ink)]'
             }`}>
               {t('booking.bookingNumber')}: #{accepted.id}
             </p>
@@ -273,16 +263,16 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
             {accepted.manage_token && (
               <a
                 href={`/manage#token=${encodeURIComponent(accepted.manage_token)}`}
-                className="mt-3 inline-block rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+                className="mt-3 inline-block ui-button ui-button-primary"
               >
                 {t('booking.manageLink')}
               </a>
             )}
           </div>
         ) : declined ? (
-          <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-gray-600 dark:bg-gray-700">
+          <div className="mt-5 rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-fill)] p-4">
             <h2 className="text-lg font-semibold">{t('waitlistOffer.declinedTitle')}</h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-gray-300">{t('waitlistOffer.declinedText')}</p>
+            <p className="mt-1 text-sm text-[var(--workspace-muted)]">{t('waitlistOffer.declinedText')}</p>
           </div>
         ) : isPending ? (
           <div className="mt-5 flex flex-wrap gap-3">
@@ -290,7 +280,7 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
               type="button"
               disabled={accept.isPending || decline.isPending}
               onClick={() => accept.mutate()}
-              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+              className="ui-button ui-button-primary disabled:opacity-50"
             >
               {accept.isPending ? t('waitlistOffer.accepting') : t('waitlistOffer.accept')}
             </button>
@@ -298,27 +288,27 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
               type="button"
               disabled={accept.isPending || decline.isPending}
               onClick={() => decline.mutate()}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50 dark:border-gray-600 dark:hover:bg-gray-700"
+              className="ui-button ui-button-secondary disabled:opacity-50"
             >
               {decline.isPending ? t('waitlistOffer.declining') : t('waitlistOffer.decline')}
             </button>
           </div>
         ) : (
-          <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-gray-600 dark:bg-gray-700">
+          <div className="mt-5 rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-fill)] p-4">
             <h2 className="text-lg font-semibold">{t(STATUS_KEYS[status] ?? 'waitlistOffer.status.expired')}</h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-gray-300">{t('waitlistOffer.closedText')}</p>
+            <p className="mt-1 text-sm text-[var(--workspace-muted)]">{t('waitlistOffer.closedText')}</p>
           </div>
         )}
 
         {(offer.business_phone || offer.business_address) && (
-          <div className="mt-5 border-t border-slate-100 pt-4 text-sm dark:border-gray-700">
-            <h2 className="text-sm font-semibold text-slate-500 dark:text-gray-400">{t('booking.contacts')}</h2>
+          <div className="mt-5 border-t border-[var(--workspace-line)] pt-4 text-sm">
+            <h2 className="text-sm font-semibold text-[var(--workspace-muted)]">{t('booking.contacts')}</h2>
             <dl className="mt-2 space-y-1">
               {offer.business_phone && (
                 <div>
-                  <dt className="inline text-slate-500 dark:text-gray-400">{t('clients.phone')}: </dt>
+                  <dt className="inline text-[var(--workspace-muted)]">{t('clients.phone')}: </dt>
                   <dd className="inline">
-                    <a className="text-primary-600 hover:underline dark:text-primary-400" href={`tel:${offer.business_phone}`}>
+                    <a className="text-[var(--workspace-accent)] hover:underline" href={`tel:${offer.business_phone}`}>
                       {offer.business_phone}
                     </a>
                   </dd>
@@ -326,7 +316,7 @@ function WaitlistOfferSession({ token }: { token: string | null }) {
               )}
               {offer.business_address && (
                 <div>
-                  <dt className="inline text-slate-500 dark:text-gray-400">{t('business.address')}: </dt>
+                  <dt className="inline text-[var(--workspace-muted)]">{t('business.address')}: </dt>
                   <dd className="inline">{offer.business_address}</dd>
                 </div>
               )}

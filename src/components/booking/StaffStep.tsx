@@ -30,24 +30,24 @@ export default function StaffStep({
           <LoadingSpinner />
         </div>
       ) : isError ? (
-        <div role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+        <div role="alert" className="mt-4 rounded-lg border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] bg-[var(--tint-red)] p-4 text-sm text-[var(--tint-red-ink)]">
           <p>{t('common.loadError')}</p>
           <button
             type="button"
             onClick={() => void onRetry()}
-            className="mt-2 rounded-md border border-red-300 px-3 py-1.5 font-medium hover:bg-red-100 dark:border-red-700 dark:hover:bg-red-900"
+            className="mt-2 rounded-md border border-[color-mix(in_srgb,var(--tint-red-ink)_25%,transparent)] px-3 py-1.5 font-medium hover:bg-[color-mix(in_srgb,var(--tint-red-ink)_12%,var(--tint-red))]"
           >
             {t('common.retry')}
           </button>
         </div>
       ) : staff.length === 0 ? (
-        <p className="mt-4 text-sm text-slate-500 dark:text-gray-400">{t('booking.noStaff')}</p>
+        <p className="mt-4 text-sm text-[var(--workspace-muted)]">{t('booking.noStaff')}</p>
       ) : (
         <div className="mt-4 space-y-3">
           <button
             type="button"
             onClick={() => onSelect(null)}
-            className="w-full rounded-xl border border-primary-200 bg-primary-50 p-4 text-left font-medium text-primary-800 transition hover:border-primary-400 dark:border-primary-800 dark:bg-primary-950 dark:text-primary-200 dark:hover:border-primary-600"
+            className="w-full rounded-xl border border-[var(--x-lavender-border)] bg-[var(--workspace-accent-soft)] p-4 text-left font-medium text-[var(--workspace-accent)] transition hover:border-[var(--workspace-focus)]"
           >
             {t('booking.anyMaster')}
           </button>
@@ -56,11 +56,11 @@ export default function StaffStep({
               key={person.id}
               type="button"
               onClick={() => onSelect(person.id)}
-              className="w-full rounded-xl border border-slate-200 p-4 text-left transition hover:border-primary-300 dark:border-gray-600 dark:hover:border-primary-500"
+              className="w-full rounded-xl border border-[var(--workspace-line)] p-4 text-left transition hover:border-[var(--workspace-focus)]"
             >
               <p className="font-medium">{person.full_name}</p>
               {person.position && (
-                <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{person.position}</p>
+                <p className="mt-1 text-sm text-[var(--workspace-muted)]">{person.position}</p>
               )}
             </button>
           ))}
@@ -70,7 +70,7 @@ export default function StaffStep({
       <button
         type="button"
         onClick={onBack}
-        className="mt-5 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 dark:border-gray-600 dark:hover:bg-gray-700"
+        className="mt-5 ui-button ui-button-secondary"
       >
         {t('booking.back')}
       </button>
