@@ -11,6 +11,7 @@ import { INTL_LOCALE } from '../components/booking/intl'
 import { useTranslation } from '../hooks/useTranslation'
 import type { TranslationKey } from '../i18n/translations'
 import type { ServiceOut, WaitlistEntryOut, WaitlistPage } from '../api/types'
+import StatusBadge, { type StatusTone } from '../ui/StatusBadge'
 
 const STATUS_KEYS: Record<string, TranslationKey> = {
   active: 'waitlist.status.active',
@@ -30,15 +31,15 @@ const TIME_KEYS: Record<string, TranslationKey> = {
   evening: 'booking.waitlist.timeEvening',
 }
 
-const statusClass: Record<string, string> = {
-  active: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
-  fulfilled: 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]',
-  cancelled: 'bg-slate-100 text-slate-600 dark:bg-gray-700 dark:text-gray-300',
-  pending: 'bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
-  accepted: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
-  declined: 'bg-slate-100 text-slate-600 dark:bg-gray-700 dark:text-gray-300',
-  expired: 'bg-slate-100 text-slate-600 dark:bg-gray-700 dark:text-gray-300',
-  conflict: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
+const STATUS_TONE: Record<string, StatusTone> = {
+  active: 'success',
+  fulfilled: 'accent',
+  cancelled: 'neutral',
+  pending: 'warning',
+  accepted: 'success',
+  declined: 'neutral',
+  expired: 'neutral',
+  conflict: 'danger',
 }
 
 function formatDateTime(value: string, locale: 'en' | 'ru' | 'cz', timeZone?: string) {
@@ -237,9 +238,9 @@ export default function Waitlist() {
                       {entry.phone && (
                         <p className="text-xs text-slate-500 dark:text-gray-400">{entry.phone}</p>
                       )}
-                      <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusClass[entry.status] ?? statusClass.cancelled}`}>
+                      <StatusBadge tone={STATUS_TONE[entry.status] ?? 'neutral'} className="mt-2 px-2">
                         {t(STATUS_KEYS[entry.status] ?? 'waitlist.status.cancelled')}
-                      </span>
+                      </StatusBadge>
                     </td>
                     <td className="px-4 py-3">
                       <p className="font-medium">{entry.service_name}</p>
@@ -253,9 +254,9 @@ export default function Waitlist() {
                     <td className="px-4 py-3">
                       {entry.latest_offer ? (
                         <>
-                          <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusClass[entry.latest_offer.status] ?? statusClass.cancelled}`}>
+                          <StatusBadge tone={STATUS_TONE[entry.latest_offer.status] ?? 'neutral'} className="px-2">
                             {t(STATUS_KEYS[entry.latest_offer.status] ?? 'waitlist.offer.expired')}
-                          </span>
+                          </StatusBadge>
                           <p className="mt-1 text-xs text-slate-500 dark:text-gray-400">
                             {formatDateTime(entry.latest_offer.start, locale)}
                           </p>

@@ -10,6 +10,7 @@ import type { TranslationKey } from '../../i18n/translations'
 import type { ServicePaymentOut } from '../../api/types'
 import { formatCurrency, type Currency } from '../../utils/currency'
 import Button from '../../ui/Button'
+import StatusBadge from '../../ui/StatusBadge'
 
 const STATUSES = [
   'pending',
@@ -42,17 +43,15 @@ function newRefundKey(): string {
   return `rf-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`
 }
 
-function StatusChip({ status }: { status: string }) {
+function PaymentStatus({ status }: { status: string }) {
   const { t } = useTranslation()
   const tone = status === 'paid' || status === 'partially_refunded' || status === 'refunded'
-    ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]'
-    : status === 'pending' || status === 'reconcile'
-      ? 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]'
-      : 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
+    ? 'success'
+    : status === 'pending' || status === 'reconcile' ? 'warning' : 'neutral'
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${tone}`}>
+    <StatusBadge tone={tone} className="py-1">
       {t(STATUS_KEYS[status] ?? 'payment.status.pending')}
-    </span>
+    </StatusBadge>
   )
 }
 
@@ -181,7 +180,7 @@ export default function ServicePayments() {
                     {payment.service_name} · {formatMoment(payment.visit_start)}
                   </p>
                 </div>
-                <StatusChip status={payment.status} />
+                <PaymentStatus status={payment.status} />
               </div>
 
               <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">

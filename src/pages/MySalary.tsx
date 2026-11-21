@@ -9,6 +9,8 @@ import { formatCurrency } from '../utils/currency'
 import { LuCircleAlert, LuCircleCheck, LuCircleX } from 'react-icons/lu'
 import ExportButton from '../components/ExportButton'
 import Tabs from '../ui/Tabs'
+import StatusBadge from '../ui/StatusBadge'
+import { paymentMethodTone, salaryPaymentTone, salaryStatusTone } from '../utils/statusPill'
 
 interface SalaryAdjustment {
   id: number
@@ -99,19 +101,6 @@ export default function MySalary() {
         <LoadingSpinner />
       </div>
     )
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return 'bg-green-100 text-green-800'
-      case 'partial':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'unpaid':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
   }
 
   const getAdjustmentTypeColor = (type: string) => {
@@ -250,9 +239,9 @@ export default function MySalary() {
                 {}
                 <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex items-center justify-between">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentSalary.payment_status)}`}>
+                    <StatusBadge tone={salaryStatusTone(currentSalary.payment_status)} className="px-3 py-1 text-sm">
                       {t(`salary.status.${currentSalary.payment_status}`)}
-                    </span>
+                    </StatusBadge>
                   </div>
                   {currentSalary.notes && (
                     <div className="mt-3">
@@ -356,14 +345,9 @@ export default function MySalary() {
                             minute: '2-digit'
                           })}
                         </span>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          payment.payment_method === 'cash' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                          payment.payment_method === 'card' ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]' :
-                          payment.payment_method === 'transfer' ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]' :
-                          'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                        }`}>
+                        <StatusBadge tone={paymentMethodTone(payment.payment_method)}>
                           {t(`salary.paymentMethod.${payment.payment_method}`)}
-                        </span>
+                        </StatusBadge>
                       </div>
                       {payment.notes && (
                         <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{payment.notes}</p>
@@ -372,13 +356,9 @@ export default function MySalary() {
                         <span className="text-xs text-gray-500 dark:text-gray-400">
                           {t('salary.status')}:
                         </span>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          payment.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                          payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                          'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                        }`}>
+                        <StatusBadge tone={salaryPaymentTone(payment.status)} className="px-2">
                           {t(`salary.status.${payment.status}`)}
-                        </span>
+                        </StatusBadge>
                       </div>
                     </div>
                   </div>
@@ -433,11 +413,9 @@ export default function MySalary() {
                         {formatCurrency(salary.paid_amount, currency)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(salary.payment_status)}`}
-                        >
+                        <StatusBadge tone={salaryStatusTone(salary.payment_status)}>
                           {t(`salary.status.${salary.payment_status}`)}
-                        </span>
+                        </StatusBadge>
                       </td>
                     </tr>
                   ))}

@@ -14,6 +14,7 @@ import type { TranslationKey } from '../i18n/translations'
 import { useAuthStore } from '../store/authStore'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
+import StatusBadge from '../ui/StatusBadge'
 import type { BusinessAuditEventOut, BusinessAuditEventPage } from '../api/types'
 
 type AuditFilters = {
@@ -351,9 +352,9 @@ export default function AuditLog() {
           <p className="page-subtitle max-w-3xl">
             {t('audit.description')}
           </p>
-          <p className="mt-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 dark:bg-gray-700 dark:text-gray-300">
+          <p className="mt-2"><StatusBadge tone="neutral" className="px-2.5 py-1">
             {t('audit.readOnly')}
-          </p>
+          </StatusBadge></p>
         </div>
         <Button variant="secondary" onClick={onExport} disabled={exporting}>
           {exporting ? t('audit.exporting') : t('audit.export')}

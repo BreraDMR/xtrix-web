@@ -8,6 +8,7 @@ import type { Schema } from '../api/types'
 type CohortRow = { cohort_month: string; total_clients: number } & Partial<Record<`month_${number}`, number | null>>
 import LoadingSpinner from '../components/LoadingSpinner'
 import Tabs from '../ui/Tabs'
+import StatusBadge from '../ui/StatusBadge'
 import { useBusinessCurrency } from '../hooks/useBusinessCurrency'
 import { formatCurrency } from '../utils/currency'
 import { dayEnd, dayStart, today } from '../utils/dates'
@@ -480,21 +481,13 @@ export default function Analytics() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{insight.title}</h3>
-                      <span
-                        className={`px-2 py-1 text-xs font-medium rounded ${
-                          insight.priority === 'high'
-                            ? 'bg-red-100 text-red-800'
-                            : insight.priority === 'medium'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
+                      <StatusBadge tone={insight.priority === 'high' ? 'danger' : insight.priority === 'medium' ? 'warning' : 'neutral'} className="px-2 py-1">
                         {insight.priority === 'high'
                           ? t('analytics.insight_priority_high')
                           : insight.priority === 'medium'
                           ? t('analytics.insight_priority_medium')
                           : t('analytics.insight_priority_low')}
-                      </span>
+                      </StatusBadge>
                     </div>
                     <p className="text-gray-700 dark:text-gray-300">{insight.message}</p>
                   </div>

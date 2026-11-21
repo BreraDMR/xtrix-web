@@ -28,6 +28,7 @@ import type {
 } from '../../api/types'
 import SaveToCabinet from '../../components/visitor/SaveToCabinet'
 import { formatCurrency, type Currency } from '../../utils/currency'
+import StatusBadge from '../../ui/StatusBadge'
 
 type BookingStep = 'service' | 'staff' | 'time' | 'waitlist' | 'contact' | 'summary' | 'done'
 
@@ -444,9 +445,9 @@ export default function BookingPage() {
               <p className="mt-1 text-sm text-[var(--workspace-muted)]">{labels.businessType(business.business_type)}</p>
             )}
           </div>
-          <span className="rounded-full bg-[var(--tint-green)] px-3 py-1 text-xs font-medium text-[var(--tint-green-ink)]">
+          <StatusBadge tone="success" className="px-3 py-1">
             {t('booking.noAccount')}
-          </span>
+          </StatusBadge>
         </div>
 
         {business.description && (

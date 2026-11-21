@@ -14,6 +14,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import type { TranslationKey } from '../i18n/translations'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
+import StatusBadge, { type StatusTone } from '../ui/StatusBadge'
 import type {
   CampaignCreate,
   CampaignOut,
@@ -47,12 +48,12 @@ const STATUS_KEYS: Record<string, TranslationKey> = {
   cancelled: 'campaigns.status.cancelled',
 }
 
-const STATUS_CLASS: Record<string, string> = {
-  draft: 'bg-slate-100 text-slate-700 dark:bg-gray-700 dark:text-gray-200',
-  confirmed: 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]',
-  sending: 'bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200',
-  sent: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
-  cancelled: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300',
+const STATUS_TONE: Record<string, StatusTone> = {
+  draft: 'neutral',
+  confirmed: 'accent',
+  sending: 'warning',
+  sent: 'success',
+  cancelled: 'danger',
 }
 
 function toLocalInput(value: string | null | undefined): string {
@@ -69,13 +70,13 @@ function toStringOrNull(value: string): string | null {
   return Number.isNaN(date.getTime()) ? null : date.toISOString()
 }
 
-function StatusBadge({ status }: { status: string }) {
+function CampaignStatus({ status }: { status: string }) {
   const { t } = useTranslation()
   const key = STATUS_KEYS[status]
   return (
-    <span className={`inline-flex shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_CLASS[status] ?? STATUS_CLASS.draft}`}>
+    <StatusBadge tone={STATUS_TONE[status] ?? 'neutral'}>
       {key ? t(key) : status}
-    </span>
+    </StatusBadge>
   )
 }
 
@@ -420,7 +421,7 @@ export default function Campaigns() {
                     >
                       <span className="flex items-start justify-between gap-2">
                         <span className="font-medium">{item.name}</span>
-                        <StatusBadge status={item.status} />
+                        <CampaignStatus status={item.status} />
                       </span>
                       <span className="mt-1 block truncate text-sm text-slate-500 dark:text-gray-400">
                         {item.subject}
@@ -469,7 +470,7 @@ export default function Campaigns() {
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="text-lg font-semibold">{campaign.name}</h2>
-                      <StatusBadge status={campaign.status} />
+                      <CampaignStatus status={campaign.status} />
                     </div>
                     <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
                       {t('campaigns.subject')}: {campaign.subject}

@@ -13,6 +13,8 @@ import type { TranslationKey } from '../../i18n/translations'
 import type { PublicBookingManageOut, PublicBookingRescheduleIn } from '../../api/types'
 import SaveToCabinet from '../../components/visitor/SaveToCabinet'
 import { formatCurrency, type Currency } from '../../utils/currency'
+import StatusBadge from '../../ui/StatusBadge'
+import { VISIT_STATUS_TONE } from '../../utils/statusPill'
 
 const TOKEN_KEY = 'booking_manage_token'
 const CUTOFF_MS = 24 * 60 * 60 * 1000
@@ -126,17 +128,11 @@ function LoadError({ error, retry }: { error: unknown; retry: () => unknown }) {
   )
 }
 
-function StatusBadge({ status }: { status: string }) {
+function VisitStatus({ status }: { status: string }) {
   const { t } = useTranslation()
   const key = STATUS_KEYS[status]
   const label = key ? t(key) : status
-  const tone =
-    status === 'planned'
-      ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]'
-      : status === 'in_progress'
-        ? 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]'
-        : 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
-  return <span className={`rounded-full px-3 py-1 text-xs font-medium ${tone}`}>{label}</span>
+  return <StatusBadge tone={VISIT_STATUS_TONE[status] ?? 'neutral'} className="px-3 py-1">{label}</StatusBadge>
 }
 
 export default function ManageBookingPage() {
@@ -348,7 +344,7 @@ function ManageBookingSession({ token }: { token: string | null }) {
               </a>
             )}
           </div>
-          <StatusBadge status={booking.status} />
+          <VisitStatus status={booking.status} />
         </div>
 
         <dl className="mt-6 divide-y divide-[var(--workspace-line)] text-sm">

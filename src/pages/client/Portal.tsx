@@ -20,6 +20,8 @@ import type {
 } from '../../api/types'
 import { formatCurrency, type Currency } from '../../utils/currency'
 import { clearPortalToken, portalHeaders, readPortalToken } from '../../utils/portalSession'
+import StatusBadge from '../../ui/StatusBadge'
+import { VISIT_STATUS_TONE } from '../../utils/statusPill'
 
 const STATUS_KEYS: Record<string, TranslationKey> = {
   planned: 'bookingManage.status.planned',
@@ -47,19 +49,13 @@ function answerText(value: unknown): string {
   return String(value)
 }
 
-function StatusBadge({ status }: { status: string }) {
+function VisitStatus({ status }: { status: string }) {
   const { t } = useTranslation()
   const key = STATUS_KEYS[status]
-  const tone =
-    status === 'planned'
-      ? 'bg-[var(--tint-green)] text-[var(--tint-green-ink)]'
-      : status === 'in_progress'
-        ? 'bg-[var(--tint-amber)] text-[var(--tint-amber-ink)]'
-        : 'bg-[var(--workspace-fill)] text-[var(--workspace-muted)]'
   return (
-    <span className={`rounded-full px-3 py-1 text-xs font-medium ${tone}`}>
+    <StatusBadge tone={VISIT_STATUS_TONE[status] ?? 'neutral'} className="px-3 py-1">
       {key ? t(key) : status}
-    </span>
+    </StatusBadge>
   )
 }
 
@@ -129,7 +125,7 @@ function VisitCard({
             <p className="mt-1 text-sm text-[var(--workspace-muted)]">{visit.staff_name}</p>
           )}
         </div>
-        <StatusBadge status={visit.status} />
+        <VisitStatus status={visit.status} />
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm font-medium">

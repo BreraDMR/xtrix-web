@@ -189,14 +189,18 @@
   .x-ev-in_progress { background: var(--status-in-progress-bg); color: var(--status-in-progress-ink); }
   .x-ev-completed { background: var(--status-completed-bg); color: var(--status-completed-ink); }
   .x-ev-cancelled { background: var(--status-cancelled-bg); color: var(--status-cancelled-ink); text-decoration: line-through; }
-  /* the same colours as a small pill in lists */
+  /* the same colours as a small pill in lists - StatusBadge in src/ui picks the tone */
   .x-status {
-    border-radius: var(--radius-pill); font-weight: 500;
+    display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; white-space: nowrap;
+    padding: 2px 10px; border-radius: var(--radius-pill); font-size: var(--text-small); font-weight: 500; line-height: 1.5;
   }
-  .x-status-planned { background: var(--status-planned-bg); color: var(--status-planned-ink); }
-  .x-status-in-progress { background: var(--status-in-progress-bg); color: var(--status-in-progress-ink); }
-  .x-status-completed { background: var(--status-completed-bg); color: var(--status-completed-ink); }
-  .x-status-cancelled { background: var(--status-cancelled-bg); color: var(--status-cancelled-ink); }
+  .x-status-dot::before { content: ''; width: 6px; height: 6px; border-radius: var(--radius-pill); background: currentColor; }
+  .x-status-info { background: var(--status-planned-bg); color: var(--status-planned-ink); }
+  .x-status-warning { background: var(--status-in-progress-bg); color: var(--status-in-progress-ink); }
+  .x-status-success { background: var(--status-completed-bg); color: var(--status-completed-ink); }
+  .x-status-danger { background: var(--status-cancelled-bg); color: var(--status-cancelled-ink); }
+  .x-status-neutral { background: var(--workspace-fill); color: var(--workspace-muted); }
+  .x-status-accent { background: var(--workspace-accent-soft); color: var(--workspace-accent-ink); }
   .x-ev:hover { filter: brightness(.98) saturate(1.1); }
   .dark .x-ev:hover { filter: brightness(1.12); }
   .ui-button {
@@ -343,14 +347,8 @@
   *, ::before, ::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
 
-/* status pills: soft tints, no outlines */
+/* small pills and counters: medium weight, no extra tracking */
 .crm-app :is(span, div, p).rounded-full:is(.text-xs, .text-\[11px\], .text-\[10px\]) { font-weight: 500; letter-spacing: 0; }
-.crm-app .rounded-full.bg-green-100 { background: #e3f5e8; color: #1a7f37; box-shadow: none; }
-.crm-app .rounded-full:is(.bg-amber-100, .bg-yellow-100, .bg-orange-100) { background: #fdf1df; color: #a35a00; }
-.crm-app .rounded-full.bg-red-100 { background: #fdebee; color: #c4122f; }
-.dark .crm-app .rounded-full.bg-green-100 { background: rgba(48, 209, 88, .14); color: #6ee28c; }
-.dark .crm-app .rounded-full:is(.bg-amber-100, .bg-yellow-100, .bg-orange-100) { background: rgba(255, 159, 10, .14); color: #ffbf5e; }
-.dark .crm-app .rounded-full.bg-red-100 { background: rgba(255, 69, 58, .14); color: #ff8a80; }
 
 /* month calendar: airy tiles, hairlines, the day number does the talking */
 .crm-app .react-calendar { width: 100%; border: none; background: transparent; font-family: inherit; }

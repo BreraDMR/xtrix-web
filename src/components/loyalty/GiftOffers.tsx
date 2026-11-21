@@ -21,6 +21,7 @@ import { showDay } from '../../utils/dates'
 import LoadingSpinner from '../LoadingSpinner'
 import QueryError from '../QueryError'
 import Button from '../../ui/Button'
+import StatusBadge from '../../ui/StatusBadge'
 
 type OfferKind = 'money' | 'package'
 
@@ -97,18 +98,13 @@ const LEDGER_KEYS: Record<string, TranslationKey> = {
   expired: 'gift.ledger.expired',
 }
 
-function StatusChip({ status }: { status: string }) {
+function CertificateStatus({ status }: { status: string }) {
   const { t } = useTranslation()
-  const tone =
-    status === 'active'
-      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-      : status === 'exhausted'
-        ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]'
-        : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+  const tone = status === 'active' ? 'success' : status === 'exhausted' ? 'accent' : 'neutral'
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${tone}`}>
+    <StatusBadge tone={tone} className="py-1">
       {t(STATUS_KEYS[status] ?? 'gift.status.active')}
-    </span>
+    </StatusBadge>
   )
 }
 
@@ -473,15 +469,9 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
                         {offer.kind === 'money' ? t('gift.kindMoney') : t('gift.kindPackage')}
                       </p>
                     </div>
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                        offer.is_active
-                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
-                      }`}
-                    >
+                    <StatusBadge tone={offer.is_active ? 'success' : 'neutral'} className="py-1">
                       {offer.is_active ? t('gift.active') : t('gift.inactive')}
-                    </span>
+                    </StatusBadge>
                   </div>
                   {offer.description && (
                     <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{offer.description}</p>
@@ -599,7 +589,7 @@ export default function GiftOffers({ canReverse = false }: { canReverse?: boolea
                     <td className="px-4 py-3 text-sm">{certificate.recipient_name}</td>
                     <td className="px-4 py-3 text-sm">{showDay(certificate.expires_at)}</td>
                     <td className="px-4 py-3 text-sm">
-                      <StatusChip status={certificate.status} />
+                      <CertificateStatus status={certificate.status} />
                     </td>
                     <td className="px-4 py-3 text-right text-sm">
                       <button

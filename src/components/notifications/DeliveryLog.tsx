@@ -4,6 +4,7 @@ import api from '../../api/client'
 import { apiErrorMessage } from '../../api/errors'
 import LoadingSpinner from '../LoadingSpinner'
 import Select from '../../ui/Select'
+import StatusBadge, { type StatusTone } from '../../ui/StatusBadge'
 import { INTL_LOCALE } from '../booking/intl'
 import { useTranslation } from '../../hooks/useTranslation'
 import type {
@@ -31,20 +32,12 @@ const KIND_KEYS: Record<string, TranslationKey> = {
   booking_reminder: 'notifications.delivery.kind.reminder',
 }
 
-const statusClass = (status: string) => {
-  if (status === 'sent') {
-    return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-  }
-  if (status === 'failed') {
-    return 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'
-  }
-  if (status === 'pending' || status === 'processing') {
-    return 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
-  }
-  if (status === 'captured') {
-    return 'bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300'
-  }
-  return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+const statusTone = (status: string): StatusTone => {
+  if (status === 'sent') return 'success'
+  if (status === 'failed') return 'danger'
+  if (status === 'pending' || status === 'processing') return 'warning'
+  if (status === 'captured') return 'info'
+  return 'neutral'
 }
 
 export default function DeliveryLog() {
@@ -174,11 +167,9 @@ export default function DeliveryLog() {
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="font-medium">{kindLabel(row.kind)}</p>
-                        <span
-                          className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusClass(row.status)}`}
-                        >
+                        <StatusBadge tone={statusTone(row.status)}>
                           {statusLabel(row.status)}
-                        </span>
+                        </StatusBadge>
                       </div>
                       <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                         {new Date(row.created_at).toLocaleString(INTL_LOCALE[locale])}
