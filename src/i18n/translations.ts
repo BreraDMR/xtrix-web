@@ -1815,6 +1815,15 @@ export type TranslationKey =
   | 'notifications.enabledHint'
   | 'notifications.enable'
   | 'notifications.disable'
+  | 'notifications.typesTitle'
+  | 'notifications.typeOn'
+  | 'notifications.typeOff'
+  | 'notifications.crmVisits'
+  | 'notifications.crmVisitsHint'
+  | 'notifications.birthday'
+  | 'notifications.birthdayHint'
+  | 'notifications.followup'
+  | 'notifications.followupHint'
   | 'notifications.reminderTime'
   | 'notifications.reminderTimeHint'
   | 'notifications.timezone'
@@ -4738,6 +4747,43 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   },
   'notifications.enable': { en: 'Enable', ru: 'Включить', cz: 'Zapnout' },
   'notifications.disable': { en: 'Disable', ru: 'Выключить', cz: 'Vypnout' },
+  'notifications.typesTitle': {
+    en: 'Which messages to send',
+    ru: 'Какие сообщения отправлять',
+    cz: 'Které zprávy odesílat',
+  },
+  'notifications.typeOn': { en: 'On', ru: 'Включено', cz: 'Zapnuto' },
+  'notifications.typeOff': { en: 'Off', ru: 'Выключено', cz: 'Vypnuto' },
+  'notifications.crmVisits': {
+    en: 'Visit changes made in the CRM',
+    ru: 'Изменения визитов в CRM',
+    cz: 'Změny návštěv v CRM',
+  },
+  'notifications.crmVisitsHint': {
+    en: 'Confirmation, move and cancellation when your team changes a visit. Never for visits in the past.',
+    ru: 'Подтверждение, перенос и отмена, когда визит меняет ваша команда. Для прошедших визитов не отправляется.',
+    cz: 'Potvrzení, přesun a zrušení, když návštěvu změní váš tým. U minulých návštěv se neodesílá.',
+  },
+  'notifications.birthday': {
+    en: 'Birthday greetings',
+    ru: 'Поздравления с днём рождения',
+    cz: 'Přání k narozeninám',
+  },
+  'notifications.birthdayHint': {
+    en: 'Marketing: only for clients who agreed to marketing from your business, with an unsubscribe link.',
+    ru: 'Маркетинг: только клиентам, согласившимся на рассылки от вашего бизнеса, со ссылкой для отписки.',
+    cz: 'Marketing: jen klientům, kteří souhlasili s marketingem od vašeho podniku, s odkazem na odhlášení.',
+  },
+  'notifications.followup': {
+    en: 'Thank-you note after a visit',
+    ru: 'Благодарность после визита',
+    cz: 'Poděkování po návštěvě',
+  },
+  'notifications.followupHint': {
+    en: 'Marketing: the day after a completed visit, only for clients who agreed to marketing, with an unsubscribe link.',
+    ru: 'Маркетинг: на следующий день после визита, только клиентам с согласием на рассылки, со ссылкой для отписки.',
+    cz: 'Marketing: den po dokončené návštěvě, jen klientům se souhlasem s marketingem, s odkazem na odhlášení.',
+  },
   'notifications.reminderTime': { en: 'Reminder time', ru: 'Время напоминания', cz: 'Čas připomínky' },
   'notifications.reminderTimeHint': {
     en: 'Local time on the day before the visit.',

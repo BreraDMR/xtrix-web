@@ -19,6 +19,22 @@ import Button from '../ui/Button'
 
 const SETTINGS_KEY = ['notification-settings']
 
+// per-salon switches for single message types, on top of the main switch
+type MessageSwitch = 'crm_visit_messages_enabled' | 'birthday_greetings_enabled' | 'visit_followups_enabled'
+type Switches = Record<MessageSwitch, boolean>
+
+const MESSAGE_TYPES = [
+  { key: 'crm_visit_messages_enabled', label: 'notifications.crmVisits', hint: 'notifications.crmVisitsHint' },
+  { key: 'birthday_greetings_enabled', label: 'notifications.birthday', hint: 'notifications.birthdayHint' },
+  { key: 'visit_followups_enabled', label: 'notifications.followup', hint: 'notifications.followupHint' },
+] as const
+
+const DEFAULT_SWITCHES: Switches = {
+  crm_visit_messages_enabled: true,
+  birthday_greetings_enabled: false,
+  visit_followups_enabled: false,
+}
+
 export default function NotificationSettings() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
@@ -26,6 +42,7 @@ export default function NotificationSettings() {
   const [enabled, setEnabled] = useState(false)
   const [channel, setChannel] = useState('email')
   const [reminderTime, setReminderTime] = useState('10:00')
+  const [switches, setSwitches] = useState<Switches>(DEFAULT_SWITCHES)
 
   const settingsQuery = useQuery<NotificationSettingsOut>({
     queryKey: SETTINGS_KEY,
@@ -42,6 +59,11 @@ export default function NotificationSettings() {
     setChannel(data.channel)
     setReminderTime(data.reminder_time)
     setEnabled(data.is_enabled)
+    setSwitches({
+      crm_visit_messages_enabled: data.crm_visit_messages_enabled,
+      birthday_greetings_enabled: data.birthday_greetings_enabled,
+      visit_followups_enabled: data.visit_followups_enabled,
+    })
   }, [settingsQuery.data])
 
   const save = useMutation({
@@ -99,7 +121,7 @@ export default function NotificationSettings() {
   const submit = (event: FormEvent) => {
     event.preventDefault()
     if (!reminderTime) return
-    save.mutate({ channel, reminder_time: reminderTime, is_enabled: enabled })
+    save.mutate({ channel, reminder_time: reminderTime, is_enabled: enabled, ...switches })
   }
 
   return (
@@ -202,6 +224,33 @@ export default function NotificationSettings() {
               {enabled ? t('notifications.disable') : t('notifications.enable')}
             </Button>
           </div>
+
+          <fieldset className="space-y-4 rounded-md border border-gray-200 p-4 dark:border-gray-700">
+            <legend className="px-1 text-sm font-medium">{t('notifications.typesTitle')}</legend>
+            {MESSAGE_TYPES.map(({ key, label, hint }) => (
+              <div key={key} className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <label htmlFor={`notification-${key}`} className="block text-sm font-medium">
+                    {t(label)}
+                  </label>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{t(hint)}</p>
+                </div>
+                <Select
+                  id={`notification-${key}`}
+                  value={switches[key] ? 'on' : 'off'}
+                  disabled={save.isPending}
+                  onChange={(event) => {
+                    save.reset()
+                    setSwitches((value) => ({ ...value, [key]: event.target.value === 'on' }))
+                  }}
+                  className="w-40 shrink-0"
+                >
+                  <option value="on">{t('notifications.typeOn')}</option>
+                  <option value="off">{t('notifications.typeOff')}</option>
+                </Select>
+              </div>
+            ))}
+          </fieldset>
 
           <div>
             <label htmlFor="notification-reminder-time" className="mb-1 block text-sm font-medium">
