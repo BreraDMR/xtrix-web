@@ -247,6 +247,7 @@ export default function BookingPage() {
 
   const selectedServiceIds = selectedServices.map((service) => service.id)
   const isChain = selectedServices.length > 1
+  const anyMaster = selectedStaffId === null && !isChain
 
   const staffQuery = useQuery<PublicStaffOut[]>({
     queryKey: ['public-booking', slug, 'staff', selectedServiceIds.join(',')],
@@ -366,7 +367,9 @@ export default function BookingPage() {
       ...(isChain
         ? { service_ids: selectedServiceIds }
         : { service_id: selectedServiceIds[0] }),
-      staff_id: selectedSlot.staff_id,
+      // "any master" for one service: the server picks whoever is free when the booking lands,
+      // the slot's master is only who it would be right now. A chain keeps the slot's master
+      ...(anyMaster ? {} : { staff_id: selectedSlot.staff_id }),
       start: selectedSlot.start,
       full_name: details.fullName.trim(),
       phone: phone || undefined,
@@ -434,6 +437,8 @@ export default function BookingPage() {
   const bookedStaffName = staffIdForSummary
     ? staffQuery.data?.find((person) => person.id === staffIdForSummary)?.full_name ?? null
     : null
+  // with "any master" the final name is only known after booking, so don't promise one
+  const summaryStaffName = anyMaster && selectedSlot ? t('booking.anyMaster') : bookedStaffName
 
   return (
     <PublicFrame>
@@ -581,7 +586,7 @@ export default function BookingPage() {
             selectedServices.length > 0 && selectedSlot ? (
               <BookingSummary
                 services={selectedServices}
-                staffName={bookedStaffName}
+                staffName={summaryStaffName}
                 slot={selectedSlot}
                 timezone={slotsQuery.data?.timezone ?? business.timezone}
                 details={details}
