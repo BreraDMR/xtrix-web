@@ -347,24 +347,24 @@ function LegacySubscription() {
             </h2>
             <div className="flex gap-2">
               {subscription.status === 'pending_cancellation' && (
-                <button
+                <Button
+                  variant="primary"
                   onClick={handleReactivate}
                   disabled={loading}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
                 >
                   {t('subscription.reactivate')}
-                </button>
+                </Button>
               )}
               {(subscription.status === 'active' || subscription.status === 'pending_cancellation') && !subscription.is_trial && (
-                <button
+                <Button
+                  variant="danger"
                   onClick={() => handleCancel(true)}
                   disabled={loading || subscription.cancel_at_period_end}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm"
                 >
                   {subscription.cancel_at_period_end
                     ? t('subscription.cancelled')
                     : t('subscription.cancel')}
-                </button>
+                </Button>
               )}
             </div>
           </div>
