@@ -221,3 +221,33 @@ describe('CRM buttons', () => {
     expect(theme).not.toMatch(/\.bg-(?:blue|purple|primary|indigo)-600/)
   })
 })
+
+// DES-02c: older screens painted the accent with plain blue/purple/primary shades, and a
+// global rule at the end of theme.css lifted them to the tokens on the dark theme. That
+// rule is gone, so a shade left over would come out dark purple on the dark panel.
+const LIFTED_SHADE = /(?<![\w:/[-])(?:text-(?:blue|purple|primary)-(?:600|700|800|900)|bg-(?:blue|purple|primary)-(?:50|100)|border-(?:blue|purple|primary)-(?:200|300))(?![\w/-])/g
+
+describe('CRM accent shades', () => {
+  it('come from the accent tokens', () => {
+    const offenders = sources(resolve(root, 'src'))
+      .map(path => relative(root, path))
+      .filter(path => !ALLOWED_DIRS.some(dir => path.startsWith(dir)))
+      .flatMap(path => {
+        const hits = readFileSync(resolve(root, path), 'utf8').match(LIFTED_SHADE) ?? []
+        return hits.length ? [`${path}: ${hits.length} (${[...new Set(hits)].slice(0, 3).join(' ')})`] : []
+      })
+    expect(offenders).toEqual([])
+  })
+
+  it('every accent token has a dark value', () => {
+    for (const token of ['--workspace-accent', '--workspace-accent-hover', '--workspace-accent-soft', '--workspace-accent-ink', '--workspace-accent-line']) {
+      expect(light.has(token), `light ${token}`).toBe(true)
+      expect(followsTheme(token), `dark ${token}`).toBe(true)
+    }
+  })
+
+  it('theme.css has no dark patch for old accent shades', () => {
+    expect(theme).not.toMatch(/:root\.dark :is\(\.text-blue-600/)
+    expect(theme).not.toMatch(/\.(?:text|bg|border)-(?:blue|purple|primary)-\d/)
+  })
+})
