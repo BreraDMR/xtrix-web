@@ -303,10 +303,10 @@ describe('CRM tone buttons', () => {
   })
 })
 
-// DES-11: the subscription page and the trial banner drew status words and notices in raw
+// DES-11: the subscription page, the trial banner and the load error box drew status words and notices in raw
 // green/yellow/red Tailwind shades - 2.9-3.2:1 on white and a light green box in dark mode.
 // They take the tint tokens now. The other screens with raw tones are DES-02g.
-const TINTED_FILES = ['src/pages/Subscription.tsx', 'src/components/TrialBanner.tsx']
+const TINTED_FILES = ['src/pages/Subscription.tsx', 'src/components/TrialBanner.tsx', 'src/components/QueryError.tsx']
 
 describe('subscription tones', () => {
   it('come from the tint tokens', () => {
