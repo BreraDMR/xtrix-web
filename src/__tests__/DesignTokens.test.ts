@@ -330,3 +330,35 @@ describe('assistant', () => {
     expect(light.get('--workspace-accent-fill')).toBe('#8b45dd')
   })
 })
+
+// DES-02f: index.css still carried its own dark calendar and dropdown colours from before
+// the tokens. theme.css styles the calendar now, and the two sets kept overriding each other,
+// so index.css keeps only layout and motion and takes every colour from the tokens.
+const indexCss = readFileSync(resolve(root, 'src/index.css'), 'utf8')
+const tailwindConfig = readFileSync(resolve(root, 'tailwind.config.js'), 'utf8')
+const exportSource = readFileSync(resolve(root, 'src/utils/export.ts'), 'utf8')
+
+describe('legacy global styles', () => {
+  it('index.css has no colours of its own', () => {
+    expect(indexCss.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []).toEqual([])
+  })
+
+  it('the calendar is styled in one place', () => {
+    expect(indexCss).not.toContain('react-calendar')
+  })
+
+  it('a focused calendar day stays dark in the dark theme', () => {
+    // the light hover/focus tint is near-white; dark only overrode hover, so a day focused
+    // from the keyboard turned into a white tile with white text
+    expect(theme).toMatch(/\.dark \.crm-app \.react-calendar__tile:enabled:focus[^{]*\{[^}]*var\(--workspace-hover\)/)
+  })
+
+  it('the rounded-card utility is the card radius token', () => {
+    expect(tailwindConfig).toMatch(/card:\s*'var\(--radius-card\)'/)
+  })
+
+  it('print and PDF headers wear the brand accent, not the old green', () => {
+    expect(exportSource).toContain(`PRINT_ACCENT = '${light.get('--workspace-accent')}'`)
+    expect(exportSource).not.toMatch(/#245f4b|139, 92, 246/i)
+  })
+})

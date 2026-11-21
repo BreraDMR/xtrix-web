@@ -8,6 +8,10 @@ import { cellText, type ExportColumn } from './columns'
 
 export type { ExportColumn }
 
+// the print window and the PDF have no access to the theme tokens, so this is the light --workspace-accent
+const PRINT_ACCENT = '#8b45dd'
+const PRINT_ACCENT_RGB = [1, 3, 5].map(at => parseInt(PRINT_ACCENT.slice(at, at + 2), 16)) as [number, number, number]
+
 export type ExportFormat = 'pdf' | 'excel' | 'csv' | 'print'
 
 export type ExportPreferences = Partial<Pick<ExportOptions<unknown>, 'format'>>
@@ -51,7 +55,7 @@ export async function exportToPDF<T extends object>(
     body: tableData,
     startY: title ? 35 : 20,
     styles: { fontSize: 8 },
-    headStyles: { fillColor: [139, 92, 246], textColor: 255 },
+    headStyles: { fillColor: PRINT_ACCENT_RGB, textColor: 255 },
     columnStyles: columns.reduce((acc, _, idx) => {
       acc[idx] = { cellWidth: colWidths[idx] }
       return acc
@@ -169,7 +173,7 @@ export function printElement(selector?: string): void {
           body { font-family: Arial, sans-serif; padding: 20px; }
           table { border-collapse: collapse; width: 100%; }
           th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-          th { background-color: #245f4b; color: white; }
+          th { background-color: ${PRINT_ACCENT}; color: white; }
         </style>
       </head>
       <body>
