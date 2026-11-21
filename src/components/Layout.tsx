@@ -186,9 +186,10 @@ export default function Layout() {
     <div className="crm-app min-h-screen" data-sidebar-compact={isCompact}>
       {isMobileMenuOpen && <button className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[3px] lg:hidden"
         aria-label={t('common.close')} onClick={() => setIsMobileMenuOpen(false)} />}
+      {/* closed on a phone it is only slid away, so hide it too - otherwise Tab walks through 20 links you can't see */}
       <aside ref={sidebar} id="workspace-navigation" role={isMobileMenuOpen ? 'dialog' : undefined}
         aria-modal={isMobileMenuOpen || undefined} aria-label={t('nav.primary')}
-        className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden transition-transform duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+        className={`crm-sidebar fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden transition-[transform,visibility] duration-200 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full max-lg:invisible'} lg:translate-x-0`}>
         <div className="crm-brand flex h-[88px] shrink-0 items-center gap-3">
           <Link to="/app" aria-label="Xtrix" className="flex items-center gap-2.5">
             <span className="crm-logo h-8 w-8 text-[17px]">X</span>
@@ -216,8 +217,8 @@ export default function Layout() {
               onClick={() => setIsCompact((compact) => !compact)}>
               {isCompact ? <LuChevronRight className="h-5 w-5" /> : <LuChevronLeft className="h-5 w-5" />}
             </button>
-            <button className="-ml-1 p-1 text-gray-600 lg:hidden dark:text-gray-300"
-              aria-label={t('nav.primary')} aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
+            <button className="-ml-2.5 inline-grid h-10 w-10 place-items-center rounded-lg text-gray-600 lg:hidden dark:text-gray-300"
+              aria-label={t('nav.menu')} aria-controls="workspace-navigation" aria-expanded={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((open) => !open)}><LuMenu className="h-5 w-5" /></button>
             <div className="min-w-0 items-center gap-2 text-xs text-gray-500 flex"><span className="max-w-28 truncate sm:max-w-40">{workspaceName}</span>{active && <><LuChevronRight className="hidden h-3 w-3 sm:block" /><span className="hidden truncate text-gray-800 sm:block dark:text-gray-200">{active.label}</span></>}</div>
           </div>

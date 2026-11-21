@@ -13,6 +13,10 @@ import Button from '../../ui/Button'
 import Card from '../../ui/Card'
 import { visitStatusClass } from '../../utils/statusPill'
 
+// The edit button stretches over its whole row (the <li> is relative), so a thumb can hit
+// the time or the service line too, not just a 20px client name.
+const rowTarget = "after:absolute after:inset-0 after:rounded-2xl after:content-['']"
+
 interface TodayAgendaProps {
   timeZone: string
   onEdit: (id: number) => void
@@ -173,10 +177,10 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
               <h3 id="today-upcoming-title" className="mt-5 text-xs font-medium uppercase tracking-[0.08em] text-[var(--workspace-muted)]">{t('today.comingUp')}</h3>
               <ul aria-labelledby="today-upcoming-title" className="mt-2 divide-y divide-[var(--workspace-line)]">
                 {upcoming.data.map(visit => (
-                  <li key={visit.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2 text-sm">
-                    <time dateTime={visit.date_start} className="w-36 shrink-0 tabular-nums text-[var(--workspace-muted)]">{formatDay(visit.date_start)}</time>
+                  <li key={visit.id} className="relative flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2 text-sm">
+                    <time dateTime={visit.date_start} className="shrink-0 basis-full tabular-nums text-[var(--workspace-muted)] sm:basis-36">{formatDay(visit.date_start)}</time>
                     {canEdit ? <button type="button" aria-label={`${t('common.edit')}: ${clientLabel(visit)}`} onClick={() => onEdit(visit.id)}
-                      className="min-w-0 break-words text-left font-semibold hover:text-[var(--workspace-accent)]">{clientLabel(visit)}</button>
+                      className={`min-w-0 break-words text-left font-semibold hover:text-[var(--workspace-accent)] ${rowTarget}`}>{clientLabel(visit)}</button>
                       : <span className="min-w-0 break-words font-semibold">{clientLabel(visit)}</span>}
                     <span className="min-w-0 break-words text-xs text-[var(--workspace-muted)]">{visit.service_name || (visit.service_id ? `#${visit.service_id}` : t('today.noService'))}</span>
                   </li>
@@ -202,7 +206,7 @@ export default function TodayAgenda({ timeZone, onEdit }: TodayAgendaProps) {
                 </div>
                 <div className="min-w-0">
                   {canEdit ? <button type="button" aria-label={`${t('common.edit')}: ${visit.client_name || `#${visit.client_id}`}`}
-                    onClick={() => onEdit(visit.id)} className="group inline-flex max-w-full items-center gap-2 text-left text-sm font-semibold text-[var(--workspace-ink)] hover:text-[var(--workspace-accent)]">
+                    onClick={() => onEdit(visit.id)} className={`group inline-flex max-w-full items-center gap-2 text-left text-sm font-semibold text-[var(--workspace-ink)] hover:text-[var(--workspace-accent)] ${rowTarget}`}>
                     <span className="break-words">{visit.client_name || `#${visit.client_id}`}</span><LuChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--workspace-muted)]" />
                   </button> : <p className="break-words text-sm font-semibold text-[var(--workspace-ink)]">{visit.client_name || `#${visit.client_id}`}</p>}
                   <p className="mt-1 break-words text-xs text-[var(--workspace-muted)]">{visit.service_name || (visit.service_id ? `#${visit.service_id}` : t('today.noService'))}</p>

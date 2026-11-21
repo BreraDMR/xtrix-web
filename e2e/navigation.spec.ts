@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test'
 import { apiLogin, apiUrl, newOwner, openAs, seedUser } from './helpers'
 
 const labels = {
-  en: { collapse: 'Collapse menu', expand: 'Expand menu', clients: 'Clients', primary: 'PRIMARY', dashboard: 'Dashboard' },
-  ru: { collapse: 'Свернуть меню', expand: 'Развернуть меню', clients: 'Клиенты', primary: 'ОСНОВНОЕ', dashboard: 'Главная' },
-  cz: { collapse: 'Sbalit nabídku', expand: 'Rozbalit nabídku', clients: 'Klienti', primary: 'ZÁKLADNÍ', dashboard: 'Přehled' },
+  en: { collapse: 'Collapse menu', expand: 'Expand menu', clients: 'Clients', primary: 'PRIMARY', menu: 'Menu', dashboard: 'Dashboard' },
+  ru: { collapse: 'Свернуть меню', expand: 'Развернуть меню', clients: 'Клиенты', primary: 'ОСНОВНОЕ', menu: 'Меню', dashboard: 'Главная' },
+  cz: { collapse: 'Sbalit nabídku', expand: 'Rozbalit nabídku', clients: 'Klienti', primary: 'ZÁKLADNÍ', menu: 'Menu', dashboard: 'Přehled' },
 }
 
 for (const language of ['en', 'ru', 'cz'] as const) {
@@ -45,7 +45,7 @@ for (const language of ['en', 'ru', 'cz'] as const) {
 
       await page.setViewportSize({ width: 375, height: 900 })
       await expect(page.getByRole('button', { name: text.expand })).toBeHidden()
-      const menu = page.getByRole('button', { name: text.primary, exact: true })
+      const menu = page.getByRole('button', { name: text.menu, exact: true })
       await menu.click()
       await expect(page.getByRole('dialog', { name: text.primary })).toBeVisible()
       await expect(sidebar).toHaveCSS('width', '248px')
