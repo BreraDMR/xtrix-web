@@ -676,7 +676,7 @@ export default function TemplateEditor({ template, services, onChanged, onClose 
         <button
           type="submit"
           disabled={busy !== null}
-          className="flex items-center gap-2 rounded-md border border-primary-600 px-5 py-2.5 font-medium text-primary-700 hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-50 dark:text-primary-300 dark:hover:bg-primary-900/20"
+          className="flex items-center gap-2 rounded-md border border-primary-600 px-5 py-2.5 font-medium text-[var(--workspace-accent-ink)] hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-primary-900/20"
         >
           {busy === 'save' && <LoadingSpinner size="sm" />}
           {t('questionnaireEditor.saveDraft')}

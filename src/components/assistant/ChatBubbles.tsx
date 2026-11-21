@@ -8,13 +8,13 @@ export function AssistantBubble({ name, children, tone = 'plain' }: { name: stri
   return (
     <div className="flex items-start gap-2">
       <span
-        className="mt-5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300"
+        className="mt-5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]"
         aria-hidden="true"
       >
         <LuSparkles className="h-4 w-4" />
       </span>
       <div className="min-w-0 max-w-[75%]">
-        <p className="mb-1 text-xs font-medium text-purple-700 dark:text-purple-300">{name}</p>
+        <p className="mb-1 text-xs font-medium text-[var(--workspace-accent-ink)]">{name}</p>
         <div
           className={`rounded-2xl rounded-tl-sm px-3 py-2 text-sm shadow-sm ${tone === 'muted'
             ? 'bg-gray-100 text-gray-600 dark:bg-gray-800/60 dark:text-gray-300'

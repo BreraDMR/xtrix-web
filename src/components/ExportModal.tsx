@@ -134,7 +134,7 @@ export default function ExportModal<T extends object>({
                 disabled={isExporting}
                 className={`p-3 border-2 rounded-lg text-center transition-all ${
                   selectedFormat === 'pdf'
-                    ? 'border-purple-600 bg-purple-50 text-purple-700'
+                    ? 'border-purple-600 bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]'
                     : 'border-gray-300 hover:border-gray-400'
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
@@ -146,7 +146,7 @@ export default function ExportModal<T extends object>({
                 disabled={isExporting}
                 className={`p-3 border-2 rounded-lg text-center transition-all ${
                   selectedFormat === 'excel'
-                    ? 'border-purple-600 bg-purple-50 text-purple-700'
+                    ? 'border-purple-600 bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]'
                     : 'border-gray-300 hover:border-gray-400'
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
@@ -158,7 +158,7 @@ export default function ExportModal<T extends object>({
                 disabled={isExporting}
                 className={`p-3 border-2 rounded-lg text-center transition-all ${
                   selectedFormat === 'csv'
-                    ? 'border-purple-600 bg-purple-50 text-purple-700'
+                    ? 'border-purple-600 bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]'
                     : 'border-gray-300 hover:border-gray-400'
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
@@ -170,7 +170,7 @@ export default function ExportModal<T extends object>({
                 disabled={isExporting}
                 className={`p-3 border-2 rounded-lg text-center transition-all ${
                   selectedFormat === 'print'
-                    ? 'border-purple-600 bg-purple-50 text-purple-700'
+                    ? 'border-purple-600 bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]'
                     : 'border-gray-300 hover:border-gray-400'
                 } ${isExporting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
@@ -189,7 +189,7 @@ export default function ExportModal<T extends object>({
                 checked={includeChartsOption}
                 onChange={(e) => setIncludeChartsOption(e.target.checked)}
                 disabled={isExporting || selectedFormat === 'print'}
-                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 dark:border-gray-600"
+                className="w-4 h-4 text-[var(--workspace-accent)] border-gray-300 rounded focus:ring-purple-500 dark:border-gray-600"
               />
               <label htmlFor={`${formId}-charts`} className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                 {t('export.includeCharts')}
@@ -198,7 +198,7 @@ export default function ExportModal<T extends object>({
           )}
 
           {}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+          <div className="bg-[var(--workspace-accent-soft)] border border-[var(--workspace-accent-line)] rounded-lg p-3 text-sm text-[var(--workspace-accent-ink)]">
             <div className="font-medium mb-1">{t('export.itemsCount')}:</div>
             <div>{totalItems ?? data.length} {t('export.items')}</div>
           </div>

@@ -234,8 +234,8 @@ function LegacySubscription() {
   if (!isPayer) {
     return (
       <div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-blue-800">
+        <div className="bg-[var(--workspace-accent-soft)] border border-[var(--workspace-accent-line)] rounded-lg p-4">
+          <p className="text-[var(--workspace-accent-ink)]">
             {t('subscription.notRequired')}
           </p>
         </div>
@@ -323,7 +323,7 @@ function LegacySubscription() {
                 <span
                   className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                     usageData.ai.is_within_limit
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                      ? 'bg-[var(--workspace-accent-soft)] text-[var(--workspace-accent-ink)]'
                       : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
                   }`}
                 >

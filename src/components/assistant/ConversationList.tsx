@@ -177,7 +177,7 @@ export default function ConversationList({
                 onClick={() => onSelect(conv.id)}
                 className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                   isSelected
-                    ? 'bg-blue-100/70 font-semibold text-blue-900 dark:bg-blue-900/40 dark:text-blue-200'
+                    ? 'bg-blue-100/70 font-semibold text-[var(--workspace-accent-ink)] dark:bg-blue-900/40'
                     : 'text-gray-700 hover:bg-gray-200/50 dark:text-gray-300 dark:hover:bg-gray-700/50'
                 }`}
               >

@@ -151,7 +151,7 @@ export default function LoyaltyAnalytics() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                       {client.client_name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--workspace-accent)]">
                       {client.points?.toFixed(0) || '0'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
@@ -193,7 +193,7 @@ export default function LoyaltyAnalytics() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {promo.unique_clients}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--workspace-accent)]">
                       {promo.total_points_awarded?.toFixed(0) || '0'}
                     </td>
                   </tr>

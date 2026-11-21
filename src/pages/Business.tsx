@@ -366,7 +366,7 @@ function PublicBookingCard() {
                 {!settings.has_bookable_service && (
                   <>
                     {' '}
-                    <Link to="/app/services" className="text-primary-600 hover:underline dark:text-primary-400">
+                    <Link to="/app/services" className="text-[var(--workspace-accent)] hover:underline">
                       {t('business.publicBooking.setupServices')}
                     </Link>
                   </>
@@ -391,7 +391,7 @@ function PublicBookingCard() {
                 {!settings.has_schedule && (
                   <>
                     {' '}
-                    <Link to="/app/schedules" className="text-primary-600 hover:underline dark:text-primary-400">
+                    <Link to="/app/schedules" className="text-[var(--workspace-accent)] hover:underline">
                       {t('business.publicBooking.setupSchedule')}
                     </Link>
                   </>
