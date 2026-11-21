@@ -12,6 +12,8 @@ interface AuthState {
   // fresh tokens from login/signup; the user is loaded right after from /users/me
   startSession: (accessToken: string, refreshToken?: string | null) => void
   setToken: (token: string) => void
+  // same person, new pair (after a password change the old refresh token is revoked)
+  renewTokens: (accessToken: string, refreshToken: string) => void
   logout: (byUser?: boolean) => void
 }
 
@@ -50,6 +52,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   setToken: (token) => {
     localStorage.setItem('auth_token', token)
     set({ token })
+  },
+  renewTokens: (accessToken, refreshToken) => {
+    localStorage.setItem('auth_refresh_token', refreshToken)
+    localStorage.setItem('auth_token', accessToken)
+    set({ token: accessToken })
   },
   logout: (byUser = false) => {
     localStorage.removeItem('auth_token')

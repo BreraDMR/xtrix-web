@@ -15,6 +15,7 @@ import { useAuthStore } from '../store/authStore'
 import api from '../api/client'
 import { CURRENCIES, Currency, getCurrencySymbol } from '../utils/currency'
 import LoadingSpinner from '../components/LoadingSpinner'
+import PasswordCard from '../components/settings/PasswordCard'
 import type { TranslationKey } from '../i18n/translations'
 import type { UserPreferencesUpdate } from '../api/types'
 import { PREFERENCES_KEY, usePreferences, useSetUiLanguage } from '../hooks/useUiLanguage'
@@ -165,6 +166,7 @@ export default function Settings() {
             { id: 'notifications', label: 'settings.notifications', visible: !!preferences },
             { id: 'autosave', label: 'settings.auto_save', visible: !!preferences },
             { id: 'export', label: 'settings.export_format', visible: !!preferences },
+            { id: 'password', label: 'settings.password.title', visible: true },
             { id: 'onboarding', label: 'onboarding.settings.title', visible: true },
           ].filter(section => section.visible).map(section => <a key={section.id} href={`#settings-${section.id}`}
             className="rounded-md px-3 py-2 text-xs leading-relaxed text-[var(--workspace-muted)] hover:bg-[var(--workspace-accent-soft)] hover:text-[var(--workspace-accent)]">
@@ -446,6 +448,8 @@ export default function Settings() {
             </Select>
           </Card>
         )}
+
+        <PasswordCard />
 
         <Card id="settings-onboarding" className="scroll-mt-6 p-5 sm:p-6 target:border-[var(--workspace-accent)]">
           <h2 className="text-[15px] font-semibold tracking-tight text-[var(--workspace-ink)] mb-3">{t('onboarding.settings.title')}</h2>

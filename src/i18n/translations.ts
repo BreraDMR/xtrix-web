@@ -1102,6 +1102,20 @@ export type TranslationKey =
   | 'nav.system'
   | 'nav.reports'
   | 'settings.title'
+  | 'settings.password.title'
+  | 'settings.password.googleOnly'
+  | 'settings.password.set'
+  | 'settings.password.sending'
+  | 'settings.password.linkSent'
+  | 'settings.password.linkFailed'
+  | 'settings.password.change'
+  | 'settings.password.changeHint'
+  | 'settings.password.current'
+  | 'settings.password.new'
+  | 'settings.password.confirm'
+  | 'settings.password.saving'
+  | 'settings.password.changed'
+  | 'settings.password.failed'
   | 'settings.subtitle'
   | 'settings.language'
   | 'settings.language_description'
@@ -3620,6 +3634,20 @@ const translations: Record<TranslationKey, Record<'en' | 'ru' | 'cz', string>> =
   'nav.reports': { en: 'REPORTS', ru: 'ОТЧЁТЫ', cz: 'REPORTY' },
   
   'settings.title': { en: 'Settings', ru: 'Настройки', cz: 'Nastavení' },
+  "settings.password.title": {"en": "Password", "ru": "Пароль", "cz": "Heslo"},
+  "settings.password.googleOnly": {"en": "You sign in with Google. Add a password to sign in with your email as well.", "ru": "Вы входите через Google. Добавьте пароль, чтобы входить и по email.", "cz": "Přihlašujete se přes Google. Přidejte heslo, abyste se mohli přihlásit i e-mailem."},
+  "settings.password.set": {"en": "Set password", "ru": "Установить пароль", "cz": "Nastavit heslo"},
+  "settings.password.sending": {"en": "Sending…", "ru": "Отправляем…", "cz": "Odesíláme…"},
+  "settings.password.linkSent": {"en": "We sent a link to {email}. Open it within 30 minutes to choose your password.", "ru": "Мы отправили ссылку на {email}. Откройте её в течение 30 минут и задайте пароль.", "cz": "Poslali jsme odkaz na {email}. Otevřete ho do 30 minut a zvolte si heslo."},
+  "settings.password.linkFailed": {"en": "Could not send the link. Try again later.", "ru": "Не удалось отправить ссылку. Попробуйте позже.", "cz": "Odkaz se nepodařilo odeslat. Zkuste to později."},
+  "settings.password.change": {"en": "Change password", "ru": "Сменить пароль", "cz": "Změnit heslo"},
+  "settings.password.changeHint": {"en": "Other devices will be signed out after the change.", "ru": "После смены пароля другие устройства выйдут из аккаунта.", "cz": "Po změně budou ostatní zařízení odhlášena."},
+  "settings.password.current": {"en": "Current password", "ru": "Текущий пароль", "cz": "Současné heslo"},
+  "settings.password.new": {"en": "New password", "ru": "Новый пароль", "cz": "Nové heslo"},
+  "settings.password.confirm": {"en": "Repeat new password", "ru": "Повторите новый пароль", "cz": "Zopakujte nové heslo"},
+  "settings.password.saving": {"en": "Saving…", "ru": "Сохраняем…", "cz": "Ukládáme…"},
+  "settings.password.changed": {"en": "Password changed.", "ru": "Пароль изменён.", "cz": "Heslo bylo změněno."},
+  "settings.password.failed": {"en": "Could not change the password.", "ru": "Не удалось сменить пароль.", "cz": "Heslo se nepodařilo změnit."},
   'settings.subtitle': { en: 'Manage your account preferences', ru: 'Управляйте настройками аккаунта', cz: 'Spravujte nastavení účtu' },
   'settings.language': { en: 'Language', ru: 'Язык', cz: 'Jazyk' },
   'settings.language_description': { en: 'Select your preferred language for the interface', ru: 'Выберите предпочитаемый язык интерфейса', cz: 'Vyberte preferovaný jazyk rozhraní' },
