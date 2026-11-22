@@ -52,7 +52,8 @@
   "git": {
     "deploymentEnabled": {
       "*": false,
-      "staging": true
+      "staging": true,
+      "main": true
     }
   },
   "redirects": [
